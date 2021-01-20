@@ -1,15 +1,16 @@
-import { RVXWidget } from "./src/widgets";
+import { RVXWidget } from './src/widgets';
 
 declare global {
-  interface Widgets {
+  interface IWidgets {
     RVX: typeof RVXWidget;
   }
 
-  interface AVA {
-    widgets: Widgets;
+  interface IAva {
+    widgets: IWidgets;
   }
 
+  // tslint:disable-next-line: interface-name
   interface Window {
-    AVA: AVA;
+    AVA: IAva;
   }
 }
