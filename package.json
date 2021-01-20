@@ -1,5 +1,5 @@
 {
-  "name": "ava-widgets",
+  "name": "@media/ava-widgets",
   "version": "0.0.1",
   "description": "",
   "main": "./lib/AVA_SDK.js",
@@ -7,7 +7,7 @@
   "scripts": {
     "build": "webpack",
     "build:prod": "webpack --env=production",
-    "feed:auth" : "npx vsts-npm-auth -config .npmrc"
+    "feed:auth": "npx vsts-npm-auth -config .npmrc"
   },
   "keywords": [],
   "author": "Nofar Edan",

@@ -1,4 +1,3 @@
 # Everything outside the src and test directory
 /node_modules/*
 /src/node_modules/*
-package-lock.json
