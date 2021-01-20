@@ -1,5 +1,5 @@
 {
-  "name": "@media/ava-widgets",
+  "name": "ava-widgets",
   "version": "0.0.1",
   "description": "",
   "main": "./lib/AVA_SDK.js",
