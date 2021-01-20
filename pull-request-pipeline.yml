@@ -1,0 +1,32 @@
+trigger:
+- main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: Npm@1
+  inputs:
+    command: 'install'
+    workingDir: './'
+    verbose: true
+
+- task: Npm@1
+  inputs:
+    command: 'custom'
+    workingDir: './'
+    customCommand: 'run build'
+- task: CopyFiles@2
+  inputs:
+    Contents: |
+      lib/**
+      .npm*
+      package*
+      README.md
+    TargetFolder: './drop'
+    CleanTargetFolder: true
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: './drop'
+    ArtifactName: 'drop'
+    publishLocation: 'Container'
