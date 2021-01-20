@@ -1,5 +1,5 @@
 # Everything outside the src and test directory
-/lib/*
+/dist/*
 /node_modules/*
 /src/node_modules/*
 package-lock.json

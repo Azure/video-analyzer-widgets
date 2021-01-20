@@ -2,8 +2,8 @@
   "name": "@media-video-analytics/widgets",
   "version": "0.0.6",
   "description": "",
-  "main": "./lib/AVA_SDK.js",
-  "typings": "./lib/index.d.ts",
+  "main": "./dist/AVA_SDK.js",
+  "typings": "./dist/index.d.ts",
   "scripts": {
     "build": "webpack",
     "build:prod": "webpack --env=production",
@@ -25,7 +25,7 @@
     "@microsoft/fast-element": "^0.21.1"
   },
   "files": [
-    "lib"
+    "dist"
   ],
   "sideEffects": false
 }

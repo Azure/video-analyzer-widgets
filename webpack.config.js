@@ -9,9 +9,9 @@ module.exports = {
     devtool: 'inline-source-map',
     output: {
         filename: isProduction ? `[name].min.js` : '[name].js',
-        path: path.join(__dirname, './lib'),
+        path: path.join(__dirname, './dist'),
         sourceMapFilename: '[name].js.map',
-        publicPath: './lib'
+        publicPath: './dist'
     },
     optimization: {
         minimize: false

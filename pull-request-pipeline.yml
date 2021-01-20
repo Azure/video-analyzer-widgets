@@ -19,7 +19,7 @@ steps:
 - task: CopyFiles@2
   inputs:
     Contents: |
-      lib/**
+      dist/**
       .npm*
       package*
       README.md

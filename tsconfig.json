@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
       "experimentalDecorators": true,
-      "outDir": "./lib",
+      "outDir": "./dist",
       "declaration":true,
       "forceConsistentCasingInFileNames": true,
       "module": "commonjs",
