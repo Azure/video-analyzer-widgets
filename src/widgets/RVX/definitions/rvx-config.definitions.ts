@@ -5,7 +5,7 @@ import { IWidgetBaseConfig } from "../../base-widget-config.definitions";
  */
 export interface IRVXWidgetConfig extends IWidgetBaseConfig {
   /**
-   * TBS
+   * TBD
    */
   sources?: string[];
 }

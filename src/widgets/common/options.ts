@@ -1,5 +1,5 @@
 /**
- * Widget options
+ * The interface specifies default widget initialization options
  */
 export interface IWidgetOptions {
   /**
