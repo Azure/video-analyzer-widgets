@@ -10,10 +10,37 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
-
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+- task: Npm@1
+  inputs:
+    command: 'install'
+    workingDir: './'
+    verbose: true
+# - task: Npm@1
+#   inputs:
+#     command: 'custom'
+#     workingDir: './'
+#     customCommand: 'run test'
+# - task: Npm@1
+#   inputs:
+#     command: 'custom'
+#     workingDir: './'
+#     customCommand: 'run lint'
+- task: Npm@1
+  inputs:
+    command: 'custom'
+    workingDir: './'
+    customCommand: 'run build'
+- task: CopyFiles@2
+  inputs:
+    Contents: |
+      ./lib
+      .npm*
+      package*
+      README.md
+    TargetFolder: './drop'
+    CleanTargetFolder: true
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: './drop'
+    ArtifactName: 'drop'
+    publishLocation: 'Container'
