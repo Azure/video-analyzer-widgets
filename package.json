@@ -5,9 +5,9 @@
   "main": "./lib/AVA_SDK.js",
   "typings": "./lib/index.d.ts",
   "scripts": {
-    "build": "webpack && npm run bump-version",
+    "build": "webpack",
     "build:prod": "webpack --env=production",
-    "bump-version": "npm version patch --force",
+    "bump-version": "npm version patch",
     "feed:auth": "npx vsts-npm-auth -config .npmrc"
   },
   "keywords": [],
