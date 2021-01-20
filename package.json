@@ -1,12 +1,13 @@
 {
   "name": "@media-video-analytics/widgets",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "",
   "main": "./lib/AVA_SDK.js",
   "typings": "./lib/index.d.ts",
   "scripts": {
-    "build": "webpack",
+    "build": "webpack && npm run bump-version",
     "build:prod": "webpack --env=production",
+    "bump-version": "npm version patch",
     "feed:auth": "npx vsts-npm-auth -config .npmrc"
   },
   "keywords": [],
