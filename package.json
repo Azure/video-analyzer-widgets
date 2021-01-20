@@ -1,6 +1,6 @@
 {
   "name": "@media-video-analytics/widgets",
-  "version": "0.0.3",
+  "version": "0.0.2",
   "description": "",
   "main": "./lib/AVA_SDK.js",
   "typings": "./lib/index.d.ts",
