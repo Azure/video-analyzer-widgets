@@ -1,6 +1,6 @@
 // Window object
-export * from './global.definitions';
+export * from './global.export';
 
 
 // NPM exports
-export * from './npm.definitions';
+export * from './npm.export';
