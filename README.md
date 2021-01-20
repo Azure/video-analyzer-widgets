@@ -1,2 +1,2 @@
-# video indexer widgets SDK
+# AVA widgets SDK
 

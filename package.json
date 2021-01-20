@@ -1,6 +1,6 @@
 {
-  "name": "ava-widgets-sdk",
-  "version": "1.0.0",
+  "name": "ava-widgets",
+  "version": "0.0.1",
   "description": "",
   "main": "./lib/AVA_SDK.js",
   "typings": "./lib/index.d.ts",
