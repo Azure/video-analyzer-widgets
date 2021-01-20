@@ -6,7 +6,8 @@
   "typings": "./lib/index.d.ts",
   "scripts": {
     "build": "webpack",
-    "build:prod": "webpack --env=production"
+    "build:prod": "webpack --env=production",
+    "feed:auth" : "npx vsts-npm-auth -config .npmrc"
   },
   "keywords": [],
   "author": "Nofar Edan",
