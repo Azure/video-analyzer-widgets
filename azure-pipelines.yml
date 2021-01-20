@@ -33,7 +33,7 @@ steps:
 - task: CopyFiles@2
   inputs:
     Contents: |
-      ./lib
+      lib/**
       .npm*
       package*
       README.md
