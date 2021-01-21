@@ -1,5 +1,5 @@
-import { RVXWidget } from './src/widgets';
+import { RVXWidget } from './packages/widgets/src';
 
-window.AVA = window.AVA || {};
-window.AVA.widgets = window.AVA.widgets || {};
-window.AVA.widgets.RVX = RVXWidget;
+window.ava = window.ava || {};
+window.ava.widgets = window.ava.widgets || {};
+window.ava.widgets.rvx = RVXWidget;

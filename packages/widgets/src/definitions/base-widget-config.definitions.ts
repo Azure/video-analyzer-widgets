@@ -5,8 +5,8 @@ import { Locale } from './locale.definitions';
  * @public
  */
 export interface IWidgetBaseConfig {
-  /**
-   * Locale language
-   */
-  locale?: Locale;
+    /**
+     * Locale language
+     */
+    locale?: Locale;
 }

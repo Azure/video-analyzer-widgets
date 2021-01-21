@@ -1,1 +1,2 @@
-export * from './src/widgets';
+export * from './packages/widgets/src';
+export * from './packages/web-components/src';
