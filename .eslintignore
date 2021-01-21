@@ -6,3 +6,6 @@ dist
 
 # Never lint webpack file
 webpack.config.js
+
+# Nexer lint stories
+packages/web-components/src/**/*.stories.ts
