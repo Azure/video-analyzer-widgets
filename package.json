@@ -2,13 +2,14 @@
   "name": "@media-video-analytics/widgets",
   "version": "0.0.8",
   "description": "",
-  "main": "./dist/AVA_SDK.js",
+  "main": "./dist/ava-widgets-sdk.js",
   "typings": "./dist/index.d.ts",
   "scripts": {
+    "start": "webpack -w",
     "build": "webpack",
     "build:prod": "webpack --env=production",
     "update-version": "npm version",
-    "bump-version": "update-version patch",
+    "bump-version": "npm version patch",
     "feed:auth": "npx vsts-npm-auth -config .npmrc",
     "lint": "npx eslint . --ext .js,.jsx,.ts,.tsx"
   },
@@ -16,6 +17,7 @@
   "author": "mediafront",
   "license": "ISC",
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.14.0",
     "@typescript-eslint/parser": "^4.14.0",
     "eslint": "^7.18.0",
     "eslint-webpack-plugin": "^2.4.3",

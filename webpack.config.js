@@ -4,7 +4,7 @@ const esLintPlugin = require('eslint-webpack-plugin');
 
 module.exports = {
     entry: {
-        AVA_SDK: path.join(__dirname, './index.ts')
+        'ava-widgets-sdk': path.join(__dirname, './index.ts')
     },
     devtool: 'inline-source-map',
     output: {
