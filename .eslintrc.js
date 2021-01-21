@@ -34,7 +34,17 @@ module.exports = {
             }
         ],
         '@typescript-eslint/member-ordering': 'error',
-        '@typescript-eslint/naming-convention': 'error',
+        '@typescript-eslint/naming-convention': [
+            'error',
+            {
+                selector: 'interface',
+                format: ['PascalCase'],
+                custom: {
+                    regex: '^I[A-Z]',
+                    match: true
+                }
+            }
+        ],
         '@typescript-eslint/no-empty-function': 'off',
         '@typescript-eslint/no-empty-interface': 'error',
         '@typescript-eslint/no-explicit-any': 'error',
