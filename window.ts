@@ -9,6 +9,7 @@ declare global {
         widgets: IWidgets;
     }
 
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     export interface Window {
         ava: IAva;
     }
