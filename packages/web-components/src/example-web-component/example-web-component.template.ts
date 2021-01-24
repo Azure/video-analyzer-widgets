@@ -7,7 +7,7 @@ import { ExampleComponent } from '.';
  */
 export const template = html<ExampleComponent>`
     <template>
-        <div class="${(x) => (x.text ? 'has-text' : '')}">
+        <div class="${(x) => (x.text?.length > 1 ? 'has-text' : '')}">
             <span>${(x) => x.text}</span>
         </div>
     </template>
