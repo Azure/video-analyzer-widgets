@@ -1,4 +1,4 @@
-import { ExampleComponent } from './';
+import { ExampleComponent } from '.';
 interface ITemplate {
     text: string;
 }
