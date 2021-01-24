@@ -1,25 +1,20 @@
 {
-  "compilerOptions": {
-      "experimentalDecorators": true,
-      "outDir": "./dist",
-      "declaration":true,
-      "forceConsistentCasingInFileNames": true,
-      "module": "commonjs",
-      "noFallthroughCasesInSwitch": true,
-      "allowSyntheticDefaultImports": true,
-      "noImplicitAny": true,
-      "noImplicitReturns": true,
-      "removeComments": true,
-      "sourceMap": true,
-      "target": "ES6",
-      "lib": [
-        "es2015",
-        "es2016",
-        "es2017",
-        "es2018",
-        "dom"
-      ],
-      "strict": true,
-      "esModuleInterop": true
-  }
+    "compilerOptions": {
+        "experimentalDecorators": true,
+        "outDir": "./dist",
+        "declaration": true,
+        "forceConsistentCasingInFileNames": true,
+        "module": "commonjs",
+        "noFallthroughCasesInSwitch": true,
+        "allowSyntheticDefaultImports": true,
+        "noImplicitAny": true,
+        "noImplicitReturns": true,
+        "removeComments": true,
+        "sourceMap": true,
+        "target": "ES6",
+        "lib": ["es2015", "es2016", "es2017", "es2018", "dom"],
+        "strict": true,
+        "esModuleInterop": true
+    },
+    "exclude": ["**/*.stories.ts", "**/*.spec.ts", "node_modules"]
 }
