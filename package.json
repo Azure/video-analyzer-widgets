@@ -29,7 +29,6 @@
     "@storybook/theming": "^6.1.14",
     "@typescript-eslint/eslint-plugin": "^4.14.0",
     "@typescript-eslint/parser": "^4.14.0",
-    "babel-loader": "^8.2.2",
     "circular-dependency-plugin": "^5.2.2",
     "eslint": "^7.18.0",
     "eslint-webpack-plugin": "^2.4.3",
