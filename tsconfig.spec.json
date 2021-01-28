@@ -1,0 +1,14 @@
+{
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        "outDir": "./out/spec",
+        "module": "esnext",
+        "moduleResolution": "node",
+        "noEmitOnError": true,
+        "lib": ["es2017", "dom"],
+        "importHelpers": true,
+        "inlineSources": true
+    },
+    "exclude": [],
+    "include": ["packages/**/*.spec.ts"]
+}
