@@ -24,8 +24,8 @@ steps:
           workingDir: './'
           customCommand: 'run lint'
     - task: Npm@1
+      displayName: 'Build'
       inputs:
-          displayName: 'Build'
           command: 'custom'
           workingDir: './'
           customCommand: 'run build'
