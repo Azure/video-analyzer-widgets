@@ -9,6 +9,6 @@
         "importHelpers": true,
         "inlineSources": true
     },
-    "exclude": [],
+    "exclude": ["node_modules"],
     "include": ["packages/**/*.spec.ts"]
 }
