@@ -43,7 +43,8 @@
     "webpack-cli": "^4.4.0",
     "@web/test-runner": "^0.11.5",
     "@open-wc/testing": "^2.0.0",
-    "@web/test-runner-playwright": "^0.8.1"
+    "@web/test-runner-playwright": "^0.8.1",
+    "@types/estree": "0.0.46"
   },
   "dependencies": {
     "@microsoft/fast-components": "^1.14.1",
