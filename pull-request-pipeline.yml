@@ -11,7 +11,7 @@ steps:
           command: 'install'
           workingDir: './'
           verbose: true
-      task: Npm@1
+    - task: Npm@1
       displayName: 'Run unit testing'
       inputs:
           command: 'custom'
