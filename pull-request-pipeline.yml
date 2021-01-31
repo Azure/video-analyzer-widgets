@@ -1,36 +1,47 @@
 trigger:
-  - develop
+    - develop
 
 pool:
-  vmImage: 'ubuntu-latest'
+    vmImage: 'ubuntu-latest'
 
 steps:
-  - task: Npm@1
-    inputs:
-      command: 'install'
-      workingDir: './'
-      verbose: true
-  - task: Npm@1
-    inputs:
-      command: 'custom'
-      workingDir: './'
-      customCommand: 'run lint'
-  - task: Npm@1
-    inputs:
-      command: 'custom'
-      workingDir: './'
-      customCommand: 'run build'
-  - task: CopyFiles@2
-    inputs:
-      Contents: |
-        dist/**
-        .npm*
-        package*
-        README.md
-      TargetFolder: './drop'
-      CleanTargetFolder: true
-  - task: PublishBuildArtifacts@1
-    inputs:
-      PathtoPublish: './drop'
-      ArtifactName: 'drop'
-      publishLocation: 'Container'
+    - task: Npm@1
+      displayName: 'Install Packages'
+      inputs:
+          command: 'install'
+          workingDir: './'
+          verbose: true
+    - task: Npm@1
+      displayName: 'Run unit testing'
+      inputs:
+          command: 'custom'
+          workingDir: './'
+          customCommand: 'run test'
+    - task: Npm@1
+      displayName: 'Run Lint'
+      inputs:
+          command: 'custom'
+          workingDir: './'
+          customCommand: 'run lint'
+    - task: Npm@1
+      displayName: 'Build'
+      inputs:
+          command: 'custom'
+          workingDir: './'
+          customCommand: 'run build'
+    - task: CopyFiles@2
+      displayName: 'Copy artifacts to dist'
+      inputs:
+          Contents: |
+              dist/**
+              .npm*
+              package*
+              README.md
+          TargetFolder: './drop'
+          CleanTargetFolder: true
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifacts'
+      inputs:
+          PathtoPublish: './drop'
+          ArtifactName: 'drop'
+          publishLocation: 'Container'

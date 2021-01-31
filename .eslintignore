@@ -7,5 +7,12 @@ dist
 # Never lint webpack file
 webpack.config.js
 
-# Nexer lint stories
+# Never lint stories
 packages/web-components/src/**/*.stories.ts
+
+# Never lint spec
+packages/web-components/src/**/*.spec.ts
+
+# Never lint test build output
+out
+coverage
