@@ -1,0 +1,52 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+    - main
+
+pool:
+    vmImage: 'ubuntu-latest'
+
+steps:
+    - task: Npm@1
+      displayName: 'Install Packages'
+      inputs:
+          command: 'install'
+          workingDir: './'
+          verbose: true
+    - task: Npm@1
+      displayName: 'Run unit testing'
+      inputs:
+          command: 'custom'
+          workingDir: './'
+          customCommand: 'run test'
+    - task: Npm@1
+      displayName: 'Run Lint'
+      inputs:
+          command: 'custom'
+          workingDir: './'
+          customCommand: 'run lint'
+    - task: Npm@1
+      displayName: 'Build'
+      inputs:
+          command: 'custom'
+          workingDir: './'
+          customCommand: 'run build'
+    - task: CopyFiles@2
+      displayName: 'Copy artifacts to dist'
+      inputs:
+          Contents: |
+              dist/**
+              .npm*
+              package*
+              README.md
+          TargetFolder: './drop'
+          CleanTargetFolder: true
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifacts'
+      inputs:
+          PathtoPublish: './drop'
+          ArtifactName: 'drop'
+          publishLocation: 'Container'
