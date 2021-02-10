@@ -1,0 +1,81 @@
+<html>
+
+<head>
+    <style></style>
+    <link href="https://endpoint-vi-fe-svc-storage-shared-dev-cdn.azureedge.net/spa/7.2.3.020421.0001/apps/web/styles.css"
+        rel="stylesheet">
+    <script type="module"
+        src="https://unpkg.com/@microsoft/fast-components"></script>
+    <script type="module"
+        src="https://unpkg.com/@fluentui/web-components"></script>
+</head>
+
+<body>
+    <script src="../../../../../dist/ava-widgets-sdk.js"></script>
+    <h1>Sample Widgets</h1>
+    <div>
+        <i class="i-vi-settings"></i>
+        <ava-button-primary-design-system-provider>
+            <!-- <fast-button onclick="console.log('click!!!')"
+                appearance="primary"><i class="i-vi-settings"></i>first</fast-button> -->
+            <!-- <fast-button href="#"
+                name=""
+                onclick="console.log('click!!!')"
+                formtarget="_blank"
+                appearance="outline">Button
+                <i width="16"
+                    height="16"
+                    viewBox="0 0 16 16"
+                    slot="start"
+                    slot="start"
+                    class="i-vi-settings"
+                    style="margin-right: 8px;"></i>
+            </fast-button> -->
+            <ava-button onclick="console.log('ava click!!!')">doron</ava-button>
+        </ava-button-primary-design-system-provider>
+
+
+        <ava-button-primary-design-system-provider>
+            <fast-button onclick="console.log('click!!!')">first</fast-button>
+            <!-- <fast-button href="#"
+                name=""
+                onclick="console.log('click!!!')"
+                formtarget="_blank"
+                appearance="outline">Button
+                <i width="16"
+                    height="16"
+                    viewBox="0 0 16 16"
+                    slot="start"
+                    slot="start"
+                    class="i-vi-settings"
+                    style="margin-right: 8px;"></i>
+            </fast-button> -->
+        </ava-button-primary-design-system-provider>
+        <fast-design-system-provider use-defaults>
+            <fast-button onclick="console.log('click!!!')">first</fast-button>
+        </fast-design-system-provider>
+        <fluent-design-system-provider use-defaults>
+            <ava-button onclick="console.log('ava click!!!')">doron</ava-button>
+            </br>
+            <ava-button class="secondary"
+                onclick="console.log('ava click!!!')">doron2</ava-button>
+        </fluent-design-system-provider>
+
+        </br>
+        <ava-button onclick="console.log('ava click!!!')">doron2</ava-button>
+        </br>
+        <ava-button-primary-design-system-provider use-defaults>
+            <ava-button onclick="console.log('ava click!!!')">doron</ava-button>
+        </ava-button-primary-design-system-provider>
+    </div>
+    <!-- <div>
+        Has dynamic text
+        <ava-button text="Dynamic text"></ava-button>
+    </div>
+    <div>
+        No text
+        <ava-button text=""></ava-button>
+    </div> -->
+</body>
+
+</html>
