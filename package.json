@@ -49,6 +49,7 @@
   "dependencies": {
     "@microsoft/fast-components": "^1.14.1",
     "@microsoft/fast-element": "^0.21.1",
+    "jest": "^26.6.3",
     "node": "^15.4.0"
   },
   "files": [
