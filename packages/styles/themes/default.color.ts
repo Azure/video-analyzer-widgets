@@ -1,10 +1,10 @@
 import { css, ElementStyles } from '@microsoft/fast-element';
 import { display } from '@microsoft/fast-foundation';
 
-export const colorsStyle: ElementStyles = css`
+export const defaultColorsStyle: ElementStyles = css`
     ${display('block')} :host {
-        --neutral-foreground-rest: #ffffff;
-        --background-color: #3b3b3b;
+        --neutral-foreground-rest: #262626;
+        --background-color: #f7f7f7;
         --density: 0;
         --design-unit: 4;
         --base-height-multiplier: 10;
@@ -31,31 +31,31 @@ export const colorsStyle: ElementStyles = css`
         --type-ramp-plus-5-line-height: 56px;
         --type-ramp-plus-6-font-size: 60px;
         --type-ramp-plus-6-line-height: 72px;
-        --accent-fill-active: #216458;
-        --accent-fill-hover: #2b8071;
-        --accent-fill-rest: #277466;
+        --accent-fill-active: #3c8b7d;
+        --accent-fill-hover: #277466;
+        --accent-fill-rest: #2b8071;
         --accent-foreground-cut-rest: #ffffff;
-        --neutral-fill-input-active: #3b3b3b;
-        --neutral-fill-input-hover: #3b3b3b;
-        --neutral-fill-input-rest: #3b3b3b;
-        --neutral-focus: #909090;
-        --neutral-outline-active: #646464;
-        --neutral-outline-hover: #a2a2a2;
-        --neutral-outline-rest: #7b7b7b;
-        --neutral-foreground-active: #ffffff;
-        --neutral-foreground-hover: #ffffff;
-        --accent-foreground-rest: #7bb0a6;
-        --neutral-fill-rest: #4d4d4d;
-        --neutral-fill-hover: #545454;
-        --neutral-fill-active: #484848;
-        --neutral-focus-inner-accent: #16423a;
-        --accent-foreground-hover: #90bdb4;
-        --accent-foreground-active: #6da89d;
-        --neutral-fill-stealth-rest: #3b3b3b;
-        --neutral-fill-stealth-hover: #484848;
-        --neutral-fill-stealth-active: #424242;
-        --neutral-divider-rest: #4f4f4f;
-        --neutral-layer-floating: #4a4a4a;
-        --neutral-foreground-hint: #a7a7a7;
+        --neutral-fill-input-active: #f7f7f7;
+        --neutral-fill-input-hover: #f7f7f7;
+        --neutral-fill-input-rest: #f7f7f7;
+        --neutral-focus: #838383;
+        --neutral-outline-active: #cecece;
+        --neutral-outline-hover: #909090;
+        --neutral-outline-rest: #b6b6b6;
+        --neutral-foreground-active: #262626;
+        --neutral-foreground-hover: #262626;
+        --accent-foreground-rest: #2a7d6e;
+        --neutral-fill-rest: #e5e5e5;
+        --neutral-fill-hover: #dddddd;
+        --neutral-fill-active: #eaeaea;
+        --neutral-focus-inner-accent: #ffffff;
+        --accent-foreground-hover: #236a5e;
+        --accent-foreground-active: #358678;
+        --neutral-fill-stealth-rest: #f7f7f7;
+        --neutral-fill-stealth-hover: #eaeaea;
+        --neutral-fill-stealth-active: #efefef;
+        --neutral-divider-rest: #e2e2e2;
+        --neutral-layer-floating: #ffffff;
+        --neutral-foreground-hint: #717171;
     }
 `;

@@ -1,1 +1,1 @@
-export * from './ava.system-provider';
+export { AvaDesignSystemProvider } from './ava.system-provider';

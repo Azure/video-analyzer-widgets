@@ -1,2 +1,2 @@
-export { colorsStyle as lightColorsStyle } from './light/colors';
-export { colorsStyle as darkColorsStyle } from './dark/colors';
+export { defaultColorsStyle } from './default.color';
+export { darkColorsStyle } from './dark.color';
