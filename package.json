@@ -51,6 +51,7 @@
         "@microsoft/fast-components": "^1.17.0",
         "@microsoft/fast-element": "^0.22.2",
         "@microsoft/fast-foundation": "^1.14.0",
+        "jest": "^26.6.3",
         "node": "^15.4.0"
     },
     "files": [
