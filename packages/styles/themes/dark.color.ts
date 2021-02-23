@@ -1,8 +1,7 @@
 import { css, ElementStyles } from '@microsoft/fast-element';
-import { display } from '@microsoft/fast-foundation';
 
 export const darkColorsStyle: ElementStyles = css`
-    ${display('block')} :host {
+    :host {
         --neutral-foreground-rest: #ffffff;
         --background-color: #3b3b3b;
         --density: 0;

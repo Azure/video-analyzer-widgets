@@ -1,10 +1,10 @@
 import { FASTDesignSystemProvider } from '@microsoft/fast-components';
 import { defineDesignSystemProvider, designSystemProperty, DesignSystemProviderTemplate as template } from '@microsoft/fast-foundation';
 import { darkColorsStyle, defaultColorsStyle } from '../themes';
-import { style } from './ava.system-provider.style';
+import { style } from './ava-design-system-provider.style';
 
 /**
- * An example web component item.
+ * AVA design system provider
  * @public
  */
 @defineDesignSystemProvider({
@@ -14,7 +14,7 @@ import { style } from './ava.system-provider.style';
 })
 export class AvaDesignSystemProvider extends FASTDesignSystemProvider {
     /**
-     * Define design system property attributes
+     * Define design system property theme attribute
      */
     @designSystemProperty({
         attribute: 'theme',
