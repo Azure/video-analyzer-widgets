@@ -31,7 +31,6 @@ body {
     grid-template-columns: auto 1fr;
     text-align: start;
     color: var(--neutral-foreground-rest);
-    font-family: 'Segoe UI';
 }
 
 .control-container p {

@@ -1,6 +1,7 @@
 import { FASTDesignSystemProvider } from '@microsoft/fast-components';
 import { defineDesignSystemProvider, designSystemProperty, DesignSystemProviderTemplate as template } from '@microsoft/fast-foundation';
 import { darkColorsStyle, defaultColorsStyle } from '../themes';
+import { AvaTheme } from './ava-design-system-provider.definitions';
 import { style } from './ava-design-system-provider.style';
 
 /**
@@ -18,13 +19,13 @@ export class AvaDesignSystemProvider extends FASTDesignSystemProvider {
      */
     @designSystemProperty({
         attribute: 'theme',
-        default: 'default'
+        default: AvaTheme.Default
     })
     public theme: string = '';
     protected themeChanged(): void {
         // If theme changes or is removed, we need to
         // re-evaluate whether we should have paint styles applied
-        if (this.theme !== 'dark') {
+        if (this.theme !== AvaTheme.Dark) {
             this.$fastController.removeStyles(darkColorsStyle);
             this.$fastController.addStyles(defaultColorsStyle);
         } else {
