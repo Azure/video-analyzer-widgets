@@ -1,6 +1,6 @@
 import { html, fixture, expect } from '@open-wc/testing';
 
-import { ExampleComponent } from './example-web-component.js';
+import { ExampleComponent } from './example-web-component';
 
 ExampleComponent;
 
