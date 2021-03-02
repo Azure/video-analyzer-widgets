@@ -47,17 +47,17 @@ export class TimeLineComponent extends FASTElement {
     private timelineProgress?: SVGProgressChart;
     private currentTime: number = 0;
 
+    constructor(config: ITimeLineConfig) {
+        super();
+        this.config = config;
+    }
+
     public connectedCallback() {
         super.connectedCallback();
         this.onResizeEventStream()?.subscribe((e) => {
             this.timelineProgress?.destroy();
             this.initSVGProgress();
         });
-    }
-
-    constructor(config: ITimeLineConfig) {
-        super();
-        this.config = config;
     }
 
     public initTimeLine() {
