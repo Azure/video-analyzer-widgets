@@ -1,0 +1,129 @@
+<html lang="en">
+
+<head>
+    <title>Time Line Component Example</title>
+    <style>
+        rect>.test {
+            fill: red;
+        }
+
+        body {
+            --timeline-progress-color: gray;
+
+            /* test class */
+            --test-color: red;
+            --test-text: blue;
+            --test-tooltip-text: yellow;
+            --test-tooltip-bg: blue;
+
+            /* vi class */
+            --vi-color: green;
+            --vi-text: black;
+            --vi-tooltip-text: white;
+            --vi-tooltip-bg: green;
+        }
+    </style>
+    <link href="../../../../styles/fonts/segoeui.css"
+        rel="stylesheet">
+    <script src="../../../../../dist/ava-widgets-sdk.js"></script>
+</head>
+
+<body>
+    <ava-design-system-provider>
+        <h1>Time Line Component Example 2</h1>
+        <div>
+            <h2>Time line with tooltip & progress</h2>
+            <div id="time-line-with-tooltip-progress-container"></div>
+            <h2>Time line with tooltip</h2>
+            <div id="time-line-with-tooltip-container"></div>
+            <h2>Time line with progress</h2>
+            <div id="time-line-with-progress-container"></div>
+            <h2>Time line</h2>
+            <div id="time-line-container"></div>
+        </div>
+    </ava-design-system-provider>
+</body>
+
+<script>(function () {
+
+        const appearances = [
+            { endSeconds: 43.294, startSeconds: 42.209 },
+            { endSeconds: 45.838, startSeconds: 44.711, className: 'vi' },
+            { endSeconds: 50.175, startSeconds: 49.466 },
+            { endSeconds: 53.095, startSeconds: 51.468, className: 'test' }
+        ];
+        const duration = 90.1
+
+        const configWithTooltipProgress = {
+            data: {
+                appearances: appearances,
+                duration: duration
+            },
+            displayOptions: {
+                height: 48,
+                barHeight: 12,
+                tooltipHeight: 20,
+                top: 0,
+                renderTooltip: true,
+                renderProgress: true
+            }
+        }
+
+        const configWithTooltip = {
+            data: {
+                appearances: appearances,
+                duration: duration
+            },
+            displayOptions: {
+                height: 42,
+                barHeight: 12,
+                tooltipHeight: 20,
+                top: 0,
+                renderTooltip: true,
+                renderProgress: false
+            }
+        }
+
+        const configWithProgress = {
+            data: {
+                appearances: appearances,
+                duration: duration
+            },
+            displayOptions: {
+                height: 26,
+                barHeight: 12,
+                top: 0,
+                renderTooltip: false,
+                renderProgress: true
+            }
+        }
+
+        const config = {
+            data: {
+                appearances: appearances,
+                duration: duration
+            },
+            displayOptions: {
+                height: 22,
+                barHeight: 12,
+                top: 0,
+                renderTooltip: false,
+                renderProgress: false
+            }
+        }
+
+        const timelineWithTooltipProgress = new window.ava.widgets.timeline(configWithTooltipProgress);
+        document.getElementById("time-line-with-tooltip-progress-container").appendChild(timelineWithTooltipProgress);
+
+        const timelineWithTooltip = new window.ava.widgets.timeline(configWithTooltip);
+        document.getElementById("time-line-with-tooltip-container").appendChild(timelineWithTooltip);
+
+        const timelineWithProgress = new window.ava.widgets.timeline(configWithProgress);
+        document.getElementById("time-line-with-progress-container").appendChild(timelineWithProgress);
+
+        const timeline = new window.ava.widgets.timeline(config);
+        document.getElementById("time-line-container").appendChild(timeline);
+    })()
+</script>
+
+</html>

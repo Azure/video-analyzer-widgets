@@ -1,8 +1,10 @@
+import { TimeLineComponent } from './packages/web-components/src';
 import { RVXWidget } from './packages/widgets/src';
 
 declare global {
     interface IWidgets {
         rvx: typeof RVXWidget;
+        timeline: typeof TimeLineComponent;
     }
 
     interface IAva {

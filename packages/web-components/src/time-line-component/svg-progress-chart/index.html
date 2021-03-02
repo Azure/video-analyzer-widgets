@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+  <link rel="stylesheet"
+    href="styles/styles.css">
+</head>
+
+<body>
+  <svg id="SVGChart"
+    xmlns="http://www.w3.org/2000/svg">
+  </svg>
+  <script src="dist/svg-progress-chart.js"></script>
+  <script>
+    var chart = new SVGProgressChart("SVGChart", {
+      width: window.document.body.clientWidth,
+      height: 70,
+      time: 450,
+      data: [{
+        type: "positive",
+        width: 10,
+        x: 44
+      },
+      {
+        type: "neutral",
+        width: 10,
+        x: 46
+      },
+      {
+        type: "negative",
+        width: 20,
+        x: 48
+      }, {
+        type: "positive",
+        width: 5
+      }]
+    });
+
+    /*
+        setTimeout(function(){
+            chart.setData([{
+                width: 20,
+                x:89
+            }])
+        },5000)
+
+            setTimeout(function(){
+            chart.setData([{
+                width: 50,
+                type: "positive",
+                x:0
+            },{
+                width: 30,
+                x:70
+            }])
+        },10000)*/
+
+  </script>
+</body>
+
+</html>
