@@ -11,11 +11,11 @@ export abstract class Shape {
     public y: number = 0;
     public color: string = '';
     public classList: string[] = [];
-    // tslint:disable-next-line: no-any
+    /* eslint-disable  @typescript-eslint/no-explicit-any */
     public _el: SVGElement | any;
     public className: string = '';
 
-    constructor(h: number, w: number, x: number, y: number, color?: string, className?: string) {
+    public constructor(h: number, w: number, x: number, y: number, color?: string, className?: string) {
         this.height = h;
         this.width = w;
         this.defaultWidth = w;
@@ -29,9 +29,6 @@ export abstract class Shape {
         }
         this.classList = [];
     }
-
-    public abstract createElement(): SVGElement | any;
-    public abstract update(): void;
 
     // Add class to svg element
     public addClass(cls: string) {
@@ -68,13 +65,17 @@ export abstract class Shape {
     private classReg(className: string) {
         return new RegExp('(^|\\s+)' + className + '(\\s+|$)');
     }
+
+    /* eslint-disable  @typescript-eslint/no-explicit-any */
+    public abstract createElement(): SVGElement | any;
+    public abstract update(): void;
 }
 
 export class Rect extends Shape implements IShowable {
     public value: number = 0;
     public type?: string;
     public addTabIndex = false;
-    constructor(h: number, w: number, x: number, y: number, color?: string, className?: string) {
+    public constructor(h: number, w: number, x: number, y: number, color?: string, className?: string) {
         super(h, w, x, y, color, className);
         this._el = this.createElement();
         this.update();
@@ -99,7 +100,7 @@ export class Rect extends Shape implements IShowable {
             element.setAttribute('tabindex', '0');
         }
 
-        if (!!this.className) {
+        if (this.className) {
             element.setAttribute('style', `fill:var(--${this.className}-color)`);
         } else if (this.color) {
             element.setAttribute('style', `fill:${this.color}`);
@@ -142,7 +143,7 @@ export class Tooltip extends Shape implements IShowable {
         path: SVGPathElement;
     };
 
-    constructor(h: number, w: number, x: number, y: number, text: string, color?: string, css?: any) {
+    public constructor(h: number, w: number, x: number, y: number, text: string, color?: string) {
         super(h, w, x, y, color);
         this.text = text || '00:00:00';
         this.components = {
@@ -224,7 +225,7 @@ export class Tooltip extends Shape implements IShowable {
         }
     }
 
-    public setText(time: number, type: string) {
+    public setText(time: number) {
         this.setDefaultWidth();
         this.components.text.textContent = toTimeText(time, true);
     }

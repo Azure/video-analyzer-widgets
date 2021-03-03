@@ -72,9 +72,8 @@ export function toTimeText(time: number, roundSeconds = false): string {
     return hours + ':' + minutes + ':' + seconds;
 }
 
-// tslint:disable-next-line:no-any
+/* eslint-disable  @typescript-eslint/no-explicit-any */
 export function humanize(duration: any): IDurationDetails | null {
-    let ago = duration < 0;
     duration = Math.abs(duration);
     duration = [
         { n: thresh(45, duration / 1000), units: 'Seconds' },
@@ -86,20 +85,18 @@ export function humanize(duration: any): IDurationDetails | null {
         { n: 'Now', units: 'Now' }
     ];
 
-    duration = first(duration, (part: any) => {
-        return part.n !== 0;
-    });
-    ago = ago && duration.n !== 'Now';
+    /* eslint-disable  @typescript-eslint/no-explicit-any */
+    duration = first(duration, (part: any) => part.n !== 0);
     if (duration.n === 1) {
         duration.units = duration.units.replace(/s$/, '');
     }
 
-    return duration
-        ? {
-              number: duration.n,
-              units: duration.units
-          }
-        : null;
+    const result = {
+        number: duration?.n,
+        units: duration?.units
+    };
+
+    return duration ? result : null;
 }
 
 export function fromNow(date: Date | string): IDurationDetails | null {
@@ -122,7 +119,7 @@ function thresh(t: number, val: number): number {
     return val < t ? val : 0;
 }
 
-// tslint:disable-next-line:no-any
+/* eslint-disable  @typescript-eslint/no-explicit-any */
 function first(arr: any, func: Function): string {
     for (const item of arr) {
         if (func(item)) {

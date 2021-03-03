@@ -5,6 +5,7 @@ export module Utils {
             window.requestAnimationFrame ||
             window['webkitRequestAnimationFrame'] ||
             window['mozRequestAnimationFrame'] ||
+            /* eslint-disable  @typescript-eslint/no-explicit-any */
             function (callback: any) {
                 window.setTimeout(callback, 1000 / 60);
             }

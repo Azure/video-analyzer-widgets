@@ -33,8 +33,17 @@ export class TimeLineComponent extends FASTElement {
             height: 0
         }
     };
+
+    private processedAppearances: IChartData[] = [];
+    private timelineProgress?: SVGProgressChart;
+    private currentTime: number = 0;
+
+    public constructor(config: ITimeLineConfig) {
+        super();
+        this.config = config;
+    }
+
     public configChanged() {
-        console.log(this.config);
         if (!this.config?.data?.appearances?.length) {
             return;
         }
@@ -43,18 +52,9 @@ export class TimeLineComponent extends FASTElement {
         });
     }
 
-    private processedAppearances: IChartData[] = [];
-    private timelineProgress?: SVGProgressChart;
-    private currentTime: number = 0;
-
-    constructor(config: ITimeLineConfig) {
-        super();
-        this.config = config;
-    }
-
     public connectedCallback() {
         super.connectedCallback();
-        this.onResizeEventStream()?.subscribe((e) => {
+        this.onResizeEventStream()?.subscribe(() => {
             this.timelineProgress?.destroy();
             this.initSVGProgress();
         });
@@ -110,15 +110,18 @@ export class TimeLineComponent extends FASTElement {
             return null;
         }
         const source = fromEvent(window, 'resize');
-        return source
-            .pipe(map((val: any) => val.target['innerWidth']))
-            .pipe(filter((val) => val > minimum))
-            .pipe(debounceTime(debounce))
-            .pipe(distinctUntilChanged());
+        return (
+            source
+                /* eslint-disable  @typescript-eslint/no-explicit-any */
+                .pipe(map((val: any) => val.target['innerWidth']))
+                .pipe(filter((val) => val > minimum))
+                .pipe(debounceTime(debounce))
+                .pipe(distinctUntilChanged())
+        );
     }
 
     private initSVGProgress() {
-        let container = this.$fastController.element.shadowRoot?.querySelector('svg');
+        const container = this.$fastController.element.shadowRoot?.querySelector('svg');
         let containerWidth = container?.getBoundingClientRect().width;
 
         // If container width is zero (show = false) - take width from parent
