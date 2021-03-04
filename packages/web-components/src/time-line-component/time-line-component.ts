@@ -1,4 +1,4 @@
-import { attr, customElement, FASTElement } from '@microsoft/fast-element';
+import { attr, customElement, FASTElement, observable } from '@microsoft/fast-element';
 import { EMPTY, fromEvent, Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter, map } from 'rxjs/operators';
 import { IChartData, IChartOptions } from './svg-progress-chart/src/interfaces';
@@ -34,9 +34,9 @@ export class TimeLineComponent extends FASTElement {
         }
     };
 
+    private currentTime: number = 0;
     private processedAppearances: IChartData[] = [];
     private timelineProgress?: SVGProgressChart;
-    private currentTime: number = 0;
 
     public constructor(config: ITimeLineConfig) {
         super();
@@ -148,6 +148,7 @@ export class TimeLineComponent extends FASTElement {
 
         this.timelineProgress.onSetProgress((time: number) => {
             this.currentTime = time;
+            this.$emit('current-time', this.currentTime);
         });
 
         // Subscribe to on time change -

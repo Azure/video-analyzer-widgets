@@ -113,15 +113,29 @@
         }
 
         const timelineWithTooltipProgress = new window.ava.widgets.timeline(configWithTooltipProgress);
-        document.getElementById("time-line-with-tooltip-progress-container").appendChild(timelineWithTooltipProgress);
-
         const timelineWithTooltip = new window.ava.widgets.timeline(configWithTooltip);
-        document.getElementById("time-line-with-tooltip-container").appendChild(timelineWithTooltip);
-
         const timelineWithProgress = new window.ava.widgets.timeline(configWithProgress);
-        document.getElementById("time-line-with-progress-container").appendChild(timelineWithProgress);
-
         const timeline = new window.ava.widgets.timeline(config);
+
+        timelineWithTooltipProgress.addEventListener('current-time', (event) => {
+            console.log('time-line-with-tooltip-progress current time changed: ', event.detail);
+        })
+
+        timelineWithTooltip.addEventListener('current-time', (event) => {
+            console.log('time-line-with-tooltip current time changed: ', event.detail);
+        })
+
+        timelineWithProgress.addEventListener('current-time', (event) => {
+            console.log('time-line-with-progress current time changed: ', event.detail);
+        })
+
+        timeline.addEventListener('current-time', (event) => {
+            console.log('time-line current time changed: ', event.detail);
+        })
+
+        document.getElementById("time-line-with-tooltip-progress-container").appendChild(timelineWithTooltipProgress);
+        document.getElementById("time-line-with-tooltip-container").appendChild(timelineWithTooltip);
+        document.getElementById("time-line-with-progress-container").appendChild(timelineWithProgress);
         document.getElementById("time-line-container").appendChild(timeline);
     })()
 </script>

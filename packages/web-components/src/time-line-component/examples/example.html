@@ -33,7 +33,9 @@
         <h1>Time Line Component Example</h1>
         <div>
             <h2>Time line with tooltip & progress</h2>
-            <time-line-component id="time-line-with-tooltip-progress"></time-line-component>
+            <time-line-component onchange="console.log('doron')"
+                currentTimeChangedCallback="{() => console.log('currentTimeChangedCallback')}"
+                id="time-line-with-tooltip-progress"></time-line-component>
             <h2>Time line with tooltip</h2>
             <time-line-component id="time-line-with-tooltip"></time-line-component>
             <h2>Time line with progress</h2>
@@ -121,6 +123,22 @@
         timelineWithTooltip.config = configWithTooltip;
         timelineWithProgress.config = configWithProgress;
         timeline.config = config;
+
+        timelineWithTooltipProgress.addEventListener('current-time', (event) => {
+            console.log('time-line-with-tooltip-progress current time changed: ', event.detail);
+        })
+
+        timelineWithTooltip.addEventListener('current-time', (event) => {
+            console.log('time-line-with-tooltip current time changed: ', event.detail);
+        })
+
+        timelineWithProgress.addEventListener('current-time', (event) => {
+            console.log('time-line-with-progress current time changed: ', event.detail);
+        })
+
+        timeline.addEventListener('current-time', (event) => {
+            console.log('time-line current time changed: ', event.detail);
+        })
     })()
 </script>
 
