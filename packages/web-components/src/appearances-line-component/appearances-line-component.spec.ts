@@ -1,15 +1,15 @@
 import { html, fixture, expect } from '@open-wc/testing';
 
-import { TimeLineComponent } from './time-line-component';
+import { AppearancesLineComponent } from './appearances-line-component';
 
-TimeLineComponent;
+AppearancesLineComponent;
 
-describe('TimeLineComponent', () => {
+describe('AppearancesLineComponent', () => {
     const appearances = [
         { endSeconds: 43.294, startSeconds: 42.209 },
-        { endSeconds: 45.838, startSeconds: 44.711, className: 'vi' },
+        { endSeconds: 45.838, startSeconds: 44.711, color: 'red' },
         { endSeconds: 50.175, startSeconds: 49.466 },
-        { endSeconds: 53.095, startSeconds: 51.468, className: 'test' }
+        { endSeconds: 53.095, startSeconds: 51.468 }
     ];
     const duration = 90.1;
     const defaultDisplayOptions = {
@@ -21,7 +21,7 @@ describe('TimeLineComponent', () => {
         renderProgress: true
     };
 
-    it('render timeline - config with tooltip & progress', async () => {
+    it('render appearances line - config with tooltip & progress', async () => {
         const configWithTooltipProgress = {
             data: {
                 appearances: appearances,
@@ -29,16 +29,16 @@ describe('TimeLineComponent', () => {
             },
             displayOptions: defaultDisplayOptions
         };
-        const el = await fixture<TimeLineComponent>(html`<time-line-component></time-line-component>`);
+        const el = await fixture<AppearancesLineComponent>(html`<appearances-line-component></appearances-line-component>`);
         el.config = configWithTooltipProgress;
-        el.initTimeLine();
+        el.initAppearancesLine();
 
         expect(el.config).to.equal(configWithTooltipProgress);
         // Should contain 8 elements 1 for bar 1 for overlay 1 for progress 1 for tooltip 4 for appearances
         expect(el.shadowRoot.querySelector('svg').childElementCount).to.equal(8);
     });
 
-    it('render timeline - config without progress', async () => {
+    it('render appearances line - config without progress', async () => {
         const configWithTooltipProgress = {
             data: {
                 appearances: appearances,
@@ -49,16 +49,16 @@ describe('TimeLineComponent', () => {
                 renderProgress: false
             }
         };
-        const el = await fixture<TimeLineComponent>(html`<time-line-component></time-line-component>`);
+        const el = await fixture<AppearancesLineComponent>(html`<appearances-line-component></appearances-line-component>`);
         el.config = configWithTooltipProgress;
-        el.initTimeLine();
+        el.initAppearancesLine();
 
         expect(el.config).to.equal(configWithTooltipProgress);
         // Should contain 7 elements 1 for bar 1 for overlay 1 for progress 4 for appearances
         expect(el.shadowRoot.querySelector('svg').childElementCount).to.equal(7);
     });
 
-    it('render timeline - config without tooltip', async () => {
+    it('render appearances line - config without tooltip', async () => {
         const configWithTooltipProgress = {
             data: {
                 appearances: appearances,
@@ -69,16 +69,16 @@ describe('TimeLineComponent', () => {
                 renderTooltip: false
             }
         };
-        const el = await fixture<TimeLineComponent>(html`<time-line-component></time-line-component>`);
+        const el = await fixture<AppearancesLineComponent>(html`<appearances-line-component></appearances-line-component>`);
         el.config = configWithTooltipProgress;
-        el.initTimeLine();
+        el.initAppearancesLine();
 
         expect(el.config).to.equal(configWithTooltipProgress);
         // Should contain 7 elements 1 for bar 1 for overlay 1 for tooltip 4 for appearances
         expect(el.shadowRoot.querySelector('svg').childElementCount).to.equal(7);
     });
 
-    it('render timeline - config without tooltip & progress', async () => {
+    it('render appearances line - config without tooltip & progress', async () => {
         const configWithTooltipProgress = {
             data: {
                 appearances: appearances,
@@ -90,9 +90,9 @@ describe('TimeLineComponent', () => {
                 renderProgress: false
             }
         };
-        const el = await fixture<TimeLineComponent>(html`<time-line-component></time-line-component>`);
+        const el = await fixture<AppearancesLineComponent>(html`<appearances-line-component></appearances-line-component>`);
         el.config = configWithTooltipProgress;
-        el.initTimeLine();
+        el.initAppearancesLine();
 
         expect(el.config).to.equal(configWithTooltipProgress);
         // Should contain 6 elements 1 for bar 1 for overlay 4 for appearances
@@ -100,7 +100,7 @@ describe('TimeLineComponent', () => {
     });
 
     it('passes the a11y audit', async () => {
-        const el = await fixture<TimeLineComponent>(html`<time-line-component></time-line-component>`);
+        const el = await fixture<AppearancesLineComponent>(html`<appearances-line-component></appearances-line-component>`);
 
         await expect(el).shadowDom.to.be.accessible();
     });

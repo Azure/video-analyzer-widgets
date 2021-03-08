@@ -1,22 +1,23 @@
-import { attr, customElement, FASTElement, observable } from '@microsoft/fast-element';
+import { attr, customElement, FASTElement } from '@microsoft/fast-element';
 import { EMPTY, fromEvent, Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter, map } from 'rxjs/operators';
+import { cloneDeep } from 'lodash-es';
 import { IChartData, IChartOptions } from './svg-progress-chart/src/interfaces';
 import { SVGProgressChart } from './svg-progress-chart/src/svgProgress';
-import { ITimeLineConfig, IUIAppearance } from './time-line-component.definitions';
-import { styles } from './time-line-component.style';
-import { template } from './time-line-component.template';
+import { IAppearancesLineConfig } from './appearances-line-component.definitions';
+import { styles } from './appearances-line-component.style';
+import { template } from './appearances-line-component.template';
 
 /**
  * An example web component item.
  * @public
  */
 @customElement({
-    name: 'time-line-component',
+    name: 'appearances-line-component',
     template,
     styles
 })
-export class TimeLineComponent extends FASTElement {
+export class AppearancesLineComponent extends FASTElement {
     /**
      * Time Line configuration, includes data & display options
      *
@@ -24,7 +25,7 @@ export class TimeLineComponent extends FASTElement {
      * @remarks
      * HTML attribute: config
      */
-    @attr public config: ITimeLineConfig = {
+    @attr public config: IAppearancesLineConfig = {
         data: {
             appearances: [],
             duration: 0
@@ -34,11 +35,19 @@ export class TimeLineComponent extends FASTElement {
         }
     };
 
-    private currentTime: number = 0;
+    /**
+     * current time, indicate the current line time
+     *
+     * @public
+     * @remarks
+     * HTML attribute: current time
+     */
+    @attr public currentTime: number = 0;
+
     private processedAppearances: IChartData[] = [];
     private timelineProgress?: SVGProgressChart;
 
-    public constructor(config: ITimeLineConfig) {
+    public constructor(config: IAppearancesLineConfig) {
         super();
         this.config = config;
     }
@@ -48,19 +57,20 @@ export class TimeLineComponent extends FASTElement {
             return;
         }
         setTimeout(() => {
-            this.initTimeLine();
+            this.initAppearancesLine();
         });
     }
 
     public connectedCallback() {
         super.connectedCallback();
+        // this.addEventListener('change', (e) => console.log((<HTMLElement>e.target).tagName));
         this.onResizeEventStream()?.subscribe(() => {
             this.timelineProgress?.destroy();
             this.initSVGProgress();
         });
     }
 
-    public initTimeLine() {
+    public initAppearancesLine() {
         this.prepareData();
         this.initSVGProgress();
     }
@@ -71,16 +81,38 @@ export class TimeLineComponent extends FASTElement {
         if (!this.config.data.appearances.length) {
             return;
         }
-        this.config.data.appearances.forEach((a: IUIAppearance) => {
-            const left = Math.min((a.startSeconds / this.config.data.duration) * 100, 100);
-            const per = Math.max((a.endSeconds - a.startSeconds) / this.config.data.duration, 0.0051);
+
+        const designSystem = window.document.getElementsByTagName('ava-design-system-provider')[0];
+        const appearancesDefaultColor = designSystem ? getComputedStyle(designSystem)?.getPropertyValue('--appearances-color') : 'black';
+        const appearancesTooltipText = designSystem
+            ? getComputedStyle(designSystem)?.getPropertyValue('--appearances-tooltip-text')
+            : 'white';
+
+        const appearances = cloneDeep(this.config.data.appearances);
+        for (let i = 0; i < appearances.length; i++) {
+            let left = Math.min((appearances[i].startSeconds / this.config.data.duration) * 100, 100);
+            let per = Math.max((appearances[i].endSeconds - appearances[i].startSeconds) / this.config.data.duration, 0.0051);
+
+            if (this.config.timeSmoothing && this.config.timeSmoothing > 0 && i > 0) {
+                const lastAppearance = appearances[i - 1];
+                if (
+                    lastAppearance.endSeconds + this.config.timeSmoothing > appearances[i].startSeconds &&
+                    lastAppearance.color === appearances[i].color
+                ) {
+                    this.processedAppearances.pop();
+                    appearances[i].startSeconds = lastAppearance.startSeconds;
+                    left = Math.min((appearances[i].startSeconds / this.config.data.duration) * 100, 100);
+                    per = Math.max((appearances[i].endSeconds - appearances[i].startSeconds) / this.config.data.duration, 0.0051);
+                }
+            }
 
             this.processedAppearances.push({
                 x: left,
                 width: per * 100,
-                className: (a.className && a.className.toLowerCase()) || 'default'
+                color: appearances[i].color || appearancesDefaultColor,
+                textColor: appearances[i].textColor || appearancesTooltipText
             });
-        });
+        }
     }
 
     public getFirstParentWidth(node: HTMLElement): number {
@@ -114,7 +146,7 @@ export class TimeLineComponent extends FASTElement {
             source
                 /* eslint-disable  @typescript-eslint/no-explicit-any */
                 .pipe(map((val: any) => val.target['innerWidth']))
-                .pipe(filter((val) => val > minimum))
+                .pipe(filter((val: any) => val > minimum))
                 .pipe(debounceTime(debounce))
                 .pipe(distinctUntilChanged())
         );

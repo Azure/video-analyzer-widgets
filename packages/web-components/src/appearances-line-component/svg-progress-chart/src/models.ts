@@ -1,6 +1,5 @@
-import { TrimSpacesRegEx, IShowable, Colors } from './interfaces';
+import { TrimSpacesRegEx, IShowable } from './interfaces';
 import { toTimeText } from '../../../../../common/utils/time';
-// tslint:disable-next-line: no-http-string
 export const SVGSchemaURI = 'http://www.w3.org/2000/svg';
 
 export abstract class Shape {
@@ -100,9 +99,7 @@ export class Rect extends Shape implements IShowable {
             element.setAttribute('tabindex', '0');
         }
 
-        if (this.className) {
-            element.setAttribute('style', `fill:var(--${this.className}-color)`);
-        } else if (this.color) {
+        if (this.color) {
             element.setAttribute('style', `fill:${this.color}`);
         }
 
@@ -137,7 +134,6 @@ export class Rect extends Shape implements IShowable {
 
 export class Tooltip extends Shape implements IShowable {
     public text: string = '';
-    public backgroundColor: string = '';
     public components: {
         text: SVGTextElement;
         path: SVGPathElement;
@@ -159,17 +155,14 @@ export class Tooltip extends Shape implements IShowable {
         text.textContent = this.text;
         text.setAttribute('x', `${this.x + this.width / 2 - 20}`);
         text.setAttribute('y', `${this.y + this.height / 2 + 4}`);
-        text.setAttribute('fill', 'rgba(0,0,0,.6)');
-        if (this.color) {
-            text.setAttribute('fill', `${this.color}`);
-        }
+        text.setAttribute('fill', 'var(--appearances-color)');
         this.components.text = text;
         this.components.path = path;
 
         this.setDefaultWidth();
         const tooltip: SVGGElement = <SVGGElement>document.createElementNS(SVGSchemaURI, 'g');
-        if (this.backgroundColor) {
-            tooltip.setAttribute('fill', `${this.backgroundColor}`);
+        if (this.color) {
+            tooltip.setAttribute('fill', `${this.color}`);
         }
 
         tooltip.setAttribute('class', 'tooltip');
@@ -250,17 +243,8 @@ export class Tooltip extends Shape implements IShowable {
         element.setAttribute('y', this.y.toString());
         element.setAttribute('class', 'transition');
 
-        if (this.backgroundColor) {
-            element.setAttribute('fill', `${this.backgroundColor}`);
-        } else {
-            element.setAttribute('fill', 'rgba(0, 0, 0, 0.1)');
-        }
-
-        const text: SVGTextElement = <SVGTextElement>element.getElementsByTagNameNS(SVGSchemaURI, 'text')[0];
         if (this.color) {
-            text.setAttribute('fill', `${this.color}`);
-        } else {
-            text.setAttribute('fill', `${Colors.default}`);
+            element.setAttribute('fill', `${this.color}`);
         }
 
         this.classList.forEach((cls) => {
@@ -268,5 +252,19 @@ export class Tooltip extends Shape implements IShowable {
                 element.classList.add(cls);
             }
         });
+    }
+
+    public updateColor(color?: string) {
+        const element = <SVGRectElement>this._el;
+        if (!element || !isFinite(this.width) || !isFinite(this.height)) {
+            return;
+        }
+
+        if (color) {
+            this.color = color;
+            element.setAttribute('fill', `${this.color}`);
+        } else {
+            element.setAttribute('fill', 'var(--appearances-tooltip)');
+        }
     }
 }

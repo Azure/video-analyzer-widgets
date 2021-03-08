@@ -21,10 +21,12 @@ export interface IChartOptions {
 
 export interface IChartData {
     width?: number;
-    className?: string;
+    type?: string;
     x?: number;
     ex?: number; // End X Pos
     selected?: boolean;
+    color?: string;
+    textColor?: string;
 }
 
 export interface IProgressBar {
@@ -41,7 +43,10 @@ export interface IComponentTree {
 }
 
 export const Colors = {
-    default: '#2C3E50'
+    positive: '#1abc9c',
+    negative: '#e83128',
+    neutral: 'rgba(0,0,0,0)',
+    default: 'rgba(0,0,0,0.08)'
 };
 
 export const TrimSpacesRegEx: RegExp = /(  +)|(?:\r\n|\r|\n|\r\s)/g;

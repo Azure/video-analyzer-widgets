@@ -5,6 +5,7 @@ export const style = css`
     :host {
         display: block;
         font-display: swap;
+        background: var(--background-color);
         font-family: ${SegoeUIFontFamily};
         --body-font: ${SegoeUIFontFamily};
     }

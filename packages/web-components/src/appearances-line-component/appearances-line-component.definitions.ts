@@ -2,6 +2,8 @@ export interface IUIAppearance {
     startSeconds: number;
     endSeconds: number;
     className?: string;
+    color?: string;
+    textColor?: string;
 }
 
 export interface IDisplayOptions {
@@ -13,12 +15,13 @@ export interface IDisplayOptions {
     renderProgress?: boolean;
 }
 
-export interface ITimeLineData {
+export interface IAppearancesLineData {
     appearances: IUIAppearance[];
     duration: number;
 }
 
-export interface ITimeLineConfig {
-    data: ITimeLineData;
+export interface IAppearancesLineConfig {
+    data: IAppearancesLineData;
     displayOptions: IDisplayOptions;
+    timeSmoothing?: number;
 }

@@ -56,5 +56,12 @@ export const defaultColorsStyle: ElementStyles = css`
         --neutral-divider-rest: #e2e2e2;
         --neutral-layer-floating: #ffffff;
         --neutral-foreground-hint: #717171;
+
+        /* Appearances Line */
+        --appearances-progress-color: rgba(189, 224, 255, 1);
+        --appearances-line-bg: rgba(0, 0, 0, 0.05);
+        --appearances-color: rgba(0, 0, 0, 0.8);
+        --appearances-tooltip: rgba(0, 0, 0, 0.08);
+        --appearances-tooltip-text: #f7f7f7;
     }
 `;

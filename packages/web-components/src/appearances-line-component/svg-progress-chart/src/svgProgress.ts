@@ -15,10 +15,9 @@ export class SVGProgressChart {
     public id: string;
     public rootElement: SVGElement;
     public components: IComponentTree;
-    /* eslint-disable  @typescript-eslint/no-explicit-any */
     public timer: any;
     public lastMatch = false;
-    public currentTooltipType: string;
+    public currentTooltipType: string = 'default';
     public options: IChartOptions = {
         height: 500,
         width: 500,
@@ -31,7 +30,7 @@ export class SVGProgressChart {
         renderProgress: false
     };
 
-    public constructor(element: SVGElement, options: IChartOptions) {
+    public constructor(element?: SVGElement, options?: IChartOptions) {
         if (!element) {
             throw new Error('Root SVG Element is missing');
         }
@@ -132,7 +131,7 @@ export class SVGProgressChart {
         if (w) {
             this.options.width = w;
         } else {
-            this.options.width = this.rootElement.parentElement?.clientWidth;
+            this.options.width = this.rootElement.parentElement.clientWidth;
         }
     }
 
@@ -141,7 +140,7 @@ export class SVGProgressChart {
         this.clearEvents();
 
         // Remove elements
-        this.components.events.forEach((e: Rect) => e.remove());
+        this.components.events.forEach((e) => e.remove());
 
         // Remove components
         Object.keys(this.components.progressBar).forEach((c) => {
@@ -153,7 +152,7 @@ export class SVGProgressChart {
 
     public setData(data: IChartData[]) {
         // If new data obj less than what exists than delete data.
-        this.components.events.forEach((e: Rect) => {
+        this.components.events.forEach((e) => {
             e.remove();
         });
 
@@ -161,7 +160,7 @@ export class SVGProgressChart {
         this.components.events.length = 0;
 
         // Create events
-        data.forEach((event: IChartData, i: number) => {
+        data.forEach((event, i) => {
             if (!event.x) {
                 event.x = i ? this.options.data[i - 1].x + this.options.data[i - 1].width : 0;
             }
@@ -169,36 +168,21 @@ export class SVGProgressChart {
             if (this.components.events && this.components.events[i] && this.components.events[i]._el) {
                 this.components.events[i].x = event.x;
                 this.components.events[i].width = event.width;
-                this.components.events[i].className = event.className || 'default';
-                if (event.className !== 'default') {
-                    this.components.events[i].color = `var(--${event.className}-color)`;
-                } else {
-                    this.components.events[i].color = Colors[event.className || 'default'];
-                }
+                this.components.events[i].type = event.type || 'default';
+                this.components.events[i].color = event.color ? event.color : Colors[event.type || 'default'];
 
                 if (
                     this.components.events[i].width &&
                     this.components.events[i].x &&
-                    this.components.events[i].className &&
+                    this.components.events[i].type &&
                     this.components.events[i].color
                 ) {
                     this.components.events[i].update();
                 }
             } else {
-                const newEvent = new Rect(
-                    this.options.barHeight,
-                    <number>event.width,
-                    <number>event.x,
-                    10 + this.options.tooltipHeight,
-                    '',
-                    event.className
-                );
-                newEvent.addTabIndex = true;
-                newEvent.addClass(event.className || 'default');
-                if (event.className !== 'default') {
-                    newEvent.color = `var(--${event.className}-color)`;
-                }
-                newEvent.update();
+                const newEvent = new Rect(this.options.barHeight, event.width, event.x, 10 + this.options.tooltipHeight, event.color);
+                newEvent.type = event.type;
+                newEvent.addClass(event.type || 'default');
                 this.components.events.push(newEvent);
                 if (this.components.progressBar.overlay) {
                     // prepend
@@ -210,8 +194,8 @@ export class SVGProgressChart {
         });
     }
 
-    public setTabIndex(newTabIndex: any): void {
-        this.components.events.forEach((event: Rect) => {
+    public setTabIndex(newTabIndex: string): void {
+        this.components.events.forEach((event) => {
             event._el.setAttribute('tabindex', newTabIndex);
 
             if (newTabIndex) {
@@ -254,9 +238,9 @@ export class SVGProgressChart {
         });
     }
 
-    private handleFocus(e: any) {
-        const position: SVGAnimatedLength = e.currentTarget['x'] || 0;
-        const widthObj: SVGAnimatedLength = e.currentTarget['width'] || 0;
+    private handleFocus(e: FocusEvent) {
+        const position: SVGAnimatedLength = e.currentTarget['x'];
+        const widthObj: SVGAnimatedLength = e.currentTarget['width'];
         if (position) {
             const xPosition = position.animVal.value;
             const width = widthObj.animVal.value;
@@ -276,13 +260,14 @@ export class SVGProgressChart {
         if (!this.options.renderTooltip) {
             return;
         }
+
         const time = (xPosition / this.options.width) * this.options.time;
 
         clearTimeout(this.timer);
 
         this.timer = setTimeout(() => {
             this.lastMatch = false;
-            this.components.events.forEach((event: Rect) => {
+            this.components.events.forEach((event) => {
                 if (!event._el) {
                     return;
                 }
@@ -290,26 +275,19 @@ export class SVGProgressChart {
                 if (
                     xPosition >= (event.x * this.options.width) / 100 &&
                     xPosition < ((event.x + event.width) / 100) * this.options.width &&
-                    event.className !== 'neutral'
+                    event.type !== 'neutral'
                 ) {
                     this.lastMatch = true;
-                    if (event.className !== this.currentTooltipType) {
+                    if (event.type !== this.currentTooltipType) {
                         requestAnimFrame(() => {
-                            // event.addClass('selected');
                             this.components.progressBar.tooltip?.removeClass(this.currentTooltipType);
-                            this.currentTooltipType = <string>event.className;
-                            this.components.progressBar.tooltip?.addClass(<string>event.className);
-                            if (event.className !== 'default') {
-                                this.components.progressBar.tooltip.color = `var(--${event.className}-tooltip-text)`;
-                                this.components.progressBar.tooltip.backgroundColor = `var(--${event.className}-tooltip-bg)`;
-                                this.components.progressBar.tooltip.update();
-                            } else {
-                                this.components.progressBar.tooltip.color = '#dddddd';
-                                this.components.progressBar.tooltip.backgroundColor = `${Colors.default}`;
-                                this.components.progressBar.tooltip.update();
-                            }
+                            this.currentTooltipType = event.type || 'default';
+                            this.components.progressBar.tooltip?.addClass(this.currentTooltipType);
+                            this.components.progressBar.tooltip?.updateColor(event.color);
                         });
                     }
+                } else {
+                    this.components.progressBar.tooltip?.updateColor();
                 }
 
                 // Set tooltip text, add event type of there was a focus event
@@ -318,9 +296,6 @@ export class SVGProgressChart {
 
             if (!this.lastMatch) {
                 this.components.progressBar.tooltip?.removeClass(this.currentTooltipType);
-                this.components.progressBar.tooltip.color = '';
-                this.components.progressBar.tooltip.backgroundColor = '';
-                this.components.progressBar.tooltip.update();
                 this.currentTooltipType = 'neutral';
             }
 
@@ -341,9 +316,8 @@ export class SVGProgressChart {
     }
 
     private init() {
-        let progress: Rect = new Rect(0, 0, 0, 0);
-        let overlay: Rect = new Rect(0, 0, 0, 0);
-        let bufferProgress: Rect = new Rect(0, 0, 0, 0);
+        let progress;
+        let bufferProgress;
         // Create progress bar
         // 1. Create the bar element
         const bar = new Rect(this.options.barHeight, 100, 0, this.options.tooltipHeight + 10);
@@ -353,9 +327,7 @@ export class SVGProgressChart {
 
         // 2. Create the progress element
         if (this.options.renderProgress) {
-            // progressContainer = new Rect(5, 100, 0, 10 + this.options.barHeight + this.options.tooltipHeight);
             progress = new Rect(5, 1, 0, 10 + this.options.barHeight + this.options.tooltipHeight);
-            // progressContainer.addClass('progress-container');
             progress.addClass('progress');
             progress.moveTo(0);
         }
@@ -380,7 +352,7 @@ export class SVGProgressChart {
         }
 
         // 5. Create overlay on top of everything for catching events
-        overlay = new Rect(this.options.barHeight * 3, 100, 0, this.options.tooltipHeight, 'rgba(255,255,255,0)');
+        const overlay = new Rect(this.options.barHeight * 3, 100, 0, this.options.tooltipHeight, 'rgba(255,255,255,0)');
         overlay.addClass('overlay');
         this.components.progressBar.overlay = overlay;
         this.rootElement.appendChild(overlay._el);
@@ -402,4 +374,4 @@ export class SVGProgressChart {
 }
 
 // Expose instance globally
-// window['SVGProgressChart'] = SVGProgressChart || {};
+window['SVGProgressChart'] = SVGProgressChart || {};

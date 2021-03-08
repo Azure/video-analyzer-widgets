@@ -4,7 +4,7 @@ export const svgStyles = css`
     svg {
         font-family: 'Segoe UI';
         font-display: swap;
-        font-size: 11px;
+        font-size: 12px;
         -webkit-user-select: none;
         opacity: 0;
         transition: opacity 0.4s;
@@ -16,18 +16,16 @@ export const svgStyles = css`
 
     .tooltip {
         opacity: 0;
-        fill: #dddddd;
     }
     .tooltip:hover {
-        fill: #d0d0d0;
         cursor: pointer;
         user-select: none;
     }
     .tooltip text {
         font-size: 0.9em;
     }
-    .tooltip.default {
-        fill: #dddddd;
+    .tooltip.default text {
+        fill: var(--appearances-tooltip-text);
     }
 
     rect {
@@ -49,7 +47,7 @@ export const svgStyles = css`
     }
 
     .bar {
-        fill: rgba(0, 0, 0, 0.1);
+        fill: var(--appearances-line-bg);
     }
 
     .buffer {
@@ -62,7 +60,7 @@ export const svgStyles = css`
     }
 
     .progress {
-        fill: var(--timeline-progress-color);
+        fill: var(--appearances-progress-color);
     }
 
     .transition {
@@ -71,14 +69,6 @@ export const svgStyles = css`
         -moz-transition: transform 0.2s, opacity 0.2s, x 0.2s, width 0.2s;
         -o-transition: transform 0.2s, opacity 0.2s, x 0.2s, width 0.2s;
         -webkit-transition: transform 0.2s, opacity 0.2s, x 0.2s, width 0.2s;
-    }
-
-    .neutral {
-        fill: rgba(44, 66, 0, 0);
-    }
-
-    .default {
-        fill: #2c3e50;
     }
 
     /*# sourceMappingURL=styles.css.map */
@@ -90,9 +80,5 @@ export const styles = css`
         display: block;
         font-family: 'Arial';
         width: 100%;
-    }
-
-    .has-text {
-        color: rgb(0 0 255);
     }
 `;
