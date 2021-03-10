@@ -1,0 +1,1 @@
+export const DEFAULT_CANVAS_HEIGHT = 375;
