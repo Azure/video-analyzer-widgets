@@ -6,6 +6,7 @@ export class SVGProgressChart {
     public id: string;
     public rootElement: SVGElement;
     public components: IComponentTree;
+    /* eslint-disable  @typescript-eslint/no-explicit-any */
     public timer: any;
     public lastMatch = false;
     public currentTooltipType: string = 'default';
