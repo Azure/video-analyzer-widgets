@@ -1,4 +1,4 @@
-import { Rect, Tooltip } from './models';
+import { Rect, Tooltip } from './svg-progress.models';
 
 // interfaces
 export interface IShowable {

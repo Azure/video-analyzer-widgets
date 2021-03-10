@@ -1,5 +1,5 @@
-import { IChartData, IChartOptions, IComponentTree, Colors } from './interfaces';
-import { Rect, Tooltip } from './models';
+import { IChartData, IChartOptions, IComponentTree, Colors } from './svg-progress.definitions';
+import { Rect, Tooltip } from './svg-progress.models';
 
 // Define requestAnimationFrame with fallback
 const requestAnimFrame = (() => {

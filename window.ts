@@ -1,10 +1,8 @@
-import { AppearancesLineComponent } from './packages/web-components/src';
 import { RVXWidget } from './packages/widgets/src';
 
 declare global {
     interface IWidgets {
         rvx: typeof RVXWidget;
-        appearances: typeof AppearancesLineComponent;
     }
 
     interface IAva {

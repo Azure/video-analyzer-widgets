@@ -1,5 +1,5 @@
-import { TrimSpacesRegEx, IShowable } from './interfaces';
-import { toTimeText } from '../../../../../common/utils/time';
+import { TrimSpacesRegEx, IShowable } from './svg-progress.definitions';
+import { toTimeText } from '../../../../common/utils/time';
 export const SVGSchemaURI = 'http://www.w3.org/2000/svg';
 
 export abstract class Shape {
@@ -155,7 +155,7 @@ export class Tooltip extends Shape implements IShowable {
         text.textContent = this.text;
         text.setAttribute('x', `${this.x + this.width / 2 - 20}`);
         text.setAttribute('y', `${this.y + this.height / 2 + 4}`);
-        text.setAttribute('fill', 'var(--appearances-color)');
+        text.setAttribute('fill', 'var(--segments-color)');
         this.components.text = text;
         this.components.path = path;
 
@@ -264,7 +264,7 @@ export class Tooltip extends Shape implements IShowable {
             this.color = color;
             element.setAttribute('fill', `${this.color}`);
         } else {
-            element.setAttribute('fill', 'var(--appearances-tooltip)');
+            element.setAttribute('fill', 'var(--segments-tooltip)');
         }
     }
 }

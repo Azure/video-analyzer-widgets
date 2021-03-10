@@ -17,20 +17,24 @@ export const svgStyles = css`
     .tooltip {
         opacity: 0;
     }
+
     .tooltip:hover {
         cursor: pointer;
         user-select: none;
     }
+
     .tooltip text {
         font-size: 0.9em;
     }
+
     .tooltip.default text {
-        fill: var(--appearances-tooltip-text);
+        fill: var(--segments-tooltip-text);
     }
 
     rect {
         cursor: pointer;
     }
+
     rect.selected {
         fill: #1abc9c;
     }
@@ -47,7 +51,7 @@ export const svgStyles = css`
     }
 
     .bar {
-        fill: var(--appearances-line-bg);
+        fill: var(--segments-line-bg);
     }
 
     .buffer {
@@ -60,7 +64,7 @@ export const svgStyles = css`
     }
 
     .progress {
-        fill: var(--appearances-progress-color);
+        fill: var(--segments-progress-color);
     }
 
     .transition {
@@ -70,8 +74,6 @@ export const svgStyles = css`
         -o-transition: transform 0.2s, opacity 0.2s, x 0.2s, width 0.2s;
         -webkit-transition: transform 0.2s, opacity 0.2s, x 0.2s, width 0.2s;
     }
-
-    /*# sourceMappingURL=styles.css.map */
 `;
 
 export const styles = css`

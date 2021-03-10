@@ -1,2 +1,2 @@
 export * from './example-web-component';
-export * from './appearances-line-component';
+export * from './segments-timeline';

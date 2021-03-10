@@ -1,0 +1,125 @@
+<html lang="en">
+
+<head>
+    <title>Segments Timeline Component Example</title>
+    <link href="../../../../styles/fonts/segoeui.css"
+        rel="stylesheet">
+    <script src="../../../../../dist/ava-widgets-sdk.js"></script>
+</head>
+
+<body>
+    <ava-design-system-provider>
+        <h1>Segments Timeline Component Example</h1>
+        <div>
+            <h2>Segments Timeline with tooltip & progress</h2>
+            <media-segments-timeline currentTime="20"
+                id="segments-timeline-with-tooltip-progress"></media-segments-timeline>
+            <h2>Segments Timeline with tooltip</h2>
+            <media-segments-timeline id="segments-timeline-with-tooltip"></media-segments-timeline>
+            <h2>Segments Timeline with progress</h2>
+            <media-segments-timeline id="segments-timeline-with-progress"></media-segments-timeline>
+            <h2>Segments Timeline</h2>
+            <media-segments-timeline id="segments-timeline"></media-segments-timeline>
+        </div>
+    </ava-design-system-provider>
+</body>
+
+<script>(function () {
+
+        const segments = [
+            { endSeconds: 43.294, startSeconds: 42.209 },
+            { endSeconds: 45.838, startSeconds: 44.711, color: 'red' },
+            { endSeconds: 50.175, startSeconds: 49.466 },
+            { endSeconds: 53.095, startSeconds: 51.468, color: 'blue' },
+            { endSeconds: 55.095, startSeconds: 53.468, color: 'blue' }
+        ];
+        const duration = 90.1
+
+        const segmentsTimelineWithTooltipProgress = document.getElementById("segments-timeline-with-tooltip-progress");
+        const segmentsTimelineWithTooltip = document.getElementById("segments-timeline-with-tooltip");
+        const segmentsTimelineWithProgress = document.getElementById("segments-timeline-with-progress");
+        const segmentsTimeline = document.getElementById("segments-timeline");
+
+        const configWithTooltipProgress = {
+            data: {
+                segments: segments,
+                duration: duration
+            },
+            displayOptions: {
+                height: 48,
+                barHeight: 12,
+                tooltipHeight: 20,
+                top: 0,
+                renderTooltip: true,
+                renderProgress: true,
+                timeSmoothing: 1.3
+            }
+        }
+
+        const configWithTooltip = {
+            data: {
+                segments: segments,
+                duration: duration
+            },
+            displayOptions: {
+                height: 42,
+                barHeight: 12,
+                tooltipHeight: 20,
+                top: 0,
+                renderTooltip: true,
+                renderProgress: false
+            }
+        }
+
+        const configWithProgress = {
+            data: {
+                segments: segments,
+                duration: duration
+            },
+            displayOptions: {
+                height: 26,
+                barHeight: 12,
+                top: 0,
+                renderTooltip: false,
+                renderProgress: true
+            }
+        }
+
+        const config = {
+            data: {
+                segments: segments,
+                duration: duration
+            },
+            displayOptions: {
+                height: 22,
+                barHeight: 12,
+                top: 0,
+                renderTooltip: false,
+                renderProgress: false
+            }
+        }
+
+        segmentsTimelineWithTooltipProgress.config = configWithTooltipProgress;
+        segmentsTimelineWithTooltip.config = configWithTooltip;
+        segmentsTimelineWithProgress.config = configWithProgress;
+        segmentsTimeline.config = config;
+
+        segmentsTimelineWithTooltipProgress.addEventListener('current-time', (event) => {
+            console.log('segments-timeline-with-tooltip-progress current time changed: ', event.detail);
+        })
+
+        segmentsTimelineWithTooltip.addEventListener('current-time', (event) => {
+            console.log('segments-timeline-with-tooltip current time changed: ', event.detail);
+        })
+
+        segmentsTimelineWithProgress.addEventListener('current-time', (event) => {
+            console.log('segments-timeline-with-progress current time changed: ', event.detail);
+        })
+
+        segmentsTimeline.addEventListener('current-time', (event) => {
+            console.log('segments-timeline current time changed: ', event.detail);
+        })
+    })()
+</script>
+
+</html>

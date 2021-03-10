@@ -1,7 +1,6 @@
-export interface IUIAppearance {
+export interface IUISegment {
     startSeconds: number;
     endSeconds: number;
-    className?: string;
     color?: string;
     textColor?: string;
 }
@@ -13,15 +12,15 @@ export interface IDisplayOptions {
     top?: number;
     renderTooltip?: boolean;
     renderProgress?: boolean;
+    timeSmoothing?: number;
 }
 
-export interface IAppearancesLineData {
-    appearances: IUIAppearance[];
+export interface ISegmentsTimelineData {
+    segments: IUISegment[];
     duration: number;
 }
 
-export interface IAppearancesLineConfig {
-    data: IAppearancesLineData;
+export interface ISegmentsTimelineConfig {
+    data: ISegmentsTimelineData;
     displayOptions: IDisplayOptions;
-    timeSmoothing?: number;
 }

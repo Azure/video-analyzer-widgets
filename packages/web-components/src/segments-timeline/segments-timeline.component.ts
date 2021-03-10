@@ -2,38 +2,30 @@ import { attr, customElement, FASTElement } from '@microsoft/fast-element';
 import { EMPTY, fromEvent, Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter, map } from 'rxjs/operators';
 import { cloneDeep } from 'lodash-es';
-import { IChartData, IChartOptions } from './svg-progress-chart/src/interfaces';
-import { SVGProgressChart } from './svg-progress-chart/src/svgProgress';
-import { IAppearancesLineConfig } from './appearances-line-component.definitions';
-import { styles } from './appearances-line-component.style';
-import { template } from './appearances-line-component.template';
+import { IChartData, IChartOptions } from './svg-progress-chart/svg-progress.definitions';
+import { SVGProgressChart } from './svg-progress-chart/svg-progress.class';
+import { ISegmentsTimelineConfig, IUISegment } from './segments-timeline.definitions';
+import { styles } from './segments-timeline.style';
+import { template } from './segments-timeline.template';
 
 /**
- * An example web component item.
+ * Segments Timeline Component
  * @public
  */
 @customElement({
-    name: 'appearances-line-component',
+    name: 'media-segments-timeline',
     template,
     styles
 })
-export class AppearancesLineComponent extends FASTElement {
+export class SegmentsTimelineComponent extends FASTElement {
     /**
-     * Time Line configuration, includes data & display options
+     * Segments Timeline configuration, includes data & display options
      *
      * @public
      * @remarks
      * HTML attribute: config
      */
-    @attr public config: IAppearancesLineConfig = {
-        data: {
-            appearances: [],
-            duration: 0
-        },
-        displayOptions: {
-            height: 0
-        }
-    };
+    @attr public config: ISegmentsTimelineConfig = null;
 
     /**
      * current time, indicate the current line time
@@ -44,73 +36,85 @@ export class AppearancesLineComponent extends FASTElement {
      */
     @attr public currentTime: number = 0;
 
-    private processedAppearances: IChartData[] = [];
+    private processedSegments: IChartData[] = [];
     private timelineProgress?: SVGProgressChart;
+    private readonly DEFAULT_COLOR = 'black';
+    private readonly TOOLTIP_TEXT = 'white';
+    private readonly emptyConfig: ISegmentsTimelineConfig = {
+        data: {
+            segments: [] as IUISegment[],
+            duration: 0
+        },
+        displayOptions: {
+            height: 20
+        }
+    };
 
-    public constructor(config: IAppearancesLineConfig) {
+    public constructor(config: ISegmentsTimelineConfig) {
         super();
-        this.config = config;
+        this.config = config || this.emptyConfig;
     }
 
     public configChanged() {
-        if (!this.config?.data?.appearances?.length) {
-            return;
+        if (this.config) {
+            this.initSegmentsLine();
         }
-        setTimeout(() => {
-            this.initAppearancesLine();
-        });
     }
 
     public connectedCallback() {
         super.connectedCallback();
-        // this.addEventListener('change', (e) => console.log((<HTMLElement>e.target).tagName));
         this.onResizeEventStream()?.subscribe(() => {
             this.timelineProgress?.destroy();
             this.initSVGProgress();
         });
     }
 
-    public initAppearancesLine() {
+    public initSegmentsLine() {
         this.prepareData();
-        this.initSVGProgress();
+        setTimeout(() => {
+            this.initSVGProgress();
+        });
     }
 
     public prepareData(): void {
-        this.processedAppearances = [];
+        this.processedSegments = [];
 
-        if (!this.config.data.appearances.length) {
+        if (!this.config?.data?.segments?.length) {
             return;
         }
 
-        const designSystem = window.document.getElementsByTagName('ava-design-system-provider')[0];
-        const appearancesDefaultColor = designSystem ? getComputedStyle(designSystem)?.getPropertyValue('--appearances-color') : 'black';
-        const appearancesTooltipText = designSystem
-            ? getComputedStyle(designSystem)?.getPropertyValue('--appearances-tooltip-text')
-            : 'white';
+        const designSystem = window.document.querySelector('ava-design-system-provider');
+        const segmentsDefaultColor = designSystem
+            ? getComputedStyle(designSystem)?.getPropertyValue('--segments-color')
+            : this.DEFAULT_COLOR;
+        const segmentsTooltipText = designSystem
+            ? getComputedStyle(designSystem)?.getPropertyValue('--segments-tooltip-text')
+            : this.TOOLTIP_TEXT;
 
-        const appearances = cloneDeep(this.config.data.appearances);
-        for (let i = 0; i < appearances.length; i++) {
-            let left = Math.min((appearances[i].startSeconds / this.config.data.duration) * 100, 100);
-            let per = Math.max((appearances[i].endSeconds - appearances[i].startSeconds) / this.config.data.duration, 0.0051);
+        const segments = cloneDeep(this.config.data.segments);
+        for (let i = 0; i < segments.length; i++) {
+            let left = Math.min((segments[i].startSeconds / this.config.data.duration) * 100, 100);
+            let per = Math.max((segments[i].endSeconds - segments[i].startSeconds) / this.config.data.duration, 0.0051);
 
-            if (this.config.timeSmoothing && this.config.timeSmoothing > 0 && i > 0) {
-                const lastAppearance = appearances[i - 1];
+            // Merging following segments if the time difference is less them timeSmoothing
+            if (this.config.displayOptions?.timeSmoothing && this.config.displayOptions?.timeSmoothing > 0 && i > 0) {
+                const lastAppearance = segments[i - 1];
                 if (
-                    lastAppearance.endSeconds + this.config.timeSmoothing > appearances[i].startSeconds &&
-                    lastAppearance.color === appearances[i].color
+                    lastAppearance.endSeconds + this.config.displayOptions?.timeSmoothing > segments[i].startSeconds &&
+                    lastAppearance.color === segments[i].color
                 ) {
-                    this.processedAppearances.pop();
-                    appearances[i].startSeconds = lastAppearance.startSeconds;
-                    left = Math.min((appearances[i].startSeconds / this.config.data.duration) * 100, 100);
-                    per = Math.max((appearances[i].endSeconds - appearances[i].startSeconds) / this.config.data.duration, 0.0051);
+                    this.processedSegments.pop();
+                    segments[i].startSeconds = lastAppearance.startSeconds;
+                    left = Math.min((segments[i].startSeconds / this.config.data.duration) * 100, 100);
+                    per = Math.max((segments[i].endSeconds - segments[i].startSeconds) / this.config.data.duration, 0.0051);
                 }
             }
 
-            this.processedAppearances.push({
+            this.processedSegments.push({
                 x: left,
                 width: per * 100,
-                color: appearances[i].color || appearancesDefaultColor,
-                textColor: appearances[i].textColor || appearancesTooltipText
+                color: segments[i].color || segmentsDefaultColor,
+                textColor: segments[i].textColor || segmentsTooltipText
             });
         }
     }
@@ -163,16 +167,17 @@ export class AppearancesLineComponent extends FASTElement {
         }
         const chartOptions: IChartOptions = {
             width: containerWidth,
-            height: this.config.displayOptions.height,
-            time: this.config.data.duration,
-            data: this.processedAppearances,
-            barHeight: this.config.displayOptions.barHeight,
-            renderTooltip: this.config.displayOptions.renderTooltip,
-            tooltipHeight: this.config.displayOptions.tooltipHeight,
-            renderProgress: this.config.displayOptions.renderProgress,
-            top: this.config.displayOptions.top
+            height: this.config?.displayOptions?.height || 30,
+            time: this.config?.data?.duration || 1,
+            data: this.processedSegments,
+            barHeight: this.config?.displayOptions?.barHeight || 12,
+            renderTooltip: this.config?.displayOptions?.renderTooltip || false,
+            tooltipHeight: this.config?.displayOptions?.tooltipHeight,
+            renderProgress: this.config?.displayOptions?.renderProgress || false,
+            top: this.config?.displayOptions?.top
         };
 
+        this.timelineProgress?.destroy();
         this.timelineProgress = new SVGProgressChart(<SVGElement>container, chartOptions);
 
         // Set initial progress

@@ -1,15 +1,15 @@
-import { AppearancesLineComponent } from '.';
-import { IAppearancesLineConfig } from './appearances-line-component.definitions';
+import { SegmentsTimelineComponent } from '.';
+import { ISegmentsTimelineConfig } from './segments-timeline.definitions';
 
 interface ITemplate {
-    config: IAppearancesLineConfig;
+    config: ISegmentsTimelineConfig;
     duration?: number;
     renderTooltip?: true;
     renderProgress?: true;
     timeSmoothing?: number;
 }
 
-const appearances = [
+const segments = [
     { endSeconds: 43.294, startSeconds: 42.209 },
     { endSeconds: 45.838, startSeconds: 44.711 },
     { endSeconds: 50.175, startSeconds: 49.466, color: 'blue' },
@@ -25,18 +25,18 @@ const displayOptions = {
     renderProgress: true
 };
 
-const emptyConfig: IAppearancesLineConfig = {
+const emptyConfig: ISegmentsTimelineConfig = {
     data: {
-        appearances: appearances,
+        segments: segments,
         duration: 90
     },
     displayOptions: displayOptions
 };
 
 // Prevent tree-shaking
-AppearancesLineComponent;
+SegmentsTimelineComponent;
 
-const AppearancesLineComponentTemplate = (data: ITemplate) => {
+const SegmentsTimelineComponentTemplate = (data: ITemplate) => {
     let config = { ...emptyConfig };
     if (data.config) {
         config = data.config;
@@ -48,23 +48,23 @@ const AppearancesLineComponentTemplate = (data: ITemplate) => {
 
     config.displayOptions.renderProgress = !!data.renderProgress;
     config.displayOptions.renderTooltip = !!data.renderTooltip;
-    config.timeSmoothing = data.timeSmoothing;
+    config.displayOptions.timeSmoothing = data.timeSmoothing;
 
-    const appearancesLine = document.createElement('appearances-line-component') as AppearancesLineComponent;
-    appearancesLine.style.setProperty('--appearances-line-bg', 'rgba(0, 0, 0, 0.05)');
-    appearancesLine.style.setProperty('--appearances-progress-color', 'rgba(189, 224, 255, 1)');
-    appearancesLine.style.setProperty('--appearances-tooltip', 'rgba(0, 0, 0, 0.08');
-    appearancesLine.style.setProperty('--appearances-color', 'rgba(0, 0, 0, 0.8)');
-    appearancesLine.style.setProperty('--appearances-tooltip-text', '#f7f7f7');
-    appearancesLine.config = config;
+    const segmentsLine = document.createElement('media-segments-timeline') as SegmentsTimelineComponent;
+    segmentsLine.style.setProperty('--segments-line-bg', 'rgba(0, 0, 0, 0.05)');
+    segmentsLine.style.setProperty('--segments-progress-color', 'rgba(189, 224, 255, 1)');
+    segmentsLine.style.setProperty('--segments-tooltip', 'rgba(0, 0, 0, 0.08');
+    segmentsLine.style.setProperty('--segments-color', 'rgba(0, 0, 0, 0.8)');
+    segmentsLine.style.setProperty('--segments-tooltip-text', '#f7f7f7');
+    segmentsLine.config = config;
 
-    return appearancesLine;
+    return segmentsLine;
 };
 
-export const AppearancesLine = (args: ITemplate) => AppearancesLineComponentTemplate(args);
+export const SegmentsTimeline = (args: ITemplate) => SegmentsTimelineComponentTemplate(args);
 
 export default {
-    title: 'Appearances Line Component',
+    title: 'Segments Timeline Component',
     argTypes: {
         duration: { control: 'number', defaultValue: 90 },
         timeSmoothing: { control: 'number', defaultValue: 0 },
