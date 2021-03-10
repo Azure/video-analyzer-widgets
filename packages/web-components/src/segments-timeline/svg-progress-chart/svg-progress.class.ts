@@ -1,15 +1,6 @@
 import { IChartData, IChartOptions, IComponentTree, Colors } from './svg-progress.definitions';
 import { Rect, Tooltip } from './svg-progress.models';
 
-// Define requestAnimationFrame with fallback
-const requestAnimFrame = (() => {
-    /* eslint-disable  @typescript-eslint/no-explicit-any */
-    const callbackFunc = (callback: any) => {
-        window.setTimeout(callback, 1000 / 60);
-    };
-    return window.requestAnimationFrame || window['webkitRequestAnimationFrame'] || window['mozRequestAnimationFrame'] || callbackFunc;
-})();
-
 // Define the main class for the progress chart.
 export class SVGProgressChart {
     public id: string;
@@ -215,13 +206,13 @@ export class SVGProgressChart {
             return;
         }
         const value = Math.min((time / that.options.time) * 100, that.options.time);
-        requestAnimFrame(() => {
+        window.requestAnimationFrame(() => {
             that.components.progressBar.buffer.moveTo(value);
         });
     }
 
     private handleMouseLeave() {
-        requestAnimFrame(() => {
+        window.requestAnimationFrame(() => {
             this.components.progressBar.tooltip?.hide();
             if (this.options.renderBuffer) {
                 this.components.progressBar.buffer.hide();
@@ -230,7 +221,7 @@ export class SVGProgressChart {
     }
 
     private handelFocusOut() {
-        requestAnimFrame(() => {
+        window.requestAnimationFrame(() => {
             this.components.progressBar.tooltip?.hide();
             if (this.options.renderBuffer) {
                 this.components.progressBar.buffer.hide();
@@ -279,7 +270,7 @@ export class SVGProgressChart {
                 ) {
                     this.lastMatch = true;
                     if (event.type !== this.currentTooltipType) {
-                        requestAnimFrame(() => {
+                        window.requestAnimationFrame(() => {
                             this.components.progressBar.tooltip?.removeClass(this.currentTooltipType);
                             this.currentTooltipType = event.type || 'default';
                             this.components.progressBar.tooltip?.addClass(this.currentTooltipType);
@@ -299,7 +290,7 @@ export class SVGProgressChart {
                 this.currentTooltipType = 'neutral';
             }
 
-            requestAnimFrame(() => {
+            window.requestAnimationFrame(() => {
                 this.setPreBuffer(time);
             });
         }, 10);
@@ -310,7 +301,7 @@ export class SVGProgressChart {
             return;
         }
         const percent = (e.offsetX / this.options.width) * 100;
-        requestAnimFrame(() => {
+        window.requestAnimationFrame(() => {
             this.components.progressBar.progress.moveTo(percent);
         });
     }
