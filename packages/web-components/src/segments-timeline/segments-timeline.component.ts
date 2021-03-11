@@ -7,6 +7,7 @@ import { SVGProgressChart } from './svg-progress-chart/svg-progress.class';
 import { ISegmentsTimelineConfig, IUISegment } from './segments-timeline.definitions';
 import { styles } from './segments-timeline.style';
 import { template } from './segments-timeline.template';
+import { closestElement } from '../../../common/utils/elements';
 
 /**
  * Segments Timeline Component
@@ -83,7 +84,8 @@ export class SegmentsTimelineComponent extends FASTElement {
             return;
         }
 
-        const designSystem = this.$fastController.element.closest('ava-design-system-provider');
+        const designSystem =
+            closestElement('ava-design-system-provider', this) || window.document.querySelector('ava-design-system-provider');
         const segmentsDefaultColor = designSystem
             ? getComputedStyle(designSystem)?.getPropertyValue('--segments-color')
             : this.DEFAULT_COLOR;

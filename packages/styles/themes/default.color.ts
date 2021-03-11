@@ -64,5 +64,9 @@ export const defaultColorsStyle: ElementStyles = css`
         --segments-color: rgba(0, 0, 0, 0.8);
         --segments-tooltip: rgba(0, 0, 0, 0.08);
         --segments-tooltip-text: #f7f7f7;
+
+        /* Time Ruler */
+        --ruler-small-scale: #8a8886;
+        --ruler-text: #444444;
     }
 `;
