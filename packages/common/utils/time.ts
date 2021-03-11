@@ -1,5 +1,5 @@
 export function toTimeText(time: number, roundSeconds = false): string {
-    const sec_num = time; // don't forget the second param
+    const sec_num = time;
     let hours: number | string = Math.floor(sec_num / 3600);
     let minutes: number | string = Math.floor((sec_num - hours * 3600) / 60);
     let seconds: number | string = sec_num - hours * 3600 - minutes * 60;
