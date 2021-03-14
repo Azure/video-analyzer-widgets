@@ -27,7 +27,7 @@ export class TimeRulerComponent extends FASTElement {
     private readonly DEFAULT_SCALE_COLOR = 'gray';
     private ruler: TimeRuler;
 
-    public dateChanged() {
+    public startDateChanged() {
         setTimeout(() => {
             const options = this.getRulerOptions();
             this.ruler.setOptions(options);
