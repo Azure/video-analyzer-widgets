@@ -13,6 +13,9 @@ packages/web-components/src/**/*.stories.ts
 # Never lint spec
 packages/web-components/src/**/*.spec.ts
 
+# Never definitions spec
+packages/web-components/src/**/*.d.ts
+
 # Never lint test build output
 out
 coverage

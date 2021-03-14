@@ -16,5 +16,5 @@
         "strict": true,
         "esModuleInterop": true
     },
-    "exclude": ["**/*.stories.ts", "**/*.spec.ts", "node_modules"]
+    "exclude": ["**/*.stories.ts", "**/*.spec.ts", "**/*.d.ts", "node_modules", "dist", "out"]
 }
