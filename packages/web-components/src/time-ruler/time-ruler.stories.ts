@@ -3,7 +3,7 @@ import { AvaDesignSystemProvider } from '../../../styles';
 
 interface ITemplate {
     darkTheme?: boolean;
-    date?: Date;
+    startDate?: Date;
 }
 
 // Prevent tree-shaking
@@ -14,16 +14,11 @@ const TimeRulerComponentTemplate = (data: ITemplate) => {
     const designSystem = document.createElement('ava-design-system-provider') as AvaDesignSystemProvider;
     const timeRuler = document.createElement('media-time-ruler') as TimeRulerComponent;
 
-    if (data.darkTheme) {
-        designSystem.theme = 'dark';
-    } else {
-        designSystem.theme = '';
-    }
+    designSystem.theme = (data?.darkTheme && 'dark') || '';
 
-    if (data.date) {
-        const date = new Date(data.date);
-        console.log(date);
-        timeRuler.date = date;
+    if (data.startDate) {
+        const startDate = new Date(data.startDate);
+        timeRuler.startDate = startDate;
     }
 
     designSystem.appendChild(timeRuler);
@@ -36,6 +31,6 @@ export default {
     title: 'Time Ruler Component',
     argTypes: {
         darkTheme: { control: 'boolean', defaultValue: true },
-        date: { control: 'date' }
+        startDate: { control: 'date' }
     }
 };

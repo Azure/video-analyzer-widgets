@@ -50,13 +50,17 @@ export class TimeRuler {
         for (let i = 0; i <= this.HOURS_IN_DAY * this.TENS_MINUTES_IN_HOUR; i += 1) {
             const pos = i * minutes;
 
+            // Large Scale mark
             if (i % this.TENS_MINUTES_IN_HOUR === 0) {
                 this.context.fillStyle = this.rulerOptions?.textColor;
                 this.context?.fillRect(pos * this.ratio, 0, this.context.lineWidth * this.ratio, this.LARGE_SCALE_MARK_HEIGHT * this.ratio);
             } else if (this.canvas && this.canvas.width > 520) {
+                // Small Scale mark
                 this.context.fillStyle = this.rulerOptions?.smallScaleColor;
                 this.context?.fillRect(pos * this.ratio, 0, this.context.lineWidth * this.ratio, this.SMALL_SCALE_MARK_HEIGHT * this.ratio);
             }
+
+            // Start Date tag
             if (i === 0) {
                 this.context.fillStyle = this.rulerOptions?.textColor;
                 this.context?.fillText(this.rulerOptions.dateText, 2, (this.rulThickness - 2) * this.ratio);

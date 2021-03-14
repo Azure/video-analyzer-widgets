@@ -53,11 +53,7 @@ const SegmentsTimelineComponentTemplate = (data: ITemplate) => {
     config.displayOptions.renderTooltip = !!data.renderTooltip;
     config.displayOptions.timeSmoothing = data.timeSmoothing;
     const designSystem = document.createElement('ava-design-system-provider') as AvaDesignSystemProvider;
-    if (data.darkTheme) {
-        designSystem.theme = 'dark';
-    } else {
-        designSystem.theme = '';
-    }
+    designSystem.theme = (data?.darkTheme && 'dark') || '';
     const segmentsLine = document.createElement('media-segments-timeline') as SegmentsTimelineComponent;
     segmentsLine.config = config;
     designSystem.appendChild(segmentsLine);

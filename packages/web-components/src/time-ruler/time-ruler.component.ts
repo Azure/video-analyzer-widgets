@@ -4,7 +4,6 @@ import { SegoeUIFontFamily } from '../../../styles/system-providers/ava-design-s
 import { TimeRuler } from './time-ruler.class';
 import { IRulerOptions } from './time-ruler.definitions';
 import { styles } from './time-ruler.style';
-import { template } from './time-ruler.template';
 
 /**
  * An Time Ruler for 24 hours
@@ -12,26 +11,23 @@ import { template } from './time-ruler.template';
  */
 @customElement({
     name: 'media-time-ruler',
-    template,
     styles
 })
 export class TimeRulerComponent extends FASTElement {
     /**
-     * date represent the ruler left bar start date
+     * start date represent the ruler left bar start date, default is current day
      *
      * @public
      * @remarks
-     * HTML attribute: date
+     * HTML attribute: start date
      */
-    @attr public date: Date;
+    @attr public startDate: Date;
 
     private readonly DEFAULT_TEXT_COLOR = 'black';
     private readonly DEFAULT_SCALE_COLOR = 'gray';
     private ruler: TimeRuler;
 
     public dateChanged() {
-        // eslint-disable-next-line no-console
-        console.log('TimeRulerComponent config changed');
         setTimeout(() => {
             const options = this.getRulerOptions();
             this.ruler.setOptions(options);
@@ -63,6 +59,7 @@ export class TimeRulerComponent extends FASTElement {
     }
 
     private getRulerOptions(): IRulerOptions {
+        // Ruler styles by design system or default
         const designSystem =
             closestElement('ava-design-system-provider', this) || window.document.querySelector('ava-design-system-provider');
         const smallScaleColor = designSystem
@@ -78,9 +75,9 @@ export class TimeRulerComponent extends FASTElement {
             lineWidth: 1,
             textColor: textColor,
             smallScaleColor: smallScaleColor,
-            dateText: this.date
-                ? this.date.toLocaleString('default', { month: 'long', day: 'numeric' })
-                : new Date().toLocaleString('default', { month: 'long', day: 'numeric' })
+            dateText:
+                this.startDate?.toLocaleString('default', { month: 'long', day: 'numeric' }) ||
+                new Date().toLocaleString('default', { month: 'long', day: 'numeric' })
         };
     }
 }
