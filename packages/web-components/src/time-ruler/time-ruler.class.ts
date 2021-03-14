@@ -7,7 +7,7 @@ export class TimeRuler {
     private rulScale: number = 0;
     private context?: CanvasRenderingContext2D;
     private canvas?: HTMLCanvasElement;
-    private options?: IRulerOptions;
+    private rulerOptions?: IRulerOptions;
     private ratio: number = 1;
     private readonly HOURS_IN_DAY = 24;
     private readonly TENS_MINUTES_IN_HOUR = 6;
@@ -16,12 +16,12 @@ export class TimeRuler {
     private readonly LARGE_SCALE_MARK_HEIGHT = 8;
     public constructor(canvas: HTMLCanvasElement, options: IRulerOptions) {
         this.canvas = canvas;
-        this.options = options;
+        this.rulerOptions = options;
         this.context = <CanvasRenderingContext2D>this.canvas.getContext('2d');
     }
 
     public setOptions(options: IRulerOptions) {
-        this.options = options;
+        this.rulerOptions = options;
     }
 
     public drawRuler(_rulerLength: number, _rulerThickness: number, _rulerScale?: number) {
@@ -33,8 +33,8 @@ export class TimeRuler {
         }
 
         if (this.context) {
-            this.context.font = `${this.getFontSize()}px ${this.options?.fontFamily}`;
-            this.context.lineWidth = this.options?.lineWidth || 1;
+            this.context.font = `${this.getFontSize()}px ${this.rulerOptions?.fontFamily}`;
+            this.context.lineWidth = this.rulerOptions?.lineWidth || 1;
             this.context.beginPath();
             setTimeout(() => {
                 this.drawPoints();
@@ -51,15 +51,15 @@ export class TimeRuler {
             const pos = i * minutes;
 
             if (i % this.TENS_MINUTES_IN_HOUR === 0) {
-                this.context.fillStyle = this.options?.textColor;
+                this.context.fillStyle = this.rulerOptions?.textColor;
                 this.context?.fillRect(pos * this.ratio, 0, this.context.lineWidth * this.ratio, this.LARGE_SCALE_MARK_HEIGHT * this.ratio);
             } else if (this.canvas && this.canvas.width > 520) {
-                this.context.fillStyle = this.options?.smallScaleColor;
+                this.context.fillStyle = this.rulerOptions?.smallScaleColor;
                 this.context?.fillRect(pos * this.ratio, 0, this.context.lineWidth * this.ratio, this.SMALL_SCALE_MARK_HEIGHT * this.ratio);
             }
             if (i === 0) {
-                this.context.fillStyle = this.options?.textColor;
-                this.context?.fillText(this.options.dateText, 2, (this.rulThickness - 2) * this.ratio);
+                this.context.fillStyle = this.rulerOptions?.textColor;
+                this.context?.fillText(this.rulerOptions.dateText, 2, (this.rulThickness - 2) * this.ratio);
             }
         }
 
@@ -67,10 +67,10 @@ export class TimeRuler {
         const timeOccurrences = this.nearestPow2(Math.floor((this.rulLength * this.ratio) / this.MIN_HOURS_GAP));
         const hoursRatio = 1 / timeOccurrences;
         for (let j = 1; j < timeOccurrences; j++) {
-            this.context.fillStyle = this.options?.textColor;
+            this.context.fillStyle = this.rulerOptions?.textColor;
             this.context?.fillText(
                 toTimeText(3600 * (hoursRatio * j) * 24),
-                this.rulLength * this.ratio * hoursRatio * j - this.options.lineWidth * this.ratio,
+                this.rulLength * this.ratio * hoursRatio * j - this.rulerOptions.lineWidth * this.ratio,
                 (this.rulThickness - 2) * this.ratio
             );
         }
@@ -92,6 +92,6 @@ export class TimeRuler {
     }
 
     private getFontSize() {
-        return this.options.fontSize ? +this.options.fontSize.split('px')[0] * this.ratio : 12;
+        return this.rulerOptions.fontSize ? +this.rulerOptions.fontSize.split('px')[0] * this.ratio : 12;
     }
 }

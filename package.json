@@ -35,8 +35,8 @@
         "@types/lodash-es": "^4.17.4",
         "@typescript-eslint/eslint-plugin": "^4.14.0",
         "@typescript-eslint/parser": "^4.14.0",
-        "@web/test-runner": "^0.11.5",
-        "@web/test-runner-playwright": "^0.8.1",
+        "@web/test-runner": "^0.12.17",
+        "@web/test-runner-playwright": "^0.8.4",
         "circular-dependency-plugin": "^5.2.2",
         "eslint": "^7.18.0",
         "eslint-webpack-plugin": "^2.4.3",
@@ -48,7 +48,7 @@
         "webpack-cli": "^4.4.0"
     },
     "dependencies": {
-        "@fluentui/web-components": "^0.15.0",
+        "@fluentui/web-components": "^0.16.0",
         "@microsoft/fast-components": "^1.18.1",
         "@microsoft/fast-element": "^1.0.0",
         "@microsoft/fast-foundation": "^1.15.1",
