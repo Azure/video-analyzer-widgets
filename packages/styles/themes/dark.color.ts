@@ -2,8 +2,9 @@ import { css, ElementStyles } from '@microsoft/fast-element';
 
 export const darkColorsStyle: ElementStyles = css`
     :host {
+        --font-family: 'Segoe UI';
         --neutral-foreground-rest: #ffffff;
-        --background-color: #3b3b3b;
+        --background-color: #444444;
         --density: 0;
         --design-unit: 4;
         --base-height-multiplier: 10;
@@ -56,5 +57,12 @@ export const darkColorsStyle: ElementStyles = css`
         --neutral-divider-rest: #4f4f4f;
         --neutral-layer-floating: #4a4a4a;
         --neutral-foreground-hint: #a7a7a7;
+
+        /* Segments Line */
+        --segments-progress-color: rgb(119 189 242);
+        --segments-line-bg: #323130;
+        --segments-color: #605e5c;
+        --segments-tooltip: #323130;
+        --segments-tooltip-text: #f7f7f7;
     }
 `;
