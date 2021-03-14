@@ -22,11 +22,21 @@ export class TimeRulerComponent extends FASTElement {
      * @remarks
      * HTML attribute: date
      */
-    @attr public date: Date = new Date();
+    @attr public date: Date;
 
     private readonly DEFAULT_TEXT_COLOR = 'black';
     private readonly DEFAULT_SCALE_COLOR = 'gray';
     private ruler: TimeRuler;
+
+    public dateChanged() {
+        // eslint-disable-next-line no-console
+        console.log('TimeRulerComponent config changed');
+        setTimeout(() => {
+            const options = this.getRulerOptions();
+            this.ruler.setOptions(options);
+            this.ruler.drawRuler(this.$fastController.element?.getBoundingClientRect()?.width, options.rulerHeight);
+        });
+    }
 
     public connectedCallback() {
         super.connectedCallback();
@@ -67,7 +77,9 @@ export class TimeRulerComponent extends FASTElement {
             lineWidth: 1,
             textColor: textColor,
             smallScaleColor: smallScaleColor,
-            dateText: this.date?.toLocaleString('default', { month: 'long', day: 'numeric' })
+            dateText: this.date
+                ? this.date.toLocaleString('default', { month: 'long', day: 'numeric' })
+                : new Date().toLocaleString('default', { month: 'long', day: 'numeric' })
         };
     }
 }

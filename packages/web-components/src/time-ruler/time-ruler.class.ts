@@ -47,7 +47,7 @@ export class TimeRuler {
         const minutes = (this.rulLength - this.context.lineWidth) / (this.HOURS_IN_DAY * this.TENS_MINUTES_IN_HOUR);
 
         // Drawing ruler line
-        for (var i = 0; i <= this.HOURS_IN_DAY * this.TENS_MINUTES_IN_HOUR; i += 1) {
+        for (let i = 0; i <= this.HOURS_IN_DAY * this.TENS_MINUTES_IN_HOUR; i += 1) {
             const pos = i * minutes;
 
             if (i % this.TENS_MINUTES_IN_HOUR === 0) {
