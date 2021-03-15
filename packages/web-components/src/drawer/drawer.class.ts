@@ -1,10 +1,11 @@
 import { FASTElement } from '@microsoft/fast-element';
 import { Colors } from './colors.definitions';
-import { DEFAULT_CANVAS_HEIGHT } from './drawer.definitions';
+import { DrawerInitializedValues } from './drawer.definitions';
 
 /**
  * The class handles:
- * 1. Creating canvas element and heat-map area by getting the boundaries of the areas as input
+ * 1. Creating canvas element and heat-map area by getting the boundaries of the areas as input.
+ * 2. After drawing the line, the component emit the coordinates [x,y]
  */
 export abstract class Drawer extends FASTElement {
     // Canvas prop
@@ -30,20 +31,20 @@ export abstract class Drawer extends FASTElement {
 
         // Create canvas object ans set style for it
         this.canvas = document.createElement('canvas');
-        this.canvas.style.zIndex = '1';
-        this.canvas.style.cursor = 'crosshair';
-        this.canvas.style.position = 'relative';
+        this.canvas.style.zIndex = DrawerInitializedValues.zIndex;
+        this.canvas.style.cursor = DrawerInitializedValues.cursorType;
+        this.canvas.style.position = DrawerInitializedValues.canvasPosition;
         this.cCtx = this.canvas.getContext('2d');
     }
 
     public initDraw(cWidth: string, cHeight: string, bColor: string) {
-        // Init canvas properties
-        this.canvasY = 0;
-        this.canvasX = 0;
+        this.canvasY = this.getBoundingClientRect().top;
+        this.canvasX = this.getBoundingClientRect().left;
         this.borderColor = bColor || Colors.red;
-
-        this.canvas.width = parseInt(cWidth) || 100;
-        this.canvas.height = parseInt(cHeight) || DEFAULT_CANVAS_HEIGHT;
+        
+        // Init canvas properties
+        this.canvas.width = parseInt(cWidth) || DrawerInitializedValues.canvasWidth;
+        this.canvas.height = parseInt(cHeight) || DrawerInitializedValues.canvasHeight;
 
         this.cCtx = this.canvas.getContext('2d');
 
@@ -68,8 +69,8 @@ export abstract class Drawer extends FASTElement {
             if (this.cCtx) {
                 this.cCtx.strokeStyle = this.borderColor;
                 this.cCtx.lineWidth = 2;
-                this.cCtx.lineJoin = 'round';
-                this.cCtx.lineCap = 'round';
+                this.cCtx.lineJoin = <CanvasLineJoin>DrawerInitializedValues.drawLineRound;
+                this.cCtx.lineCap = <CanvasLineCap>DrawerInitializedValues.drawLineRound;
             }
             this.cCtx?.stroke();
         }
@@ -79,8 +80,8 @@ export abstract class Drawer extends FASTElement {
         this.lastMouseX = e.clientX - this.canvasX;
         this.lastMouseY = e.clientY - this.canvasY;
         this.mouseDown = true;
-        // Trigger event
-
+        // Trigger event to parent component
+        this.$emit('drawer', [this.lastMouseX, this.lastMouseY]);
     }
 
     // To-do: Responsive 

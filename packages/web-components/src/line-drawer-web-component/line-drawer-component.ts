@@ -1,14 +1,12 @@
 import { attr, customElement } from '@microsoft/fast-element';
 import { Drawer } from '../drawer/drawer.class';
-import { styles } from './line-drawer-component.style';
 
 /**
  * An line-drawer-component item.
  * @public
  */
 @customElement({
-    name: 'line-drawer-component',
-    styles
+    name: 'line-drawer-component'
 })
 export class LineDrawerComponent extends Drawer {
 
@@ -47,7 +45,4 @@ export class LineDrawerComponent extends Drawer {
         super.connectedCallback();
         super.initDraw(this.canvasWidth, this.canvasHeight, this.borderColor);
     }
-
-    // When complete to draw, trigger event with the dots
-
 }
