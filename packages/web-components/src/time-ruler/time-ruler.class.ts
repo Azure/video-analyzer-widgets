@@ -1,98 +1,122 @@
+import { ICanvasElement, ICanvasFillData } from '../../../common/definitions/canvas.definitions';
 import { toTimeText } from '../../../common/utils/time';
 import { IRulerOptions } from './time-ruler.definitions';
 
-export class TimeRuler {
+// canvas common interface
+
+export class TimeRuler extends ICanvasElement {
+    public canvasPointsDataList: ICanvasFillData[] = [];
     private rulLength: number = 0;
     private rulThickness: number = 0;
     private rulScale: number = 0;
-    private context?: CanvasRenderingContext2D;
-    private canvas?: HTMLCanvasElement;
+    private zoom: number = 1;
+    private startPos: number = 0;
     private rulerOptions?: IRulerOptions;
-    private ratio: number = 1;
     private readonly HOURS_IN_DAY = 24;
     private readonly TENS_MINUTES_IN_HOUR = 6;
     private readonly MIN_HOURS_GAP = 300;
     private readonly SMALL_SCALE_MARK_HEIGHT = 4;
     private readonly LARGE_SCALE_MARK_HEIGHT = 8;
     public constructor(canvas: HTMLCanvasElement, options: IRulerOptions) {
-        this.canvas = canvas;
+        super(canvas);
         this.rulerOptions = options;
-        this.context = <CanvasRenderingContext2D>this.canvas.getContext('2d');
     }
 
     public setOptions(options: IRulerOptions) {
         this.rulerOptions = options;
     }
 
-    public drawRuler(_rulerLength: number, _rulerThickness: number, _rulerScale?: number) {
-        this.rulLength = Math.floor(_rulerLength);
-        this.rulThickness = _rulerThickness;
-        this.rulScale = _rulerScale || 1;
+    public draw(): void {
+        this.rulLength = this.rulerOptions.width;
+        this.rulThickness = this.rulerOptions.height;
         if (this.canvas) {
-            this.setCanvasSize(this.canvas, _rulerLength, _rulerThickness);
+            this.setCanvasSize(this.rulerOptions.width, this.rulerOptions.height);
         }
 
         if (this.context) {
             this.context.font = `${this.getFontSize()}px ${this.rulerOptions?.fontFamily}`;
             this.context.lineWidth = this.rulerOptions?.lineWidth || 1;
             this.context.beginPath();
+            this.preparePoints();
             setTimeout(() => {
                 this.drawPoints();
                 this.context.stroke();
+                this.context.restore();
             }, 100);
         }
     }
 
-    public drawPoints() {
-        const minutes = (this.rulLength - this.context.lineWidth) / (this.HOURS_IN_DAY * this.TENS_MINUTES_IN_HOUR);
+    public preparePoints() {
+        const minutes = ((this.rulLength - this.context.lineWidth) * this.zoom) / (this.HOURS_IN_DAY * this.TENS_MINUTES_IN_HOUR);
+
+        const timeOccurrences = this.nearestPow2(Math.floor((this.rulLength * this.ratio) / this.MIN_HOURS_GAP));
+        const timeOccurrencesGap = (this.HOURS_IN_DAY * this.TENS_MINUTES_IN_HOUR) / timeOccurrences;
+
+        this.canvasPointsDataList = [];
+        let lastHourMark = 0;
 
         // Drawing ruler line
-        for (let i = 0; i <= this.HOURS_IN_DAY * this.TENS_MINUTES_IN_HOUR; i += 1) {
-            const pos = i * minutes;
+        for (let i = 0; i <= (this.HOURS_IN_DAY * this.TENS_MINUTES_IN_HOUR) / this.zoom; i += 1) {
+            const pos = i * minutes + this.startPos;
 
-            // Large Scale mark
+            // Large scale mark
             if (i % this.TENS_MINUTES_IN_HOUR === 0) {
-                this.context.fillStyle = this.rulerOptions?.textColor;
-                this.context?.fillRect(pos * this.ratio, 0, this.context.lineWidth * this.ratio, this.LARGE_SCALE_MARK_HEIGHT * this.ratio);
+                this.canvasPointsDataList.push({
+                    x: pos * this.ratio,
+                    y: 0,
+                    w: this.context.lineWidth * this.ratio,
+                    h: this.LARGE_SCALE_MARK_HEIGHT * this.ratio,
+                    color: this.rulerOptions?.fontColor
+                });
+
+                // Time hours mark
+                if (i - lastHourMark >= timeOccurrencesGap && i !== this.HOURS_IN_DAY * this.TENS_MINUTES_IN_HOUR) {
+                    lastHourMark = i;
+
+                    this.canvasPointsDataList.push({
+                        x: pos * this.ratio,
+                        y: (this.rulThickness - 2) * this.ratio,
+                        color: this.rulerOptions?.fontColor,
+                        text: toTimeText(3600 * (i / this.TENS_MINUTES_IN_HOUR))
+                    });
+                }
             } else if (this.canvas && this.canvas.width > 520) {
-                // Small Scale mark
-                this.context.fillStyle = this.rulerOptions?.smallScaleColor;
-                this.context?.fillRect(pos * this.ratio, 0, this.context.lineWidth * this.ratio, this.SMALL_SCALE_MARK_HEIGHT * this.ratio);
+                // Small scale mark
+                this.canvasPointsDataList.push({
+                    x: pos * this.ratio,
+                    y: 0,
+                    w: this.context.lineWidth * this.ratio,
+                    h: this.SMALL_SCALE_MARK_HEIGHT * this.ratio,
+                    color: this.rulerOptions?.smallScaleColor
+                });
             }
 
             // Start Date tag
             if (i === 0) {
-                this.context.fillStyle = this.rulerOptions?.textColor;
-                this.context?.fillText(this.rulerOptions.dateText, 2, (this.rulThickness - 2) * this.ratio);
+                this.canvasPointsDataList.push({
+                    x: pos * this.ratio,
+                    y: (this.rulThickness - 2) * this.ratio,
+                    color: this.rulerOptions?.fontColor,
+                    text: this.rulerOptions.dateText
+                });
             }
         }
+    }
 
-        // Drawing Hours line
-        const timeOccurrences = this.nearestPow2(Math.floor((this.rulLength * this.ratio) / this.MIN_HOURS_GAP));
-        const hoursRatio = 1 / timeOccurrences;
-        for (let j = 1; j < timeOccurrences; j++) {
-            this.context.fillStyle = this.rulerOptions?.textColor;
-            this.context?.fillText(
-                toTimeText(3600 * (hoursRatio * j) * 24),
-                this.rulLength * this.ratio * hoursRatio * j - this.rulerOptions.lineWidth * this.ratio,
-                (this.rulThickness - 2) * this.ratio
-            );
+    public drawPoints() {
+        for (const point of this.canvasPointsDataList) {
+            if (point.text) {
+                this.context.fillStyle = this.rulerOptions?.fontColor;
+                this.context?.fillText(point.text, point.x, point.y);
+            } else {
+                this.context.fillStyle = point.color;
+                this.context?.fillRect(point.x, point.y, point.w, point.h);
+            }
         }
     }
 
     private nearestPow2(num: number) {
         return Math.pow(2, Math.round(Math.log(num) / Math.log(2)));
-    }
-
-    private setCanvasSize(canvas: HTMLCanvasElement, width: number, height: number) {
-        const style = canvas.style;
-        this.ratio = window.devicePixelRatio || 1;
-
-        style.width = width + 'px';
-        style.height = height + 'px';
-
-        canvas.width = width * this.ratio;
-        canvas.height = height * this.ratio;
     }
 
     private getFontSize() {

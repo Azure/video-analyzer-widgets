@@ -1,9 +1,6 @@
-export interface IRulerOptions {
-    rulerHeight: number;
-    fontFamily: string;
-    fontSize: string;
-    lineWidth: number;
-    textColor: string;
+import { ICanvasOptions } from '../../../common/definitions/canvas.definitions';
+
+export interface IRulerOptions extends ICanvasOptions {
     smallScaleColor: string;
     dateText: string;
 }

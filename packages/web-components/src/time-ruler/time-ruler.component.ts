@@ -29,9 +29,7 @@ export class TimeRulerComponent extends FASTElement {
 
     public startDateChanged() {
         setTimeout(() => {
-            const options = this.getRulerOptions();
-            this.ruler.setOptions(options);
-            this.ruler.drawRuler(this.$fastController.element?.getBoundingClientRect()?.width, options.rulerHeight);
+            this.redrawRuler();
         });
     }
 
@@ -41,21 +39,25 @@ export class TimeRulerComponent extends FASTElement {
     }
 
     public initRuler() {
-        let rulerOptions = this.getRulerOptions();
+        const rulerOptions = this.getRulerOptions();
         const canvas = document.createElement('canvas');
         this.ruler = new TimeRuler(canvas, rulerOptions);
-        this.ruler.drawRuler(this.$fastController.element?.getBoundingClientRect()?.width, rulerOptions.rulerHeight);
+        this.ruler.draw();
         this.$fastController.element.shadowRoot?.appendChild(canvas);
 
         window.addEventListener('resize', () => {
-            this.ruler.drawRuler(this.$fastController.element?.getBoundingClientRect()?.width, rulerOptions.rulerHeight);
+            this.redrawRuler();
         });
 
         closestElement('ava-design-system-provider', this)?.addEventListener('theme-changed', () => {
-            rulerOptions = this.getRulerOptions();
-            this.ruler.setOptions(rulerOptions);
-            this.ruler.drawRuler(this.$fastController.element?.getBoundingClientRect()?.width, rulerOptions.rulerHeight);
+            this.redrawRuler();
         });
+    }
+
+    private redrawRuler() {
+        const rulerOptions = this.getRulerOptions();
+        this.ruler.setOptions(rulerOptions);
+        this.ruler.draw();
     }
 
     private getRulerOptions(): IRulerOptions {
@@ -69,11 +71,12 @@ export class TimeRulerComponent extends FASTElement {
         const fontFamily = designSystem ? getComputedStyle(designSystem)?.getPropertyValue('--font-family') : SegoeUIFontFamily;
 
         return {
-            rulerHeight: 22,
+            height: 22,
+            width: this.$fastController.element?.getBoundingClientRect()?.width,
             fontFamily: fontFamily,
             fontSize: '12px',
             lineWidth: 1,
-            textColor: textColor,
+            fontColor: textColor,
             smallScaleColor: smallScaleColor,
             dateText:
                 this.startDate?.toLocaleString('default', { month: 'long', day: 'numeric' }) ||
