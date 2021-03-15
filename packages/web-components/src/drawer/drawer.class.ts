@@ -1,6 +1,6 @@
 import { FASTElement } from '@microsoft/fast-element';
 import { Colors } from './colors.definitions';
-import { Point } from './drawer.definitions';
+import { IPoint, IDrawPoint } from './drawer.definitions';
 
 /**
  * The class handles:
@@ -75,19 +75,12 @@ export abstract class Drawer extends FASTElement {
         this.mouseX = e.clientX - this.canvasX;
         this.mouseY = e.clientY - this.canvasY;
         if (this.mouseDown) {
-            const start: Point = {
-                x: this.lastMouseX,
-                y: this.lastMouseY
-            };
-            const end: Point = {
-                x: this.mouseX,
-                y: this.mouseY
-            };
-            this.drawLine(start, end);
+            const points = this.getStartEndIPoints();
+            this.drawLine(points.start, points.end);
         }
     }
 
-    public drawLine(start: Point, end: Point) {
+    public drawLine(start: IPoint, end: IPoint) {
         this.cCtx?.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.cCtx?.beginPath();
         // Start to draw
@@ -104,26 +97,32 @@ export abstract class Drawer extends FASTElement {
 
     public onDrawComplete() {
         this.mouseDown = false;
-        console.log('complete');
         // Trigger event to parent component.
         // Output: IDrawCompleteEvent
-        // this.$emit('drawer', [end, start]);
+        this.$emit('drawer', this.getStartEndIPoints());
     }
 
-    public onScrollHandler() {
-        console.log('scroll');
-    }
-
-    // To-do: Responsive 
+    // To-do: Responsive and scroll event to handle
     public onCanvasSizeChange() {
 
+    }
+
+    private getStartEndIPoints(): IDrawPoint {
+        const start: IPoint = {
+            x: this.lastMouseX,
+            y: this.lastMouseY
+        };
+        const end: IPoint = {
+            x: this.mouseX,
+            y: this.mouseY
+        };
+        return { start, end };
     }
 
     private appendEvents() {
         this.canvas.addEventListener('mousedown', this.onDrawStart.bind(this));
         this.canvas.addEventListener('mousemove', this.onDraw.bind(this));
         this.canvas.addEventListener('mouseup', this.onDrawComplete.bind(this));
-        this.shadowRoot.addEventListener('scroll', this.onScrollHandler.bind(this));
     }
 
 }
