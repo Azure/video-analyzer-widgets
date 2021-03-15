@@ -1,14 +1,26 @@
 import { LineDrawerComponent } from '.';
+
 interface ITemplate {
-    elemId: string;
+    borderColor: string;
+    canvasWidth: string;
+    canvasHeight: string;
 }
 
 // Prevent tree-shaking
 LineDrawerComponent;
 
 const LineDrawerComponentTemplate = (data: ITemplate) => {
-    const storybook = document.createElement('line-drawer-component') as LineDrawerComponent;
-    return storybook;
+    const lineDrawer = document.createElement('line-drawer-component') as LineDrawerComponent;
+    if (data.borderColor) {
+        lineDrawer.borderColor = data.borderColor;
+    }
+    if (data.canvasWidth) {
+        lineDrawer.canvasWidth = data.canvasWidth;
+    }
+    if (data.canvasHeight) {
+        lineDrawer.canvasHeight = data.canvasHeight;
+    }
+    return lineDrawer;
 };
 
 export const lineDrawer = (args) => LineDrawerComponentTemplate(args);
@@ -16,6 +28,8 @@ export const lineDrawer = (args) => LineDrawerComponentTemplate(args);
 export default {
     title: 'Line Drawer Component',
     argTypes: {
-        elemId: { control: 'string' }
+        borderColor: { control: 'string' },
+        canvasWidth: { control: 'string' },
+        canvasHeight: { control: 'string' }
     }
 };

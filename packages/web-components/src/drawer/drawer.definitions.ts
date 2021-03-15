@@ -1,8 +1,10 @@
-export const DrawerInitializedValues = {
-    canvasPosition: 'relative',
-    canvasHeight: 375,
-    canvasWidth: 250,
-    zIndex: '1',
-    drawLineRound: 'round',
-    cursorType: 'crosshair'
-};
+export interface Point {
+    x: number;
+    y: number;
+}
+
+// The object type when draw is completed
+export interface IDrawCompleteEvent {
+    end: Point;
+    start: Point;
+}
