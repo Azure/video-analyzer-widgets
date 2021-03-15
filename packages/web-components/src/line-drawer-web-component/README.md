@@ -2,12 +2,14 @@
 
 `line-drawer-component` is an example web component implementation of a [Fast element](https://www.fast.design/).
 The component drawing line over an element container with default values or predefined values.
+The class inherits from Drawer abstract class
 
 Inputs:
-
-
+borderColor
+canvasWidth
+canvasHeight
 
 
 ## Code examples:
 
--   [Example 1](../examples/example-line.html)
+-   [Example 1](../examples/example.html)
