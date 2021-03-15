@@ -76,7 +76,7 @@ export class TimeRuler extends ICanvasElement {
                     this.canvasPointsDataList.push({
                         x: pos * this.ratio,
                         y: (this.rulThickness - 2) * this.ratio,
-                        color: this.rulerOptions?.fontColor,
+                        color: this.rulerOptions?.timeColor,
                         text: toTimeText(3600 * (i / this.TENS_MINUTES_IN_HOUR))
                     });
                 }
@@ -105,11 +105,10 @@ export class TimeRuler extends ICanvasElement {
 
     public drawPoints() {
         for (const point of this.canvasPointsDataList) {
+            this.context.fillStyle = point.color;
             if (point.text) {
-                this.context.fillStyle = this.rulerOptions?.fontColor;
                 this.context?.fillText(point.text, point.x, point.y);
             } else {
-                this.context.fillStyle = point.color;
                 this.context?.fillRect(point.x, point.y, point.w, point.h);
             }
         }

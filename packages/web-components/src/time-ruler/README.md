@@ -8,8 +8,9 @@ Inputs:
 -   date - the start date for the ruler (left bar string). (type Date)
 
 -   To customize colors you can change 2 css variables:
-    -   --ruler-small-scale-color: the small scale color;
-    -   --ruler-text-color: the date text and large scale color;
+    -   --ruler-small-scale-color: the small scale color.
+    -   --ruler-text-color: the date text and large scale color.
+    -   --ruler-time-color: the times text color.
 
 ## Please see examples:
 

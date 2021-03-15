@@ -66,7 +66,8 @@ export const defaultColorsStyle: ElementStyles = css`
         --segments-tooltip-text: #f7f7f7;
 
         /* Time Ruler */
-        --ruler-small-scale: #8a8886;
-        --ruler-text: #444444;
+        --ruler-small-scale-color: #8a8886;
+        --ruler-text-color: #444444;
+        --ruler-time-color: #c8c6c4;
     }
 `;

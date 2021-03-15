@@ -65,9 +65,10 @@ export class TimeRulerComponent extends FASTElement {
         const designSystem =
             closestElement('ava-design-system-provider', this) || window.document.querySelector('ava-design-system-provider');
         const smallScaleColor = designSystem
-            ? getComputedStyle(designSystem)?.getPropertyValue('--ruler-small-scale')
+            ? getComputedStyle(designSystem)?.getPropertyValue('--ruler-small-scale-color')
             : this.DEFAULT_SCALE_COLOR;
-        const textColor = designSystem ? getComputedStyle(designSystem)?.getPropertyValue('--ruler-text') : this.DEFAULT_TEXT_COLOR;
+        const textColor = designSystem ? getComputedStyle(designSystem)?.getPropertyValue('--ruler-text-color') : this.DEFAULT_TEXT_COLOR;
+        const timeColor = designSystem ? getComputedStyle(designSystem)?.getPropertyValue('--ruler-time-color') : this.DEFAULT_TEXT_COLOR;
         const fontFamily = designSystem ? getComputedStyle(designSystem)?.getPropertyValue('--font-family') : SegoeUIFontFamily;
 
         return {
@@ -77,6 +78,7 @@ export class TimeRulerComponent extends FASTElement {
             fontSize: '12px',
             lineWidth: 1,
             fontColor: textColor,
+            timeColor: timeColor,
             smallScaleColor: smallScaleColor,
             dateText:
                 this.startDate?.toLocaleString('default', { month: 'long', day: 'numeric' }) ||

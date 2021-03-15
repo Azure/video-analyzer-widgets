@@ -23,6 +23,7 @@ describe('TimeRulerClass', () => {
         lineWidth: 1,
         fontColor: 'black',
         smallScaleColor: 'gray',
+        timeColor: 'gray',
         dateText: new Date().toLocaleString('default', { month: 'long', day: 'numeric' })
     };
 
