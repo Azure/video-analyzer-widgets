@@ -1,4 +1,4 @@
-# Example Web Component
+# Time Ruler Component
 
 `media-time-ruler` is an component implementation of a [Fast element](https://www.fast.design/).
 

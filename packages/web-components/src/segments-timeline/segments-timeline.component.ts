@@ -62,6 +62,12 @@ export class SegmentsTimelineComponent extends FASTElement {
         }
     }
 
+    public zoomChanged() {
+        if (this.config) {
+            this.initSegmentsLine();
+        }
+    }
+
     public connectedCallback() {
         super.connectedCallback();
         this.onResizeEventStream()?.subscribe(() => {
@@ -143,7 +149,7 @@ export class SegmentsTimelineComponent extends FASTElement {
         return source.pipe(distinctUntilChanged());
     }
 
-    public onResizeEventStream(minimum = 375, debounce = 600) {
+    public onResizeEventStream(minimum = 375, debounce = 100) {
         if (!window) {
             return null;
         }
@@ -160,13 +166,9 @@ export class SegmentsTimelineComponent extends FASTElement {
 
     private initSVGProgress() {
         const container = this.$fastController.element.shadowRoot?.querySelector('svg');
-        let containerWidth = container?.getBoundingClientRect().width;
+        const containerWidth = this.$fastController.element.offsetWidth * (this.config.displayOptions.zoom || 1);
+        container.style.width = `${containerWidth}px`;
 
-        // If container width is zero (show = false) - take width from parent
-        if (!containerWidth) {
-            // Timeline is not shown
-            containerWidth = this.getFirstParentWidth(<HTMLElement>this.$fastController.element.shadowRoot?.getRootNode());
-        }
         const chartOptions: IChartOptions = {
             width: containerWidth,
             height: this.config?.displayOptions?.height || 30,

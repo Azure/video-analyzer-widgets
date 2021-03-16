@@ -23,11 +23,26 @@ export class TimeRulerComponent extends FASTElement {
      */
     @attr public startDate: Date;
 
+    /**
+     * zoom
+     *
+     * @public
+     * @remarks
+     * HTML attribute: zoom
+     */
+    @attr public zoom: number = 1;
+
     private readonly DEFAULT_TEXT_COLOR = 'black';
     private readonly DEFAULT_SCALE_COLOR = 'gray';
     private ruler: TimeRuler;
 
     public startDateChanged() {
+        setTimeout(() => {
+            this.redrawRuler();
+        });
+    }
+
+    public zoomChanged() {
         setTimeout(() => {
             this.redrawRuler();
         });
@@ -40,10 +55,9 @@ export class TimeRulerComponent extends FASTElement {
 
     public initRuler() {
         const rulerOptions = this.getRulerOptions();
-        const canvas = document.createElement('canvas');
-        this.ruler = new TimeRuler(canvas, rulerOptions);
+        this.ruler = new TimeRuler(rulerOptions);
         this.ruler.draw();
-        this.$fastController.element.shadowRoot?.appendChild(canvas);
+        this.$fastController.element.shadowRoot?.appendChild(this.ruler.canvas);
 
         window.addEventListener('resize', () => {
             this.redrawRuler();
@@ -56,7 +70,7 @@ export class TimeRulerComponent extends FASTElement {
 
     private redrawRuler() {
         const rulerOptions = this.getRulerOptions();
-        this.ruler.setOptions(rulerOptions);
+        this.ruler.rulerOptions = rulerOptions;
         this.ruler.draw();
     }
 
@@ -73,10 +87,11 @@ export class TimeRulerComponent extends FASTElement {
 
         return {
             height: 22,
-            width: this.$fastController.element?.getBoundingClientRect()?.width,
+            width: this.$fastController.element?.offsetWidth,
             fontFamily: fontFamily,
             fontSize: '12px',
             lineWidth: 1,
+            zoom: this.zoom,
             fontColor: textColor,
             timeColor: timeColor,
             smallScaleColor: smallScaleColor,

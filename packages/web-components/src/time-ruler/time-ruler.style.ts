@@ -6,7 +6,6 @@ export const styles = css`
         font-display: swap;
         display: inline-flex;
         width: 100%;
-        justify-content: center;
     }
 
     .ruler {

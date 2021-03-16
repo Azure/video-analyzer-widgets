@@ -1,13 +1,12 @@
+// Find the closest element (throw the selector) to the base element.
+/* eslint-disable  @typescript-eslint/no-explicit-any */
 export function closestElement(selector: string, base: Element) {
-    /* eslint-disable  @typescript-eslint/no-explicit-any */
     function closestFrom(el: Element | Window | Document): any {
         if (!el || el === document || el === window) {
             return null;
         }
 
-        /* eslint-disable  @typescript-eslint/no-explicit-any */
         if ((el as any).assignedSlot) {
-            /* eslint-disable  @typescript-eslint/no-explicit-any */
             el = (el as any).assignedSlot;
         }
 
