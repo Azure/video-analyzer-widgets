@@ -37,11 +37,11 @@ export class LineDrawerComponent extends Drawer {
     */
     @attr public canvasHeight: string = '';
 
-    constructor() {
+    public constructor() {
         super();
     }
 
-    connectedCallback() {
+    public connectedCallback() {
         super.connectedCallback();
         super.initDraw(this.canvasWidth, this.canvasHeight, this.borderColor);
     }

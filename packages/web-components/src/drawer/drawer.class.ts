@@ -6,6 +6,7 @@ import { IPoint, IDrawPoint } from './drawer.definitions';
  * The class handles:
  * 1. Creating canvas element and heat-map area by getting the boundaries of the areas as input.
  * 2. After drawing the line, the component emit the coordinates [x,y]
+ * @public
  */
 export abstract class Drawer extends FASTElement {
     // Canvas prop
@@ -33,7 +34,7 @@ export abstract class Drawer extends FASTElement {
     private readonly CURSOR_TYPE = 'crosshair';
     private readonly LINE_WIDTH = 2;
 
-    constructor() {
+    public constructor() {
         super();
         // Init class properties
         this.borderColor = Colors.red;
@@ -48,10 +49,10 @@ export abstract class Drawer extends FASTElement {
 
     public initDraw(cWidth: string, cHeight: string, bColor: string) {
         this.borderColor = bColor || Colors.red;
-        
+
         // Init canvas properties
-        this.canvas.width = parseInt(cWidth) || this.CANVAS_WIDTH;
-        this.canvas.height = parseInt(cHeight) || this.CANVAS_HEIGHT;
+        this.canvas.width = parseInt(cWidth, 10) || this.CANVAS_WIDTH;
+        this.canvas.height = parseInt(cHeight, 10) || this.CANVAS_HEIGHT;
 
         this.cCtx = this.canvas.getContext('2d');
 
@@ -64,7 +65,7 @@ export abstract class Drawer extends FASTElement {
 
         this.mouseDown = false;
     }
-    
+
     public onDrawStart(e: MouseEvent) {
         this.lastMouseX = e.clientX - this.canvasX;
         this.lastMouseY = e.clientY - this.canvasY;
@@ -89,8 +90,8 @@ export abstract class Drawer extends FASTElement {
         if (this.cCtx) {
             this.cCtx.strokeStyle = this.borderColor;
             this.cCtx.lineWidth = this.LINE_WIDTH;
-            this.cCtx.lineJoin = <CanvasLineJoin>this.DRAW_LINE;
-            this.cCtx.lineCap = <CanvasLineCap>this.DRAW_LINE;
+            this.cCtx.lineJoin = this.DRAW_LINE;
+            this.cCtx.lineCap = this.DRAW_LINE;
         }
         this.cCtx?.stroke();
     }
