@@ -41,7 +41,7 @@ export class TimeRuler extends CanvasElement {
                 this.drawPoints();
                 this.context.stroke();
                 this.context.restore();
-            }, 100);
+            }, 50);
         }
     }
 
