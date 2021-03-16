@@ -18,6 +18,9 @@ export class TimeRuler extends CanvasElement {
     public constructor(options: IRulerOptions) {
         super(options);
         this.rulerOptions = options;
+        if (!this.rulerOptions.zoom) {
+            this.rulerOptions.zoom = 1;
+        }
     }
 
     public get rulerOptions() {

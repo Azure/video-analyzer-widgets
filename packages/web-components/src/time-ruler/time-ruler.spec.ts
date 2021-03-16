@@ -28,9 +28,8 @@ describe('TimeRulerClass', () => {
     };
 
     it('should render all ruler scales + 3 time hours', async () => {
-        const canvas = document.createElement('canvas');
         rulerOptions.width = 1000;
-        const ruler = new TimeRuler(canvas, rulerOptions);
+        const ruler = new TimeRuler(rulerOptions);
         ruler.draw();
 
         // Should equal 149 - 25 for the large hours scale, 120 for small scale (5 small scale per hour 5*24), 1 for start time, 3 hours time
@@ -38,20 +37,17 @@ describe('TimeRulerClass', () => {
     });
 
     it('should render all ruler scales + 1 time hours', async () => {
-        const canvas = document.createElement('canvas');
         rulerOptions.width = 700;
-        const ruler = new TimeRuler(canvas, rulerOptions);
+        const ruler = new TimeRuler(rulerOptions);
         ruler.draw();
-        ruler.preparePoints();
 
         // Should equal 147 - 25 for the large hours scale, 120 for small scale (5 small scale per hour 5*24), 1 for start time, 1 hours time
         expect(ruler.canvasPointsDataList.length).to.equal(147);
     });
 
     it('should render only large ruler scales', async () => {
-        const canvas = document.createElement('canvas');
         rulerOptions.width = 500;
-        const ruler = new TimeRuler(canvas, rulerOptions);
+        const ruler = new TimeRuler(rulerOptions);
         ruler.draw();
 
         // Should equal 26 - 25 for the large hours scale, 1 for start time

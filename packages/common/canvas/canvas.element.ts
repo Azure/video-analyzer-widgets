@@ -28,8 +28,8 @@ export abstract class CanvasElement {
         style.width = width + 'px';
         style.height = height + 'px';
 
-        this.canvas.width = width * this.ratio;
-        this.canvas.height = height * this.ratio;
+        this._canvas.width = width * this.ratio;
+        this._canvas.height = height * this.ratio;
 
         this.context.font = `${this.getFontSize()}px ${this.options?.fontFamily}`;
         this.context.lineWidth = this.options?.lineWidth || 1;
