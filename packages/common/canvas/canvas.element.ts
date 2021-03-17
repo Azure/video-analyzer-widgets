@@ -45,4 +45,6 @@ export abstract class CanvasElement {
     }
 
     public abstract draw(): void;
+
+    public abstract resize(): void;
 }

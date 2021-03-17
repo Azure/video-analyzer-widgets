@@ -39,13 +39,13 @@ export class TimeRulerComponent extends FASTElement {
 
     public startDateChanged() {
         setTimeout(() => {
-            this.redrawRuler();
+            this.drawRuler();
         });
     }
 
     public zoomChanged() {
         setTimeout(() => {
-            this.redrawRuler();
+            this.resizeRuler();
         });
     }
 
@@ -57,19 +57,24 @@ export class TimeRulerComponent extends FASTElement {
     public initRuler() {
         const rulerOptions = this.getRulerOptions();
         this.ruler = new TimeRuler(rulerOptions);
-        this.ruler.draw();
         this.$fastController.element.shadowRoot?.appendChild(this.ruler.canvas);
 
         window.addEventListener('resize', () => {
-            this.redrawRuler();
+            this.resizeRuler();
         });
 
         closestElement('ava-design-system-provider', this)?.addEventListener('theme-changed', () => {
-            this.redrawRuler();
+            this.drawRuler();
         });
     }
 
-    private redrawRuler() {
+    private resizeRuler() {
+        const rulerOptions = this.getRulerOptions();
+        this.ruler.rulerOptions = rulerOptions;
+        this.ruler.resize();
+    }
+
+    private drawRuler() {
         const rulerOptions = this.getRulerOptions();
         this.ruler.rulerOptions = rulerOptions;
         this.ruler.draw();

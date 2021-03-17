@@ -22,6 +22,8 @@ export class TimeRuler extends CanvasElement {
         if (!this.rulerOptions.zoom) {
             this.rulerOptions.zoom = 1;
         }
+
+        this.resize();
     }
 
     public get rulerOptions() {
@@ -32,9 +34,12 @@ export class TimeRuler extends CanvasElement {
         this._rulerOptions = options;
     }
 
-    public draw(): void {
+    public resize(): void {
         this.setCanvasSize(this.rulerOptions.width * this.rulerOptions.zoom, this.rulerOptions.height);
+        this.draw();
+    }
 
+    public draw(): void {
         if (this.context) {
             this.context.beginPath();
             this.preparePoints();
