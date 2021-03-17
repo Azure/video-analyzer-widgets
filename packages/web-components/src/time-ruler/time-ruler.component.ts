@@ -30,10 +30,11 @@ export class TimeRulerComponent extends FASTElement {
      * @remarks
      * HTML attribute: zoom
      */
-    @attr public zoom: number = 1;
+    @attr public zoom = 1;
 
     private readonly DEFAULT_TEXT_COLOR = 'black';
     private readonly DEFAULT_SCALE_COLOR = 'gray';
+    private readonly DEFAULT_FONT_SIZE = '12px';
     private ruler: TimeRuler;
 
     public startDateChanged() {
@@ -88,7 +89,7 @@ export class TimeRulerComponent extends FASTElement {
             height: 22,
             width: this.$fastController.element?.offsetWidth,
             fontFamily: fontFamily,
-            fontSize: '12px',
+            fontSize: this.DEFAULT_FONT_SIZE,
             lineWidth: 1,
             zoom: this.zoom,
             fontColor: textColor,

@@ -1,5 +1,6 @@
 import { SegmentsTimelineComponent } from '.';
 import { AvaDesignSystemProvider } from '../../../styles';
+import { AvaTheme } from '../../../styles/system-providers/ava-design-system-provider.definitions';
 import { ISegmentsTimelineConfig } from './segments-timeline.definitions';
 
 // Prevent tree-shaking
@@ -53,7 +54,7 @@ const SegmentsTimelineComponentTemplate = (data: ITemplate) => {
     config.displayOptions.renderTooltip = !!data.renderTooltip;
     config.displayOptions.timeSmoothing = data.timeSmoothing;
     const designSystem = document.createElement('ava-design-system-provider') as AvaDesignSystemProvider;
-    designSystem.theme = (data?.darkTheme && 'dark') || '';
+    designSystem.theme = (data?.darkTheme && AvaTheme.Dark) || '';
     const segmentsLine = document.createElement('media-segments-timeline') as SegmentsTimelineComponent;
     segmentsLine.config = config;
     designSystem.appendChild(segmentsLine);
