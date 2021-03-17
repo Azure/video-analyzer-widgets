@@ -90,8 +90,7 @@ export class SegmentsTimelineComponent extends FASTElement {
             return;
         }
 
-        const designSystem =
-            closestElement('ava-design-system-provider', this) || window.document.querySelector('ava-design-system-provider');
+        const designSystem = closestElement('ava-design-system-provider', this);
         const segmentsDefaultColor = designSystem
             ? getComputedStyle(designSystem)?.getPropertyValue('--segments-color')
             : this.DEFAULT_COLOR;

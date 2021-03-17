@@ -76,8 +76,7 @@ export class TimeRulerComponent extends FASTElement {
 
     private getRulerOptions(): IRulerOptions {
         // Ruler styles by design system or default
-        const designSystem =
-            closestElement('ava-design-system-provider', this) || window.document.querySelector('ava-design-system-provider');
+        const designSystem = closestElement('ava-design-system-provider', this);
         const smallScaleColor = designSystem
             ? getComputedStyle(designSystem)?.getPropertyValue('--ruler-small-scale-color')
             : this.DEFAULT_SCALE_COLOR;
