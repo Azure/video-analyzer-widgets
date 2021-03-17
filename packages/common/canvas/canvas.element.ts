@@ -25,6 +25,8 @@ export abstract class CanvasElement {
             return;
         }
 
+        this.context.clearRect(0, 0, this._canvas.width, this._canvas.height);
+
         const style = this.canvas.style;
         this.ratio = window.devicePixelRatio || 1;
 
