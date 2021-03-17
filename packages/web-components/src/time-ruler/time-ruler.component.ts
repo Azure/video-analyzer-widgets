@@ -63,7 +63,7 @@ export class TimeRulerComponent extends FASTElement {
             this.resizeRuler();
         });
 
-        closestElement('ava-design-system-provider', this)?.addEventListener('theme-changed', () => {
+        closestElement('ava-design-system-provider', this.$fastController.element)?.addEventListener('theme-changed', () => {
             this.drawRuler();
         });
     }
@@ -82,7 +82,7 @@ export class TimeRulerComponent extends FASTElement {
 
     private getRulerOptions(): IRulerOptions {
         // Ruler styles by design system or default
-        const designSystem = closestElement('ava-design-system-provider', this);
+        const designSystem = closestElement('ava-design-system-provider', this.$fastController.element);
         const smallScaleColor = designSystem
             ? getComputedStyle(designSystem)?.getPropertyValue('--ruler-small-scale-color')
             : this.DEFAULT_SCALE_COLOR;
