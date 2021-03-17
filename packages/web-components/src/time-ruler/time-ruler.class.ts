@@ -38,6 +38,8 @@ export class TimeRuler extends CanvasElement {
         if (this.context) {
             this.context.beginPath();
             this.preparePoints();
+
+            // using setTimeout since @font-face does not work at the first draw on canvas this solves it
             setTimeout(() => {
                 this.drawPoints();
                 this.context.stroke();
