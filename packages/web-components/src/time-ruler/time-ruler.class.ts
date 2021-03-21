@@ -40,6 +40,7 @@ export class TimeRuler extends CanvasElement {
     }
 
     public draw(): void {
+        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
         if (this.context) {
             this.context.beginPath();
             this.preparePoints();
