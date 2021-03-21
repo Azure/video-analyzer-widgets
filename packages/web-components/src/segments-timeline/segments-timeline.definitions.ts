@@ -13,6 +13,7 @@ export interface IDisplayOptions {
     renderTooltip?: boolean;
     renderProgress?: boolean;
     timeSmoothing?: number;
+    zoom?: number;
 }
 
 export interface ISegmentsTimelineData {
