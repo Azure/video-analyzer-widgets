@@ -1,25 +1,25 @@
-/* import { html, fixture, expect } from '@open-wc/testing';
+import { html, fixture, expect } from '@open-wc/testing';
 
-import { ExampleComponent } from './example-web-component.js';
+import { LineDrawerComponent } from './line-drawer-component';
 
-ExampleComponent;
+LineDrawerComponent;
 
-describe('ExampleComponent', () => {
+describe('LineDrawerComponent', () => {
     it('has a default text "this is example component"', async () => {
-        const el = await fixture<ExampleComponent>(html`<example-web-component></example-web-component>`);
+        const el = await fixture<LineDrawerComponent>(html`<line-drawer-component></line-drawer-component>`);
 
-        expect(el.text).to.equal('this is example component');
+        expect(el.borderColor).to.equal('this is example component');
     });
 
     it('can override the text via attribute', async () => {
-        const el = await fixture<ExampleComponent>(html`<example-web-component text="Hello"></example-web-component>`);
+        const el = await fixture<LineDrawerComponent>(html`<line-drawer-component text="Hello"></line-drawer-component>`);
 
-        expect(el.text).to.equal('Hello');
+        expect(el).to.equal('Hello');
     });
 
     it('passes the a11y audit', async () => {
-        const el = await fixture<ExampleComponent>(html`<example-web-component></example-web-component>`);
+        const el = await fixture<LineDrawerComponent>(html`<line-drawer-component></line-drawer-component>`);
 
         await expect(el).shadowDom.to.be.accessible();
     });
-}); */
+});
