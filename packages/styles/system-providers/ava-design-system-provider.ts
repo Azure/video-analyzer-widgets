@@ -32,5 +32,7 @@ export class AvaDesignSystemProvider extends FASTDesignSystemProvider {
             this.$fastController.removeStyles(defaultColorsStyle);
             this.$fastController.addStyles(darkColorsStyle);
         }
+
+        this.$emit('theme-changed');
     }
 }
