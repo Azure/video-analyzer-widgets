@@ -43,6 +43,6 @@ export class LineDrawerComponent extends Drawer {
 
     public connectedCallback() {
         super.connectedCallback();
-        super.initDraw(this.canvasWidth, this.canvasHeight, this.borderColor);
+        super.init(this.canvasWidth, this.canvasHeight, this.borderColor);
     }
 }

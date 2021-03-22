@@ -3,7 +3,7 @@ import { Colors } from './colors.definitions';
 import { IPoint, IDrawPoint } from './drawer.definitions';
 
 /**
- * The class handles:
+ * Drawer class
  * 1. Creating canvas element and heat-map area by getting the boundaries of the areas as input.
  * 2. After drawing the line, the component emit the coordinates [x,y]
  * @public
@@ -27,8 +27,8 @@ export abstract class Drawer extends FASTElement {
 
     // Const readyOnly
     private readonly CANVAS_POSITION = 'relative';
-    private readonly CANVAS_HEIGHT = 375;
-    private readonly CANVAS_WIDTH = 250;
+    private readonly CANVAS_DEFAULT_HEIGHT = 375;
+    private readonly CANVAS_DEFAULT_WIDTH = 250;
     private readonly Z_INDEX = '1';
     private readonly DRAW_LINE = 'round';
     private readonly CURSOR_TYPE = 'crosshair';
@@ -47,12 +47,12 @@ export abstract class Drawer extends FASTElement {
         this.cCtx = this.canvas.getContext('2d');
     }
 
-    public initDraw(cWidth: string, cHeight: string, bColor: string) {
+    public init(cWidth: string, cHeight: string, bColor: string) {
         this.borderColor = bColor || Colors.red;
 
         // Init canvas properties
-        this.canvas.width = parseInt(cWidth, 10) || this.CANVAS_WIDTH;
-        this.canvas.height = parseInt(cHeight, 10) || this.CANVAS_HEIGHT;
+        this.canvas.width = parseInt(cWidth, 10) || this.CANVAS_DEFAULT_WIDTH;
+        this.canvas.height = parseInt(cHeight, 10) || this.CANVAS_DEFAULT_HEIGHT;
 
         this.cCtx = this.canvas.getContext('2d');
 
