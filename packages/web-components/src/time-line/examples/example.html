@@ -1,0 +1,55 @@
+<html>
+
+<body>
+    <script src="../../../../../dist/ava-widgets-sdk.js"></script>
+    <h1>Time Line Component</h1>
+    <div>
+        <ava-design-system-provider theme="dark">
+            <h1>Time Line Component Example - Dark</h1>
+            <media-time-line id='media-time-line-1'></media-time-line>
+        </ava-design-system-provider>
+    </div>
+
+    <div>
+        <ava-design-system-provider theme="">
+            <h1>Time Line Component Example - Default (Zoom enabled)</h1>
+            <media-time-line id='media-time-line-2'></media-time-line>
+        </ava-design-system-provider>
+    </div>
+</body>
+
+<script>(function () {
+        const segments = [
+            { startSeconds: 0, endSeconds: 3600 },
+            { startSeconds: 4500, endSeconds: 5000, color: 'red' },
+            { startSeconds: 20000, endSeconds: 30000 },
+            { startSeconds: 55000, endSeconds: 57000, color: 'blue' },
+            { startSeconds: 60600, endSeconds: 64200 },
+            { startSeconds: 80000, endSeconds: 81000, color: 'blue' }
+        ];
+
+        const date = new Date();
+        date.setMonth(1);
+        date.setDate(1);
+
+        const config = {
+            segments: segments,
+            date: date
+        }
+
+        const config2 = {
+            segments: segments,
+            date: date,
+            enableZoom: true
+        }
+
+        const mediaTimeLine1 = document.getElementById("media-time-line-1");
+        const mediaTimeLine2 = document.getElementById("media-time-line-2");
+
+
+        mediaTimeLine1.config = config;
+        mediaTimeLine2.config = config2;
+    })()
+</script>
+
+</html>

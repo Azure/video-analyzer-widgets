@@ -39,6 +39,10 @@ export const svgStyles = css`
         fill: #1abc9c;
     }
 
+    rect.active {
+        fill: var(--segments-active-color) !important;
+    }
+
     .buffer-progress {
         transition: transform 0.1s;
         -moz-transition: transform 0.1s;

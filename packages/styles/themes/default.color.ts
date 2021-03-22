@@ -64,6 +64,7 @@ export const defaultColorsStyle: ElementStyles = css`
         --segments-color: rgba(0, 0, 0, 0.8);
         --segments-tooltip: rgba(0, 0, 0, 0.08);
         --segments-tooltip-text: #f7f7f7;
+        --segments-active-color: white;
 
         /* Time Ruler */
         --ruler-small-scale-color: #8a8886;
