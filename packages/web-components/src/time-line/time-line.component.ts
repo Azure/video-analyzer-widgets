@@ -64,6 +64,7 @@ export class TimeLineComponent extends FASTElement {
         // Disabling zoom on FireFox since we can't modify the scrollbar on FireFox
         const isFirefoxBrowser = navigator.userAgent.includes('Firefox');
         if (this.config.enableZoom && !this.fastSlider && !isFirefoxBrowser) {
+            /* eslint-disable-next-line  @typescript-eslint/no-explicit-any */
             this.fastSlider = document.createElement('fast-slider') as any;
             this.$fastController.element.shadowRoot.appendChild(this.fastSlider);
         } else {
