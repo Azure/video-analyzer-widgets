@@ -36,6 +36,7 @@ export class TimeRuler extends CanvasElement {
 
     public resize(): void {
         this.setCanvasSize(this.rulerOptions.width * this.rulerOptions.zoom, this.rulerOptions.height);
+        this.setContextStyle();
         this.draw();
     }
 

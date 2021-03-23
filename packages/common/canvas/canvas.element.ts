@@ -1,8 +1,5 @@
 import { ICanvasOptions } from './canvas.definitions';
 
-// CanvasElement is abstract class for components that use canvas
-// basic class that create canvas with options configuration
-// use setCanvasSize to draw make the canvas with the right width and height depending on the ratio
 export abstract class CanvasElement {
     public context: CanvasRenderingContext2D;
     public ratio = 1;
@@ -33,7 +30,9 @@ export abstract class CanvasElement {
 
         this._canvas.width = width * this.ratio;
         this._canvas.height = height * this.ratio;
+    }
 
+    public setContextStyle() {
         this.context.font = `${this.getFontSize()}px ${this.options?.fontFamily}`;
         this.context.lineWidth = this.options?.lineWidth || 1;
     }
