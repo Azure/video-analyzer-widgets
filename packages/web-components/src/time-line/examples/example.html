@@ -6,14 +6,14 @@
     <div>
         <ava-design-system-provider theme="dark">
             <h1>Time Line Component Example - Dark</h1>
-            <media-time-line id='media-time-line-1'></media-time-line>
+            <media-time-line id='media-time-line-without-zoom'></media-time-line>
         </ava-design-system-provider>
     </div>
 
     <div>
         <ava-design-system-provider theme="">
             <h1>Time Line Component Example - Default (Zoom enabled)</h1>
-            <media-time-line id='media-time-line-2'></media-time-line>
+            <media-time-line id='media-time-line-with-zoom'></media-time-line>
         </ava-design-system-provider>
     </div>
 </body>
@@ -32,23 +32,22 @@
         date.setMonth(1);
         date.setDate(1);
 
-        const config = {
+        const configWithoutZoom = {
             segments: segments,
             date: date
         }
 
-        const config2 = {
+        const configWithZoom = {
             segments: segments,
             date: date,
             enableZoom: true
         }
 
-        const mediaTimeLine1 = document.getElementById("media-time-line-1");
-        const mediaTimeLine2 = document.getElementById("media-time-line-2");
+        const mediaTimeLineWithoutZoom = document.getElementById("media-time-line-without-zoom");
+        const mediaTimeLineWithZoom = document.getElementById("media-time-line-with-zoom");
 
-
-        mediaTimeLine1.config = config;
-        mediaTimeLine2.config = config2;
+        mediaTimeLineWithoutZoom.config = configWithoutZoom;
+        mediaTimeLineWithZoom.config = configWithZoom;
     })()
 </script>
 

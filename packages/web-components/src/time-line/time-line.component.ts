@@ -87,7 +87,7 @@ export class TimeLineComponent extends FASTElement {
     private initTimeLine() {
         setTimeout(() => {
             this.initSlider();
-        }, 50);
+        });
         this.initSegmentsTimeline();
         this.initTimeRuler();
     }
