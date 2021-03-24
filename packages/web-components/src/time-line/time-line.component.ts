@@ -62,14 +62,16 @@ export class TimeLineComponent extends FASTElement {
         this.timeRuler = <TimeRulerComponent>this.$fastController.element?.shadowRoot?.querySelector('media-time-ruler');
 
         // Disabling zoom on FireFox since we can't modify the scrollbar on FireFox
-        const isFirefoxBrowser = navigator.userAgent.includes('Firefox');
-        if (this.config.enableZoom && !this.fastSlider && !isFirefoxBrowser) {
+        if (navigator.userAgent.includes('Firefox')) {
+            this.config.enableZoom = false;
+        }
+
+        if (this.config.enableZoom && !this.fastSlider) {
             /* eslint-disable-next-line  @typescript-eslint/no-explicit-any */
             this.fastSlider = document.createElement('fast-slider') as any;
             this.$fastController.element.shadowRoot.appendChild(this.fastSlider);
-        } else {
+        } else if (!this.fastSlider) {
             this.$fastController.element.style.overflowX = 'hidden';
-            this.config.enableZoom = false;
         }
 
         window.addEventListener('resize', () => {
@@ -78,18 +80,19 @@ export class TimeLineComponent extends FASTElement {
 
         this.fastSlider?.addEventListener('change', () => {
             this.zoom = +this.fastSlider.value / this.SLIDER_DENSITY;
-            this.initTimeLine();
+            this.initSegmentsTimeline();
+            this.initTimeRuler();
         });
 
         this.initTimeLine();
     }
 
     private initTimeLine() {
-        setTimeout(() => {
-            this.initSlider();
-        });
         this.initSegmentsTimeline();
         this.initTimeRuler();
+        setTimeout(() => {
+            this.initSlider();
+        }, 50);
     }
 
     private initSlider() {
