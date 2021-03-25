@@ -2,18 +2,18 @@
 
 <body>
     <script src="../../../../../dist/ava-widgets-sdk.js"></script>
-    <h1>Time Line Component</h1>
+    <h1>Timeline Component</h1>
     <div>
         <ava-design-system-provider theme="dark">
-            <h1>Time Line Component Example - Dark</h1>
-            <media-time-line id='media-time-line-without-zoom'></media-time-line>
+            <h1>Timeline Component Example - Dark</h1>
+            <media-timeline id='media-timeline-without-zoom'></media-timeline>
         </ava-design-system-provider>
     </div>
 
     <div>
         <ava-design-system-provider theme="">
-            <h1>Time Line Component Example - Default (Zoom enabled)</h1>
-            <media-time-line id='media-time-line-with-zoom'></media-time-line>
+            <h1>Timeline Component Example - Default (Zoom enabled)</h1>
+            <media-timeline id='media-timeline-with-zoom'></media-timeline>
         </ava-design-system-provider>
     </div>
 </body>
@@ -43,8 +43,8 @@
             enableZoom: true
         }
 
-        const mediaTimeLineWithoutZoom = document.getElementById("media-time-line-without-zoom");
-        const mediaTimeLineWithZoom = document.getElementById("media-time-line-with-zoom");
+        const mediaTimeLineWithoutZoom = document.getElementById("media-timeline-without-zoom");
+        const mediaTimeLineWithZoom = document.getElementById("media-timeline-with-zoom");
 
         mediaTimeLineWithoutZoom.config = configWithoutZoom;
         mediaTimeLineWithZoom.config = configWithZoom;

@@ -1,8 +1,8 @@
 import { html, fixture, expect } from '@open-wc/testing';
-import { TimeLineComponent } from './time-line.component';
-import { ITimeLineConfig } from './time-line.definitions';
+import { TimelineComponent } from './time-line.component';
+import { ITimeLineConfig } from './timeline.definitions';
 
-TimeLineComponent;
+TimelineComponent;
 
 const segments = [
     { startSeconds: 0, endSeconds: 3600 },
@@ -18,15 +18,15 @@ const config: ITimeLineConfig = {
     date: new Date()
 };
 
-describe('TimeLineComponent', () => {
+describe('TimelineComponent', () => {
     it('passes the a11y audit', async () => {
-        const el = await fixture<TimeLineComponent>(html`<media-time-line></media-time-line>`);
+        const el = await fixture<TimelineComponent>(html`<media-timeline></media-timeline>`);
 
         await expect(el).shadowDom.to.be.accessible();
     });
 
     it('without zoom - should have 2 children', async () => {
-        const el = await fixture<TimeLineComponent>(html`<media-time-line></media-time-line>`);
+        const el = await fixture<TimelineComponent>(html`<media-timeline></media-timeline>`);
         config.enableZoom = false;
         el.config = config;
         el.initData();
@@ -38,7 +38,7 @@ describe('TimeLineComponent', () => {
     });
 
     it('with zoom - should have 3 children', async () => {
-        const el = await fixture<TimeLineComponent>(html`<media-time-line></media-time-line>`);
+        const el = await fixture<TimelineComponent>(html`<media-timeline></media-timeline>`);
         config.enableZoom = true;
         el.config = config;
         el.initData();

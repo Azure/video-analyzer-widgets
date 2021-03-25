@@ -1,6 +1,6 @@
-import { TimeLineComponent } from '.';
+import { TimelineComponent } from '.';
 import { AvaDesignSystemProvider } from '../../../styles';
-import { ITimeLineConfig } from './time-line.definitions';
+import { ITimeLineConfig } from './timeline.definitions';
 interface ITemplate {
     darkTheme?: boolean;
     date?: Date;
@@ -8,7 +8,7 @@ interface ITemplate {
 }
 
 // Prevent tree-shaking
-TimeLineComponent;
+TimelineComponent;
 AvaDesignSystemProvider;
 
 const segments = [
@@ -25,9 +25,9 @@ const config: ITimeLineConfig = {
     date: new Date()
 };
 
-const TimeLineComponentTemplate = (data: ITemplate) => {
+const TimelineComponentTemplate = (data: ITemplate) => {
     const designSystem = document.createElement('ava-design-system-provider') as AvaDesignSystemProvider;
-    const timeLine = document.createElement('media-time-line') as TimeLineComponent;
+    const timeLine = document.createElement('media-timeline') as TimelineComponent;
 
     if (data.darkTheme) {
         designSystem.theme = 'dark';
@@ -47,10 +47,10 @@ const TimeLineComponentTemplate = (data: ITemplate) => {
     return designSystem;
 };
 
-export const TimeLine = (args: ITemplate) => TimeLineComponentTemplate(args);
+export const Timeline = (args: ITemplate) => TimelineComponentTemplate(args);
 
 export default {
-    title: 'Time Line Component',
+    title: 'Timeline Component',
     argTypes: {
         darkTheme: { control: 'boolean', defaultValue: true },
         enableZoom: { control: 'boolean', defaultValue: false },

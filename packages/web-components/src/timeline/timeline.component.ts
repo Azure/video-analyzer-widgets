@@ -4,20 +4,20 @@ import { SegmentsTimelineComponent } from '..';
 import { guid } from '../../../common/utils/guid';
 import { ISegmentsTimelineConfig } from '../segments-timeline/segments-timeline.definitions';
 import { TimeRulerComponent } from '../time-ruler';
-import { ITimeLineConfig } from './time-line.definitions';
-import { styles } from './time-line.style';
-import { template } from './time-line.template';
+import { ITimeLineConfig } from './timeline.definitions';
+import { styles } from './timeline.style';
+import { template } from './timeline.template';
 
 /**
  * Time Line component.
  * @public
  */
 @customElement({
-    name: 'media-time-line',
+    name: 'media-timeline',
     template,
     styles
 })
-export class TimeLineComponent extends FASTElement {
+export class TimelineComponent extends FASTElement {
     @attr public id: string = guid();
 
     /**
