@@ -1,5 +1,5 @@
 import { html, fixture, expect } from '@open-wc/testing';
-import { TimelineComponent } from './time-line.component';
+import { TimelineComponent } from './timeline.component';
 import { ITimeLineConfig } from './timeline.definitions';
 
 TimelineComponent;
