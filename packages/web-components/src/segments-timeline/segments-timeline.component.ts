@@ -68,6 +68,10 @@ export class SegmentsTimelineComponent extends FASTElement {
         }
     }
 
+    public currentTimeChanged() {
+        this.timelineProgress?.setProgress(+this.currentTime);
+    }
+
     public connectedCallback() {
         super.connectedCallback();
         this.onResizeEventStream()?.subscribe(() => {
@@ -205,7 +209,6 @@ export class SegmentsTimelineComponent extends FASTElement {
                 }
                 setTimeout(() => {
                     this.currentTime = time;
-                    this.timelineProgress?.setProgress(time);
                 });
             }
         });

@@ -22,6 +22,8 @@ export class SVGProgressChart {
         renderProgress: false
     };
 
+    private activeRect: Rect;
+
     public constructor(element?: SVGElement, options?: IChartOptions) {
         if (!element) {
             throw new Error('Root SVG Element is missing');
@@ -85,6 +87,8 @@ export class SVGProgressChart {
 
     public setProgress(time: number) {
         const timeType = typeof time;
+
+        this.updateActiveRect(time);
         if (timeType === 'undefined' || !this.options.renderProgress) {
             return;
         }
@@ -298,12 +302,38 @@ export class SVGProgressChart {
     }
 
     private handleMouseClick(e: MouseEvent) {
+        const percent = (e.offsetX / this.options.width) * 100;
+        this.updateActiveRect(this.options.time * (percent / 100));
+
         if (!this.options.renderProgress) {
             return;
         }
-        const percent = (e.offsetX / this.options.width) * 100;
+
         window.requestAnimationFrame(() => {
             this.components.progressBar.progress.moveTo(percent);
+        });
+    }
+
+    private updateActiveRect(time: number) {
+        if (this.activeRect) {
+            const startTime = (this.activeRect.x / 100) * this.options.time;
+            const endTime = (this.activeRect.width / 100) * this.options.time + startTime;
+            if (startTime <= time && endTime >= time) {
+                return;
+            } else {
+                this.activeRect.removeClass('active');
+                this.activeRect = null;
+            }
+        }
+
+        this.components.events.forEach((rect) => {
+            const startTime = (rect.x / 100) * this.options.time;
+            const endTime = (rect.width / 100) * this.options.time + startTime;
+            if (startTime <= time && endTime >= time) {
+                this.activeRect = rect;
+                this.activeRect.addClass('active');
+                return;
+            }
         });
     }
 

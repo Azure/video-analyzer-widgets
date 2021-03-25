@@ -35,8 +35,8 @@ export const svgStyles = css`
         cursor: pointer;
     }
 
-    rect.selected {
-        fill: #1abc9c;
+    rect.active {
+        fill: var(--segments-active-color) !important;
     }
 
     .buffer-progress {
