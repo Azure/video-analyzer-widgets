@@ -56,9 +56,15 @@ export class PolygonDrawerComponent extends FASTElement {
             this.context.closePath();
             this.context.fill();
             this.isClosed = true;
+            // Calculate angles
+            this.calculateAngles();
         }
         this.context.stroke();
     };
+
+    private calculateAngles() {
+        const angle = Math.atan2(my, mx) * 180 / Math.PI;
+    }
 
     private drawPoints() {
         this.context.strokeStyle = "#df4b26";
