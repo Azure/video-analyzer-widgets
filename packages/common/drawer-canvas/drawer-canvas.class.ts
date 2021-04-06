@@ -1,5 +1,4 @@
-import { Colors } from './colors.definitions';
-import { IPoint, IDrawPoint } from './drawer-canvas.definitions';
+import { IPoint } from './drawer-canvas.definitions';
 import { CanvasElement } from '../canvas/canvas.element';
 import { ICanvasOptions } from '../canvas/canvas.definitions';
 
@@ -23,13 +22,11 @@ export class DrawerCanvas extends CanvasElement {
     private _lastMouseY: number = 0
     // Const readyOnly
     private readonly DRAW_LINE = 'round';
+    private readonly DEFAULT_LINE_COLOR = '#DB4646';
 
     public constructor(canvasOptions: ICanvasOptions) {
         // Create canvas object
         super(canvasOptions);
-
-        // Init class properties
-        this._borderColor = Colors.red;
     }
 
     // To-do: Responsive and scroll event to handle
@@ -67,8 +64,8 @@ export class DrawerCanvas extends CanvasElement {
         this.context.lineCap = this.DRAW_LINE;
     }
 
-    public setCanvas(cWidth: number, cHeight: number, bColor: string, linesLimit: number) {
-        this._borderColor = bColor || Colors.red;
+    public setCanvas(cWidth: number, cHeight: number, bColor?: string, linesLimit: number = 2) {
+        this._borderColor = bColor || this.DEFAULT_LINE_COLOR;
         this._linesLimit = linesLimit;
 
         // Init canvas properties
