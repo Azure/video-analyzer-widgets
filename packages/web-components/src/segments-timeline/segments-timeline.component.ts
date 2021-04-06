@@ -7,6 +7,7 @@ import { SVGProgressChart } from './svg-progress-chart/svg-progress.class';
 import { ISegmentsTimelineConfig, IUISegment } from './segments-timeline.definitions';
 import { styles } from './segments-timeline.style';
 import { template } from './segments-timeline.template';
+import { closestElement } from '../../../common/utils/elements';
 
 /**
  * Segments Timeline Component
@@ -61,6 +62,16 @@ export class SegmentsTimelineComponent extends FASTElement {
         }
     }
 
+    public zoomChanged() {
+        if (this.config) {
+            this.initSegmentsLine();
+        }
+    }
+
+    public currentTimeChanged() {
+        this.timelineProgress?.setProgress(+this.currentTime);
+    }
+
     public connectedCallback() {
         super.connectedCallback();
         this.onResizeEventStream()?.subscribe(() => {
@@ -83,7 +94,7 @@ export class SegmentsTimelineComponent extends FASTElement {
             return;
         }
 
-        const designSystem = this.$fastController.element.closest('ava-design-system-provider');
+        const designSystem = closestElement('ava-design-system-provider', this.$fastController.element);
         const segmentsDefaultColor = designSystem
             ? getComputedStyle(designSystem)?.getPropertyValue('--segments-color')
             : this.DEFAULT_COLOR;
@@ -141,7 +152,7 @@ export class SegmentsTimelineComponent extends FASTElement {
         return source.pipe(distinctUntilChanged());
     }
 
-    public onResizeEventStream(minimum = 375, debounce = 600) {
+    public onResizeEventStream(minimum = 375, debounce = 100) {
         if (!window) {
             return null;
         }
@@ -158,13 +169,9 @@ export class SegmentsTimelineComponent extends FASTElement {
 
     private initSVGProgress() {
         const container = this.$fastController.element.shadowRoot?.querySelector('svg');
-        let containerWidth = container?.getBoundingClientRect().width;
+        const containerWidth = this.$fastController.element.offsetWidth * (this.config.displayOptions.zoom || 1);
+        container.style.width = `${containerWidth}px`;
 
-        // If container width is zero (show = false) - take width from parent
-        if (!containerWidth) {
-            // Timeline is not shown
-            containerWidth = this.getFirstParentWidth(<HTMLElement>this.$fastController.element.shadowRoot?.getRootNode());
-        }
         const chartOptions: IChartOptions = {
             width: containerWidth,
             height: this.config?.displayOptions?.height || 30,
@@ -202,7 +209,6 @@ export class SegmentsTimelineComponent extends FASTElement {
                 }
                 setTimeout(() => {
                     this.currentTime = time;
-                    this.timelineProgress?.setProgress(time);
                 });
             }
         });

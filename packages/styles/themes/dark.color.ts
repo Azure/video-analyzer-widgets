@@ -64,5 +64,11 @@ export const darkColorsStyle: ElementStyles = css`
         --segments-color: #605e5c;
         --segments-tooltip: #323130;
         --segments-tooltip-text: #f7f7f7;
+        --segments-active-color: white;
+
+        /* Time Ruler */
+        --ruler-small-scale-color: #8a8886;
+        --ruler-text-color: #f3f2f1;
+        --ruler-time-color: #c8c6c4;
     }
 `;
