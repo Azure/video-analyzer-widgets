@@ -1,0 +1,11 @@
+@import './variables';
+
+@font-face {
+    font-family: 'avarvx-arrow';
+    src: url('#{$ava-font-path}avarvx-arrow.eot');
+    src: url('#{$ava-font-path}avarvx-arrow.eot') format('embedded-opentype'), url('#{$ava-font-path}avarvx-arrow.ttf') format('truetype'),
+        url('#{$ava-font-path}avarvx-arrow.woff') format('woff'), url('#{$ava-font-path}avarvx-arrow.svg') format('svg');
+    font-weight: normal;
+    font-style: normal;
+    font-display: block;
+}
