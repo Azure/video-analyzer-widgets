@@ -1,16 +1,20 @@
-<html>
+<html lang="en">
 
 <head>
-    <style></style>
+    <script type="module"
+        src="https://unpkg.com/@microsoft/fast-components"></script>
+    <script type="module"
+        src="https://unpkg.com/@fluentui/web-components"></script>
 </head>
 
 <body>
     <script src="../../../../../dist/ava-widgets-sdk.js"></script>
-    <h1>Sample Widgets</h1>
-    <div>
-        Has Text
-        <rvx-player></rvx-player>
-    </div>
+    <h1>RVX Player</h1>
+    <ava-design-system-provider theme="dark"
+        use-defaults>
+        <rvx-player>
+        </rvx-player>
+    </ava-design-system-provider>
 </body>
 
 </html>

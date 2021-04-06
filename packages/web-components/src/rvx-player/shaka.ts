@@ -1,3 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/member-ordering */
+/* eslint-disable @typescript-eslint/explicit-member-accessibility */
+/* eslint-disable no-unused-vars */
+/* eslint-disable @typescript-eslint/naming-convention */
 export declare namespace shaka {
     namespace media {
         class InitSegmentReference {
@@ -951,13 +956,45 @@ export declare namespace shaka {
             eventElement?: any;
             messageData?: Uint8Array;
         }
+
+        interface Request {
+            headers: any;
+        }
+
+        interface EmsgInfo {
+            schemeIdUri: string;
+            value: string;
+            startTime: number;
+            endTime: number;
+            timescale: number;
+            presentationTimeDelta: number;
+            eventDuration: number;
+            id: number;
+            messageData: Uint8Array;
+        }
     }
 
     /** Player events and map */
     namespace PlayerEvents {
+        interface FakeEvent extends util.ShakaEvent {
+            bubbles: boolean;
+            cancelable: boolean;
+            currentTarget: util.FakeEventTarget;
+            defaultPrevented: boolean;
+            isTrusted: boolean;
+            stopped: boolean;
+            target: util.FakeEventTarget;
+            timeStamp: number;
+        }
+
         interface ErrorEvent extends util.ShakaEvent {
             type: 'error';
-            details: util.Error;
+            detail: util.Error;
+        }
+
+        interface EmsgEvent extends util.ShakaEvent {
+            type: 'emsg';
+            detail: extern.EmsgInfo;
         }
 
         interface DrmSessionUpdateEvent extends util.ShakaEvent {
@@ -1033,6 +1070,7 @@ export declare namespace shaka {
             expirationupdated: ExpirationUpdatedEvent;
             largegap: LargeGapEvent;
             streaming: StreamingEvent;
+            emsg: EmsgEvent;
         }
     }
 
@@ -1389,7 +1427,7 @@ export declare namespace shaka {
     }
 }
 
-//tslint:disable-next-line:no-single-declare-module
+// tslint:disable-next-line:no-single-declare-module
 // declare module 'shaka-player' {
 //     export = shaka;
 // }
