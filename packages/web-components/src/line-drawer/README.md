@@ -13,3 +13,4 @@ canvasHeight
 ## Code examples:
 
 -   [Example 1](../examples/example.html)
+-   [Example 2](../examples/example.video.html)
