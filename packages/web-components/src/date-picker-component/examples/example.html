@@ -1,0 +1,37 @@
+<html lang="en">
+
+<head>
+    <title>Date picker component example</title>
+    <script src="../../../../../dist/ava-widgets-sdk.js"></script>
+
+</head>
+
+<body>
+    <ava-design-system-provider>
+        <h1>Date picker selecting current day, other dates disable</h1>
+        <div>
+            <date-picker-component></date-picker-component>
+        </div>
+        <h1>Date picker selecting specific day</h1>
+        <div>
+            <date-picker-component id="date-picker-component-specific-day"></date-picker-component>
+        </div>
+        <h1>Date picker selecting allowing April ,March and October, and 2021,2020 years</h1>
+        <div>
+            <date-picker-component allowedMonths='3,4,10'
+                allowedYears='2020,2021'></date-picker-component>
+        </div>
+        <h1>Date picker selecting allowing selecting first 3 days in a month</h1>
+        <div>
+            <date-picker-component allowedDays='1,2,3'></date-picker-component>
+        </div>
+    </ava-design-system-provider>
+</body>
+
+<script>(function () {
+        const datePickerSpecificDay = document.getElementById("date-picker-component-specific-day");
+        datePickerSpecificDay.setAttribute('inputDate', new Date('2021.2.2'))
+    })()
+</script>
+
+</html>

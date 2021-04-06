@@ -30,6 +30,26 @@ module.exports = {
                 test: /\.(ts|js)?$/,
                 loader: 'ts-loader',
                 exclude: /node_modules/
+            },
+            {
+                test: /\.(css|scss)$/,
+                loader: 'style-loader'
+            },
+            {
+                test: /\.(css|scss)$/,
+                loader: 'css-loader'
+            },
+            {
+                test: /\.(css|scss)$/,
+                loader: 'sass-loader'
+            },
+            {
+                test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
+                loader: 'url-loader',
+                options: {
+                    name: '[name].[ext]',
+                    outputPath: 'fonts/'
+                }
             }
         ]
     }
