@@ -32,8 +32,13 @@ export abstract class CanvasElement {
         this._canvas.height = height * this.ratio;
     }
 
+    public setCanvasStyle() {
+        this._canvas.style.position = this.options?.position || 'relative';
+        this._canvas.style.cursor = this.options?.cursor || 'default';
+    }
+
     public setContextStyle() {
-        this.context.font = `${this.getFontSize()}px ${this.options?.fontFamily}`;
+        this.context.font = `${this.getFontSize()}px ${this.options?.fontFamily || 'Segoe UI'}`;
         this.context.lineWidth = this.options?.lineWidth || 1;
     }
 

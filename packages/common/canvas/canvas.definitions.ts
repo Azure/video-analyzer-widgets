@@ -10,8 +10,10 @@ export interface ICanvasFillData {
 export interface ICanvasOptions {
     height: number;
     width: number;
-    lineWidth: number;
-    fontFamily: string;
-    fontSize: string;
-    fontColor: string;
+    lineWidth?: number;
+    fontFamily?: string;
+    fontSize?: string;
+    fontColor?: string;
+    cursor?: string;
+    position?: string;
 }
