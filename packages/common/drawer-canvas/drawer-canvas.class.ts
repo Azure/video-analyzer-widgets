@@ -11,7 +11,7 @@ export class DrawerCanvas extends CanvasElement {
     // Canvas prop
     public canvasX: number = 0;
     public canvasY: number = 0;
-    
+
     // Line attributes
     private _borderColor: string;
     private _linesLimit: number;
@@ -19,7 +19,7 @@ export class DrawerCanvas extends CanvasElement {
     // Mouse properties
     private _isDrawCompleted: boolean;
     private _lastMouseX: number = 0;
-    private _lastMouseY: number = 0
+    private _lastMouseY: number = 0;
     // Const readyOnly
     private readonly DRAW_LINE = 'round';
     private readonly DEFAULT_LINE_COLOR = '#DB4646';
@@ -37,7 +37,8 @@ export class DrawerCanvas extends CanvasElement {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.context.beginPath();
         this.context.moveTo(this._points[0].x, this._points[0].y);
-        for (var i = 0; i < this._points.length; i++) {
+        /* eslint-disable  @typescript-eslint/prefer-for-of */
+        for (let i = 0; i < this._points.length; i++) {
             // Start to draw
             this.context.lineTo(this._points[i].x, this._points[i].y);
         }

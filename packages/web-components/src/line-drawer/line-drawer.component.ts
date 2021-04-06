@@ -1,8 +1,6 @@
 import { attr, customElement, FASTElement } from '@microsoft/fast-element';
 import { ICanvasOptions } from '../../../common/canvas/canvas.definitions';
 import { DrawerCanvas } from './../../../common/drawer-canvas/drawer-canvas.class';
-import { Point } from './../../../../dist/packages/web-components/src/drawer/drawer.props.d';
-import { IPoint } from './../../../../dist/packages/web-components/src/drawer/drawer.definitions.d';
 
 /**
  * An line-drawer-component item.
@@ -12,7 +10,6 @@ import { IPoint } from './../../../../dist/packages/web-components/src/drawer/dr
     name: 'line-drawer-component'
 })
 export class LineDrawerComponent extends FASTElement {
-    public dCanvas: DrawerCanvas;
 
     /**
      * Drawing line color.
@@ -41,6 +38,7 @@ export class LineDrawerComponent extends FASTElement {
     */
     @attr public canvasHeight: string = '';
 
+    public dCanvas: DrawerCanvas;
     private readonly CANVAS_DEFAULT_HEIGHT = 375;
     private readonly CANVAS_DEFAULT_WIDTH = 250;
     private readonly CANVAS_POSITION = 'relative';
@@ -65,7 +63,7 @@ export class LineDrawerComponent extends FASTElement {
             cursor: this.CURSOR_TYPE,
             position: this.CANVAS_POSITION,
             lineWidth: this.LINE_WIDTH
-        }
+        };
         this.dCanvas = new DrawerCanvas(this.canvasOptions);
         // Set canvas size
         this.dCanvas.setCanvas(this.canvasOptions.width, this.canvasOptions.height, this.borderColor, 2);
@@ -73,7 +71,7 @@ export class LineDrawerComponent extends FASTElement {
         this.shadowRoot?.appendChild(this.dCanvas.canvas);
         // Init props after appending to DOM
         this.dCanvas.initBoundingCanvas();
-        // Handle mouse events 
+        // Handle mouse events
         this.appendEvents();
     }
 
