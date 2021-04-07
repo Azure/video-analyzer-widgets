@@ -13,14 +13,17 @@ export class DrawerCanvas extends CanvasElement {
     private _canvasOptions: ICanvasOptions;
     private _canvasX: number = 0;
     private _canvasY: number = 0;
+
     // Line attributes
     private _borderColor: string;
     private _pointsLimit: number;
     private _points: IPoint[] = [];
+
     // Mouse properties
     private _isDrawCompleted: boolean;
     private _lastMouseX: number = 0;
     private _lastMouseY: number = 0;
+
     // Const readyOnly
     private readonly DRAW_LINE = 'round';
     private readonly DEFAULT_LINE_COLOR = '#DB4646';
@@ -38,11 +41,11 @@ export class DrawerCanvas extends CanvasElement {
     public draw(): void {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.context.beginPath();
-        this.context.moveTo(this._points[0].x, this._points[0].y);
-        /* eslint-disable  @typescript-eslint/prefer-for-of */
-        for (let i = 0; i < this._points.length; i++) {
+        this.context.moveTo(this._points && this._points[0].x, this._points && this._points[0].y);
+
+        for (const point of this._points) {
             // Start to draw
-            this.context.lineTo(this._points[i].x, this._points[i].y);
+            this.context.lineTo(point.x, point.y);
         }
         this.context.stroke();
     }
@@ -51,8 +54,8 @@ export class DrawerCanvas extends CanvasElement {
         this.context?.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.context?.beginPath();
 
-        const lastPointX = this._points[this._points.length - 1].x;
-        const lastPointY = this._points[this._points.length - 1].y;
+        const lastPointX = this._points && this._points[this._points.length - 1].x;
+        const lastPointY = this._points && this._points[this._points.length - 1].y;
 
         // Start to draw
         this.context?.moveTo(this._lastMouseX, this._lastMouseY);
@@ -91,12 +94,12 @@ export class DrawerCanvas extends CanvasElement {
         const lastMouseX = e.clientX - this._canvasX;
         const lastMouseY = e.clientY - this._canvasY;
 
-        this._points.push({
+        this._points?.push({
             x: lastMouseX,
             y: lastMouseY
         });
 
-        if (this._points.length === this._pointsLimit) {
+        if (this._points?.length === this._pointsLimit) {
             this.onDrawComplete();
         }
 
@@ -104,7 +107,7 @@ export class DrawerCanvas extends CanvasElement {
     }
 
     public onMouseMove(e: MouseEvent) {
-        if (!this._points.length || this._isDrawCompleted) {
+        if (!this._points?.length || this._isDrawCompleted) {
             return;
         }
 
