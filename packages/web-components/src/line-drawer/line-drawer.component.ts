@@ -55,6 +55,10 @@ export class LineDrawerComponent extends FASTElement {
     public connectedCallback() {
         super.connectedCallback();
 
+        this.init();
+    }
+
+    private init() {
         const width = parseInt(this.canvasWidth, 10) || this.CANVAS_DEFAULT_WIDTH;
         const height = parseInt(this.canvasHeight, 10) || this.CANVAS_DEFAULT_HEIGHT;
         this.canvasOptions = {
