@@ -1,6 +1,7 @@
 import { attr, customElement, FASTElement } from '@microsoft/fast-element';
 import { ICanvasOptions } from '../../../common/canvas/canvas.definitions';
 import { DrawerCanvas } from './../../../common/drawer-canvas/drawer-canvas.class';
+import { closestElement } from './../../../common/utils/elements';
 
 /**
  * An line-drawer item.
@@ -61,16 +62,21 @@ export class LineDrawerComponent extends FASTElement {
     private init() {
         const width = parseInt(this.canvasWidth, 10) || this.CANVAS_DEFAULT_WIDTH;
         const height = parseInt(this.canvasHeight, 10) || this.CANVAS_DEFAULT_HEIGHT;
+        const designSystem = closestElement('line-drawer', this.$fastController.element);
+        const borderColor = designSystem
+            ? getComputedStyle(designSystem)?.getPropertyValue('--drawer-line-color') : '';
         this.canvasOptions = {
             height: height,
             width: width,
             cursor: this.CURSOR_TYPE,
             position: this.CANVAS_POSITION,
-            lineWidth: this.LINE_WIDTH
+            lineWidth: this.LINE_WIDTH,
+            lineColor: this.borderColor || borderColor
         };
+
         this.dCanvas = new DrawerCanvas(this.canvasOptions);
         // Set canvas size
-        this.dCanvas.setCanvas(this.canvasOptions.width, this.canvasOptions.height, this.borderColor, 2);
+        this.dCanvas.setCanvas(this.canvasOptions.width, this.canvasOptions.height, 2);
         // Append to DOM
         this.shadowRoot?.appendChild(this.dCanvas.canvas);
         // Init props after appending to DOM

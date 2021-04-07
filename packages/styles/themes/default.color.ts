@@ -69,5 +69,8 @@ export const defaultColorsStyle: ElementStyles = css`
         --ruler-small-scale-color: #8a8886;
         --ruler-text-color: #444444;
         --ruler-time-color: #c8c6c4;
+
+        /* Drawer Canvas */
+        --drawer-line-color: #DB4646;
     }
 `;

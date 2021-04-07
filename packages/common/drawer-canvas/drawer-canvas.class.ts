@@ -1,6 +1,7 @@
 import { IPoint } from './drawer-canvas.definitions';
 import { CanvasElement } from '../canvas/canvas.element';
 import { ICanvasOptions } from '../canvas/canvas.definitions';
+import { closestElement } from './../utils/elements';
 
 /**
  * DrawerCanvas class is an implementation of CanvasElement
@@ -9,9 +10,9 @@ import { ICanvasOptions } from '../canvas/canvas.definitions';
  */
 export class DrawerCanvas extends CanvasElement {
     // Canvas prop
-    public canvasX: number = 0;
-    public canvasY: number = 0;
-
+    private _canvasOptions: ICanvasOptions;
+    private _canvasX: number = 0;
+    private _canvasY: number = 0;
     // Line attributes
     private _borderColor: string;
     private _pointsLimit: number;
@@ -27,6 +28,7 @@ export class DrawerCanvas extends CanvasElement {
     public constructor(canvasOptions: ICanvasOptions) {
         // Create canvas object
         super(canvasOptions);
+        this._canvasOptions = canvasOptions;
     }
 
     // To-do: Responsive and scroll event to handle
@@ -65,8 +67,8 @@ export class DrawerCanvas extends CanvasElement {
         this.context.lineCap = this.DRAW_LINE;
     }
 
-    public setCanvas(cWidth: number, cHeight: number, bColor?: string, pointsLimit: number = 2) {
-        this._borderColor = bColor || this.DEFAULT_LINE_COLOR;
+    public setCanvas(cWidth: number, cHeight: number, pointsLimit: number = 2) {
+        this._borderColor = this._canvasOptions.lineColor || this.DEFAULT_LINE_COLOR;
         this._pointsLimit = pointsLimit;
 
         // Init canvas properties
@@ -77,8 +79,8 @@ export class DrawerCanvas extends CanvasElement {
 
     public initBoundingCanvas() {
         // Init x,y after append to document.
-        this.canvasY = this.canvas.getBoundingClientRect().top;
-        this.canvasX = this.canvas.getBoundingClientRect().left;
+        this._canvasY = this.canvas.getBoundingClientRect().top;
+        this._canvasX = this.canvas.getBoundingClientRect().left;
     }
 
     public onDraw(e: MouseEvent) {
@@ -86,8 +88,8 @@ export class DrawerCanvas extends CanvasElement {
             return;
         }
 
-        const lastMouseX = e.clientX - this.canvasX;
-        const lastMouseY = e.clientY - this.canvasY;
+        const lastMouseX = e.clientX - this._canvasX;
+        const lastMouseY = e.clientY - this._canvasY;
 
         this._points.push({
             x: lastMouseX,
@@ -106,8 +108,8 @@ export class DrawerCanvas extends CanvasElement {
             return;
         }
 
-        this._lastMouseX = e.clientX - this.canvasX;
-        this._lastMouseY = e.clientY - this.canvasY;
+        this._lastMouseX = e.clientX - this._canvasX;
+        this._lastMouseY = e.clientY - this._canvasY;
 
         this.drawLastLine();
     }
