@@ -3,11 +3,11 @@ import { ICanvasOptions } from '../../../common/canvas/canvas.definitions';
 import { DrawerCanvas } from './../../../common/drawer-canvas/drawer-canvas.class';
 
 /**
- * An line-drawer-component item.
+ * An line-drawer item.
  * @public
  */
 @customElement({
-    name: 'line-drawer-component'
+    name: 'line-drawer'
 })
 export class LineDrawerComponent extends FASTElement {
 
@@ -78,11 +78,11 @@ export class LineDrawerComponent extends FASTElement {
     private appendEvents() {
         this.dCanvas.canvas.addEventListener('mousemove', this.dCanvas.onMouseMove.bind(this.dCanvas));
         this.dCanvas.canvas.addEventListener('mouseup', this.dCanvas.onDraw.bind(this.dCanvas));
-        this.dCanvas.canvas.addEventListener('drawComplete', this.onDrawComplete.bind(this));
+        this.dCanvas.canvas.addEventListener('drawerComplete', this.onDrawComplete.bind(this));
     }
 
     private onDrawComplete() {
-        this.$emit('drawer', this.dCanvas.points);
+        this.$emit('drawerComplete', this.dCanvas.points);
     }
 
 }

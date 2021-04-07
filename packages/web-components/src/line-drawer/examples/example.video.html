@@ -1,26 +1,31 @@
-<html>
+<html lang="en">
 
 <head>
+    <title>Line Drawer samples</title>
     <style>
         * {
             background-color: black;
         }
+        img, line-drawer-component {
+            position: absolute;
+        }
+        line-drawer-component {
+            background-color: transparent;
+        }
     </style>
-    <script>
-        const element = document.getElementById(this.elemId);
-    </script>
+    <script src="../../../../../dist/ava-widgets-sdk.js"></script>
 </head>
 
 <body>
-    <script src="../../../../../dist/ava-widgets-sdk.js"></script>
-    <h1>Line Drawer and Polygon samples</h1>
+    <h1>Line Drawer samples</h1>
     <br />
     <h2>Line Drawer with default values</h2>
     <div id="default-wrapper"
-        style="height: 500px;">
-        <img style="height: 500px;position: absolute;"
+        height="500">
+        <img height="500"
             src="assets/video-demo.png">
-        <line-drawer-component style="height: 480px; width: 733px;position: absolute;background-color: transparent;"
+        <line-drawer-component height="480"
+            width="733"
             borderColor="#4D9DFF"
             canvasWidth="733"
             canvasHeight="480">

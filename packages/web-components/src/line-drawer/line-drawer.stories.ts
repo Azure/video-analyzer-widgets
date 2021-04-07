@@ -10,7 +10,7 @@ interface ITemplate {
 LineDrawerComponent;
 
 const LineDrawerComponentTemplate = (data: ITemplate) => {
-    const lineDrawer = document.createElement('line-drawer-component') as LineDrawerComponent;
+    const lineDrawer = document.createElement('line-drawer') as LineDrawerComponent;
     if (data.borderColor) {
         lineDrawer.borderColor = data.borderColor;
     }

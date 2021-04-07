@@ -114,7 +114,7 @@ export class DrawerCanvas extends CanvasElement {
 
     public onDrawComplete() {
         this._isDrawCompleted = true;
-        const customEvent = new CustomEvent('drawComplete', {
+        const customEvent = new CustomEvent('drawerComplete', {
             bubbles: true
         });
         // Trigger event to parent component.
