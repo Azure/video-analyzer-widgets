@@ -14,7 +14,7 @@ export class DrawerCanvas extends CanvasElement {
 
     // Line attributes
     private _borderColor: string;
-    private _linesLimit: number;
+    private _pointsLimit: number;
     private _points: IPoint[] = [];
     // Mouse properties
     private _isDrawCompleted: boolean;
@@ -65,9 +65,9 @@ export class DrawerCanvas extends CanvasElement {
         this.context.lineCap = this.DRAW_LINE;
     }
 
-    public setCanvas(cWidth: number, cHeight: number, bColor?: string, linesLimit: number = 2) {
+    public setCanvas(cWidth: number, cHeight: number, bColor?: string, pointsLimit: number = 2) {
         this._borderColor = bColor || this.DEFAULT_LINE_COLOR;
-        this._linesLimit = linesLimit;
+        this._pointsLimit = pointsLimit;
 
         // Init canvas properties
         this.setCanvasSize(cWidth, cHeight);
@@ -94,7 +94,7 @@ export class DrawerCanvas extends CanvasElement {
             y: lastMouseY
         });
 
-        if (this._points.length === this._linesLimit) {
+        if (this._points.length === this._pointsLimit) {
             this.onDrawComplete();
         }
 

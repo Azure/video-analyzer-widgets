@@ -5,9 +5,9 @@ The component drawing line over an element container with default values or pred
 The class inherits from Drawer abstract class
 
 Inputs:
-borderColor
-canvasWidth
-canvasHeight
+borderColor: string
+canvasWidth: string
+canvasHeight: string
 
 
 ## Code examples:
