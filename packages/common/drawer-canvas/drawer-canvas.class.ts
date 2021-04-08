@@ -1,7 +1,6 @@
 import { IPoint } from './drawer-canvas.definitions';
 import { CanvasElement } from '../canvas/canvas.element';
 import { ICanvasOptions } from '../canvas/canvas.definitions';
-import { closestElement } from './../utils/elements';
 
 /**
  * DrawerCanvas class is an implementation of CanvasElement
