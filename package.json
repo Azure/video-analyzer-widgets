@@ -59,7 +59,7 @@
         "webpack-cli": "^4.6.0"
     },
     "dependencies": {
-        "@fluentui/web-components": "^0.16.2",
+        "@fluentui/web-components": "^0.20.2",
         "@microsoft/fast-components": "^1.19.1",
         "@microsoft/fast-element": "^1.0.1",
         "@microsoft/fast-foundation": "^1.16.1",
