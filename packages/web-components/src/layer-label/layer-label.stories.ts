@@ -1,5 +1,5 @@
 import { AvaDesignSystemProvider } from '../../../styles';
-import { MORE_SVG_PATH } from '../../../styles/svg/svg-path';
+import { MORE_SVG_PATH } from '../../../styles/svg/svg-shapes';
 import { LayerLabelComponent } from './layer-label.component';
 import { LayerLabelColor, LayerLabelMode } from './layer-label.definitions';
 

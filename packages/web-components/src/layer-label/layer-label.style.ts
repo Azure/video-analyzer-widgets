@@ -37,6 +37,7 @@ export const styles = css`
     }
 
     .label {
+        font-weight: 400;
         text-overflow: ellipsis;
         overflow: hidden;
         white-space: nowrap;

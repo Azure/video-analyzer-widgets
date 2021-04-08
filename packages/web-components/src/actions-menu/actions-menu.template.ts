@@ -1,6 +1,6 @@
 import { html, repeat, when } from '@microsoft/fast-element';
 import { ActionsMenuComponent } from './actions-menu.component';
-import { MORE_SVG_PATH } from '../../../styles/svg/svg-path';
+import { MORE_SVG_PATH } from '../../../styles/svg/svg-shapes';
 import { IAction } from './actions-menu.definitions';
 
 /**
@@ -10,7 +10,12 @@ import { IAction } from './actions-menu.definitions';
 /* eslint-disable  @typescript-eslint/indent */
 export const template = html<ActionsMenuComponent>`
     <template>
-        <fast-button @focusout="${(x, c) => x.handleFocusOut(c.event as FocusEvent)}" @click="${(x) => x.toggleMenu()}">
+        <fast-button
+            aria-label="Options"
+            title="Options"
+            @focusout="${(x, c) => x.handleFocusOut(c.event as FocusEvent)}"
+            @click="${(x) => x.toggleMenu()}"
+        >
             <svg>
                 <path d="${MORE_SVG_PATH}"></path>
             </svg>
@@ -22,6 +27,8 @@ export const template = html<ActionsMenuComponent>`
                     (x) => x.actions,
                     html<IAction>`
                         <fast-menu-item
+                            aria-label="${(x) => x.label}"
+                            title="${(x) => x.label}"
                             aria-disabled="${(x) => x.disabled}"
                             @focusout="${(x, c) => c.parent.handleFocusOut(c.event as FocusEvent)}"
                             @keydown="${(x, c) => c.parent.handleMenuItemKeyDown(c.event as KeyboardEvent, x)}"
