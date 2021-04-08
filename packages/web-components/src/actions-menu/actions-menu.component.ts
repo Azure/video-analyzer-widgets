@@ -42,7 +42,7 @@ export class ActionsMenuComponent extends FASTElement {
                     this.fastMenu = this.$fastController.element.shadowRoot.querySelector('fast-menu');
                 }
                 this.initMenu();
-            }, 50);
+            });
         }
     }
 

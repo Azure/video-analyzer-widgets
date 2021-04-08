@@ -27,7 +27,7 @@ export class LayerLabelComponent extends FASTElement {
         if (this.config?.mode === LayerLabelMode.Actions && this.config.actions?.length) {
             setTimeout(() => {
                 this.setActions();
-            }, 50);
+            });
         }
     }
 
