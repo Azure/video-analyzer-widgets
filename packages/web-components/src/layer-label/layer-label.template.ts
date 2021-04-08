@@ -1,4 +1,4 @@
-import { html, ref, when } from '@microsoft/fast-element';
+import { html, when } from '@microsoft/fast-element';
 import { LayerLabelComponent } from './layer-label.component';
 import { LayerLabelMode } from './layer-label.definitions';
 
