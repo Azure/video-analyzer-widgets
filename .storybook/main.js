@@ -1,13 +1,6 @@
 const CircularDependencyPlugin = require('circular-dependency-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-// .storybook/main.js
 
-const custom = require('../webpack.config.js');
-const path = require('path');
 module.exports = {
-    core: {
-        builder: 'webpack5'
-    },
     stories: ['../packages/web-components/src/**/*.stories.@(js|jsx|ts|tsx)', '../stories/**/*.stories.mdx'],
     addons: ['@storybook/addon-links', '@storybook/addon-essentials', '@storybook/addon-controls'],
     webpackFinal: async (config) => {
@@ -41,6 +34,18 @@ module.exports = {
                 use: [
                     {
                         loader: require.resolve('sass-loader')
+                    }
+                ]
+            },
+            {
+                test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
+                use: [
+                    {
+                        loader: require.resolve('url-loader'),
+                        options: {
+                            name: '[name].[ext]',
+                            outputPath: 'fonts/'
+                        }
                     }
                 ]
             }

@@ -1,4 +1,6 @@
 import { DatePickerComponent } from '.';
+import { SegmentsTimelineComponent } from '..';
+
 interface ITemplate {
     date: string;
     allowedMonths: string;
@@ -8,6 +10,7 @@ interface ITemplate {
 
 // Prevent tree-shaking
 DatePickerComponent;
+SegmentsTimelineComponent;
 
 const DatePickerComponentTemplate = (data: ITemplate) => {
     const datePicker = document.createElement('date-picker-component') as DatePickerComponent;
@@ -23,7 +26,9 @@ const DatePickerComponentTemplate = (data: ITemplate) => {
     if (data.date) {
         datePicker.date = new Date(data.date);
     }
-    return datePicker;
+    const designSystem = document.createElement('ava-design-system-provider') as AvaDesignSystemProvider;
+    designSystem.appendChild(datePicker);
+    return designSystem;
 };
 
 export const Example = (args: ITemplate) => DatePickerComponentTemplate(args);
