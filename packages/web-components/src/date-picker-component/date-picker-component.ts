@@ -1,28 +1,86 @@
 /* eslint-disable @typescript-eslint/prefer-for-of */
 import { attr, customElement, FASTElement } from '@microsoft/fast-element';
+import { DatePickerEvent, IDatePickerRenderEvent } from './date-picker-component.definitions';
 import { styles } from './date-picker-component.style';
 import { template } from './date-picker-component.template';
 /**
- * An example web component item.
+ * Date picker component
  * @public
  */
 @customElement({
-    name: 'date-picker-component',
+    name: 'media-date-picker-component',
     template,
     styles
 })
 export class DatePickerComponent extends FASTElement {
+    /**
+     * When true, align date picker to the right side of the opener button
+     *
+     * @public
+     * @remarks
+     * HTML attribute: alignRight
+     */
+    @attr public alignRight = false;
+
+    /**
+     * Enable UI attribute, when true date picker is shown
+     *
+     * @public
+     * @remarks
+     * HTML attribute: enableUI
+     */
     @attr public enableUI = false;
+
+    /**
+     * Reflects the current selected date
+     *
+     * @public
+     * @remarks
+     * HTML attribute: enableUI
+     */
     @attr public date: Date = new Date();
+
+    /**
+     * Reflects a new input date
+     *
+     * @public
+     * @remarks
+     * HTML attribute: inputDate
+     */
     @attr public inputDate: string;
+
+    /**
+     * Available days list
+     *
+     * @public
+     * @remarks
+     * HTML attribute: allowedDays
+     */
     @attr public allowedDays: string = '';
-    @attr public allowedYears: string = '';
+
+    /**
+     * Available months list
+     *
+     * @public
+     * @remarks
+     * HTML attribute: allowedMonths
+     */
     @attr public allowedMonths: string = '';
+
+    /**
+     * Available years list
+     *
+     * @public
+     * @remarks
+     * HTML attribute: allowedYears
+     */
+    @attr public allowedYears: string = '';
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private datePicker: any = null;
+
+    // Loading sources
     private datePickerCSSLoaded = false;
-    private fabricCSSLoaded = false;
     private datePickerScriptLoaded = false;
     private jquerySrcLoaded = false;
     private datePickerSrcLoaded = false;
@@ -34,17 +92,14 @@ export class DatePickerComponent extends FASTElement {
     }
 
     public allowedMonthsChanged() {
-        console.log('allowedMonthsChanged');
         this.disableDates();
     }
 
     public allowedDaysChanged() {
-        console.log('allowedDaysChanged');
         this.disableDates();
     }
 
     public allowedYearsChanged() {
-        console.log('allowedDaysChanged');
         this.disableDates();
     }
 
@@ -53,6 +108,8 @@ export class DatePickerComponent extends FASTElement {
         if (dateObj.getTime() === this.date.getTime()) {
             return;
         }
+
+        // Update date object and set the date picker
         this.date = dateObj;
         this.datePicker?.picker?.set('select', this.date);
     }
@@ -65,11 +122,18 @@ export class DatePickerComponent extends FASTElement {
     }
 
     public disconnectedCallback() {
+        // Remove all elements
         this.shadowRoot.removeChild(this.shadowRoot.querySelector('#date-picker-css-link'));
-        this.shadowRoot.removeChild(this.shadowRoot.querySelector('#fabric-css-link'));
         document.head.removeChild(document.querySelector('#jquery-script'));
-        document.head.removeChild(document.querySelector('#date-picker-src-link'));
-        document.head.removeChild(document.querySelector('#picker-date-src-link'));
+        const datePickerSRC = document.querySelector('#date-picker-src-link');
+        if (datePickerSRC) {
+            document.head.removeChild(datePickerSRC);
+        }
+
+        const pickerDateSRC = document.querySelector('#picker-date-src-link');
+        if (pickerDateSRC) {
+            document.head.removeChild(pickerDateSRC);
+        }
     }
 
     private createFabricDatePicker() {
@@ -79,14 +143,6 @@ export class DatePickerComponent extends FASTElement {
         datePickerCSS.setAttribute(
             'href',
             'https://static2.sharepointonline.com/files/fabric/office-ui-fabric-js/1.4.0/css/fabric.min.css'
-        );
-
-        const fabricCSS = document.createElement('link');
-        fabricCSS.setAttribute('id', 'fabric-css-link');
-        fabricCSS.setAttribute('rel', 'stylesheet');
-        fabricCSS.setAttribute(
-            'href',
-            'https://static2.sharepointonline.com/files/fabric/office-ui-fabric-js/1.4.0/css/fabric.components.min.css'
         );
 
         const jquerySrcLink = document.createElement('script');
@@ -109,11 +165,6 @@ export class DatePickerComponent extends FASTElement {
             this.createDatePicker();
         };
 
-        this.fabricCSSLoaded = true;
-        fabricCSS.onload = () => {
-            this.createDatePicker();
-        };
-
         datePickerSrcLink.onload = () => {
             this.datePickerScriptLoaded = true;
             this.createDatePicker();
@@ -133,15 +184,14 @@ export class DatePickerComponent extends FASTElement {
 
         document.head.appendChild(jquerySrcLink);
         this.shadowRoot.appendChild(datePickerCSS);
-        // this.shadowRoot.appendChild(fabricCSS);
     }
 
     private createDatePicker() {
+        // If all sources loaded - create fabric date picker
         if (
             !(
                 this.uiConnected &&
                 this.datePickerCSSLoaded &&
-                this.fabricCSSLoaded &&
                 this.datePickerScriptLoaded &&
                 this.jquerySrcLoaded &&
                 this.datePickerSrcLoaded
@@ -152,13 +202,13 @@ export class DatePickerComponent extends FASTElement {
 
         setTimeout(() => {
             const DatePickerElements = this.shadowRoot.querySelectorAll('.ms-DatePicker');
-            this.datePicker = new window.fabric['DatePicker'](DatePickerElements[0]);
+            this.datePicker = new window['fabric']['DatePicker'](DatePickerElements[0]);
 
-            // this.$emit('datePicker.changed', this.date);
             this.datePicker.picker.on('open', this.onDateOpen.bind(this));
             this.datePicker.picker.on('set', this.onDateChange.bind(this));
             this.datePicker.picker.on('render', this.onRenderDates.bind(this));
 
+            // Show date picker only after initialization
             this.enableUI = true;
 
             setTimeout(() => {
@@ -168,11 +218,12 @@ export class DatePickerComponent extends FASTElement {
     }
 
     private onRenderDates() {
-        this.$emit('datePicker.render', {
+        // When render new month / year, emit the selected ones.
+        const eventData: IDatePickerRenderEvent = {
             month: this.datePicker.picker.component.item.view?.month,
             year: this.datePicker.picker.component.item.view?.year
-        });
-        console.log('onRenderDates');
+        };
+        this.$emit(DatePickerEvent.RENDER, eventData);
         this.disableDates();
     }
 
@@ -183,12 +234,12 @@ export class DatePickerComponent extends FASTElement {
             if (this.date.getTime() !== newDate.getTime()) {
                 this.date = newDate;
             }
-            this.$emit('datePicker.changed', this.date);
+            this.$emit(DatePickerEvent.DATE_CHANGE, this.date);
         }
     }
 
     private disableMonths() {
-        // Take all days
+        // Take months according to available months list
         const monthsElements = this.shadowRoot.querySelectorAll('.ms-DatePicker-monthOption.js-changeDate');
         const months = this.allowedMonths?.split(',');
         for (let index = 0; index < monthsElements.length; index++) {
@@ -218,7 +269,6 @@ export class DatePickerComponent extends FASTElement {
     }
 
     private disableDays() {
-        console.log('this.allowedDays', this.allowedDays);
         // Take all days
         const daysElements = this.shadowRoot.querySelectorAll('.ms-DatePicker-day.ms-DatePicker-day--infocus');
         const days = this.allowedDays?.split(',');
@@ -240,6 +290,5 @@ export class DatePickerComponent extends FASTElement {
 
     private onDateOpen() {
         this.datePicker.picker.set('select', this.date);
-        console.log('date open');
     }
 }

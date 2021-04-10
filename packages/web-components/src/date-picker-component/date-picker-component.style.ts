@@ -24,6 +24,10 @@ export const styles = css`
         font-weight: 400;
     }
 
+    .ms-DatePicker.right .ms-DatePicker-holder {
+        right: 0;
+    }
+
     .ms-DatePicker-monthOption,
     .ms-DatePicker-yearOption {
         background-color: #252423;
@@ -39,7 +43,6 @@ export const styles = css`
 
     .ms-DatePicker-holder {
         top: 9px;
-        right: 0;
     }
 
     .ms-Icon {

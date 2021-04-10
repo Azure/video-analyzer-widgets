@@ -6,6 +6,7 @@
 .shaka-hidden {
     display: none !important;
 }
+
 .shaka-video-container {
     position: relative;
     top: 0;
@@ -83,6 +84,7 @@
     padding-bottom: 2.5%;
     z-index: 1;
     background-color: #161514;
+    padding: 0px 0px 8px !important;
 }
 .shaka-controls-button-panel {
     padding: 0 14px;
@@ -247,9 +249,9 @@
     position: relative;
     top: 0;
     left: 0;
-    margin: 4px 6px;
-    height: 4px;
-    border-radius: 4px;
+    margin: 0 0 4px 0;
+    height: 2px;
+    border-radius: 0;
     background: #fff;
 }
 .shaka-volume-bar-container {

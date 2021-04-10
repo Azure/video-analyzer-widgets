@@ -3,6 +3,7 @@ import { defineDesignSystemProvider, designSystemProperty, DesignSystemProviderT
 import { darkColorsStyle, defaultColorsStyle } from '../themes';
 import { AvaTheme } from './ava-design-system-provider.definitions';
 import { style } from './ava-design-system-provider.style';
+import '../common.scss';
 
 /**
  * AVA design system provider

@@ -5,6 +5,7 @@ import { attr, customElement, FASTElement } from '@microsoft/fast-element';
 import { toInteger } from 'lodash-es';
 import { MediaApi } from '../../../common/services/media/media-api.class';
 import { IAvailableMediaResponse, Precision } from '../../../common/services/media/media.definitions';
+import { DatePickerEvent, IDatePickerRenderEvent } from '../date-picker-component/date-picker-component.definitions';
 import { Player } from './player.class';
 import { styles } from './rvx-player.style';
 import { template } from './rvx-player.template';
@@ -85,9 +86,9 @@ export class PlayerComponent extends FASTElement {
             this.isLive = event.detail;
         }) as EventListener);
 
-        const datePickerComponent: any = this.shadowRoot?.querySelector('date-picker-component');
+        const datePickerComponent: any = this.shadowRoot?.querySelector('media-date-picker-component');
 
-        datePickerComponent.addEventListener('datePicker.changed', (event: CustomEvent) => {
+        datePickerComponent.addEventListener(DatePickerEvent.DATE_CHANGE, (event: CustomEvent) => {
             if (event.detail?.toDateString() !== this.currentDate?.toDateString()) {
                 this.currentDate = event.detail;
                 // Load vod stream
@@ -106,10 +107,11 @@ export class PlayerComponent extends FASTElement {
             }
         });
 
-        datePickerComponent.addEventListener('datePicker.render', (event: CustomEvent) => {
+        datePickerComponent.addEventListener(DatePickerEvent.RENDER, (event: CustomEvent) => {
             console.log(event.detail);
+            const data = event.detail as IDatePickerRenderEvent;
             if (this.afterInit) {
-                this.updateMonthAndDates(event.detail.year, event.detail.month + 1);
+                this.updateMonthAndDates(data.year, data.month + 1);
             }
         });
 

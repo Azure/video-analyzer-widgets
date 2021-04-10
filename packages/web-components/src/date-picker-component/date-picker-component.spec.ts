@@ -1,25 +1,26 @@
-// import { html, fixture, expect } from '@open-wc/testing';
+import { html, fixture, expect } from '@open-wc/testing';
 
-// import { ExampleComponent } from './date-picker-component';
+import { DatePickerComponent } from './date-picker-component';
 
-// ExampleComponent;
+DatePickerComponent;
 
-// describe('ExampleComponent', () => {
-//     it('has a default text "this is example component"', async () => {
-//         const el = await fixture<ExampleComponent>(html`<example-web-component></example-web-component>`);
+describe('DatePickerComponent', () => {
+    it('Select todays date"', async () => {
+        const el = await fixture<DatePickerComponent>(html`<media-date-picker-component></media-date-picker-component>`);
+        const currentDate = new Date();
+        expect(el.date.toString()).to.equal(currentDate.toString());
+    });
 
-//         expect(el.text).to.equal('this is example component');
-//     });
+    it('Select input date"', async () => {
+        const el = await fixture<DatePickerComponent>(html`<media-date-picker-component></media-date-picker-component>`);
+        const inputDate = new Date('2021.2.2').toString();
+        el.setAttribute('inputDate', inputDate);
+        expect(el.date.toString()).to.equal(inputDate.toString());
+    });
 
-//     it('can override the text via attribute', async () => {
-//         const el = await fixture<ExampleComponent>(html`<example-web-component text="Hello"></example-web-component>`);
+    it('passes the a11y audit', async () => {
+        const el = await fixture<DatePickerComponent>(html`<media-date-picker-component></media-date-picker-component>`);
 
-//         expect(el.text).to.equal('Hello');
-//     });
-
-//     it('passes the a11y audit', async () => {
-//         const el = await fixture<ExampleComponent>(html`<example-web-component></example-web-component>`);
-
-//         await expect(el).shadowDom.to.be.accessible();
-//     });
-// });
+        await expect(el).shadowDom.to.be.accessible();
+    });
+});

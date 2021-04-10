@@ -1,24 +1,45 @@
-// import { ExampleComponent } from '.';
-// interface ITemplate {
-//     text: string;
-// }
+import { DatePickerComponent } from '.';
+import { SegmentsTimelineComponent } from '..';
+import { AvaDesignSystemProvider } from '../../../styles';
 
-// // Prevent tree-shaking
-// ExampleComponent;
+interface ITemplate {
+    date: string;
+    allowedMonths: string;
+    allowedYears: string;
+    allowedDays: string;
+}
 
-// const ExampleComponentTemplate = (data: ITemplate) => {
-//     const btn = document.createElement('example-web-component') as ExampleComponent;
-//     if (data.text) {
-//         btn.text = data.text;
-//     }
-//     return btn;
-// };
+// Prevent tree-shaking
+DatePickerComponent;
+SegmentsTimelineComponent;
 
-// export const Example = (args: ITemplate) => ExampleComponentTemplate(args);
+const DatePickerComponentTemplate = (data: ITemplate) => {
+    const datePicker = document.createElement('media-date-picker-component') as DatePickerComponent;
+    if (data.allowedMonths) {
+        datePicker.allowedMonths = data.allowedMonths;
+    }
+    if (data.allowedYears) {
+        datePicker.allowedYears = data.allowedYears;
+    }
+    if (data.allowedDays) {
+        datePicker.allowedDays = data.allowedDays;
+    }
+    if (data.date) {
+        datePicker.date = new Date(data.date);
+    }
+    const designSystem = document.createElement('ava-design-system-provider') as AvaDesignSystemProvider;
+    designSystem.appendChild(datePicker);
+    return designSystem;
+};
 
-// export default {
-//     title: 'Example Component',
-//     argTypes: {
-//         text: { control: 'text' }
-//     }
-// };
+export const Example = (args: ITemplate) => DatePickerComponentTemplate(args);
+
+export default {
+    title: 'Date Picker Component',
+    argTypes: {
+        date: { control: 'text' },
+        allowedMonths: { control: 'text' },
+        text: { control: 'text' },
+        allowedDays: { control: 'text' }
+    }
+};

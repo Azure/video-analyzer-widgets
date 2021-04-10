@@ -11,13 +11,14 @@ export const template = html<PlayerComponent>`
             <span class="col camera-name">Camera 1</span>
             <div class="date-picker col">
                 <span>${(x) => x.time}</span>
-                <date-picker-component
+                <media-date-picker-component
                     class="date-picker-component"
+                    alignRight="${true}"
                     inputDate="${(x) => x.currentDate}"
                     allowedDays="${(x) => x.currentAllowedDays}"
                     allowedMonths="${(x) => x.currentAllowedMonths}"
                     allowedYears="${(x) => x.currentAllowedYears}"
-                ></date-picker-component>
+                ></media-date-picker-component>
             </div>
         </div>
         <style>
