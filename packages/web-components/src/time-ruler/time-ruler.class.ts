@@ -3,7 +3,10 @@ import { CanvasElement } from '../../../common/canvas/canvas.element';
 import { toTimeText } from '../../../common/utils/time';
 import { IRulerOptions } from './time-ruler.definitions';
 
-//  TimeRuler is an implementation of CanvasElement draws time ruler for 24 hours
+/**
+ * TimeRuler is an implementation of CanvasElement draws time ruler for 24 hours
+ * @public
+ */
 export class TimeRuler extends CanvasElement {
     public canvasPointsDataList: ICanvasFillData[] = [];
 
@@ -36,6 +39,7 @@ export class TimeRuler extends CanvasElement {
 
     public resize(): void {
         this.setCanvasSize(this.rulerOptions.width * this.rulerOptions.zoom, this.rulerOptions.height);
+        this.setContextStyle();
         this.draw();
     }
 

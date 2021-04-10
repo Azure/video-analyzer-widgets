@@ -78,5 +78,12 @@ export const darkColorsStyle: ElementStyles = css`
         /* Actions Menu */
         --actions-menu-bg: rgba(17, 16, 15, 0.9);
         --actions-menu-color: #f3f2f1;
+
+        /* Drawer Canvas */
+        --drawer-line-color: #db4646;
+
+        /* Area Draw */
+        --area-draw-color: #f3f2f1;
+        --area-draw-bg: #201f1e;
     }
 `;
