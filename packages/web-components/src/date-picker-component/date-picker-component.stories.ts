@@ -1,5 +1,6 @@
 import { DatePickerComponent } from '.';
 import { SegmentsTimelineComponent } from '..';
+import { AvaDesignSystemProvider } from '../../../styles';
 
 interface ITemplate {
     date: string;
@@ -13,7 +14,7 @@ DatePickerComponent;
 SegmentsTimelineComponent;
 
 const DatePickerComponentTemplate = (data: ITemplate) => {
-    const datePicker = document.createElement('date-picker-component') as DatePickerComponent;
+    const datePicker = document.createElement('media-date-picker-component') as DatePickerComponent;
     if (data.allowedMonths) {
         datePicker.allowedMonths = data.allowedMonths;
     }

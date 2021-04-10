@@ -8,7 +8,7 @@ import { template } from './date-picker-component.template';
  * @public
  */
 @customElement({
-    name: 'date-picker-component',
+    name: 'media-date-picker-component',
     template,
     styles
 })
@@ -72,7 +72,6 @@ export class DatePickerComponent extends FASTElement {
 
     // Loading sources
     private datePickerCSSLoaded = false;
-    private fabricCSSLoaded = false;
     private datePickerScriptLoaded = false;
     private jquerySrcLoaded = false;
     private datePickerSrcLoaded = false;
@@ -116,10 +115,16 @@ export class DatePickerComponent extends FASTElement {
     public disconnectedCallback() {
         // Remove all elements
         this.shadowRoot.removeChild(this.shadowRoot.querySelector('#date-picker-css-link'));
-        this.shadowRoot.removeChild(this.shadowRoot.querySelector('#fabric-css-link'));
         document.head.removeChild(document.querySelector('#jquery-script'));
-        document.head.removeChild(document.querySelector('#date-picker-src-link'));
-        document.head.removeChild(document.querySelector('#picker-date-src-link'));
+        const datePickerSRC = document.querySelector('#date-picker-src-link');
+        if (datePickerSRC) {
+            document.head.removeChild(datePickerSRC);
+        }
+
+        const pickerDateSRC = document.querySelector('#picker-date-src-link');
+        if (pickerDateSRC) {
+            document.head.removeChild(pickerDateSRC);
+        }
     }
 
     private createFabricDatePicker() {
@@ -129,14 +134,6 @@ export class DatePickerComponent extends FASTElement {
         datePickerCSS.setAttribute(
             'href',
             'https://static2.sharepointonline.com/files/fabric/office-ui-fabric-js/1.4.0/css/fabric.min.css'
-        );
-
-        const fabricCSS = document.createElement('link');
-        fabricCSS.setAttribute('id', 'fabric-css-link');
-        fabricCSS.setAttribute('rel', 'stylesheet');
-        fabricCSS.setAttribute(
-            'href',
-            'https://static2.sharepointonline.com/files/fabric/office-ui-fabric-js/1.4.0/css/fabric.components.min.css'
         );
 
         const jquerySrcLink = document.createElement('script');
@@ -156,11 +153,6 @@ export class DatePickerComponent extends FASTElement {
 
         datePickerCSS.onload = () => {
             this.datePickerCSSLoaded = true;
-            this.createDatePicker();
-        };
-
-        this.fabricCSSLoaded = true;
-        fabricCSS.onload = () => {
             this.createDatePicker();
         };
 
@@ -191,7 +183,6 @@ export class DatePickerComponent extends FASTElement {
             !(
                 this.uiConnected &&
                 this.datePickerCSSLoaded &&
-                this.fabricCSSLoaded &&
                 this.datePickerScriptLoaded &&
                 this.jquerySrcLoaded &&
                 this.datePickerSrcLoaded
@@ -202,7 +193,7 @@ export class DatePickerComponent extends FASTElement {
 
         setTimeout(() => {
             const DatePickerElements = this.shadowRoot.querySelectorAll('.ms-DatePicker');
-            this.datePicker = new window.fabric['DatePicker'](DatePickerElements[0]);
+            this.datePicker = new window['fabric']['DatePicker'](DatePickerElements[0]);
 
             this.datePicker.picker.on('open', this.onDateOpen.bind(this));
             this.datePicker.picker.on('set', this.onDateChange.bind(this));
