@@ -39,7 +39,7 @@ export class ActionsMenuComponent extends FASTElement {
         if (this.opened) {
             setTimeout(() => {
                 if (!this.fastMenu) {
-                    this.fastMenu = this.$fastController.element.shadowRoot.querySelector('fast-menu');
+                    this.fastMenu = this.shadowRoot?.querySelector('fast-menu');
                 }
                 this.initMenu();
             });
@@ -78,7 +78,7 @@ export class ActionsMenuComponent extends FASTElement {
     };
 
     public handleFocusOut(event: FocusEvent) {
-        if (!event.relatedTarget) {
+        if (!event.relatedTarget || !this.shadowRoot.contains(<Node>event.relatedTarget)) {
             this.opened = false;
         }
     }

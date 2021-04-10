@@ -20,7 +20,7 @@ export interface ILayerLabelConfig {
     label: string;
     mode: LayerLabelMode;
     labelPrefix?: string;
-    color?: LayerLabelColor;
+    color?: DrawingColors;
     actions?: IAction[];
 }
 ```

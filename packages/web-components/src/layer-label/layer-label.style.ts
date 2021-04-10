@@ -56,7 +56,7 @@ export const styles = css`
         background: #db4646;
     }
 
-    .light-blue {
+    .lightBlue {
         background: #4d9dff;
     }
 

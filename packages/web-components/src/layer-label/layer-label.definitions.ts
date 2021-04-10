@@ -1,3 +1,4 @@
+import { DrawingColors } from '../../../styles/system-providers/ava-design-system-provider.definitions';
 import { IAction } from '../actions-menu/actions-menu.definitions';
 
 export type ILayerLabelType = 'area' | 'line';
@@ -8,23 +9,11 @@ export enum LayerLabelMode {
     Actions = 'actions'
 }
 
-export enum LayerLabelColor {
-    Red = 'red',
-    LightBlue = 'light-blue',
-    Yellow = 'yellow',
-    Magenta = 'magenta',
-    Teal = 'teal',
-    Purple = 'purple',
-    Lime = 'lime',
-    Blue = 'blue',
-    Green = 'green',
-    Orange = 'orange'
-}
-
 export interface ILayerLabelConfig {
+    id: string;
     label: string;
     mode: LayerLabelMode;
     labelPrefix?: string;
-    color?: LayerLabelColor;
+    color?: string;
     actions?: IAction[];
 }

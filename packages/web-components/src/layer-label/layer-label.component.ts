@@ -36,9 +36,13 @@ export class LayerLabelComponent extends FASTElement {
     }
 
     private setActions() {
-        const actionsMenu = <ActionsMenuComponent>this.$fastController.element.shadowRoot.querySelector('media-actions-menu');
+        const actionsMenu = <ActionsMenuComponent>this.shadowRoot?.querySelector('media-actions-menu');
         if (actionsMenu) {
             actionsMenu.actions = this.config.actions;
         }
+        actionsMenu.addEventListener('action-clicked', (e: any) => {
+            console.log(e);
+            this.$emit('label-action', { ...e.detail, id: this.config.id });
+        });
     }
 }

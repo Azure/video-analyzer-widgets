@@ -1,7 +1,8 @@
 import { AvaDesignSystemProvider } from '../../../styles';
 import { MORE_SVG_PATH } from '../../../styles/svg/svg-shapes';
+import { DrawingColors } from '../../../styles/system-providers/ava-design-system-provider.definitions';
 import { LayerLabelComponent } from './layer-label.component';
-import { LayerLabelColor, LayerLabelMode } from './layer-label.definitions';
+import { LayerLabelMode } from './layer-label.definitions';
 
 // Prevent tree-shaking
 AvaDesignSystemProvider;
@@ -11,7 +12,7 @@ interface ITemplate {
     darkTheme?: boolean;
     labelPrefix?: string;
     label?: string;
-    color?: LayerLabelColor;
+    color?: DrawingColors;
     mode?: LayerLabelMode;
 }
 
@@ -22,10 +23,11 @@ const LayerLabelComponentTemplate = (data: ITemplate) => {
     (designSystem as AvaDesignSystemProvider).theme = (data?.darkTheme && 'dark') || '';
     const layerLabel = document.createElement('media-layer-label') as LayerLabelComponent;
     const config = {
+        id: '',
         label: data.label || '',
         mode: data.mode || LayerLabelMode.Compact,
         labelPrefix: data.labelPrefix || '',
-        color: data.color || LayerLabelColor.Lime,
+        color: data.color || DrawingColors.Lime,
         actions: [
             {
                 label: 'Rename',
