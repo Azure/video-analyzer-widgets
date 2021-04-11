@@ -10,7 +10,7 @@ export abstract class Shape {
     public y: number = 0;
     public color: string = '';
     public classList: string[] = [];
-    /* eslint-disable  @typescript-eslint/no-explicit-any */
+    /* eslint-disable-next-line  @typescript-eslint/no-explicit-any */
     public _el: SVGElement | any;
     public className: string = '';
 
@@ -65,7 +65,7 @@ export abstract class Shape {
         return new RegExp('(^|\\s+)' + className + '(\\s+|$)');
     }
 
-    /* eslint-disable  @typescript-eslint/no-explicit-any */
+    /* eslint-disable-next-line  @typescript-eslint/no-explicit-any */
     public abstract createElement(): SVGElement | any;
     public abstract update(): void;
 }

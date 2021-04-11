@@ -1,0 +1,93 @@
+<html lang="en">
+
+<head>
+    <title>Line Drawer samples</title>
+    <style>
+        line-drawer-component {
+            border: 1px solid black;
+            position: absolute;
+        }
+
+        .default-wrapper,
+        .predefined-values-wrapper {
+            width: 50%;
+            height: 30%;
+            background: aliceblue;
+        }
+    </style>
+    </script>
+    <script src="../../../../../dist/ava-widgets-sdk.js"></script>
+</head>
+
+<body>
+    <h1>Area View samples</h1>
+    <br />
+    <h2>Area View Component</h2>
+    <div class="default-wrapper">
+        <media-areas-view id="media-areas-view"></media-areas-view>
+    </div>
+    <br />
+</body>
+<script>(function () {
+        const areas = [
+            {
+                points: [
+                    {
+                        x: 0,
+                        y: 0
+                    },
+                    {
+                        x: 0.5,
+                        y: 0.5
+                    }
+                ],
+                color: '#1ABC9C'
+            },
+            {
+                points: [
+                    {
+                        x: 0.9,
+                        y: 0.1
+                    },
+                    {
+                        x: 0.7,
+                        y: 0.8
+                    }
+                ],
+                color: '#DB4646'
+            },
+            {
+                points: [
+                    {
+                        x: 0.8,
+                        y: 0.1
+                    },
+                    {
+                        x: 0.9,
+                        y: 0.8
+                    }
+                ],
+                color: '#A6C102'
+            },
+            {
+                points: [
+                    {
+                        x: 0.3,
+                        y: 0.1
+                    },
+                    {
+                        x: 0.3,
+                        y: 0.8
+                    }
+                ],
+                color: '#F2880C'
+            },
+        ];
+
+        const mediaAreaView = document.getElementById("media-areas-view");
+
+        mediaAreaView.areas = areas;
+    })()
+</script>
+
+</html>
