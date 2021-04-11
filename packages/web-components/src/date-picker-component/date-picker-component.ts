@@ -1,5 +1,5 @@
 import { attr, customElement, FASTElement } from '@microsoft/fast-element';
-import { DatePickerEvent, IDatePickerRenderEvent } from './date-picker-component.definitions';
+import { DatePickerEvent, IAllowedDates, IDatePickerRenderEvent } from './date-picker-component.definitions';
 import { styles } from './date-picker-component.style';
 import { template } from './date-picker-component.template';
 /**
@@ -40,31 +40,17 @@ export class DatePickerComponent extends FASTElement {
     @attr public inputDate: string;
 
     /**
-     * Available days list
-     *
-     * @public
-     * @remarks
-     * HTML attribute: allowedDays
-     */
-    @attr public allowedDays: string = '';
-
-    /**
-     * Available months list
-     *
-     * @public
-     * @remarks
-     * HTML attribute: allowedMonths
-     */
-    @attr public allowedMonths: string = '';
-
-    /**
-     * Available years list
+     * Represents available dates - years months and days.
      *
      * @public
      * @remarks
      * HTML attribute: allowedYears
      */
-    @attr public allowedYears: string = '';
+    @attr public allowedDates: IAllowedDates = {
+        days: '',
+        months: '',
+        years: ''
+    };
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private datePicker: any = null;
@@ -81,15 +67,7 @@ export class DatePickerComponent extends FASTElement {
         this.createFabricDatePicker();
     }
 
-    public allowedMonthsChanged() {
-        this.disableDates();
-    }
-
-    public allowedDaysChanged() {
-        this.disableDates();
-    }
-
-    public allowedYearsChanged() {
+    public allowedDatesChanged() {
         this.disableDates();
     }
 
@@ -231,7 +209,7 @@ export class DatePickerComponent extends FASTElement {
     private disableMonths() {
         // Take months according to available months list
         const monthsElements = this.shadowRoot.querySelectorAll('.ms-DatePicker-monthOption.js-changeDate');
-        const months = this.allowedMonths?.split(',');
+        const months = this.allowedDates.months?.split(',') || '';
         // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let index = 0; index < monthsElements.length; index++) {
             const element = monthsElements[index];
@@ -247,7 +225,7 @@ export class DatePickerComponent extends FASTElement {
     private disableYears() {
         // Take all days
         const yearsElements = this.shadowRoot.querySelectorAll('.ms-DatePicker-yearOption.js-changeDate');
-        const years = this.allowedYears?.split(',');
+        const years = this.allowedDates.years?.split(',') || '';
         // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let index = 0; index < yearsElements.length; index++) {
             const element = yearsElements[index];
@@ -263,7 +241,7 @@ export class DatePickerComponent extends FASTElement {
     private disableDays() {
         // Take all days
         const daysElements = this.shadowRoot.querySelectorAll('.ms-DatePicker-day.ms-DatePicker-day--infocus');
-        const days = this.allowedDays?.split(',');
+        const days = this.allowedDates.days?.split(',') || '';
         // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let index = 0; index < daysElements.length; index++) {
             const element = daysElements[index];

@@ -18,19 +18,29 @@
         </div>
         <h1>Date picker selecting allowing April ,March and October, and 2021,2020 years</h1>
         <div>
-            <media-date-picker allowedMonths='3,4,10'
-                allowedYears='2020,2021'></media-date-picker>
+            <media-date-picker id="date-picker-component-month-years"></media-date-picker>
         </div>
         <h1>Date picker selecting allowing selecting first 3 days in a month</h1>
         <div>
-            <media-date-picker allowedDays='1,2,3'></media-date-picker>
+            <media-date-picker id="date-picker-component-days"></media-date-picker>
         </div>
     </ava-design-system-provider>
 </body>
 
 <script>(function () {
         const datePickerSpecificDay = document.getElementById("date-picker-component-specific-day");
-        datePickerSpecificDay.setAttribute('inputDate', new Date('2021.2.2'))
+        datePickerSpecificDay.setAttribute('inputDate', new Date('2021.2.2'));
+
+        const datePickerMonthYear = document.getElementById("date-picker-component-month-years");
+        datePickerMonthYear.allowedDates = {
+            months: '3,4,10',
+            years: '2020,2021'
+        };
+
+        const datePickerDays = document.getElementById("date-picker-component-days");
+        datePickerDays.allowedDates = {
+            days: '1,2,3'
+        };
     })()
 </script>
 
