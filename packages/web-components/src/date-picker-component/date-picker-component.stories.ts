@@ -39,7 +39,7 @@ export default {
     argTypes: {
         date: { control: 'text' },
         allowedMonths: { control: 'text' },
-        text: { control: 'text' },
+        allowedYears: { control: 'text' },
         allowedDays: { control: 'text' }
     }
 };

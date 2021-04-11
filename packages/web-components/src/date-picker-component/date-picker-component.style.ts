@@ -26,15 +26,15 @@ export const styles = css`
 
     .ms-DatePicker-monthOption,
     .ms-DatePicker-yearOption {
-        background-color: #252423;
-        font-size: 12px;
-        color: #f3f2f1;
+        background-color: var(--date-picker-holder-bg);
+        color: var(--date-picker-text-color);
+        font-size: var(--type-ramp-minus-1-font-size);
     }
 
     .ms-DatePicker-monthOption.is-highlighted,
     .ms-DatePicker-yearOption.is-highlighted {
-        background-color: #2899f5;
-        color: #1b1a19;
+        background-color: var(--date-picker-bg-today);
+        color: var(--date-picker-text-color-today);
     }
 
     .ms-DatePicker-holder {
@@ -47,17 +47,17 @@ export const styles = css`
 
     .ms-Icon.i-arrow-page-up:before {
         content: '\\e74a';
-        font-size: 12px;
-        color: #f3f2f1;
+        font-size: var(--type-ramp-minus-1-font-size);
+        color: var(--date-picker-text-color);
     }
     .ms-Icon.i-arrow-page-down:before {
         content: '\\e74b';
-        font-size: 12px;
-        color: #f3f2f1;
+        font-size: var(--type-ramp-minus-1-font-size);
+        color: var(--date-picker-text-color);
     }
 
     .ms-DatePicker-day--selected {
-        color: #1b1a19 !important;
+        color: var(--date-picker-text-color-today); !important;
     }
 
     .ms-DatePicker-yearOption.js-changeDate.disabled,
@@ -66,6 +66,6 @@ export const styles = css`
     .ms-DatePicker-day.ms-DatePicker-day--outfocus {
         pointer-events: none;
         cursor: not-allowed;
-        color: #605e5c;
+        color: var(--date-picker-focus-text-color-hover);
     }
 `;
