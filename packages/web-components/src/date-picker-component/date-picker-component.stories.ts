@@ -14,7 +14,7 @@ DatePickerComponent;
 SegmentsTimelineComponent;
 
 const DatePickerComponentTemplate = (data: ITemplate) => {
-    const datePicker = document.createElement('media-date-picker-component') as DatePickerComponent;
+    const datePicker = document.createElement('media-date-picker') as DatePickerComponent;
     if (data.allowedMonths) {
         datePicker.allowedMonths = data.allowedMonths;
     }

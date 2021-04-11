@@ -10,26 +10,26 @@
     <ava-design-system-provider>
         <h1>Date picker selecting current day, other dates disable</h1>
         <div>
-            <media-date-picker-component></media-date-picker-component>
+            <media-date-picker></media-date-picker>
         </div>
         <h1>Date picker selecting specific day</h1>
         <div>
-            <media-date-picker-component id="date-picker-component-specific-day"></media-date-picker-component>
+            <media-date-picker id="date-picker-component-specific-day"></media-date-picker>
         </div>
         <h1>Date picker selecting allowing April ,March and October, and 2021,2020 years</h1>
         <div>
-            <media-date-picker-component allowedMonths='3,4,10'
-                allowedYears='2020,2021'></media-date-picker-component>
+            <media-date-picker allowedMonths='3,4,10'
+                allowedYears='2020,2021'></media-date-picker>
         </div>
         <h1>Date picker selecting allowing selecting first 3 days in a month</h1>
         <div>
-            <media-date-picker-component allowedDays='1,2,3'></media-date-picker-component>
+            <media-date-picker allowedDays='1,2,3'></media-date-picker>
         </div>
     </ava-design-system-provider>
 </body>
 
 <script>(function () {
-        const datePickerSpecificDay = document.getElementById("media-date-picker-component-specific-day");
+        const datePickerSpecificDay = document.getElementById("media-date-picker-specific-day");
         datePickerSpecificDay.setAttribute('inputDate', new Date('2021.2.2'))
     })()
 </script>

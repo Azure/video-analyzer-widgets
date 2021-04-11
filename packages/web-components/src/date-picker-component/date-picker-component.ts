@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/prefer-for-of */
 import { attr, customElement, FASTElement } from '@microsoft/fast-element';
 import { DatePickerEvent, IDatePickerRenderEvent } from './date-picker-component.definitions';
 import { styles } from './date-picker-component.style';
@@ -8,7 +7,7 @@ import { template } from './date-picker-component.template';
  * @public
  */
 @customElement({
-    name: 'media-date-picker-component',
+    name: 'media-date-picker',
     template,
     styles
 })
@@ -233,6 +232,7 @@ export class DatePickerComponent extends FASTElement {
         // Take months according to available months list
         const monthsElements = this.shadowRoot.querySelectorAll('.ms-DatePicker-monthOption.js-changeDate');
         const months = this.allowedMonths?.split(',');
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let index = 0; index < monthsElements.length; index++) {
             const element = monthsElements[index];
             const month = parseInt(element?.getAttribute('data-month'), 10) + 1;
@@ -248,6 +248,7 @@ export class DatePickerComponent extends FASTElement {
         // Take all days
         const yearsElements = this.shadowRoot.querySelectorAll('.ms-DatePicker-yearOption.js-changeDate');
         const years = this.allowedYears?.split(',');
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let index = 0; index < yearsElements.length; index++) {
             const element = yearsElements[index];
             const year = parseInt(element?.getAttribute('data-year'), 10);
@@ -263,6 +264,7 @@ export class DatePickerComponent extends FASTElement {
         // Take all days
         const daysElements = this.shadowRoot.querySelectorAll('.ms-DatePicker-day.ms-DatePicker-day--infocus');
         const days = this.allowedDays?.split(',');
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let index = 0; index < daysElements.length; index++) {
             const element = daysElements[index];
             if (!days?.includes(element?.innerHTML)) {

@@ -3,7 +3,7 @@ import { GO_TO_ARCHIVE_MAIN_PATH, GO_TO_ARCHIVE_SUB_PATH } from '../../../styles
 import { DatePickerComponent } from './date-picker-component';
 
 /**
- * The template for the example component.
+ * The template for the date picker component.
  * @public
  */
 export const template = html<DatePickerComponent>`
