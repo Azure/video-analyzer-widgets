@@ -66,7 +66,17 @@ export class ActionsMenuComponent extends FASTElement {
         this.$emit('action-clicked', action);
     }
 
-    public handleMenuItemKeyDown = (e: KeyboardEvent, action: IAction): boolean => {
+    public handleMenuItemMouseUp(e: MouseEvent, action: IAction): boolean {
+        switch (e.which) {
+            case 1: // left mouse button.
+                this.handleMenuItemClick(action);
+                return false;
+        }
+
+        return true;
+    }
+
+    public handleMenuItemKeyUp(e: KeyboardEvent, action: IAction): boolean {
         switch (e.keyCode) {
             case keyCodeEnter:
             case keyCodeSpace:
@@ -75,7 +85,7 @@ export class ActionsMenuComponent extends FASTElement {
         }
 
         return true;
-    };
+    }
 
     public handleFocusOut(event: FocusEvent) {
         if (!event.relatedTarget || !this.shadowRoot.contains(<Node>event.relatedTarget)) {

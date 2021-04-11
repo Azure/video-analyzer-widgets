@@ -107,7 +107,7 @@ export class AreaDrawWidget extends FASTElement {
 
             this.lineDrawer.addEventListener('drawerComplete', (e: any) => {
                 console.log(e.detail);
-                this.createArea(e.detail);
+                this.createArea([...e.detail]);
             });
         } else {
             // init polygon drawer

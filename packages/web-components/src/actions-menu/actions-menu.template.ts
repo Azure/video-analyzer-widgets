@@ -31,8 +31,8 @@ export const template = html<ActionsMenuComponent>`
                             title="${(x) => x.label}"
                             aria-disabled="${(x) => x.disabled}"
                             @focusout="${(x, c) => c.parent.handleFocusOut(c.event as FocusEvent)}"
-                            @keydown="${(x, c) => c.parent.handleMenuItemKeyDown(c.event as KeyboardEvent, x)}"
-                            @click="${(x, c) => c.parent.handleMenuItemClick(x)}"
+                            @keyup="${(x, c) => c.parent.handleMenuItemKeyUp(c.event as KeyboardEvent, x)}"
+                            @mouseup="${(x, c) => c.parent.handleMenuItemMouseUp(c.event as MouseEvent, x)}"
                         >
                             ${when(
                                 (x) => x.svgPath,
