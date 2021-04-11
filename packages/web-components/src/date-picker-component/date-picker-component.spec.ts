@@ -8,7 +8,9 @@ describe('DatePickerComponent', () => {
     it('Select todays date"', async () => {
         const el = await fixture<DatePickerComponent>(html`<media-date-picker></media-date-picker>`);
         const currentDate = new Date();
-        expect(el.date.toString()).to.equal(currentDate.toString());
+        expect(el.date.getFullYear().toString()).to.equal(currentDate.getFullYear().toString());
+        expect(el.date.getMonth().toString()).to.equal(currentDate.getMonth().toString());
+        expect(el.date.getDate().toString()).to.equal(currentDate.getDate().toString());
     });
 
     it('Select input date"', async () => {
