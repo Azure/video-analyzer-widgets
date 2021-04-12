@@ -22,12 +22,14 @@ export class LineDrawerComponent extends FASTElement {
      */
     @attr public borderColor: string = '';
     borderColorChanged() {
-        setTimeout(() => {
-            this.canvasOptions.lineColor = this.borderColor;
-            this.dCanvas.drawerOptions = this.canvasOptions;
+        if (this.canvasOptions) {
+            setTimeout(() => {
+                this.canvasOptions.lineColor = this.borderColor;
+                this.dCanvas.drawerOptions = this.canvasOptions;
 
-            this.resetLineDrawer();
-        });
+                this.resetLineDrawer();
+            });
+        }
     }
 
     public dCanvas: DrawerCanvas;
@@ -47,7 +49,9 @@ export class LineDrawerComponent extends FASTElement {
     public connectedCallback() {
         super.connectedCallback();
 
-        this.init();
+        setTimeout(() => {
+            this.init();
+        });
     }
 
     public resetLineDrawer() {
