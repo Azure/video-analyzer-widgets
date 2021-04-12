@@ -1,6 +1,8 @@
 import { IPoint } from './drawer-canvas.definitions';
 import { CanvasElement } from '../canvas/canvas.element';
 import { ICanvasOptions } from '../canvas/canvas.definitions';
+import { Point } from './../../../dist/packages/web-components/src/drawer/drawer.props.d';
+import { WidgetGeneralError } from './../../widgets/src/common/error';
 
 /**
  * DrawerCanvas class is an implementation of CanvasElement
@@ -162,7 +164,6 @@ export class DrawerCanvas extends CanvasElement {
             const diffY = Math.abs(lastMouseY - clickY);
             if (diffX < 10 && diffY < 10) {
                 this._isDrawCompleted = true;
-                // Calculate angles
                 this.calculateAngles();
             }
         }
@@ -177,16 +178,36 @@ export class DrawerCanvas extends CanvasElement {
         }
     }
 
+    // 
     private calculateAngles() {
-        const legalAnglesSum = 180 * (this._points.length - 2);
+        const legalAnglesSum = 180 * (this._points?.length - 2);
         let polygonAnglesSum = 0;
-        for (const point of this._points) {
-            polygonAnglesSum += Math.atan2(point.x * this.drawerOptions.width, point.y * this.drawerOptions.height) * 180 / Math.PI;
-        }
-        console.log(polygonAnglesSum);
-        if (polygonAnglesSum === legalAnglesSum) {
+        const pointsLength = this.points?.length;
+        for (var i = 0; i < pointsLength; i++) {
+            const pointA = this._points[i];
+            const index2 = i === 0 ? pointsLength - 1 : i - 1;
+            const index3 = i === 0 ? pointsLength - 2 : (i === 1 ? pointsLength - 1 : i - 2);
+            const pointB = this._points[index2];
+            const pointC = this._points[index3];
 
+            const angle = this.getAngle({ x: pointA.x * this.drawerOptions.width, y: pointA.y * this.drawerOptions.height },
+                { x: pointB.x * this.drawerOptions.width, y: pointB.y * this.drawerOptions.height },
+                { x: pointC.x * this.drawerOptions.width, y: pointC.y * this.drawerOptions.height });
+            polygonAnglesSum += Math.abs(angle);
         }
+
+        if (polygonAnglesSum !== legalAnglesSum) {
+            this.clearCanvas();
+            throw new WidgetGeneralError('polygon not valid');
+        }
+    }
+
+    private getAngle(pointA: Point, pointB: Point, pointC: Point) {
+        const AB = Math.sqrt(Math.pow(pointB.x - pointA.x, 2) + Math.pow(pointB.y - pointA.y, 2));
+        const BC = Math.sqrt(Math.pow(pointB.x - pointC.x, 2) + Math.pow(pointB.y - pointC.y, 2));
+        const AC = Math.sqrt(Math.pow(pointC.x - pointA.x, 2) + Math.pow(pointC.y - pointA.y, 2));
+
+        return Math.acos((BC * BC + AB * AB - AC * AC) / (2 * BC * AB)) * (180 / Math.PI);
     }
 
     public onMouseMove(e: MouseEvent) {
