@@ -14,7 +14,6 @@ export class DrawerCanvas extends CanvasElement {
     private _canvasY: number = 0;
 
     // Line attributes
-    private _borderColor: string;
     private _pointsLimit: number;
     private _points: IPoint[] = [];
 
@@ -22,6 +21,8 @@ export class DrawerCanvas extends CanvasElement {
     private _isDrawCompleted: boolean;
     private _lastMouseX: number = 0;
     private _lastMouseY: number = 0;
+    private _cursors = ['crosshair', 'pointer'];
+    private _currentCursor: number = 0;
 
     // Const readyOnly
     private readonly DRAW_LINE = 'round';
@@ -44,31 +45,59 @@ export class DrawerCanvas extends CanvasElement {
     public resize(): void {
         this.setCanvasSize(this._drawerOptions.width, this._drawerOptions.height);
         this.setContextStyle();
-
+        this.clearCanvas();
         this.draw();
     }
 
-    public draw(): void {
+    public clearCanvas() {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    }
 
-        if (!this._points.length) {
+    public draw(): void {
+        if (this._points.length < 2) {
             return;
         }
+
         this.context.beginPath();
+
+        const startPointX = this._points[0].x * this.drawerOptions.width * this.ratio;
+        const startPointY = this._points[0].y * this.drawerOptions.height * this.ratio;
         this.context.moveTo(
-            this._points && this._points[0].x * this.drawerOptions.width * this.ratio,
-            this._points && this._points[0].y * this.drawerOptions.height * this.ratio
+            startPointX,
+            startPointY
         );
 
         for (const point of this._points) {
             // Start to draw
             this.context.lineTo(point.x * this.drawerOptions.width * this.ratio, point.y * this.drawerOptions.height * this.ratio);
         }
+
+        if (this._isDrawCompleted) {
+            this.context.lineTo(startPointX, startPointY);
+            this.context.closePath();
+            this.context.fill();
+        }
+
         this.context.stroke();
     }
 
+    private drawPoints() {
+        for (const point of this._points) {
+            this.context.beginPath();
+            const pointX = point.x * this.drawerOptions.width * this.ratio;
+            const pointY = point.y * this.drawerOptions.height * this.ratio;
+            this.context.arc(pointX, pointY, 3, 0, 2 * Math.PI, false);
+            this.context.fill();
+            this.context.stroke();
+        }
+    };
+
     public drawLastLine() {
-        this.context?.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        if (this._pointsLimit > 2) {
+            return;
+        }
+
+        this.clearCanvas();
         this.context?.beginPath();
 
         const lastPointX = this._points && this._points[this._points.length - 1].x * this.drawerOptions.width * this.ratio;
@@ -103,34 +132,97 @@ export class DrawerCanvas extends CanvasElement {
     }
 
     public onDraw(e: MouseEvent) {
+        e.preventDefault();
+        e.stopPropagation();
+
         if (this._isDrawCompleted) {
             return;
         }
 
-        const lastMouseX = e.clientX - this._canvasX;
-        const lastMouseY = e.clientY - this._canvasY;
-
-        this._points?.push({
-            x: lastMouseX / this.drawerOptions.width,
-            y: lastMouseY / this.drawerOptions.height
-        });
+        this.addPointToList(e);
+        this.clearCanvas();
+        this.draw();
+        this.drawPoints();
 
         if (this._points?.length === this._pointsLimit) {
             this.onDrawComplete();
         }
+    }
 
-        this.draw();
+    private addPointToList(e: MouseEvent) {
+        const lastMouseX = e.clientX - this._canvasX;
+        const lastMouseY = e.clientY - this._canvasY;
+    
+        // Compare between the dots.
+        // If the last click equal to the first one, close the polygon
+        if (this._points.length > 1) {
+            const clickX = this._points[0].x * this.drawerOptions.width;
+            const clickY = this._points[0].y * this.drawerOptions.height;
+            const diffX = Math.abs(lastMouseX - clickX);
+            const diffY = Math.abs(lastMouseY - clickY);
+            if (diffX < 10 && diffY < 10) {
+                this._isDrawCompleted = true;
+                // Calculate angles
+                this.calculateAngles();
+            }
+        }
+
+        // Push the last click only if polygon not closed
+        if (!this._isDrawCompleted) {
+            this._points?.push({
+                x: lastMouseX / this.drawerOptions.width,
+                y: lastMouseY / this.drawerOptions.height,
+                cursor: (this._points.length === 0) ? 1 : 0
+            });
+        }
+    }
+
+    private calculateAngles() {
+        const legalAnglesSum = 180 * (this._points.length - 2);
+        let polygonAnglesSum = 0;
+        for (const point of this._points) {
+            polygonAnglesSum += Math.atan2(point.x * this.drawerOptions.width, point.y * this.drawerOptions.height) * 180 / Math.PI;
+        }
+        console.log(polygonAnglesSum);
+        if (polygonAnglesSum === legalAnglesSum) {
+
+        }
     }
 
     public onMouseMove(e: MouseEvent) {
-        if (!this._points?.length || this._isDrawCompleted) {
+        if (this._isDrawCompleted || !this._points?.length) {
             return;
         }
 
+        this.drawLastLine();
+        this.setCanvasCursor(e);
+    }
+
+    private setCanvasCursor(e: MouseEvent) {
         this._lastMouseX = e.clientX - this._canvasX;
         this._lastMouseY = e.clientY - this._canvasY;
 
-        this.drawLastLine();
+        // Determine cursor by its position
+        var newCursor;
+        if (this._points?.length > 2) {
+            const diffX = Math.abs(this._lastMouseX - (this._points[0].x * this.drawerOptions.width));
+            const diffY = Math.abs(this._lastMouseY - (this._points[0].y * this.drawerOptions.height));
+
+            var s = this._points[0];
+
+            if (diffX < 10 && diffY < 10) {
+                newCursor = s.cursor;
+            }
+            if (!newCursor) {
+                if (this._currentCursor > 0) {
+                    this._currentCursor = 0;
+                    this.canvas.style.cursor = this._cursors[this._currentCursor];
+                }
+            } else if (newCursor !== this._currentCursor) {
+                this._currentCursor = newCursor;
+                this.canvas.style.cursor = this._cursors[this._currentCursor];
+            }
+        }
     }
 
     public onDrawComplete() {

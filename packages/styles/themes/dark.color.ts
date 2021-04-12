@@ -81,6 +81,7 @@ export const darkColorsStyle: ElementStyles = css`
 
         /* Drawer Canvas */
         --drawer-line-color: #db4646;
+        --drawer-fill-color: rgba(100,100,100,0.5);
 
         /* Area Draw */
         --area-draw-color: #f3f2f1;

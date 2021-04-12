@@ -1,7 +1,10 @@
-import { customElement, FASTElement } from '@microsoft/fast-element';
+import { customElement, FASTElement, attr } from '@microsoft/fast-element';
+import { ICanvasOptions } from '../../../common/canvas/canvas.definitions';
+import { DrawerCanvas } from './../../../common/drawer-canvas/drawer-canvas.class';
+import { closestElement } from './../../../common/utils/elements';
 
 /**
- * Time Line component.
+ * A polygon-drawer component.
  * @public
  */
 @customElement({
@@ -9,138 +12,112 @@ import { customElement, FASTElement } from '@microsoft/fast-element';
 })
 export class PolygonDrawerComponent extends FASTElement {
 
-    private canvas: any;
-    private context: any;
-    private offsetX = 0;
-    private offsetY = 0;
-    private clicks: any = [];
-    private cursors = ['crosshair', 'grabbing', 'n-resize'];
-    private currentCursor = 0;
-    private isClosed: boolean;
+    /**
+     * Drawing line color.
+     *
+     * @public
+     * @remarks
+     * HTML attribute: borderColor
+     */
+    @attr public borderColor: string = '';
+    borderColorChanged() {
+        setTimeout(() => {
+            this.dCanvas.drawerOptions.lineColor = this.borderColor;
 
-    private init() {
-        // Temporary
-        this.canvas = document.createElement('canvas');
-        this.canvas.style.border = '1px solid black';
-        this.shadowRoot?.appendChild(this.canvas);
-        this.context = this.canvas.getContext('2d');
-
-        this.appendEvents();
-        this.reOffset();
-    }
-
-    private reOffset() {
-        var BB = this.canvas.getBoundingClientRect();
-        this.offsetX = BB.left;
-        this.offsetY = BB.top;
-    }
-
-    private drawPolygon() {
-        this.context.fillStyle = 'rgba(100,100,100,0.5)';
-        this.context.strokeStyle = "#df4b26";
-        this.context.lineWidth = 1;
-
-        this.context.beginPath();
-        this.context.moveTo(this.clicks[0].x, this.clicks[0].y);
-        for (var i = 1; i < this.clicks.length; i++) {
-            this.context.lineTo(this.clicks[i].x, this.clicks[i].y);
-        }
-
-        // Compare between the dots.
-        // If the last click equal to the first one, close the polygon
-        const lastClickX = this.clicks[this.clicks.length - 1].x;
-        const lastClickY = this.clicks[this.clicks.length - 1].y;
-        const diffX = Math.abs(lastClickX - this.clicks[0].x);
-        const diffY = Math.abs(lastClickY - this.clicks[0].y);
-        if (this.clicks.length > 1 && diffX < 10 && diffY < 10) {
-            this.context.closePath();
-            this.context.fill();
-            this.isClosed = true;
-            // Calculate angles
-            this.calculateAngles();
-        }
-        this.context.stroke();
-    };
-
-    private calculateAngles() {
-        const angle = Math.atan2(my, mx) * 180 / Math.PI;
-    }
-
-    private drawPoints() {
-        this.context.strokeStyle = "#df4b26";
-        this.context.lineJoin = "round";
-        this.context.lineWidth = 5;
-
-        for (var i = 0; i < this.clicks.length; i++) {
-            this.context.beginPath();
-            this.context.arc(this.clicks[i].x, this.clicks[i].y, 3, 0, 2 * Math.PI, false);
-            this.context.fillStyle = '#ffffff';
-            this.context.fill();
-            this.context.lineWidth = 5;
-            this.context.stroke();
-        }
-    };
-
-    private redraw() {
-        this.context.clearRect(0, 0, 500, 500); // Clear the canvas
-
-        this.drawPolygon();
-        this.drawPoints();
-    };
-
-    private handleMouseMove(e: MouseEvent) {
-        e.preventDefault();
-        e.stopPropagation();
-
-        const mouseX = e.clientX - this.offsetX;
-        const mouseY = e.clientY - this.offsetY;
-
-        // Determine cursor by its position
-        var newCursor;
-        if (this.clicks.length !== 0) {
-            const diffX = Math.abs(mouseX - this.clicks[0].x);
-            const diffY = Math.abs(mouseY - this.clicks[0].y);
-
-            var s = this.clicks[0];
-
-            if (diffX < 10 && diffY < 10) {
-                newCursor = s.cursor;
-            }
-            if (!newCursor) {
-                if (this.currentCursor > 0) {
-                    this.currentCursor = 0;
-                    this.canvas.style.cursor = this.cursors[this.currentCursor];
-                }
-            } else if (newCursor !== this.currentCursor) {
-                this.currentCursor = newCursor;
-                this.canvas.style.cursor = this.cursors[this.currentCursor];
-            }
-        }
-    }
-
-    private handleMouseUp(e: MouseEvent) {
-        if (this.isClosed) {
-            return;
-        }
-
-        this.clicks.push({
-            x: e.offsetX,
-            y: e.offsetY,
-            cursor: (this.clicks.length === 0) ? 1 : 0,
-            counter: 1
+            this.resetLineDrawer();
         });
-
-        this.redraw();
     }
 
-    private appendEvents() {
-        this.canvas.addEventListener('mousemove', this.handleMouseMove.bind(this));
-        this.canvas.addEventListener('mouseup', this.handleMouseUp.bind(this));
+    /**
+     * Drawing fill polygon color.
+     *
+     * @public
+     * @remarks
+     * HTML attribute: fillColor
+     */
+    @attr public fillColor: string = '';
+    fillColorChanged() {
+        setTimeout(() => {
+            this.dCanvas.drawerOptions.fillStyle = this.fillColor;
+
+            this.resetLineDrawer();
+        });
     }
 
+    public dCanvas: DrawerCanvas;
+
+    private readonly CANVAS_DEFAULT_HEIGHT = 375;
+    private readonly CANVAS_DEFAULT_WIDTH = 250;
+    private readonly CANVAS_POSITION = 'relative';
+    private readonly CURSOR_TYPE = 'crosshair';
+    private readonly LINE_WIDTH = 2;
+
+    public constructor() {
+        super();
+    }
+
+    // Only after creation of the template, the canvas element is created and assigned to DOM
     public connectedCallback() {
         super.connectedCallback();
+
         this.init();
     }
 
+    public resetLineDrawer() {
+        this.dCanvas.resize();
+    }
+
+    private init() {
+        const parent = this.$fastController.element.parentElement;
+        const width = parent.clientWidth || this.CANVAS_DEFAULT_WIDTH;
+        const height = parent.clientHeight || this.CANVAS_DEFAULT_HEIGHT;
+        const designSystem = closestElement('ava-design-system-provider', this.$fastController.element);
+        const borderColor = designSystem ? getComputedStyle(designSystem)?.getPropertyValue('--drawer-line-color') : '';
+        const fillColor = designSystem ? getComputedStyle(designSystem)?.getPropertyValue('--drawer-fill-color') : '';
+        const drawerOptions: ICanvasOptions = {
+            height: height,
+            width: width,
+            cursor: this.CURSOR_TYPE,
+            position: this.CANVAS_POSITION,
+            lineWidth: this.LINE_WIDTH,
+            lineColor: this.borderColor || borderColor,
+            fillStyle: this.fillColor || fillColor
+        };
+
+        this.dCanvas = new DrawerCanvas(drawerOptions);
+        // Set canvas size
+        this.dCanvas.setCanvas(drawerOptions.width, drawerOptions.height, 10);
+        // Append to DOM
+        this.shadowRoot?.appendChild(this.dCanvas.canvas);
+        // Init props after appending to DOM
+        this.dCanvas.initBoundingCanvas();
+        // Handle mouse events
+        this.appendEvents();
+    }
+
+    private appendEvents() {
+        this.dCanvas.canvas.addEventListener('mousemove', this.dCanvas.onMouseMove.bind(this.dCanvas));
+        this.dCanvas.canvas.addEventListener('mouseup', this.dCanvas.onDraw.bind(this.dCanvas));
+
+        this.dCanvas.canvas.addEventListener('drawerComplete', this.onDrawComplete.bind(this.dCanvas));
+
+        window.addEventListener('resize', () => {
+            const parent = this.$fastController.element.parentElement;
+            const width = parent?.clientWidth || this.CANVAS_DEFAULT_WIDTH;
+            const height = parent?.clientHeight || this.CANVAS_DEFAULT_HEIGHT;
+            this.dCanvas.drawerOptions = {
+                ...this.dCanvas.drawerOptions,
+                height: height,
+                width: width
+            };
+
+            this.dCanvas.initBoundingCanvas();
+            this.dCanvas.resize();
+        });
+    }
+
+    private onDrawComplete() {
+        this.$emit('drawerComplete', this.dCanvas.points);
+        this.dCanvas.clearPoints();
+    }
 }

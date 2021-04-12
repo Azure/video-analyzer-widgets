@@ -81,5 +81,6 @@ export const defaultColorsStyle: ElementStyles = css`
 
         /* Drawer Canvas */
         --drawer-line-color: #db4646;
+        --drawer-fill-color: rgba(100,100,100,0.5);
     }
 `;
