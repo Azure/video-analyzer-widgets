@@ -5,7 +5,7 @@ import { closestElement } from './../../../common/utils/elements';
 import { styles } from './line-drawer.style';
 
 /**
- * An line-drawer item.
+ * An media-line-drawer item.
  * @public
  */
 @customElement({

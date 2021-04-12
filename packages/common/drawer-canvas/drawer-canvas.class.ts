@@ -178,7 +178,6 @@ export class DrawerCanvas extends CanvasElement {
         }
     }
 
-    // 
     private calculateAngles() {
         const legalAnglesSum = 180 * (this._points?.length - 2);
         let polygonAnglesSum = 0;

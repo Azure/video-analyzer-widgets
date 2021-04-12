@@ -8,7 +8,7 @@ import { closestElement } from './../../../common/utils/elements';
  * @public
  */
 @customElement({
-    name: 'polygon-drawer'
+    name: 'media-polygon-drawer'
 })
 export class PolygonDrawerComponent extends FASTElement {
 
