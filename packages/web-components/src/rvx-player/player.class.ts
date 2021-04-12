@@ -1,10 +1,12 @@
 /* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { neutralFillToggleFocusBehavior } from '@microsoft/fast-components';
+import { ICanvasOptions } from '../../../common/canvas/canvas.definitions';
 import { WidgetGeneralError } from '../../../widgets/src';
 import { shaka as shaka_player } from './shaka';
+import { BoundingBoxDrawer } from './UI/bounding-box.class';
 import { ForwardButton, FullscreenButton, MuteButton, OverflowMenu, PlayButton, RewindButton } from './UI/buttons.class';
 import {
+    BodyTrackingButtonFactory,
     ForwardButtonFactory,
     FullscreenButtonFactory,
     LiveButtonFactory,
@@ -20,6 +22,7 @@ export class Player {
     private player: shaka_player.Player = Object.create(null);
     private controls: any;
     private timestampOffset: number;
+    private boundingBoxesDrawer: BoundingBoxDrawer;
 
     public set liveStream(value: string) {
         this._liveStream = value;
@@ -65,7 +68,8 @@ export class Player {
                 this.video.play();
             }
         } catch (error) {
-            throw new WidgetGeneralError(error.message);
+            // eslint-disable-next-line no-console
+            console.log(error.message);
         }
     }
 
@@ -74,6 +78,9 @@ export class Player {
             await this.load(this._liveStream, true);
         } else {
             await this.load(this._vodStream, true);
+        }
+        if (this.boundingBoxesDrawer) {
+            this.boundingBoxesDrawer.clearInstances();
         }
         this.isLive = isLive;
         document.dispatchEvent(new CustomEvent('player_live', { detail: this.isLive }));
@@ -120,9 +127,23 @@ export class Player {
             // document.dispatchEvent(new CustomEvent('player_live', { detail: this.isLive }));
         };
         shaka.ui.Controls.registerElement('live', new LiveButtonFactory());
+
+        BodyTrackingButtonFactory.callBack = (isOn: boolean) => {
+            this.toggleBodyTracking(isOn);
+            // document.dispatchEvent(new CustomEvent('player_live', { detail: this.isLive }));
+        };
+        shaka.ui.Controls.registerElement('bodyTracking', new BodyTrackingButtonFactory());
     }
 
-    private init() {
+    private toggleBodyTracking(isOn: boolean) {
+        if (isOn) {
+            this.addBoundingBoxLayer();
+        } else {
+            this.removeBoundingBoxLayer();
+        }
+    }
+
+    private async init() {
         this.addUILayer();
 
         // Getting reference to video and video container on DOM
@@ -139,6 +160,7 @@ export class Player {
                 'volume',
                 // 'time_and_duration',
                 'spacer',
+                'bodyTracking',
                 'overflow_menu',
                 'fullscreen'
             ],
@@ -165,8 +187,7 @@ export class Player {
         // Listen for error events.
         this.player.addEventListener('error', this.onErrorEvent.bind(this));
         this.player.addEventListener('trackschanged', this.onTrackChange.bind(this));
-
-        this.controls.addEventListener('timeandseekrangeupdated', this.onTimeSeekUpdate.bind(this));
+        // this.player.addEventListener('loaded', this.loaded.bind(this));
 
         this.player.addEventListener('emsg', this.onShakaMetadata.bind(this));
 
@@ -177,10 +198,41 @@ export class Player {
         //     this.load(this._vodStream, false);
         // }
 
-        this.toggleLiveMode(this.isLive);
+        await this.toggleLiveMode(this.isLive);
     }
 
+    private onWindowResize() {
+        // Clear canvas
+        this.boundingBoxesDrawer?.resize();
+    }
+
+    private addBoundingBoxLayer() {
+        const options: ICanvasOptions = {
+            height: this.video.clientHeight,
+            width: this.video.clientWidth
+        };
+        this.boundingBoxesDrawer = new BoundingBoxDrawer(options, this.video);
+        this.boundingBoxesDrawer.canvas.style.position = 'absolute';
+        this.boundingBoxesDrawer.canvas.style.zIndex = '1';
+        this.boundingBoxesDrawer.canvas.style.pointerEvents = 'none';
+        this.videoContainer.prepend(this.boundingBoxesDrawer.canvas);
+        window.addEventListener('resize', this.onWindowResize.bind(this));
+        this.boundingBoxesDrawer.playAnimation();
+    }
+
+    private removeBoundingBoxLayer() {
+        if (!this.boundingBoxesDrawer) {
+            return;
+        }
+
+        window.removeEventListener('resize', this.onWindowResize.bind(this));
+        this.videoContainer.removeChild(this.boundingBoxesDrawer.canvas);
+        this.boundingBoxesDrawer.clear();
+        this.boundingBoxesDrawer = null;
+    }
     private authenticationHandler(type: shaka_player.net.NetworkingEngine.RequestType, request: shaka_player.extern.Request) {
+        // request.headers['set-cookie'] = AvaAPi.cookie;
+
         if (!this._accessToken) {
             return;
         }
@@ -198,22 +250,23 @@ export class Player {
         const emsg = event.detail;
         // we are only interested in AVA metadata.
         if (emsg.schemeIdUri === 'urn:msft:media:ava:event:2020:json') {
-            const inference = this.parseEmsg(emsg);
-            console.log(inference);
+            this.parseEmsg(emsg);
         }
     }
 
     private parseEmsg(emsg: any) {
+        if (!this.boundingBoxesDrawer) {
+            return;
+        }
         const decoder = new TextDecoder();
         const message = decoder.decode(emsg.messageData);
         const inferences = JSON.parse(message).inferences;
-        // console.log(`received inferences time ${emsg.startTime}=>${emsg.endTime} ${message}`);
-        return {
-            startTime: emsg.startTime,
-            endTime: emsg.endTime,
-            value: inferences,
-            track: emsg.value // the track name shows which inference track this inference bleongs to.
-        };
+        for (const iterator of inferences) {
+            if (iterator.type === 'MOTION' || iterator.type === 'ENTITY') {
+                const data = iterator.motion.box;
+                this.boundingBoxesDrawer.addItem(emsg.startTime, data);
+            }
+        }
     }
 
     private async onTrackChange() {
@@ -229,18 +282,20 @@ export class Player {
         const reference = segmentIndex.get(index);
         if (reference) {
             this.timestampOffset = reference.timestampOffset * -1000;
+            this.controls.addEventListener('timeandseekrangeupdated', this.onTimeSeekUpdate.bind(this));
         }
     }
 
     private onTimeSeekUpdate() {
-        // Extract the shaka.util.Error object from the event.
-        // console.log(event);
         const displayTime = this.controls.getDisplayTime();
         const time = this.computeClock(displayTime, true);
         this.timeUpdateCallback(time);
     }
 
     private computeClock(time: number, showDate: boolean) {
+        if (!this.timestampOffset) {
+            return '';
+        }
         const date = new Date(this.timestampOffset + time * 1000);
         return `${showDate ? date.toLocaleDateString() : ''} ${date.toLocaleTimeString()}`;
     }

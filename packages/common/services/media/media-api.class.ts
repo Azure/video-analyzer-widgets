@@ -1,4 +1,4 @@
-import { IAvailableMediaResponse, ITimeRange, Precision, VideoFormat } from './media.definitions';
+import { ITimeRange, Precision, VideoFormat } from './media.definitions';
 
 export class MediaApi {
     private static _baseStream = '';
@@ -17,15 +17,15 @@ export class MediaApi {
     }
 
     public static getLiveStream(): string {
-        const format = MediaApi.format === VideoFormat.HLS ? 'm3u8-cmaf' : 'mpd-time-cmaf';
-        const extension = MediaApi.format === VideoFormat.HLS ? '.m3u8' : '.mpd';
+        const format = MediaApi._format === VideoFormat.HLS ? 'm3u8-cmaf' : 'mpd-time-cmaf';
+        const extension = MediaApi._format === VideoFormat.HLS ? '.m3u8' : '.mpd';
 
         return `${this.baseStream}/manifest(format=${format})${extension}`;
     }
 
     public static getVODStream(range: ITimeRange = null): string {
-        const format = MediaApi.format === VideoFormat.HLS ? 'm3u8-cmaf' : 'mpd-time-cmaf';
-        const extension = MediaApi.format === VideoFormat.HLS ? '.m3u8' : '.mpd';
+        const format = MediaApi._format === VideoFormat.HLS ? 'm3u8-cmaf' : 'mpd-time-cmaf';
+        const extension = MediaApi._format === VideoFormat.HLS ? '.m3u8' : '.mpd';
 
         let range_query = '';
         if (range) {

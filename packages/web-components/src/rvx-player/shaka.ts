@@ -1063,6 +1063,7 @@ export declare namespace shaka {
             timelineregionexit: TimelineRegionExitEvent;
             buffering: BufferingEvent;
             loading: LoadingEvent;
+            loaded: LoadingEvent;
             unloading: UnloadingEvent;
             texttrackvisibility: TextTrackVisibilityEvent;
             trackschanged: TracksChangedEvent;

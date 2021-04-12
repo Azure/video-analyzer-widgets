@@ -19,21 +19,12 @@ import { template } from './rvx-player.template';
     styles
 })
 export class PlayerComponent extends FASTElement {
-    /**
-     * The width of the item.
-     *
-     * @public
-     * @remarks
-     * HTML attribute: text
-     */
-    @attr public width: string = '100%';
-    @attr public height: string = '100%';
-
     @attr public liveStream: string;
     @attr public vodStream: string;
 
     @attr public isLive = true;
     @attr public time = '';
+    @attr public cameraName = 'Camera';
     @attr public currentDate = new Date();
     @attr public currentAllowedDays: string[] = [];
     @attr public currentAllowedMonths: string[] = [];
@@ -45,13 +36,36 @@ export class PlayerComponent extends FASTElement {
     private videoContainer!: HTMLElement;
     private allowedDates: any = [];
     private afterInit = false;
+    private connected = false;
 
     public constructor() {
         super();
-        MediaApi.baseStream =
-            'https://amsts71mediaarmacfgqhd-ts711.streaming.media.azure-test.net/527754db-43ab-4357-9fda-8959121d3a5e/test.ism';
-        this.liveStream = MediaApi.getLiveStream();
-        this.vodStream = MediaApi.getVODStream();
+    }
+
+    public async init() {
+        if (!this.connected) {
+            return;
+        }
+
+        this.liveStream = MediaApi.getLiveStream() || this.liveStream;
+        this.vodStream = MediaApi.getVODStream() || this.vodStream;
+
+        // Init  player
+        this.player = new Player(this.video, this.videoContainer, this.liveStream, this.vodStream, this.timeUpdateCallBack.bind(this));
+
+        if (!MediaApi.baseStream) {
+            return;
+        }
+        await this.fetchAvailableYears();
+
+        // First initialization - init month and dates
+        const currentYear = this.currentDate.getFullYear();
+        const currentMonth = this.currentDate.getMonth() + 1;
+        await this.updateMonthAndDates(currentYear, currentMonth);
+    }
+
+    public cameraNameChanged() {
+        this.cameraName = this.cameraName || 'Camera';
     }
 
     public liveStreamChanged() {
@@ -75,12 +89,10 @@ export class PlayerComponent extends FASTElement {
 
         this.video = this.shadowRoot?.querySelector('#player-video') as HTMLVideoElement;
         this.videoContainer = this.shadowRoot?.querySelector('.video-container') as HTMLElement;
-
+        this.connected = true;
         if (!this.video) {
             return;
         }
-        // Init  player
-        this.player = new Player(this.video, this.videoContainer, this.liveStream, this.vodStream, this.timeUpdateCallBack.bind(this));
 
         document.addEventListener('player_live', ((event: CustomEvent) => {
             this.isLive = event.detail;
@@ -115,12 +127,8 @@ export class PlayerComponent extends FASTElement {
             }
         });
 
-        await this.fetchAvailableYears();
+        this.init();
 
-        // First initialization - init month and dates
-        const currentYear = this.currentDate.getFullYear();
-        const currentMonth = this.currentDate.getMonth() + 1;
-        await this.updateMonthAndDates(currentYear, currentMonth);
         this.afterInit = true;
     }
 

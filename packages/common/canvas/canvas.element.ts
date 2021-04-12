@@ -6,9 +6,8 @@ import { ICanvasOptions } from './canvas.definitions';
 export abstract class CanvasElement {
     public context: CanvasRenderingContext2D;
     public ratio = 1;
-
-    private _canvas: HTMLCanvasElement;
-    private options: ICanvasOptions;
+    protected options: ICanvasOptions;
+    protected _canvas: HTMLCanvasElement;
 
     public constructor(options: ICanvasOptions) {
         this._canvas = document.createElement('canvas');

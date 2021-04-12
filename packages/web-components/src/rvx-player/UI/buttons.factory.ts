@@ -1,5 +1,5 @@
 import { callbackify } from 'util';
-import { LiveButton } from './buttons.class';
+import { BodyTracking, LiveButton } from './buttons.class';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const shaka = require('shaka-player/dist/shaka-player.ui.debug.js');
@@ -44,5 +44,12 @@ export class LiveButtonFactory {
     public static callBack: (isLive: boolean) => void;
     public create(rootElement: any, controls: any) {
         return new LiveButton(rootElement, controls, LiveButtonFactory.callBack);
+    }
+}
+
+export class BodyTrackingButtonFactory {
+    public static callBack: (isOn: boolean) => void;
+    public create(rootElement: any, controls: any) {
+        return new BodyTracking(rootElement, controls, BodyTrackingButtonFactory.callBack);
     }
 }

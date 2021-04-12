@@ -8,7 +8,7 @@ import { PlayerComponent } from '.';
 export const template = html<PlayerComponent>`
     <template>
         <div class="upper-bounding">
-            <span class="col camera-name">Camera 1</span>
+            <span class="col camera-name">${(x) => x.cameraName}</span>
             <div class="date-picker col">
                 <span>${(x) => x.time}</span>
                 <media-date-picker-component
@@ -21,11 +21,8 @@ export const template = html<PlayerComponent>`
                 ></media-date-picker-component>
             </div>
         </div>
-        <style>
-            @import '../controls.css';
-        </style>
         <div shaka-controls="true" class="video-container ${(x) => (x.isLive ? 'live' : 'vod')}">
-            <video id="player-video" width="${(x) => x.width}" height="${(x) => x.height}"></video>
+            <video id="player-video"></video>
         </div>
     </template>
 `;

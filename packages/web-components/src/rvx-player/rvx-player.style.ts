@@ -1,4 +1,5 @@
 import { css } from '@microsoft/fast-element';
+import { stylesShaka } from './shaka-controls.style';
 
 export const styles = css`
     :host {
@@ -11,6 +12,8 @@ export const styles = css`
         --design-unit: 2;
         --base-height-multiplier: 12;
     }
+
+    ${stylesShaka}
 
     .shaka-video-container {
         position: relative;

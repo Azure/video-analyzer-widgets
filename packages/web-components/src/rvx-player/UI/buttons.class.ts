@@ -182,3 +182,41 @@ export class LiveButton extends shaka.ui.Element {
         });
     }
 }
+
+export class BodyTracking extends shaka.ui.Element {
+    private isOn = false;
+    private readonly METADATA_PATH =
+        'M15 3.93l-7.5-3.93-7.5 3.93v7.94l7.5 3.93 7.5-3.93v-7.94zM7.5 1.13l5.92 3.1-5.92 3.1-5.92-3.1 5.92-3.1zM1 11.26v-6.2l6 3.14v6.2l-6-3.14zM8 14.41v-6.21l6-3.14v6.2l-6 3.15z';
+    public constructor(parent: any, controls: any, private callBack: (isOn: boolean) => void) {
+        super(parent, controls);
+        this.init();
+    }
+
+    public updateIcon_() {
+        if (this.isOn) {
+            this.path.style['fill'] = 'red';
+        } else {
+            this.path.style['fill'] = 'white';
+        }
+    }
+
+    private init() {
+        this.button_ = document.createElement('fast-button');
+        // Create SVG
+        this.svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        this.path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+
+        this.path.setAttribute('d', this.METADATA_PATH);
+        this.svg.appendChild(this.path);
+        this.button_.appendChild(this.svg);
+        this.parent.appendChild(this.button_);
+        this.updateIcon_();
+        this.eventManager.listen(this.button_, 'click', () => {
+            this.isOn = !this.isOn;
+            this.updateIcon_();
+            // this.button_.classList.add(this.isLive ? 'live-on' : 'live-off');
+            // this.button_.classList.remove(this.isLive ? 'live-off' : 'live-on');
+            this.callBack(this.isOn);
+        });
+    }
+}
