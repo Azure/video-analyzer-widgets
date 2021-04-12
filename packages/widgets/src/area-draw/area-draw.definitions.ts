@@ -36,3 +36,10 @@ export enum ColorsRanking {
     Green = 8,
     Orange = 9
 }
+
+export interface IAreaOutput {
+    type: string;
+    name: string;
+    polygon?: IPoint[];
+    line?: IPoint[];
+}

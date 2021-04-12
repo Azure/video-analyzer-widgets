@@ -8,7 +8,7 @@ import { AreasViewComponent } from '../../../web-components/src/areas-view/areas
 import { LayerLabelComponent } from '../../../web-components/src/layer-label/layer-label.component';
 import { ILayerLabelConfig, LayerLabelMode } from '../../../web-components/src/layer-label/layer-label.definitions';
 import { LineDrawerComponent } from '../../../web-components/src/line-drawer/line-drawer.component';
-import { AreaDrawMode, IArea, IAreaDrawWidgetConfig } from './area-draw.definitions';
+import { AreaDrawMode, IArea, IAreaDrawWidgetConfig, IAreaOutput } from './area-draw.definitions';
 import { styles } from './area-draw.style';
 import { template } from './area-draw.template';
 
@@ -87,9 +87,11 @@ export class AreaDrawWidget extends FASTElement {
     }
     public save() {
         console.log('save');
+        console.log(this.getAreasOutputs());
     }
     public done() {
         console.log('done');
+        console.log(this.getAreasOutputs());
     }
 
     private initDrawer() {
@@ -250,5 +252,27 @@ export class AreaDrawWidget extends FASTElement {
                 }
             ]
         };
+    }
+
+    private getAreasOutputs(): IAreaOutput[] {
+        const outputs: IAreaOutput[] = [];
+        for (const area of this.areas) {
+            const output: IAreaOutput = {
+                type: '#Microsoft.VideoAnalyzer',
+                name: area.name
+            };
+
+            if (area.points.length === 2) {
+                output.type += '.NamedLineString';
+                output.line = area.points;
+            } else {
+                output.type += '.NamedPolygonString';
+                output.polygon = area.points;
+            }
+
+            outputs.push(output);
+        }
+
+        return outputs;
     }
 }
