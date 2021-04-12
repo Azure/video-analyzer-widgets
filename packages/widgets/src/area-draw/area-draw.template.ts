@@ -53,7 +53,9 @@ export const template = html<AreaDrawWidget>`
                             html`
                                 ${(x) => {
                                     if (x.isLineDrawMode) {
-                                        return html`<media-line-drawer></media-line-drawer>`;
+                                        return html`<media-line-drawer
+                                            connectedCallback="${(x) => x.lineDrawerConnectedCallback()}"
+                                        ></media-line-drawer>`;
                                     } else {
                                         return html`<!-- polygon drawer -->Polygon Drawer`;
                                     }

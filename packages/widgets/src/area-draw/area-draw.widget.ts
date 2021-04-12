@@ -1,6 +1,4 @@
 import { customElement, attr, FASTElement, observable } from '@microsoft/fast-element';
-// import { AreasViewComponent } from '../../../..';
-// import { LineDrawerComponent } from '../../../..';
 import { IPoint } from '../../../common/drawer-canvas/drawer-canvas.definitions';
 import { guid } from '../../../common/utils/guid';
 import { DELETE_SVG_PATH, RENAME_SVG_PATH } from '../../../styles/svg/svg-shapes';
@@ -10,8 +8,7 @@ import { AreasViewComponent } from '../../../web-components/src/areas-view/areas
 import { LayerLabelComponent } from '../../../web-components/src/layer-label/layer-label.component';
 import { ILayerLabelConfig, LayerLabelMode } from '../../../web-components/src/layer-label/layer-label.definitions';
 import { LineDrawerComponent } from '../../../web-components/src/line-drawer/line-drawer.component';
-// import { IArea } from '../../../web-components/src/areas-view/areas-view.definitions';
-import { AreaDrawMode, ColorsRanking, IArea, IAreaDrawWidgetConfig } from './area-draw.definitions';
+import { AreaDrawMode, IArea, IAreaDrawWidgetConfig } from './area-draw.definitions';
 import { styles } from './area-draw.style';
 import { template } from './area-draw.template';
 
@@ -21,27 +18,24 @@ import { template } from './area-draw.template';
     styles
 })
 export class AreaDrawWidget extends FASTElement {
-    @attr public config: IAreaDrawWidgetConfig;
-    public configChanged() {
-        setTimeout(() => {
-            if (this.isReady) {
-                this.initAreaDrawComponents();
-            }
-        });
-    }
+    @attr
+    public config: IAreaDrawWidgetConfig;
 
-    @observable public areas: IArea[] = [];
-    public areasColorsMap: Map<ColorsRanking, IArea>[] = [];
+    @observable
+    public areas: IArea[] = [];
+    @observable
+    public isReady = false;
+    @observable
+    public isDirty = false;
+    @observable
+    showDrawer = true;
+    @observable
+    isLineDrawMode = true;
+    @observable
+    isLabelsListEmpty = true;
 
-    @observable public isReady = false;
     public areaDrawMode = AreaDrawMode.Line;
-    @observable public isDirty = false;
 
-    //  public areasCanvas: AreasCanvas;
-    private readonly CANVAS_DEFAULT_HEIGHT = 375;
-    private readonly CANVAS_DEFAULT_WIDTH = 250;
-    private readonly CANVAS_POSITION = 'relative';
-    private readonly LINE_WIDTH = 2;
     private readonly MAX_AREAS = 10;
 
     private areasView: AreasViewComponent;
@@ -49,28 +43,14 @@ export class AreaDrawWidget extends FASTElement {
     private labelsList: HTMLElement;
     private labelListIndex = 1;
 
-    //  private areasOptions: IAreasOptions;
-
     public constructor() {
         super();
     }
-    //  public areasChanged() {
-    //      setTimeout(() => {
-    //          this.initAreasOptions();
-    //          this.areasCanvas.areasOptions = this.areasOptions;
-    //          this.areasCanvas.resize();
-    //      });
-    //  }
-
-    @observable showDrawer = true;
-    @observable isLineDrawMode = true;
-    @observable isLabelsListEmpty = true;
 
     // Only after creation of the template, the canvas element is created and assigned to DOM
     public connectedCallback() {
         super.connectedCallback();
 
-        // this.areas = [...(this.config?.areas || [])];
         this.isReady = true;
         this.initAreaDrawComponents();
         window.addEventListener('resize', () => {
@@ -79,11 +59,27 @@ export class AreaDrawWidget extends FASTElement {
         });
     }
 
+    public configChanged() {
+        setTimeout(() => {
+            if (this.isReady) {
+                this.initAreaDrawComponents();
+            }
+        });
+    }
+
+    public lineDrawerConnectedCallback() {
+        console.log('lineDrawerConnectedCallback');
+        setTimeout(() => {
+            this.initDrawer();
+        });
+    }
+
     private initAreaDrawComponents() {
-        this.labelsList = this.shadowRoot.querySelector('.labels-list');
+        if (!this.labelsList) {
+            this.labelsList = this.shadowRoot.querySelector('.labels-list');
+        }
+
         this.initAreas();
-        // this.setLabels();
-        this.initDrawer();
     }
 
     public close() {
@@ -98,20 +94,31 @@ export class AreaDrawWidget extends FASTElement {
 
     private initDrawer() {
         if (this.isLineDrawMode) {
-            this.lineDrawer = this.shadowRoot.querySelector('media-line-drawer');
-
-            if (!this.lineDrawer) {
+            if (this.lineDrawer) {
                 return;
             }
-            this.lineDrawer.borderColor = this.getNextColor();
+            this.lineDrawer = this.shadowRoot.querySelector('media-line-drawer');
 
-            this.lineDrawer.addEventListener('drawerComplete', (e: any) => {
-                console.log(e.detail);
-                this.createArea([...e.detail]);
-            });
+            this.lineDrawer?.setAttribute('borderColor', this.getNextColor());
+
+            this.lineDrawer?.addEventListener('drawerComplete', this.drawerComplete.bind(this));
         } else {
             // init polygon drawer
         }
+    }
+
+    private destroyDrawer() {
+        if (this.isLineDrawMode) {
+            this.lineDrawer?.removeEventListener('drawerComplete', this.drawerComplete);
+            this.lineDrawer = null;
+        } else {
+            // destroy polygon drawer
+        }
+    }
+
+    private drawerComplete(e: any) {
+        console.log(e.detail);
+        this.createArea([...e.detail]);
     }
 
     public toggleDrawMode() {
@@ -119,9 +126,6 @@ export class AreaDrawWidget extends FASTElement {
     }
 
     private initAreas() {
-        // this.areas = [...(this.config?.areas || [])];
-        // this.isLabelsListEmpty = this.areas.length === 0;
-
         if (this.config) {
             for (const area of this.config.areas) {
                 this.addArea(area);
@@ -166,6 +170,7 @@ export class AreaDrawWidget extends FASTElement {
 
         if (this.areas.length === this.MAX_AREAS) {
             this.showDrawer = false;
+            this.destroyDrawer();
         }
 
         this.isLabelsListEmpty = false;
@@ -182,12 +187,7 @@ export class AreaDrawWidget extends FASTElement {
 
         if (!this.showDrawer) {
             this.showDrawer = true;
-            setTimeout(() => {
-                this.initDrawer();
-            });
         }
-
-        // this.setLabels();
     }
 
     private getNewAreaName(): string {
@@ -204,12 +204,7 @@ export class AreaDrawWidget extends FASTElement {
         return '';
     }
 
-    private setLabels() {
-        this.labelsList = this.shadowRoot.querySelector('.labels-list');
-    }
-
     private addLabel(area: IArea) {
-        // const id = guid();
         const li = window.document.createElement('li');
         const layerLabel = <LayerLabelComponent>window.document.createElement('media-layer-label');
         li.id = area.id;
@@ -239,7 +234,7 @@ export class AreaDrawWidget extends FASTElement {
         console.log(area);
         return {
             id: area.id,
-            label: area.name || this.generateName(area),
+            label: area.name,
             color: area.color,
             mode: LayerLabelMode.Actions,
             actions: [
@@ -256,12 +251,4 @@ export class AreaDrawWidget extends FASTElement {
             ]
         };
     }
-
-    private generateName(area: IArea): string {
-        return `${this.isLineDrawMode ? 'Line' : 'Area'} ${this.areas.indexOf(area) + 1}`;
-    }
-
-    // public isLineDrawMode(): boolean {
-    //     return this.areaDrawMode === AreaDrawMode.Line;
-    // }
 }
