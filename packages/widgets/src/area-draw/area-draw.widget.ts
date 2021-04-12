@@ -258,15 +258,15 @@ export class AreaDrawWidget extends FASTElement {
         const outputs: IAreaOutput[] = [];
         for (const area of this.areas) {
             const output: IAreaOutput = {
-                type: '#Microsoft.VideoAnalyzer',
+                '@type': '#Microsoft.VideoAnalyzer',
                 name: area.name
             };
 
             if (area.points.length === 2) {
-                output.type += '.NamedLineString';
+                output['@type'] += '.NamedLineString';
                 output.line = area.points;
             } else {
-                output.type += '.NamedPolygonString';
+                output['@type'] += '.NamedPolygonString';
                 output.polygon = area.points;
             }
 

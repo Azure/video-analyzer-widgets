@@ -38,7 +38,7 @@ export enum ColorsRanking {
 }
 
 export interface IAreaOutput {
-    type: string;
+    '@type': string;
     name: string;
     polygon?: IPoint[];
     line?: IPoint[];
