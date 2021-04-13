@@ -87,11 +87,15 @@ export class AreaDrawWidget extends FASTElement {
     }
     public save() {
         console.log('save');
-        console.log(this.getAreasOutputs());
+        const outputs = this.getAreasOutputs();
+        console.log(outputs);
+        this.$emit('areaDrawComplete', outputs);
     }
     public done() {
         console.log('done');
-        console.log(this.getAreasOutputs());
+        const outputs = this.getAreasOutputs();
+        console.log(outputs);
+        this.$emit('areaDrawComplete', outputs);
     }
 
     private initDrawer() {
@@ -213,10 +217,11 @@ export class AreaDrawWidget extends FASTElement {
         layerLabel.config = this.getLabelConfig(area);
         li.appendChild(layerLabel);
         this.labelsList.appendChild(li);
-        layerLabel.addEventListener('label-action', (e: any) => {
+        layerLabel.addEventListener('labelActionClicked', (e: any) => {
             console.log(e);
             switch (e.detail?.type) {
                 case UIActionType.RENAME:
+                    layerLabel.editMode = true;
                     console.log('RENAME');
                     return;
                 case UIActionType.DELETE:
@@ -225,7 +230,25 @@ export class AreaDrawWidget extends FASTElement {
                     return;
             }
         });
+
+        layerLabel.addEventListener('labelTextChanged', (e: any) => {
+            console.log('labelTextChanged');
+            console.log(e);
+            for (const area of this.areas) {
+                if (area.id === li.id) {
+                    area.name = e.detail.name;
+                    return;
+                }
+            }
+        });
     }
+
+    private renameArea(id: string) {
+        const li = this.shadowRoot.getElementById(id);
+        const layerLabel = li.shadowRoot.querySelector('media-layer-label');
+    }
+
+    private labelActionClicked(e: any) {}
 
     private removeLabel(id: string) {
         const li = this.shadowRoot.getElementById(id);

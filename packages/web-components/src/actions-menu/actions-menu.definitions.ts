@@ -3,6 +3,7 @@ export interface IAction {
     svgPath?: string;
     disabled?: boolean;
     type?: UIActionTypeOptions;
+    edit?: boolean;
 }
 
 export enum UIActionType {

@@ -135,4 +135,8 @@ export const styles = css`
         width: 100%;
         height: 100%;
     }
+
+    li > media-layer-label > media-editable-text-field {
+        height: 30px;
+    }
 `;

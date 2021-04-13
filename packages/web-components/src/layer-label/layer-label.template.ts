@@ -18,9 +18,12 @@ export const template = html<LayerLabelComponent>`
         ${when(
             (x) => x.config?.mode === LayerLabelMode.Actions,
             html` <div class="color-container" style="background: ${(x) => x.config?.color};"></div>
-                <span class="label-prefix" aria-label="${(x) => x.config.label}" title="${(x) => x.config.label}"
-                    >${(x) => `${x.config?.label}`}</span
-                >
+
+                <media-editable-text-field
+                    class="label-prefix"
+                    text="${(x) => x.config.label}"
+                    edit-mode="${(x) => x.editMode}"
+                ></media-editable-text-field>
                 <media-actions-menu></media-actions-menu>`
         )}
         ${when(

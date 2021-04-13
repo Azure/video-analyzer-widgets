@@ -63,7 +63,7 @@ export class ActionsMenuComponent extends FASTElement {
     }
 
     public handleMenuItemClick(action: IAction) {
-        this.$emit('action-clicked', action);
+        this.$emit('actionClicked', action);
     }
 
     public handleMenuItemMouseUp(e: MouseEvent, action: IAction): boolean {
