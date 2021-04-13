@@ -57,7 +57,9 @@ export const template = html<AreaDrawWidget>`
                                             connectedCallback="${(x) => x.lineDrawerConnectedCallback()}"
                                         ></media-line-drawer>`;
                                     } else {
-                                        return html`<media-polygon-drawer></media-polygon-drawer>`;
+                                        return html`<media-polygon-drawer
+                                            connectedCallback="${(x) => x.lineDrawerConnectedCallback()}"
+                                        ></media-polygon-drawer>`;
                                     }
                                 }}
                             `

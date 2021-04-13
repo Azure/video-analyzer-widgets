@@ -76,6 +76,13 @@ export class AreaDrawWidget extends FASTElement {
         });
     }
 
+    public polygonDrawerConnectedCallback() {
+        console.log('lineDrawerConnectedCallback');
+        setTimeout(() => {
+            this.initDrawer();
+        });
+    }
+
     private initAreaDrawComponents() {
         if (!this.labelsList) {
             this.labelsList = this.shadowRoot.querySelector('.labels-list');
@@ -138,10 +145,9 @@ export class AreaDrawWidget extends FASTElement {
     public toggleDrawMode() {
         this.destroyDrawer();
         this.isLineDrawMode = !this.isLineDrawMode;
-        setTimeout(() => {
-
-            this.initDrawer();
-        })
+        // setTimeout(() => {
+        //     this.initDrawer();
+        // }, 50);
     }
 
     private initAreas() {

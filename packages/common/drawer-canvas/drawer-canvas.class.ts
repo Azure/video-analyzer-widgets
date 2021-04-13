@@ -1,7 +1,7 @@
 import { IPoint } from './drawer-canvas.definitions';
 import { CanvasElement } from '../canvas/canvas.element';
 import { ICanvasOptions } from '../canvas/canvas.definitions';
-import { Point } from './../../../dist/packages/web-components/src/drawer/drawer.props.d';
+// import { Point } from './../../../dist/packages/web-components/src/drawer/drawer.props.d';
 import { WidgetGeneralError } from './../../widgets/src/common/error';
 
 /**
@@ -65,10 +65,7 @@ export class DrawerCanvas extends CanvasElement {
 
         const startPointX = this._points[0].x * this.drawerOptions.width * this.ratio;
         const startPointY = this._points[0].y * this.drawerOptions.height * this.ratio;
-        this.context.moveTo(
-            startPointX,
-            startPointY
-        );
+        this.context.moveTo(startPointX, startPointY);
 
         for (const point of this._points) {
             // Start to draw
@@ -93,14 +90,15 @@ export class DrawerCanvas extends CanvasElement {
             this.context.fill();
             this.context.stroke();
         }
-    };
+    }
 
     public drawLastLine() {
-        if (this.points?.length === 0 || this.points?.length > 1) {
+        if (this.points?.length === 0) {
             return;
         }
 
         this.clearCanvas();
+        this.draw();
         this.context?.beginPath();
 
         const lastPointX = this._points[this._points.length - 1].x * this.drawerOptions.width * this.ratio;
@@ -156,7 +154,7 @@ export class DrawerCanvas extends CanvasElement {
     private addPointToList(e: MouseEvent) {
         const lastMouseX = e.clientX - this._canvasX;
         const lastMouseY = e.clientY - this._canvasY;
-    
+
         // Compare between the dots.
         // If the last click equal to the first one, close the polygon
         if (this._points.length > 1) {
@@ -176,7 +174,7 @@ export class DrawerCanvas extends CanvasElement {
             this._points?.push({
                 x: lastMouseX / this.drawerOptions.width,
                 y: lastMouseY / this.drawerOptions.height,
-                cursor: (this._points.length === 0) ? 1 : 0
+                cursor: this._points.length === 0 ? 1 : 0
             });
         }
     }
@@ -199,13 +197,15 @@ export class DrawerCanvas extends CanvasElement {
         for (var i = 0; i < pointsLength; i++) {
             const pointA = this._points[i];
             const index2 = i === 0 ? pointsLength - 1 : i - 1;
-            const index3 = i === 0 ? pointsLength - 2 : (i === 1 ? pointsLength - 1 : i - 2);
+            const index3 = i === 0 ? pointsLength - 2 : i === 1 ? pointsLength - 1 : i - 2;
             const pointB = this._points[index2];
             const pointC = this._points[index3];
 
-            const angle = this.getAngle({ x: pointA.x * this.drawerOptions.width, y: pointA.y * this.drawerOptions.height },
+            const angle = this.getAngle(
+                { x: pointA.x * this.drawerOptions.width, y: pointA.y * this.drawerOptions.height },
                 { x: pointB.x * this.drawerOptions.width, y: pointB.y * this.drawerOptions.height },
-                { x: pointC.x * this.drawerOptions.width, y: pointC.y * this.drawerOptions.height });
+                { x: pointC.x * this.drawerOptions.width, y: pointC.y * this.drawerOptions.height }
+            );
             polygonAnglesSum += Math.abs(angle);
         }
 
@@ -216,7 +216,7 @@ export class DrawerCanvas extends CanvasElement {
         }
     }
 
-    private getAngle(pointA: Point, pointB: Point, pointC: Point) {
+    private getAngle(pointA: any, pointB: any, pointC: any) {
         const AB = Math.sqrt(Math.pow(pointB.x - pointA.x, 2) + Math.pow(pointB.y - pointA.y, 2));
         const BC = Math.sqrt(Math.pow(pointB.x - pointC.x, 2) + Math.pow(pointB.y - pointC.y, 2));
         const AC = Math.sqrt(Math.pow(pointC.x - pointA.x, 2) + Math.pow(pointC.y - pointA.y, 2));
@@ -239,8 +239,8 @@ export class DrawerCanvas extends CanvasElement {
         // Determine cursor by its position
         var newCursor;
         if (this._points?.length > 2) {
-            const diffX = Math.abs(this._lastMouseX - (this._points[0].x * this.drawerOptions.width));
-            const diffY = Math.abs(this._lastMouseY - (this._points[0].y * this.drawerOptions.height));
+            const diffX = Math.abs(this._lastMouseX - this._points[0].x * this.drawerOptions.width);
+            const diffY = Math.abs(this._lastMouseY - this._points[0].y * this.drawerOptions.height);
 
             var s = this._points[0];
 
