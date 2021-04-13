@@ -21,3 +21,7 @@ export interface IRVXWidgetConfig extends IWidgetBaseConfig {
      */
     token?: string;
 }
+
+export enum RVXEvents {
+    TOKEN_EXPIRED = 'TOKEN_EXPIRED'
+}

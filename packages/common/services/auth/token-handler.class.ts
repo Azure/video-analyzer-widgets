@@ -1,11 +1,14 @@
 import EventEmitter from 'node:events';
-import { isJwtTokenExpired } from './auth.utils';
+import jwt_decode, { JwtPayload } from 'jwt-decode';
 
 export class TokenHandler {
     public static tokenExpiredEvent: EventEmitter;
     private static _avaAPIToken = '';
 
-    private static tokenIntervalChecker = 0;
+    private static tokenTimeoutRef = 0;
+    private static _tokenExpiredCallback: () => void;
+
+    private static readonly MAX_SET_TIMEOUT_TIME = 2147483647;
 
     public static get avaAPIToken() {
         return TokenHandler._avaAPIToken;
@@ -16,25 +19,42 @@ export class TokenHandler {
         this.init();
     }
 
-    private static tokenExpiredHandler() {
-        // First, check if token expired
-        if (isJwtTokenExpired(this.avaAPIToken)) {
-            // If expired, emit an event
-            this.tokenExpiredEvent.emit('token_expired');
+    public static get tokenExpiredCallback(): () => void {
+        return TokenHandler._tokenExpiredCallback;
+    }
+    public static set tokenExpiredCallback(value: () => void) {
+        TokenHandler._tokenExpiredCallback = value;
+    }
 
-            // Clear interval
-            window.clearInterval(this.tokenIntervalChecker);
-            this.tokenIntervalChecker = 0;
+    private static tokenExpiredHandler() {
+        // If expired, emit an event
+        if (this.tokenExpiredCallback) {
+            this.tokenExpiredCallback();
         }
+
+        // Clear interval
+        window.clearTimeout(this.tokenTimeoutRef);
+        this.tokenTimeoutRef = 0;
     }
 
     private static init() {
-        if (this.tokenIntervalChecker !== 0) {
+        if (this.tokenTimeoutRef !== 0) {
             // Clear existing interval
-            window.clearInterval(this.tokenIntervalChecker);
-            this.tokenIntervalChecker = 0;
+            window.clearTimeout(this.tokenTimeoutRef);
+            this.tokenExpiredHandler();
         }
 
-        this.tokenIntervalChecker = window.setInterval(this.tokenExpiredHandler.bind(this, 100));
+        let tokenExpirationTime;
+        const decoded = jwt_decode(this.avaAPIToken) as JwtPayload;
+        if (decoded.exp === undefined) {
+            tokenExpirationTime = 0;
+        }
+
+        const date = new Date(0);
+        date.setUTCSeconds(decoded.exp - 5);
+        tokenExpirationTime = date.getTime() - new Date(Date.now()).getTime();
+        if (tokenExpirationTime < TokenHandler.MAX_SET_TIMEOUT_TIME) {
+            this.tokenTimeoutRef = window.setTimeout(this.tokenExpiredHandler.bind(this, tokenExpirationTime));
+        }
     }
 }

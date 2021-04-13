@@ -9,20 +9,24 @@ export class AvaAPi {
     private static isTestEnv = true;
     private static readonly apiVersion = '2021-05-01-preview';
 
-    private static cookieIntervalChecker = 0;
+    private static cookieTimeoutRef = 0;
     private static cookieExpiration: Date;
+    private static _fallbackAPIBase = '';
+    private static readonly MAX_SET_TIMEOUT_TIME = 2147483647;
 
     public static get apiBase() {
-        // return `https://${this.accountID}.api.${this.longRegionCode}.videoanalyzer.azure${this.isTestEnv ? '-test' : ''}.net`;
-        return 'http://localhost:4100/mocks/ava/';
+        return (
+            this._fallbackAPIBase ||
+            `https://${this.accountID}.api.${this.longRegionCode}.videoanalyzer.azure${this.isTestEnv ? '-test' : ''}.net`
+        );
     }
 
     public static async authorize() {
         // If there is an existing cookie handler, clear it
-        if (this.cookieIntervalChecker !== 0) {
+        if (this.cookieTimeoutRef !== 0) {
             // Clear existing interval
-            window.clearInterval(this.cookieIntervalChecker);
-            this.cookieIntervalChecker = 0;
+            window.clearTimeout(this.cookieTimeoutRef);
+            this.cookieTimeoutRef = 0;
         }
 
         const url = `${this.apiBase}/videos/${this.videoName}/playbackAuthorization?api-version=${this.apiVersion}`;
@@ -35,7 +39,10 @@ export class AvaAPi {
         this.cookieExpiration = new Date(data.expiration);
         this.cookie = await response.headers.get('x-ava-token');
         console.log(this.cookieExpiration);
-        this.cookieIntervalChecker = window.setInterval(this.cookieExpiredHandler.bind(this, 100));
+        const cookieExpirationTime = this.cookieExpiration.getTime() - new Date(Date.now()).getTime();
+        if (cookieExpirationTime < AvaAPi.MAX_SET_TIMEOUT_TIME) {
+            this.cookieTimeoutRef = window.setTimeout(this.cookieExpiredHandler.bind(this, cookieExpirationTime));
+        }
     }
 
     public static getVideo(videoName?: string): Promise<Response> {
@@ -49,6 +56,14 @@ export class AvaAPi {
         headers['Authorization'] = `Bearer ${TokenHandler.avaAPIToken}`;
 
         return fetch(url, { headers });
+    }
+
+    public static get fallbackAPIBase() {
+        return AvaAPi._fallbackAPIBase;
+    }
+
+    public static set fallbackAPIBase(value) {
+        AvaAPi._fallbackAPIBase = value;
     }
 
     public static get videoName() {

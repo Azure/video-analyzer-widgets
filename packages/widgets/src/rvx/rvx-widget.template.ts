@@ -13,7 +13,7 @@ export const template = html<RVXWidget>`
             theme="dark"
             use-defaults
         >
-            <rvx-player cameraName="${(x) => x.widgetConfig?.videoName}"> </rvx-player>
+            <rvx-player cameraName="${(x) => x._config?.videoName}"> </rvx-player>
         </ava-design-system-provider>
     </template>
 `;
