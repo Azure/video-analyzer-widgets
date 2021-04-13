@@ -107,7 +107,7 @@ export class LineDrawerComponent extends FASTElement {
     }
 
     private onDrawComplete() {
-        this.$emit('drawerComplete', this.dCanvas.points);
+        this.$emit('drawerComplete', this.dCanvas?.points);
         this.dCanvas.clearPoints();
     }
 }

@@ -99,7 +99,7 @@ export class PolygonDrawerComponent extends FASTElement {
         this.dCanvas.canvas.addEventListener('mousemove', this.dCanvas.onMouseMove.bind(this.dCanvas));
         this.dCanvas.canvas.addEventListener('mouseup', this.dCanvas.onDraw.bind(this.dCanvas));
 
-        this.dCanvas.canvas.addEventListener('drawerComplete', this.onDrawComplete.bind(this.dCanvas));
+        this.dCanvas.canvas.addEventListener('drawerComplete', this.onDrawComplete.bind(this));
 
         window.addEventListener('resize', () => {
             const parent = this.$fastController.element.parentElement;
@@ -117,7 +117,8 @@ export class PolygonDrawerComponent extends FASTElement {
     }
 
     private onDrawComplete() {
-        this.$emit('drawerComplete', this.dCanvas.points);
+        console.log('complete');
+        this.$emit('drawerComplete', this.dCanvas?.points);
         this.dCanvas.clearPoints();
     }
 }
