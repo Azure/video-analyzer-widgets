@@ -29,6 +29,7 @@ export class DrawerCanvas extends CanvasElement {
     // Const readyOnly
     private readonly DRAW_LINE = 'round';
     private readonly DEFAULT_LINE_COLOR = '#DB4646';
+    private readonly DEFAULT_FILL_COLOR = 'rgba(219, 70, 70, 0.4)';
 
     public constructor(canvasOptions: ICanvasOptions) {
         // Create canvas object
@@ -95,15 +96,15 @@ export class DrawerCanvas extends CanvasElement {
     };
 
     public drawLastLine() {
-        if (this._pointsLimit > 2) {
+        if (this.points?.length === 0 || this.points?.length > 1) {
             return;
         }
 
         this.clearCanvas();
         this.context?.beginPath();
 
-        const lastPointX = this._points && this._points[this._points.length - 1].x * this.drawerOptions.width * this.ratio;
-        const lastPointY = this._points && this._points[this._points.length - 1].y * this.drawerOptions.height * this.ratio;
+        const lastPointX = this._points[this._points.length - 1].x * this.drawerOptions.width * this.ratio;
+        const lastPointY = this._points[this._points.length - 1].y * this.drawerOptions.height * this.ratio;
 
         // Start to draw
         this.context?.moveTo(this._lastMouseX * this.ratio, this._lastMouseY * this.ratio);
@@ -114,6 +115,7 @@ export class DrawerCanvas extends CanvasElement {
     public setContextStyle() {
         super.setContextStyle();
         this.context.strokeStyle = this._drawerOptions.lineColor || this.DEFAULT_LINE_COLOR;
+        this.context.fillStyle = this._drawerOptions.fillStyle || this.DEFAULT_FILL_COLOR;
         this.context.lineJoin = this.DRAW_LINE;
         this.context.lineCap = this.DRAW_LINE;
     }
@@ -144,7 +146,7 @@ export class DrawerCanvas extends CanvasElement {
         this.addPointToList(e);
         this.clearCanvas();
         this.draw();
-        this.drawPoints();
+        // this.drawPoints();
 
         if (this._points?.length === this._pointsLimit) {
             this.onDrawComplete();
@@ -163,8 +165,9 @@ export class DrawerCanvas extends CanvasElement {
             const diffX = Math.abs(lastMouseX - clickX);
             const diffY = Math.abs(lastMouseY - clickY);
             if (diffX < 10 && diffY < 10) {
-                this._isDrawCompleted = true;
                 this.calculateAngles();
+                this.onDrawComplete();
+                return;
             }
         }
 
@@ -176,6 +179,17 @@ export class DrawerCanvas extends CanvasElement {
                 cursor: (this._points.length === 0) ? 1 : 0
             });
         }
+    }
+
+    private closePolygon(startPointX: number, startPointY: number) {
+        this.context.moveTo(
+            this._points[this._points.length - 1].x * this.drawerOptions.width,
+            this._points[this._points.length - 1].y * this.drawerOptions.height
+        );
+        this.context.lineTo(startPointX, startPointY);
+        this.context.closePath();
+        this.context.fill();
+        this.context.stroke();
     }
 
     private calculateAngles() {
@@ -195,8 +209,9 @@ export class DrawerCanvas extends CanvasElement {
             polygonAnglesSum += Math.abs(angle);
         }
 
-        if (polygonAnglesSum !== legalAnglesSum) {
+        if (Math.round(polygonAnglesSum) !== legalAnglesSum) {
             this.clearCanvas();
+            this.clearPoints();
             throw new WidgetGeneralError('polygon not valid');
         }
     }
@@ -213,9 +228,8 @@ export class DrawerCanvas extends CanvasElement {
         if (this._isDrawCompleted || !this._points?.length) {
             return;
         }
-
-        this.drawLastLine();
         this.setCanvasCursor(e);
+        this.drawLastLine();
     }
 
     private setCanvasCursor(e: MouseEvent) {

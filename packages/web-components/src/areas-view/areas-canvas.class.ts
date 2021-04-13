@@ -40,6 +40,14 @@ export class AreasCanvas extends CanvasElement {
             for (const point of area.points) {
                 this.context.lineTo(point.x * this.areasOptions.width * this.ratio, point.y * this.areasOptions.height * this.ratio);
             }
+
+            if (area.points.length > 2) {
+                this.context.lineTo(area.points[0].x * this.areasOptions.width * this.ratio, area.points[0].y * this.areasOptions.height * this.ratio);
+                this.context.fillStyle = area.color;
+                this.context.globalAlpha = 0.5;
+                this.context.fill();
+
+            }
             this.context.stroke();
         }
     }

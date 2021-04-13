@@ -110,7 +110,7 @@ export class AreaDrawWidget extends FASTElement {
             // init polygon drawer
             this.polygonDrawer = this.shadowRoot.querySelector('media-polygon-drawer');
 
-            // this.polygonDrawer?.setAttribute('borderColor', this.getNextColor());
+            this.polygonDrawer?.setAttribute('borderColor', this.getNextColor());
 
             this.polygonDrawer?.addEventListener('drawerComplete', this.drawerComplete.bind(this));
         }
@@ -132,7 +132,12 @@ export class AreaDrawWidget extends FASTElement {
     }
 
     public toggleDrawMode() {
+        this.destroyDrawer();
         this.isLineDrawMode = !this.isLineDrawMode;
+        setTimeout(() => {
+
+            this.initDrawer();
+        })
     }
 
     private initAreas() {
@@ -176,6 +181,8 @@ export class AreaDrawWidget extends FASTElement {
 
         if (this.lineDrawer) {
             this.lineDrawer.borderColor = this.getNextColor();
+        } else {
+            this.polygonDrawer?.setAttribute('borderColor', this.getNextColor());
         }
 
         if (this.areas.length === this.MAX_AREAS) {
