@@ -65,8 +65,8 @@ export class EditableTextFieldComponent extends FASTElement {
             return;
         }
         this.text = this.input.value;
-        this.$emit('textChanged', this.text);
         console.log(this.text);
+        this.$emit('textChanged', this.text);
         this.editMode = false;
     }
 

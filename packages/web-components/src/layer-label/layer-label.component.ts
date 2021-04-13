@@ -63,6 +63,7 @@ export class LayerLabelComponent extends FASTElement {
                 console.log('text-changed');
                 console.log(e);
                 this.$emit('labelTextChanged', { name: e.detail, id: this.config.id });
+                this.editMode = false;
             });
         }
     }

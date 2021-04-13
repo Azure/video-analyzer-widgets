@@ -59,6 +59,31 @@ export class AreaDrawWidget extends FASTElement {
             const rvxContainer = this.shadowRoot.querySelector('.rvx-widget-container');
             this.labelsList.style.maxHeight = `${rvxContainer.clientHeight}px`;
         });
+
+        window.addEventListener('labelActionClicked', (e: any) => {
+            console.log(e);
+            switch (e.detail?.type) {
+                case UIActionType.RENAME:
+                    this.renameArea(e.detail.id);
+                    console.log('RENAME');
+                    return;
+                case UIActionType.DELETE:
+                    console.log('DELETE');
+                    this.deleteArea(e.detail.id);
+                    return;
+            }
+        });
+
+        window.addEventListener('labelTextChanged', (e: any) => {
+            console.log('labelTextChanged');
+            console.log(e);
+            for (const area of this.areas) {
+                if (area.id === e.detail.id) {
+                    area.name = e.detail.name;
+                    return;
+                }
+            }
+        });
     }
 
     public configChanged() {
@@ -238,35 +263,12 @@ export class AreaDrawWidget extends FASTElement {
         layerLabel.config = this.getLabelConfig(area);
         li.appendChild(layerLabel);
         this.labelsList.appendChild(li);
-        layerLabel.addEventListener('labelActionClicked', (e: any) => {
-            console.log(e);
-            switch (e.detail?.type) {
-                case UIActionType.RENAME:
-                    layerLabel.editMode = true;
-                    console.log('RENAME');
-                    return;
-                case UIActionType.DELETE:
-                    console.log('DELETE');
-                    this.deleteArea(e.detail.id);
-                    return;
-            }
-        });
-
-        layerLabel.addEventListener('labelTextChanged', (e: any) => {
-            console.log('labelTextChanged');
-            console.log(e);
-            for (const area of this.areas) {
-                if (area.id === li.id) {
-                    area.name = e.detail.name;
-                    return;
-                }
-            }
-        });
     }
 
     private renameArea(id: string) {
         const li = this.shadowRoot.getElementById(id);
-        const layerLabel = li.shadowRoot.querySelector('media-layer-label');
+        const layerLabel = <LayerLabelComponent>li.querySelector('media-layer-label');
+        layerLabel.editMode = true;
     }
 
     private labelActionClicked(e: any) {}
