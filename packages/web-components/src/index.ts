@@ -7,3 +7,4 @@ export * from './editable-text-field';
 export * from './actions-menu';
 export * from './layer-label';
 export * from './areas-view';
+export * from './polygon-drawer';

@@ -8,6 +8,7 @@ import { AreasViewComponent } from '../../../web-components/src/areas-view/areas
 import { LayerLabelComponent } from '../../../web-components/src/layer-label/layer-label.component';
 import { ILayerLabelConfig, LayerLabelMode } from '../../../web-components/src/layer-label/layer-label.definitions';
 import { LineDrawerComponent } from '../../../web-components/src/line-drawer/line-drawer.component';
+import { PolygonDrawerComponent } from './../../../web-components/src/polygon-drawer/polygon-drawer.component';
 import { AreaDrawMode, IArea, IAreaDrawWidgetConfig, IAreaOutput } from './area-draw.definitions';
 import { styles } from './area-draw.style';
 import { template } from './area-draw.template';
@@ -40,6 +41,7 @@ export class AreaDrawWidget extends FASTElement {
 
     private areasView: AreasViewComponent;
     private lineDrawer: LineDrawerComponent;
+    private polygonDrawer: PolygonDrawerComponent;
     private labelsList: HTMLElement;
     private labelListIndex = 1;
 
@@ -110,6 +112,11 @@ export class AreaDrawWidget extends FASTElement {
             this.lineDrawer?.addEventListener('drawerComplete', this.drawerComplete.bind(this));
         } else {
             // init polygon drawer
+            this.polygonDrawer = this.shadowRoot.querySelector('media-polygon-drawer');
+
+            this.polygonDrawer?.setAttribute('borderColor', this.getNextColor());
+
+            this.polygonDrawer?.addEventListener('drawerComplete', this.drawerComplete.bind(this));
         }
     }
 
@@ -118,7 +125,8 @@ export class AreaDrawWidget extends FASTElement {
             this.lineDrawer?.removeEventListener('drawerComplete', this.drawerComplete);
             this.lineDrawer = null;
         } else {
-            // destroy polygon drawer
+            this.polygonDrawer?.removeEventListener('drawerComplete', this.drawerComplete);
+            this.polygonDrawer = null;
         }
     }
 
@@ -128,7 +136,12 @@ export class AreaDrawWidget extends FASTElement {
     }
 
     public toggleDrawMode() {
+        this.destroyDrawer();
         this.isLineDrawMode = !this.isLineDrawMode;
+        setTimeout(() => {
+
+            this.initDrawer();
+        })
     }
 
     private initAreas() {
@@ -172,6 +185,8 @@ export class AreaDrawWidget extends FASTElement {
 
         if (this.lineDrawer) {
             this.lineDrawer.borderColor = this.getNextColor();
+        } else {
+            this.polygonDrawer?.setAttribute('borderColor', this.getNextColor());
         }
 
         if (this.areas.length === this.MAX_AREAS) {

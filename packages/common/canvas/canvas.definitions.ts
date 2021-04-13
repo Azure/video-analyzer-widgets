@@ -17,4 +17,5 @@ export interface ICanvasOptions {
     fontColor?: string;
     cursor?: string;
     position?: string;
+    fillStyle?: string;
 }
