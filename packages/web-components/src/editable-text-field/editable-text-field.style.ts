@@ -22,5 +22,8 @@ export const styles = css`
 
     input {
         min-width: 100px;
+        color: var(--area-draw-color);
+        background: var(--area-draw-bg);
+        height: 30px;
     }
 `;
