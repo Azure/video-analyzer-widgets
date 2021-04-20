@@ -40,8 +40,8 @@ export class LayerLabelComponent extends FASTElement {
         if (actionsMenu) {
             actionsMenu.actions = this.config.actions;
         }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         actionsMenu.addEventListener('action-clicked', (e: any) => {
-            console.log(e);
             this.$emit('label-action', { ...e.detail, id: this.config.id });
         });
     }

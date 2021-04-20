@@ -1,7 +1,6 @@
-import { html, repeat, when } from '@microsoft/fast-element';
+import { html, when } from '@microsoft/fast-element';
 import { AreaDrawWidget } from './area-draw.widget';
-import { CLOSE_BIG_SVG_PATH, LINE_SVG_PATH, MORE_SVG_PATH, POLYGON_SVG_PATH } from '../../../styles/svg/svg-shapes';
-import { AreaDrawMode } from './area-draw.definitions';
+import { CLOSE_BIG_SVG_PATH, LINE_SVG_PATH, POLYGON_SVG_PATH } from '../../../styles/svg/svg-shapes';
 
 /**
  * The template for the actions menu component.
@@ -54,7 +53,7 @@ export const template = html<AreaDrawWidget>`
                                 ${(x) => {
                                     if (x.isLineDrawMode) {
                                         return html`<media-line-drawer
-                                            connectedCallback="${(x) => x.lineDrawerConnectedCallback()}"
+                                            connectedCallback="${(y) => y.lineDrawerConnectedCallback()}"
                                         ></media-line-drawer>`;
                                     } else {
                                         return html`<!-- polygon drawer -->Polygon Drawer`;

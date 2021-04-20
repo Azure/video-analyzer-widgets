@@ -28,11 +28,11 @@ export class AreaDrawWidget extends FASTElement {
     @observable
     public isDirty = false;
     @observable
-    showDrawer = true;
+    public showDrawer = true;
     @observable
-    isLineDrawMode = true;
+    public isLineDrawMode = true;
     @observable
-    isLabelsListEmpty = true;
+    public isLabelsListEmpty = true;
 
     public areaDrawMode = AreaDrawMode.Line;
 
@@ -68,10 +68,47 @@ export class AreaDrawWidget extends FASTElement {
     }
 
     public lineDrawerConnectedCallback() {
-        console.log('lineDrawerConnectedCallback');
         setTimeout(() => {
             this.initDrawer();
         });
+    }
+
+    public close() {
+        // console.log('close');
+    }
+
+    public save() {
+        // console.log('save');
+    }
+
+    public done() {
+        // console.log('done');
+    }
+
+    public toggleDrawMode() {
+        this.isLineDrawMode = !this.isLineDrawMode;
+    }
+
+    public getLabelConfig(area: IArea): ILayerLabelConfig {
+        // console.log(area);
+        return {
+            id: area.id,
+            label: area.name,
+            color: area.color,
+            mode: LayerLabelMode.Actions,
+            actions: [
+                {
+                    label: 'Rename',
+                    svgPath: RENAME_SVG_PATH,
+                    type: UIActionType.RENAME
+                },
+                {
+                    label: 'Delete',
+                    svgPath: DELETE_SVG_PATH,
+                    type: UIActionType.DELETE
+                }
+            ]
+        };
     }
 
     private initAreaDrawComponents() {
@@ -80,16 +117,6 @@ export class AreaDrawWidget extends FASTElement {
         }
 
         this.initAreas();
-    }
-
-    public close() {
-        console.log('close');
-    }
-    public save() {
-        console.log('save');
-    }
-    public done() {
-        console.log('done');
     }
 
     private initDrawer() {
@@ -116,13 +143,10 @@ export class AreaDrawWidget extends FASTElement {
         }
     }
 
+     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private drawerComplete(e: any) {
-        console.log(e.detail);
+        // console.log(e.detail);
         this.createArea([...e.detail]);
-    }
-
-    public toggleDrawMode() {
-        this.isLineDrawMode = !this.isLineDrawMode;
     }
 
     private initAreas() {
@@ -211,14 +235,15 @@ export class AreaDrawWidget extends FASTElement {
         layerLabel.config = this.getLabelConfig(area);
         li.appendChild(layerLabel);
         this.labelsList.appendChild(li);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         layerLabel.addEventListener('label-action', (e: any) => {
-            console.log(e);
+            // console.log(e);
             switch (e.detail?.type) {
                 case UIActionType.RENAME:
-                    console.log('RENAME');
+                    // console.log('RENAME');
                     return;
                 case UIActionType.DELETE:
-                    console.log('DELETE');
+                    // console.log('DELETE');
                     this.deleteArea(e.detail.id);
                     return;
             }
@@ -228,27 +253,5 @@ export class AreaDrawWidget extends FASTElement {
     private removeLabel(id: string) {
         const li = this.shadowRoot.getElementById(id);
         this.labelsList.removeChild(li);
-    }
-
-    public getLabelConfig(area: IArea): ILayerLabelConfig {
-        console.log(area);
-        return {
-            id: area.id,
-            label: area.name,
-            color: area.color,
-            mode: LayerLabelMode.Actions,
-            actions: [
-                {
-                    label: 'Rename',
-                    svgPath: RENAME_SVG_PATH,
-                    type: UIActionType.RENAME
-                },
-                {
-                    label: 'Delete',
-                    svgPath: DELETE_SVG_PATH,
-                    type: UIActionType.DELETE
-                }
-            ]
-        };
     }
 }

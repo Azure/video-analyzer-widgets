@@ -1,5 +1,4 @@
 import { IPoint } from '../../../common/drawer-canvas/drawer-canvas.definitions';
-import { DrawingColors } from '../../../styles/system-providers/ava-design-system-provider.definitions';
 import { IWidgetBaseConfig } from '../definitions/base-widget-config.definitions';
 
 /**
@@ -22,17 +21,4 @@ export interface IArea {
 export enum AreaDrawMode {
     Line = 'line',
     Polygon = 'polygon'
-}
-
-export enum ColorsRanking {
-    Red = 0,
-    LightBlue = 1,
-    Yellow = 2,
-    Magenta = 3,
-    Teal = 4,
-    Purple = 5,
-    Lime = 6,
-    Blue = 7,
-    Green = 8,
-    Orange = 9
 }
