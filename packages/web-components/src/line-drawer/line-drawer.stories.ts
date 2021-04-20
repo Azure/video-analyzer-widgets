@@ -2,8 +2,6 @@ import { LineDrawerComponent } from '.';
 
 interface ITemplate {
     borderColor: string;
-    canvasWidth: string;
-    canvasHeight: string;
 }
 
 // Prevent tree-shaking
@@ -14,12 +12,6 @@ const LineDrawerComponentTemplate = (data: ITemplate) => {
     if (data.borderColor) {
         lineDrawer.borderColor = data.borderColor;
     }
-    // if (data.canvasWidth) {
-    //     lineDrawer.canvasWidth = data.canvasWidth;
-    // }
-    // if (data.canvasHeight) {
-    //     lineDrawer.canvasHeight = data.canvasHeight;
-    // }
     return lineDrawer;
 };
 
@@ -29,7 +21,5 @@ export default {
     title: 'Line Drawer Component',
     argTypes: {
         borderColor: { control: 'string' }
-        // canvasWidth: { control: 'string' },
-        // canvasHeight: { control: 'string' }
     }
 };
