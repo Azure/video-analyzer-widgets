@@ -85,5 +85,20 @@ export const darkColorsStyle: ElementStyles = css`
         /* Area Draw */
         --area-draw-color: #f3f2f1;
         --area-draw-bg: #201f1e;
+
+        /* Date picker */
+        --date-picker-holder-bg: #252423;
+        --date-picker-text-color: #f3f2f1;
+        --date-picker-bg-today: #2899f5;
+        --date-picker-text-color-today: #1b1a19;
+        --date-picker-disabled-text-color: #a6a6a6;
+        --date-picker-out-focus-text-color: #a19f9d;
+        --date-picker-focus-text-color: #f3f2f1;
+        --date-picker-focus-text-color-hover: #605e5c;
+        --date-picker-focus-bg-color-hover: #eaeaea;
+        --date-picker-focus-month-hover-bg: #c8c8c8;
+        --date-picker-divider-color: #484644;
+        --date-picker-holder-box-shadow-1: rgba(0, 0, 0, 0.1);
+        --date-picker-holder-box-shadow-2: rgba(0, 0, 0, 0.13);
     }
 `;
