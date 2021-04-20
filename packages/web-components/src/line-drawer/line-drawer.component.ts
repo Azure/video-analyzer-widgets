@@ -55,7 +55,6 @@ export class LineDrawerComponent extends FASTElement {
     }
 
     public resetLineDrawer() {
-        // this.dCanvas.clearPoints();
         this.dCanvas.resize();
     }
 
@@ -64,7 +63,7 @@ export class LineDrawerComponent extends FASTElement {
         const width = parent.clientWidth || this.CANVAS_DEFAULT_WIDTH;
         const height = parent.clientHeight || this.CANVAS_DEFAULT_HEIGHT;
         const designSystem = closestElement('ava-design-system-provider', this.$fastController.element);
-        const borderColor = designSystem ? getComputedStyle(designSystem)?.getPropertyValue('--drawer-line-color') : '';
+        const borderColor = designSystem ? getComputedStyle(designSystem)?.getPropertyValue('--drawer-default-line-color') : '';
         this.canvasOptions = {
             height: height,
             width: width,

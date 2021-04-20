@@ -80,7 +80,7 @@ export const darkColorsStyle: ElementStyles = css`
         --actions-menu-color: #f3f2f1;
 
         /* Drawer Canvas */
-        --drawer-line-color: #db4646;
+        --drawer-default-line-color: #db4646;
 
         /* Area Draw */
         --area-draw-color: #f3f2f1;

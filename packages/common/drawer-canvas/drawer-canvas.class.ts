@@ -14,7 +14,6 @@ export class DrawerCanvas extends CanvasElement {
     private _canvasY: number = 0;
 
     // Line attributes
-    private _borderColor: string;
     private _pointsLimit: number;
     private _points: IPoint[] = [];
 
