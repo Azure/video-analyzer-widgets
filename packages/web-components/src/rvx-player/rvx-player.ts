@@ -47,8 +47,8 @@ export class PlayerComponent extends FASTElement {
             return;
         }
 
-        this.liveStream = MediaApi.getLiveStream() || this.liveStream;
-        this.vodStream = MediaApi.getVODStream() || this.vodStream;
+        this.liveStream = MediaApi.baseStream ? MediaApi.getLiveStream() : this.liveStream;
+        this.vodStream = MediaApi.baseStream ? MediaApi.getVODStream() : this.vodStream;
 
         // Init  player
         this.player = new Player(this.video, this.videoContainer, this.liveStream, this.vodStream, this.timeUpdateCallBack.bind(this));

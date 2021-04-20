@@ -306,6 +306,8 @@ export class Player {
     }
 
     private onError(error: shaka_player.util.Error) {
-        throw new WidgetGeneralError(error.code);
+        // throw new WidgetGeneralError(error.code);
+        // eslint-disable-next-line no-console
+        console.log(error);
     }
 }
