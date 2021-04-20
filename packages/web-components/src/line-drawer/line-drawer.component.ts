@@ -21,16 +21,6 @@ export class LineDrawerComponent extends FASTElement {
      * HTML attribute: borderColor
      */
     @attr public borderColor: string = '';
-    borderColorChanged() {
-        if (this.canvasOptions) {
-            setTimeout(() => {
-                this.canvasOptions.lineColor = this.borderColor;
-                this.dCanvas.drawerOptions = this.canvasOptions;
-
-                this.resetLineDrawer();
-            });
-        }
-    }
 
     public dCanvas: DrawerCanvas;
     private readonly CANVAS_DEFAULT_HEIGHT = 375;
@@ -43,6 +33,17 @@ export class LineDrawerComponent extends FASTElement {
 
     public constructor() {
         super();
+    }
+
+    public borderColorChanged() {
+        if (this.canvasOptions) {
+            setTimeout(() => {
+                this.canvasOptions.lineColor = this.borderColor;
+                this.dCanvas.drawerOptions = this.canvasOptions;
+
+                this.resetLineDrawer();
+            });
+        }
     }
 
     // Only after creation of the template, the canvas element is created and assigned to DOM
@@ -82,6 +83,12 @@ export class LineDrawerComponent extends FASTElement {
         this.dCanvas.initBoundingCanvas();
         // Handle mouse events
         this.appendEvents();
+    }
+
+    private appendEvents() {
+        this.dCanvas.canvas.addEventListener('mousemove', this.dCanvas.onMouseMove.bind(this.dCanvas));
+        this.dCanvas.canvas.addEventListener('mouseup', this.dCanvas.onDraw.bind(this.dCanvas));
+        this.dCanvas.canvas.addEventListener('drawerComplete', this.onDrawComplete.bind(this));
 
         window.addEventListener('resize', () => {
             const parent = this.$fastController.element.parentElement;
@@ -97,12 +104,6 @@ export class LineDrawerComponent extends FASTElement {
             this.dCanvas.initBoundingCanvas();
             this.dCanvas.resize();
         });
-    }
-
-    private appendEvents() {
-        this.dCanvas.canvas.addEventListener('mousemove', this.dCanvas.onMouseMove.bind(this.dCanvas));
-        this.dCanvas.canvas.addEventListener('mouseup', this.dCanvas.onDraw.bind(this.dCanvas));
-        this.dCanvas.canvas.addEventListener('drawerComplete', this.onDrawComplete.bind(this));
     }
 
     private onDrawComplete() {
