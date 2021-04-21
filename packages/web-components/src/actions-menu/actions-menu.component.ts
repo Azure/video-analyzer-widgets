@@ -50,9 +50,13 @@ export class ActionsMenuComponent extends FASTElement {
     public connectedCallback() {
         super.connectedCallback();
 
-        window.addEventListener('resize', () => {
-            this.initMenu();
-        });
+        window.addEventListener('resize', this.initMenu.bind(this));
+    }
+
+    public disconnectedCallback() {
+        super.disconnectedCallback();
+
+        window.removeEventListener('resize', this.initMenu);
     }
 
     public toggleMenu() {
