@@ -98,7 +98,7 @@ export class PlayerComponent extends FASTElement {
             this.isLive = event.detail;
         }) as EventListener);
 
-        const datePickerComponent: any = this.shadowRoot?.querySelector('media-date-picker-component');
+        const datePickerComponent: any = this.shadowRoot?.querySelector('media-date-picker');
 
         datePickerComponent.addEventListener(DatePickerEvent.DATE_CHANGE, (event: CustomEvent) => {
             if (event.detail?.toDateString() !== this.currentDate?.toDateString()) {

@@ -7,3 +7,9 @@ export interface IDatePickerRenderEvent {
     month: number;
     year: number;
 }
+
+export interface IAllowedDates {
+    days?: string;
+    months?: string;
+    years?: string;
+}

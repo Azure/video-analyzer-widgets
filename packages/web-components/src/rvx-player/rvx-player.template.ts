@@ -11,14 +11,14 @@ export const template = html<PlayerComponent>`
             <span class="col camera-name">${(x) => x.cameraName}</span>
             <div class="date-picker col">
                 <span>${(x) => x.time}</span>
-                <media-date-picker-component
+                <media-date-picker
                     class="date-picker-component"
                     alignRight="${true}"
                     inputDate="${(x) => x.currentDate}"
                     allowedDays="${(x) => x.currentAllowedDays}"
                     allowedMonths="${(x) => x.currentAllowedMonths}"
                     allowedYears="${(x) => x.currentAllowedYears}"
-                ></media-date-picker-component>
+                ></media-date-picker>
             </div>
         </div>
         <div shaka-controls="true" class="video-container ${(x) => (x.isLive ? 'live' : 'vod')}">

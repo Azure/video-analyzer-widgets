@@ -14,15 +14,15 @@ DatePickerComponent;
 SegmentsTimelineComponent;
 
 const DatePickerComponentTemplate = (data: ITemplate) => {
-    const datePicker = document.createElement('media-date-picker-component') as DatePickerComponent;
+    const datePicker = document.createElement('media-date-picker') as DatePickerComponent;
     if (data.allowedMonths) {
-        datePicker.allowedMonths = data.allowedMonths;
+        datePicker.allowedDates.months = data.allowedMonths;
     }
     if (data.allowedYears) {
-        datePicker.allowedYears = data.allowedYears;
+        datePicker.allowedDates.years = data.allowedYears;
     }
     if (data.allowedDays) {
-        datePicker.allowedDays = data.allowedDays;
+        datePicker.allowedDates.days = data.allowedDays;
     }
     if (data.date) {
         datePicker.date = new Date(data.date);
@@ -39,7 +39,7 @@ export default {
     argTypes: {
         date: { control: 'text' },
         allowedMonths: { control: 'text' },
-        text: { control: 'text' },
+        allowedYears: { control: 'text' },
         allowedDays: { control: 'text' }
     }
 };

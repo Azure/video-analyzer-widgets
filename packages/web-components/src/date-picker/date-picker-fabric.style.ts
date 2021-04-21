@@ -16,7 +16,7 @@ export const stylesFabric = css`
     }
 
     .ms-DatePicker-picker {
-        font-size: 14px;
+        font-size: var(--type-ramp-base-font-size);
         position: relative;
         text-align: left;
         z-index: 0;
@@ -28,7 +28,7 @@ export const stylesFabric = css`
         position: absolute;
         min-width: 300px;
         display: none;
-        background-color: #252423;
+        background-color: var(--date-picker-holder-bg);
     }
 
     .ms-DatePicker-picker.ms-DatePicker-picker--opened .ms-DatePicker-holder {
@@ -40,7 +40,7 @@ export const stylesFabric = css`
         animation-timing-function: cubic-bezier(0.1, 0.25, 0.75, 0.9);
         animation-fill-mode: both;
         box-sizing: border-box;
-        box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.4);
+        box-shadow: 0px 1.2px 3.6px var(--date-picker-holder-box-shadow-1), 0px 6.4px 14.4px var(--date-picker-holder-box-shadow-2);
         display: block;
     }
 
@@ -74,13 +74,16 @@ export const stylesFabric = css`
         margin-top: -1px;
 
         font-weight: 600;
-        font-size: 14px;
-        color: #f3f2f1;
+        font-size: var(--type-ramp-base-font-size);
+        color: var(--date-picker-text-color);
+    }
+
+    .ms-DatePicker-month {
+        pointer-events: none;
     }
 
     .ms-DatePicker-month:hover,
     .ms-DatePicker-year:hover {
-        color: #005a9e;
         cursor: pointer;
     }
 
@@ -116,36 +119,36 @@ export const stylesFabric = css`
         padding: 0;
         font-weight: 400;
         line-height: 40px;
-        font-size: 14px;
+        font-size: var(--type-ramp-base-font-size);
     }
 
     .ms-DatePicker-day--today {
         position: relative;
 
-        background: #2899f5;
-        color: #1b1a19;
+        background: var(--date-picker-bg-today);
+        color: var(--date-picker-text-color-today);
     }
 
     .ms-DatePicker-day--disabled:before {
-        border-top-color: #a6a6a6;
+        border-top-color: var(--date-picker-disabled-text-color);
     }
 
     .ms-DatePicker-day--outfocus {
         font-weight: 400;
-        color: #a19f9d;
+        color: var(--date-picker-out-focus-text-color);
     }
 
     .ms-DatePicker-weekday,
     .ms-DatePicker-day.ms-DatePicker-day--infocus {
-        color: #f3f2f1;
+        color: var(--date-picker-focus-text-color);
     }
 
     .ms-DatePicker-day--infocus:hover,
     .ms-DatePicker-day--outfocus:hover {
         cursor: pointer;
-        background: #eaeaea;
+        background: var(date-picker-focus-bg-color-hover);
 
-        color: #605e5c;
+        color: var(--date-picker-focus-text-color-hover);
     }
 
     .ms-DatePicker-day--highlighted:hover,
@@ -153,13 +156,13 @@ export const stylesFabric = css`
         cursor: pointer;
 
         border-radius: 50%;
-        color: #1b1a19;
-        background: #2899f5;
+        color: var(--date-picker-text-color-today);
+        background: var(--date-picker-bg-today);
     }
 
     .ms-DatePicker-day--highlighted.ms-DatePicker-day--disabled,
     .ms-DatePicker-day--highlighted.ms-DatePicker-day--disabled:hover {
-        background: #a6a6a6;
+        background: none;
     }
 
     .ms-DatePicker-monthPicker,
@@ -194,7 +197,7 @@ export const stylesFabric = css`
         text-align: center;
         line-height: 23px;
         font-size: 21px;
-        color: #666;
+        color: var(--date-picker-text-color);
         position: relative;
         top: 3px;
     }
@@ -205,7 +208,7 @@ export const stylesFabric = css`
     .ms-DatePicker-prevDecade:hover,
     .ms-DatePicker-prevMonth:hover,
     .ms-DatePicker-prevYear:hover {
-        color: #212121;
+        color: var(--date-picker-text-color);
         cursor: pointer;
         outline: 1px solid transparent;
     }
@@ -228,12 +231,12 @@ export const stylesFabric = css`
         margin-left: 15px;
 
         font-weight: 600;
-        font-size: 14px;
-        color: #f3f2f1;
+        font-size: var(--type-ramp-base-font-size);
+        color: var(--date-picker-text-color);
     }
 
     .ms-DatePicker-currentYear:hover {
-        color: #005a9e;
+        color: var(--date-picker-text-color);
         cursor: pointer;
     }
 
@@ -246,7 +249,7 @@ export const stylesFabric = css`
 
     .ms-DatePicker-monthOption,
     .ms-DatePicker-yearOption {
-        background-color: #252423;
+        background-color: var(--date-picker-holder-bg);
         width: 60px;
         height: 60px;
         line-height: 60px;
@@ -254,29 +257,20 @@ export const stylesFabric = css`
         float: left;
         margin: 0 10px 10px 0;
         font-weight: 400;
-        font-size: 13px;
-        color: #333;
         text-align: center;
     }
 
     .ms-DatePicker-monthOption:hover,
     .ms-DatePicker-yearOption:hover {
-        background-color: #c8c8c8;
+        background-color: var(--date-picker-focus-month-hover-bg);
         outline: 1px solid transparent;
-    }
-
-    .ms-DatePicker-monthOption.is-highlighted,
-    .ms-DatePicker-yearOption.is-highlighted {
-        background-color: #333;
-        color: #fff;
     }
 
     .ms-DatePicker-goToday {
         bottom: 9px;
-        color: #0078d7;
+        color: var(--date-picker-text-color);
         cursor: pointer;
         font-weight: 300;
-        font-size: 13px;
         height: 30px;
         line-height: 30px;
         padding: 0 10px;
@@ -310,7 +304,7 @@ export const stylesFabric = css`
 
         .ms-DatePicker-dayPicker {
             box-sizing: border-box;
-            border-right: 1px solid #eaeaea;
+            border-right: 1px solid var(--date-picker-divider-color);
             width: 220px;
             margin: -10px 0;
             padding: 10px 0;
@@ -346,7 +340,7 @@ export const stylesFabric = css`
             width: 30px;
             height: 30px;
             line-height: 30px;
-            font-size: 14px;
+            font-size: var(--type-ramp-base-font-size);
             font-weight: 400;
         }
 
@@ -378,7 +372,7 @@ export const stylesFabric = css`
             width: 40px;
             height: 40px;
             line-height: 40px;
-            font-size: 12px;
+            font-size: var(--type-ramp-minus-1-font-size);
             margin: 0 10px 10px 0;
         }
 
@@ -389,7 +383,7 @@ export const stylesFabric = css`
 
         .ms-DatePicker-goToday {
             box-sizing: border-box;
-            font-size: 12px;
+            font-size: var(--type-ramp-minus-1-font-size);
             height: 30px;
             line-height: 30px;
             padding: 0 10px;
