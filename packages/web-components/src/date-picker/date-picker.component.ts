@@ -13,15 +13,6 @@ import { template } from './date-picker.template';
 })
 export class DatePickerComponent extends FASTElement {
     /**
-     * When true, align date picker to the right side of the opener button
-     *
-     * @public
-     * @remarks
-     * HTML attribute: alignRight
-     */
-    @attr public alignRight = false;
-
-    /**
      * Enable UI attribute, when true date picker is shown
      *
      * @public
