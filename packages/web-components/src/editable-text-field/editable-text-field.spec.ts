@@ -20,7 +20,9 @@ describe('EditableTextFieldComponent', () => {
     it('passes the text in the slot', async () => {
         const el = await fixture<EditableTextFieldComponent>(html`<media-editable-text-field>text</media-editable-text-field>`);
 
-        await expect(el.text).to.equal('text');
+        setTimeout(() => {
+            expect(el.text).to.equal('text');
+        });
     });
 
     it('edit mode true - input should initialize', async () => {

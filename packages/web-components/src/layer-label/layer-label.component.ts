@@ -54,7 +54,7 @@ export class LayerLabelComponent extends FASTElement {
             actionsMenu.actions = this.config.actions;
         }
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        actionsMenu.addEventListener('actionClicked', (e: any) => {
+        actionsMenu?.addEventListener('actionClicked', (e: any) => {
             this.$emit('labelActionClicked', { ...e.detail, id: this.config.id });
             actionsMenu.opened = false;
         });
