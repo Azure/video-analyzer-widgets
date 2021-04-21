@@ -9,4 +9,12 @@ export interface IWidgetBaseConfig {
      * Locale language
      */
     locale?: Locale;
+    /**
+     * Widget width
+     */
+    width?: string;
+    /**
+     * Widget height
+     */
+    height?: string;
 }
