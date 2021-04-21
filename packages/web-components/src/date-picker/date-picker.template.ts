@@ -1,5 +1,5 @@
 import { html } from '@microsoft/fast-element';
-import { SVG_GO_TO_ARCHIVE_MAIN_PATH, SVG_GO_TO_ARCHIVE_SUB_PATH } from '../../../styles/svg/shapes';
+import { GO_TO_ARCHIVE_MAIN_SVG_PATH, GO_TO_ARCHIVE_SUB_SVG_PATH } from '../../../styles/svg/svg.shapes';
 import { DatePickerComponent } from './date-picker';
 
 /**
@@ -12,8 +12,8 @@ export const template = html<DatePickerComponent>`
             <div class="ms-TextField">
                 <fast-button class="ms-TextField-field">
                     <svg>
-                        <path d="${SVG_GO_TO_ARCHIVE_MAIN_PATH}"></path>
-                        <path d="${SVG_GO_TO_ARCHIVE_SUB_PATH}"></path>
+                        <path d="${GO_TO_ARCHIVE_MAIN_SVG_PATH}"></path>
+                        <path d="${GO_TO_ARCHIVE_SUB_SVG_PATH}"></path>
                     </svg>
                 </fast-button>
             </div>
