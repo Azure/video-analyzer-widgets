@@ -10,7 +10,7 @@ export interface IAction {
     label?: string;
     svgPath?: string;
     disabled?: boolean;
-    type?: UIActionTypeOptions;
+    type?: UIActionType;
 }
 ```
 
