@@ -53,17 +53,16 @@ export class LayerLabelComponent extends FASTElement {
         if (actionsMenu) {
             actionsMenu.actions = this.config.actions;
         }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         actionsMenu.addEventListener('actionClicked', (e: any) => {
-            console.log(e);
             this.$emit('labelActionClicked', { ...e.detail, id: this.config.id });
             actionsMenu.opened = false;
         });
 
         if (this.editMode) {
             const editableTextField = <EditableTextFieldComponent>this.shadowRoot?.querySelector('media-editable-text-field');
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             editableTextField?.addEventListener('textChanged', (e: any) => {
-                console.log('text-changed');
-                console.log(e);
                 this.$emit('labelTextChanged', { name: e.detail, id: this.config.id });
                 this.editMode = false;
             });

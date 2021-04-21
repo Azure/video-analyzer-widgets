@@ -1,7 +1,4 @@
-import { FASTMenu } from '@microsoft/fast-components';
 import { attr, customElement, FASTElement, observable } from '@microsoft/fast-element';
-import { keyCodeEnter, keyCodeSpace } from '@microsoft/fast-web-utilities';
-// import { IAction } from './editable-text-field.definitions';
 import { styles } from './editable-text-field.style';
 import { template } from './editable-text-field.template';
 
@@ -65,7 +62,6 @@ export class EditableTextFieldComponent extends FASTElement {
             return;
         }
         this.text = this.input.value;
-        console.log(this.text);
         this.$emit('textChanged', this.text);
         this.editMode = false;
     }
