@@ -29,12 +29,19 @@ export class AvaAPi {
             this.cookieTimeoutRef = 0;
         }
 
-        const url = `${this.apiBase}/videos/${this.videoName}/playbackAuthorization?api-version=${this.apiVersion}`;
+        const url = `${this.apiBase}/videos/${this.videoName}/listStreamingToken?api-version=${this.apiVersion}`;
 
         const headers = { 'Content-Type': 'application/json' };
         headers['Authorization'] = `Bearer ${TokenHandler.avaAPIToken}`;
 
-        const response = await fetch(url, { headers });
+        const config = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${TokenHandler.avaAPIToken}`
+            }
+        };
+        const response = await fetch(url, config);
         const data = await response.json();
         this.cookieExpiration = new Date(data.expiration);
         this.cookie = await response.headers.get('x-ava-token');
