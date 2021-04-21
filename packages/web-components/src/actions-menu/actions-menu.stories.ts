@@ -1,6 +1,6 @@
 import { ActionsMenuComponent } from '.';
 import { AvaDesignSystemProvider } from '../../../styles';
-import { MORE_SVG_PATH } from '../../../styles/svg/svg-shapes';
+import { DELETE_SVG_PATH, MORE_SVG_PATH, RENAME_SVG_PATH } from '../../../styles/svg/svg.shapes';
 import { IAction } from './actions-menu.definitions';
 
 // Prevent tree-shaking
@@ -30,11 +30,11 @@ export const ActionsMenu = (args: ITemplate) => ActionsMenuComponentTemplate(arg
 const actions: IAction[] = [
     {
         label: 'Rename',
-        svgPath: MORE_SVG_PATH
+        svgPath: RENAME_SVG_PATH
     },
     {
         label: 'Delete',
-        svgPath: MORE_SVG_PATH
+        svgPath: DELETE_SVG_PATH
     }
 ];
 

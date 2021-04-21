@@ -68,7 +68,10 @@ export class EditableTextFieldComponent extends FASTElement {
 
     public handleFocusOut(event: FocusEvent) {
         if (!event.relatedTarget || !this.shadowRoot.contains(<Node>event.relatedTarget)) {
-            // this.opened = false;
+            if (this.input) {
+                this.input.value = this.text;
+            }
+            this.editMode = false;
         }
     }
 

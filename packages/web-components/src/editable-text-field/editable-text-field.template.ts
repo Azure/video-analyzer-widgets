@@ -8,7 +8,7 @@ import { EditableTextFieldComponent } from './editable-text-field.component';
  */
 /* eslint-disable  @typescript-eslint/indent */
 export const template = html<EditableTextFieldComponent>`
-    <template>
+    <template @focusout="${(x, c) => x.handleFocusOut(c.event as FocusEvent)}">
         ${when(
             (x) => x.editMode,
             html`

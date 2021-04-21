@@ -103,24 +103,24 @@ export class ActionsMenuComponent extends FASTElement {
             return;
         }
 
-        const fastMenuClientRect = this.fastMenu.$fastController.element.getBoundingClientRect();
+        const fastMenuClientRect = this.fastMenu.$fastController?.element?.getBoundingClientRect();
 
         const boundingClientRect = this.$fastController.element.getBoundingClientRect();
         const windowClientRect = window.document.querySelector('html')?.getBoundingClientRect();
 
         // Checking opening directions
         // Checking top / bottom opening
-        if (windowClientRect.height + windowClientRect.top > boundingClientRect.bottom + fastMenuClientRect.height) {
+        if (windowClientRect.height + windowClientRect.top > boundingClientRect.bottom + fastMenuClientRect?.height) {
             this.fastMenu.style.top = `${boundingClientRect.bottom}px`;
         } else {
-            this.fastMenu.style.top = `${boundingClientRect.top - fastMenuClientRect.height - windowClientRect.top}px`;
+            this.fastMenu.style.top = `${boundingClientRect.top - fastMenuClientRect?.height - windowClientRect.top}px`;
         }
 
         // Checking left / right opening
-        if (windowClientRect.width > boundingClientRect.left + fastMenuClientRect.width) {
+        if (windowClientRect.width > boundingClientRect.left + fastMenuClientRect?.width) {
             this.fastMenu.style.left = `${boundingClientRect.left}px`;
         } else {
-            this.fastMenu.style.left = `${boundingClientRect.right - fastMenuClientRect.width}px`;
+            this.fastMenu.style.left = `${boundingClientRect.right - fastMenuClientRect?.width}px`;
         }
 
         this.fastMenu.style.visibility = 'visible';
