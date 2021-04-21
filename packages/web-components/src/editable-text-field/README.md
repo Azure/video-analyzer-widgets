@@ -1,22 +1,33 @@
 # Actions Menu Component
 
-`media-actions-menu` is an implementation of a [Fast element](https://www.fast.design/).
+`media-editable-text-field` is an implementation of a [Fast element](https://www.fast.design/).
 
-The component showing actions menu with IAction[] input.
-actions list input contains:
+The component showing text label with edit mode option
+The component inputs:
 
 ```ts
-export interface IAction {
-    label?: string;
-    svgPath?: string;
-    disabled?: boolean;
-    type?: UIActionType;
+export class EditableTextFieldComponent extends FASTElement {
+    /**
+     * The text field text
+     *
+     * @public
+     * @remarks
+     * HTML attribute: text
+     */
+    @attr public text: string = '';
+
+    /**
+     * The text field edit mode (boolean).
+     *
+     * @public
+     * @remarks
+     * HTML attribute: editMode
+     */
+
+    @attr({ attribute: 'edit-mode', mode: 'boolean' })
+    public editMode: boolean = false;
 }
 ```
-
--   To customize colors you can change css variables:
-    -   --actions-menu-bg: the label background color.
-    -   --actions-menu-color: the text color.
 
 ## Please see examples:
 
