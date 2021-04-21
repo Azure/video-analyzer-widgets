@@ -16,3 +16,8 @@ export interface ILayerLabelConfig {
     color?: string;
     actions?: IAction[];
 }
+
+export enum LayerLabelEvents {
+    labelActionClicked = 'LAYER_LABEL_ACTION_CLICKED',
+    labelTextChanged = 'LAYER_LABEL_TEXT_CHANGED'
+}

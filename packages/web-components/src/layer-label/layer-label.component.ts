@@ -1,7 +1,9 @@
 import { attr, customElement, FASTElement } from '@microsoft/fast-element';
 import { ActionsMenuComponent } from '../actions-menu';
+import { ActionsMenuEvents } from '../actions-menu/actions-menu.definitions';
 import { EditableTextFieldComponent } from '../editable-text-field/editable-text-field.component';
-import { ILayerLabelConfig, LayerLabelMode } from './layer-label.definitions';
+import { EditableTextFieldEvents } from '../editable-text-field/editable-text-field.definitions';
+import { ILayerLabelConfig, LayerLabelEvents, LayerLabelMode } from './layer-label.definitions';
 import { styles } from './layer-label.style';
 import { template } from './layer-label.template';
 
@@ -28,6 +30,9 @@ export class LayerLabelComponent extends FASTElement {
     @attr({ attribute: 'edit-mode', mode: 'boolean' })
     public editMode: boolean = false;
 
+    private actionsMenu: ActionsMenuComponent;
+    private editableTextField: EditableTextFieldComponent;
+
     public configChanged() {
         if (this.config?.mode === LayerLabelMode.Actions && this.config.actions?.length) {
             setTimeout(() => {
@@ -48,22 +53,28 @@ export class LayerLabelComponent extends FASTElement {
         super.connectedCallback();
     }
 
+    public disconnectedCallback() {
+        super.disconnectedCallback();
+        this.actionsMenu?.removeEventListener(ActionsMenuEvents.ActionClicked, null);
+        this.editableTextField?.removeEventListener(EditableTextFieldEvents.TextChanged, null);
+    }
+
     private setActions() {
-        const actionsMenu = <ActionsMenuComponent>this.shadowRoot?.querySelector('media-actions-menu');
-        if (actionsMenu) {
-            actionsMenu.actions = this.config.actions;
+        this.actionsMenu = <ActionsMenuComponent>this.shadowRoot?.querySelector('media-actions-menu');
+        if (this.actionsMenu) {
+            this.actionsMenu.actions = this.config.actions;
         }
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        actionsMenu?.addEventListener('actionClicked', (e: any) => {
-            this.$emit('labelActionClicked', { ...e.detail, id: this.config.id });
-            actionsMenu.opened = false;
+        this.actionsMenu?.addEventListener(ActionsMenuEvents.ActionClicked, (e: any) => {
+            this.$emit(LayerLabelEvents.labelActionClicked, { ...e.detail, id: this.config.id });
+            this.actionsMenu.opened = false;
         });
 
         if (this.editMode) {
-            const editableTextField = <EditableTextFieldComponent>this.shadowRoot?.querySelector('media-editable-text-field');
+            this.editableTextField = <EditableTextFieldComponent>this.shadowRoot?.querySelector('media-editable-text-field');
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            editableTextField?.addEventListener('textChanged', (e: any) => {
-                this.$emit('labelTextChanged', { name: e.detail, id: this.config.id });
+            this.editableTextField?.addEventListener(EditableTextFieldEvents.TextChanged, (e: any) => {
+                this.$emit(LayerLabelEvents.labelTextChanged, { name: e.detail, id: this.config.id });
                 this.editMode = false;
             });
         }

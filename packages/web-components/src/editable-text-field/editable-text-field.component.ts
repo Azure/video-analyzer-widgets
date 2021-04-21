@@ -1,9 +1,10 @@
 import { attr, customElement, FASTElement, observable } from '@microsoft/fast-element';
+import { EditableTextFieldEvents } from './editable-text-field.definitions';
 import { styles } from './editable-text-field.style';
 import { template } from './editable-text-field.template';
 
 /**
- * An actions menu web component.
+ * An editable text field.
  * @public
  */
 @customElement({
@@ -13,7 +14,7 @@ import { template } from './editable-text-field.template';
 })
 export class EditableTextFieldComponent extends FASTElement {
     /**
-     * The text.
+     * The text field text
      *
      * @public
      * @remarks
@@ -22,7 +23,7 @@ export class EditableTextFieldComponent extends FASTElement {
     @attr public text: string = '';
 
     /**
-     * The editMode state.
+     * The text field edit mode (boolean).
      *
      * @public
      * @remarks
@@ -57,12 +58,17 @@ export class EditableTextFieldComponent extends FASTElement {
         this.initTextField();
     }
 
+    public disconnectedCallback() {
+        super.disconnectedCallback();
+        this.input?.removeEventListener('input', this.handleValueChanged);
+    }
+
     public approveChanges() {
         if (!this.input) {
             return;
         }
         this.text = this.input.value;
-        this.$emit('textChanged', this.text);
+        this.$emit(EditableTextFieldEvents.TextChanged, this.text);
         this.editMode = false;
     }
 
@@ -84,10 +90,6 @@ export class EditableTextFieldComponent extends FASTElement {
     }
 
     private handleValueChanged() {
-        if (this.text !== this.input.value) {
-            this.isDirty = true;
-        } else {
-            this.isDirty = false;
-        }
+        this.isDirty = this.text !== this.input.value;
     }
 }

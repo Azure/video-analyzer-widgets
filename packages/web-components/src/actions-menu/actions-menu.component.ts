@@ -1,7 +1,7 @@
 import { FASTMenu } from '@microsoft/fast-components';
 import { attr, customElement, FASTElement } from '@microsoft/fast-element';
 import { keyCodeEnter, keyCodeSpace } from '@microsoft/fast-web-utilities';
-import { IAction } from './actions-menu.definitions';
+import { ActionsMenuEvents, IAction } from './actions-menu.definitions';
 import { styles } from './actions-menu.style';
 import { template } from './actions-menu.template';
 
@@ -68,7 +68,7 @@ export class ActionsMenuComponent extends FASTElement {
     }
 
     public handleMenuItemClick(action: IAction) {
-        this.$emit('actionClicked', action);
+        this.$emit(ActionsMenuEvents.ActionClicked, action);
     }
 
     public handleMenuItemMouseUp(e: MouseEvent, action: IAction): boolean {

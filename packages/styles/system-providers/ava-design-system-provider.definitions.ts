@@ -17,3 +17,7 @@ export enum DrawingColors {
     Green = '#0f9d49',
     Orange = '#f2880c'
 }
+
+export enum AvaDesignSystemProviderEvents {
+    themeChanged = 'AVA_DESIGN_SYSTEM_THEME_CHANGED'
+}
