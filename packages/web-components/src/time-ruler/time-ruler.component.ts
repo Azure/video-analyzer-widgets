@@ -1,6 +1,6 @@
 import { attr, customElement, FASTElement } from '@microsoft/fast-element';
 import { closestElement } from '../../../common/utils/elements';
-import { SegoeUIFontFamily } from '../../../styles/system-providers/ava-design-system-provider.definitions';
+import { AvaDesignSystemProviderEvents, SegoeUIFontFamily } from '../../../styles/system-providers/ava-design-system-provider.definitions';
 import { TimeRuler } from './time-ruler.class';
 import { IRulerOptions } from './time-ruler.definitions';
 import { styles } from './time-ruler.style';
@@ -63,9 +63,12 @@ export class TimeRulerComponent extends FASTElement {
             this.resizeRuler();
         });
 
-        closestElement('ava-design-system-provider', this.$fastController.element)?.addEventListener('theme-changed', () => {
-            this.drawRuler();
-        });
+        closestElement('ava-design-system-provider', this.$fastController.element)?.addEventListener(
+            AvaDesignSystemProviderEvents.themeChanged,
+            () => {
+                this.drawRuler();
+            }
+        );
     }
 
     private resizeRuler() {
