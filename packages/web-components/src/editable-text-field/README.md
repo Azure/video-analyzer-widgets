@@ -1,4 +1,4 @@
-# Actions Menu Component
+# Editable Text Field Component
 
 `media-editable-text-field` is an implementation of a [Fast element](https://www.fast.design/).
 
