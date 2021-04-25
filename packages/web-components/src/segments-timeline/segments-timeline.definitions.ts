@@ -25,3 +25,8 @@ export interface ISegmentsTimelineConfig {
     data: ISegmentsTimelineData;
     displayOptions: IDisplayOptions;
 }
+
+export enum SegmentsTimelineEvents {
+    CurrentTimeChanged = 'SEGMENTS_TIMELINE_CURRENT_TIME_CHANGED',
+    SegmentClicked = 'SEGMENTS_TIMELINE_SEGMENT_CLICKED'
+}

@@ -1,3 +1,5 @@
+import { BehaviorSubject } from 'rxjs';
+import { IUISegment } from '../segments-timeline.definitions';
 import { IChartData, IChartOptions, IComponentTree, Colors } from './svg-progress.definitions';
 import { Rect, Tooltip } from './svg-progress.models';
 
@@ -22,7 +24,8 @@ export class SVGProgressChart {
         renderProgress: false
     };
 
-    private activeRect: Rect;
+    public activeRect: Rect;
+    public activeSegment$: BehaviorSubject<IUISegment> = new BehaviorSubject<IUISegment>(null);
 
     public constructor(element?: SVGElement, options?: IChartOptions) {
         if (!element) {
@@ -323,6 +326,7 @@ export class SVGProgressChart {
             } else {
                 this.activeRect.removeClass('active');
                 this.activeRect = null;
+                this.activeSegment$.next(null);
             }
         }
 
@@ -332,6 +336,11 @@ export class SVGProgressChart {
             if (startTime <= time && endTime >= time) {
                 this.activeRect = rect;
                 this.activeRect.addClass('active');
+                this.activeSegment$.next({
+                    startSeconds: startTime,
+                    endSeconds: endTime,
+                    color: rect.color
+                });
                 return;
             }
         });

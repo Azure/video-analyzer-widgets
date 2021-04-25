@@ -119,6 +119,11 @@
         segmentsTimeline.addEventListener('current-time', (event) => {
             console.log('segments-timeline current time changed: ', event.detail);
         })
+
+        window.addEventListener('SEGMENTS_TIMELINE_SEGMENT_CLICKED', (s) => {
+            console.log('SEGMENTS_TIMELINE_SEGMENT_CLICKED');
+            console.log(s);
+        })
     })()
 </script>
 

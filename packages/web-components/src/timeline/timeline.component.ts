@@ -29,6 +29,15 @@ export class TimelineComponent extends FASTElement {
      */
     @attr public config: ITimeLineConfig;
 
+    /**
+     * current time, indicate the current line time
+     *
+     * @public
+     * @remarks
+     * HTML attribute: current time
+     */
+    @attr public currentTime: number = 0;
+
     public readonly DAY_DURATION_IN_SECONDS = 86400; // 60 (sec) * 60 (min) * 24 (hours)
 
     public zoom: number = 1;
@@ -44,6 +53,12 @@ export class TimelineComponent extends FASTElement {
         setTimeout(() => {
             this.initData();
         });
+    }
+
+    public currentTimeChanged() {
+        if (this.segmentsTimeline) {
+            this.segmentsTimeline.currentTime = this.currentTime;
+        }
     }
 
     public connectedCallback() {
