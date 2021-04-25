@@ -104,19 +104,19 @@
         segmentsTimelineWithProgress.config = configWithProgress;
         segmentsTimeline.config = config;
 
-        segmentsTimelineWithTooltipProgress.addEventListener('current-time', (event) => {
+        segmentsTimelineWithTooltipProgress.addEventListener('SEGMENTS_TIMELINE_CURRENT_TIME_CHANGED', (event) => {
             console.log('segments-timeline-with-tooltip-progress current time changed: ', event.detail);
         })
 
-        segmentsTimelineWithTooltip.addEventListener('current-time', (event) => {
+        segmentsTimelineWithTooltip.addEventListener('SEGMENTS_TIMELINE_CURRENT_TIME_CHANGED', (event) => {
             console.log('segments-timeline-with-tooltip current time changed: ', event.detail);
         })
 
-        segmentsTimelineWithProgress.addEventListener('current-time', (event) => {
+        segmentsTimelineWithProgress.addEventListener('SEGMENTS_TIMELINE_CURRENT_TIME_CHANGED', (event) => {
             console.log('segments-timeline-with-progress current time changed: ', event.detail);
         })
 
-        segmentsTimeline.addEventListener('current-time', (event) => {
+        segmentsTimeline.addEventListener('SEGMENTS_TIMELINE_CURRENT_TIME_CHANGED', (event) => {
             console.log('segments-timeline current time changed: ', event.detail);
         })
 
