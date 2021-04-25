@@ -59,7 +59,7 @@ export class RVXWidget extends BaseWidget {
                     } else {
                         const response = await videoInformation.json();
                         // Init media API
-                        MediaApi.baseStream = response.properties.playback.archiveBaseUrl;
+                        MediaApi.baseStream = response.properties.streaming.archiveBaseUrl;
 
                         // Authorize video
                         await AvaAPi.authorize();

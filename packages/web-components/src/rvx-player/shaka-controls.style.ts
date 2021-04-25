@@ -72,6 +72,13 @@ export const stylesShaka = css`
         align-items: center;
         z-index: 1;
     }
+    .shaka-controls-container.live-off {
+        height: calc(100% + 48px + 43px);
+    }
+    media-timeline {
+        z-index: 9;
+        background-color: rgb(26, 26, 26);
+    }
     .shaka-video-container:not([shaka-controls='true']) .shaka-controls-container {
         display: none;
     }

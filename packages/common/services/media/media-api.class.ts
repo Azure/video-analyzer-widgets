@@ -47,7 +47,7 @@ export class MediaApi {
         const url = `${this.baseStream}/availableMedia${range_query}`;
 
         return fetch(url, {
-            credentials: 'include'
+            // credentials: 'include'
         }); // (fetch(url) as unknown) as Promise<IAvailableMediaResponse>;
     }
 

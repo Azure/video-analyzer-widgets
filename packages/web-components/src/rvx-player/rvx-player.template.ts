@@ -15,9 +15,6 @@ export const template = html<PlayerComponent>`
                     class="date-picker-component"
                     alignRight="${true}"
                     inputDate="${(x) => x.currentDate}"
-                    allowedDays="${(x) => x.currentAllowedDays}"
-                    allowedMonths="${(x) => x.currentAllowedMonths}"
-                    allowedYears="${(x) => x.currentAllowedYears}"
                 ></media-date-picker>
             </div>
         </div>

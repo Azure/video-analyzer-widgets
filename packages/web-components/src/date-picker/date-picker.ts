@@ -1,4 +1,4 @@
-import { attr, customElement, FASTElement } from '@microsoft/fast-element';
+import { attr, customElement, FASTElement, observable } from '@microsoft/fast-element';
 import { DatePickerEvent, IAllowedDates, IDatePickerRenderEvent } from './date-picker.definitions';
 import { styles } from './date-picker.style';
 import { template } from './date-picker.template';
@@ -55,7 +55,7 @@ export class DatePickerComponent extends FASTElement {
      * @remarks
      * HTML attribute: allowedYears
      */
-    @attr public allowedDates: IAllowedDates = {
+    @observable public allowedDates: IAllowedDates = {
         days: '',
         months: '',
         years: ''

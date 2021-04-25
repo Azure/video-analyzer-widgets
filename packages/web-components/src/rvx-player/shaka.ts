@@ -144,6 +144,7 @@ export declare namespace shaka {
              * @param time The time in seconds.
              */
             evict(time: any): void;
+            references: shaka.media.SegmentReference[];
         }
         class PresentationTimeline {
             /**

@@ -2,6 +2,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ICanvasOptions } from '../../../common/canvas/canvas.definitions';
 import { WidgetGeneralError } from '../../../widgets/src';
+import { IUISegment } from '../segments-timeline/segments-timeline.definitions';
+import { TimelineComponent } from '../timeline';
 import { shaka as shaka_player } from './shaka';
 import { BoundingBoxDrawer } from './UI/bounding-box.class';
 import { ForwardButton, FullscreenButton, MuteButton, OverflowMenu, PlayButton, RewindButton } from './UI/buttons.class';
@@ -22,7 +24,12 @@ export class Player {
     private player: shaka_player.Player = Object.create(null);
     private controls: any;
     private timestampOffset: number;
+    private date: Date;
+    private timelineComponent: TimelineComponent;
     private boundingBoxesDrawer: BoundingBoxDrawer;
+    private segmentIndex: shaka_player.media.SegmentIndex;
+    private segmentReferences: shaka_player.media.SegmentReference[];
+    private configSegmentIndex = 0;
 
     public set liveStream(value: string) {
         this._liveStream = value;
@@ -37,7 +44,8 @@ export class Player {
         private videoContainer: HTMLElement,
         private _liveStream: string,
         private _vodStream: string,
-        private timeUpdateCallback: (time: string) => void
+        private timeUpdateCallback: (time: string) => void,
+        private segmentInitializationCallback: (segmentReferences: shaka_player.media.SegmentReference[]) => void
     ) {
         // Install built-in polyfills to patch browser incompatibilities.
         shaka.polyfill.installAll();
@@ -76,8 +84,13 @@ export class Player {
     public async toggleLiveMode(isLive: boolean) {
         if (isLive) {
             await this.load(this._liveStream, true);
+            this.removeTimelineComponent();
         } else {
             await this.load(this._vodStream, true);
+            setTimeout(() => {
+                this.removeTimelineComponent();
+                this.createTimelineComponent();
+            });
         }
         if (this.boundingBoxesDrawer) {
             this.boundingBoxesDrawer.clearInstances();
@@ -89,6 +102,74 @@ export class Player {
         this.controls.elements_[5].isLive = this.isLive;
         this.controls.elements_[5].button_.classList.add(this.isLive ? 'live-on' : 'live-off');
         this.controls.elements_[5].button_.classList.remove(this.isLive ? 'live-off' : 'live-on');
+        this.controls.controlsContainer_.classList.add(this.isLive ? 'live-on' : 'live-off');
+        this.controls.controlsContainer_.classList.remove(this.isLive ? 'live-off' : 'live-on');
+    }
+
+    private removeTimelineComponent() {
+        if (this.timelineComponent) {
+            this.controls.controlsContainer_.removeChild(this.timelineComponent);
+            this.timelineComponent = null;
+        }
+    }
+
+    private createTimelineComponent() {
+        // go over reference
+        const segments = [];
+        for (const iterator of this.segmentReferences) {
+            const segmentEnd = iterator.getEndTime();
+            const segmentStart = iterator.getStartTime();
+            // const segmentStartRange = 3600 * segments.length;
+            const segmentEndRange = 3600 * segments.length;
+            if (segments.length) {
+                // If the difference between two segments is less then 5 minutes - merge
+                const prevSegmentEnd = segments[segments.length - 1].endSeconds;
+                // If this segment started a new hour
+                if (segmentStart >= segmentEndRange) {
+                    segments.push({
+                        startSeconds: segmentStart,
+                        endSeconds: segmentEnd
+                    });
+                } else if (segmentStart - prevSegmentEnd <= 300) {
+                    // merge
+                    segments[segments.length - 1].endSeconds = segmentEnd;
+                }
+            } else {
+                // first segment
+                const segment: IUISegment = {
+                    startSeconds: segmentStart,
+                    endSeconds: segmentEnd
+                };
+                segments.push(segment);
+            }
+            // if (segmentStart >= segmentStartRange && segmentEnd <= segmentEndRange) {
+            //     const segment: IUISegment = {
+            //         startSeconds: segments.length ? segments[segments.length - 1].startSeconds : segmentStart,
+            //         endSeconds: segmentEnd
+            //     };
+            //     segments.push(segment);
+            // }
+        }
+
+        const configWithZoom = {
+            segments: segments,
+            date: this.date
+            // enableZoom: true
+        };
+        this.configSegmentIndex = 0;
+        this.timelineComponent = new TimelineComponent();
+        this.controls.controlsContainer_.insertBefore(this.timelineComponent, this.controls.bottomControls_);
+        this.timelineComponent.config = configWithZoom;
+    }
+
+    private updateTimeline(segmentIndex: number) {
+        // if (this.timelineComponent?.config?.segments && this.timelineComponent.config.segments.length > segmentIndex) {
+        //     const segments = this.timelineComponent.config.segments;
+        //     segments[this.configSegmentIndex].color = '';
+        //     segments[segmentIndex].color = 'white';
+        //     this.configSegmentIndex = segmentIndex;
+        //     this.timelineComponent.config = { ...this.timelineComponent.config, segments: segments };
+        // }
     }
 
     private createButton() {
@@ -232,7 +313,7 @@ export class Player {
     }
     private authenticationHandler(type: shaka_player.net.NetworkingEngine.RequestType, request: shaka_player.extern.Request) {
         // request.headers['set-cookie'] = AvaAPi.cookie;
-
+        // request['allowCrossSiteCredentials'] = true;
         if (!this._accessToken) {
             return;
         }
@@ -277,9 +358,12 @@ export class Player {
         if (!stream.segmentIndex) {
             await stream.createSegmentIndex();
         }
-        const segmentIndex = stream.segmentIndex;
-        const index = segmentIndex.find(0) || 0;
-        const reference = segmentIndex.get(index);
+        this.segmentIndex = stream.segmentIndex;
+
+        this.segmentReferences = this.segmentIndex.references;
+
+        const index = this.segmentIndex.find(0) || 0;
+        const reference = this.segmentIndex.get(index);
         if (reference) {
             this.timestampOffset = reference.timestampOffset * -1000;
             this.controls.addEventListener('timeandseekrangeupdated', this.onTimeSeekUpdate.bind(this));
@@ -288,16 +372,22 @@ export class Player {
 
     private onTimeSeekUpdate() {
         const displayTime = this.controls.getDisplayTime();
-        const time = this.computeClock(displayTime, true);
+        const time = this.computeClock(displayTime);
+        const indexFromTime = Math.floor(displayTime / 3600);
+        this.updateTimeline(indexFromTime);
         this.timeUpdateCallback(time);
     }
 
-    private computeClock(time: number, showDate: boolean) {
+    private computeClock(time: number) {
         if (!this.timestampOffset) {
             return '';
         }
-        const date = new Date(this.timestampOffset + time * 1000);
-        return `${showDate ? date.toLocaleDateString() : ''} ${date.toLocaleTimeString()}`;
+        // const date = new Date(this.timestampOffset + time * 1000);
+        this.date = new Date(this.timestampOffset + time * 1000);
+        return `${this.date.toLocaleDateString()} ${this.date.toLocaleTimeString()}`;
+        // return `${showDate ? date.getUTCDate() : ''} ${date.toLocaleTimeString()}`;
+        // return `${this.date.getUTCMonth()}/${this.date.getUTCDay()}/${this.date.getUTCFullYear()} ${this.date.getUTCHours()}:${this.date.getUTCMinutes()}:${this.date.getUTCSeconds()}`;
+        // return `${showDate ? date.toLocaleDateString() : ''} ${date.toLocaleTimeString()}`;
     }
 
     private onErrorEvent(event: shaka_player.PlayerEvents.ErrorEvent) {

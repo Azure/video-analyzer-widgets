@@ -1,14 +1,16 @@
 /* eslint-disable no-undef */
 /* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { attr, customElement, FASTElement } from '@microsoft/fast-element';
+import { attr, customElement, FASTElement, observable } from '@microsoft/fast-element';
 import { toInteger } from 'lodash-es';
 import { MediaApi } from '../../../common/services/media/media-api.class';
 import { IAvailableMediaResponse, Precision } from '../../../common/services/media/media.definitions';
-import { DatePickerEvent, IDatePickerRenderEvent } from '../date-picker-component/date-picker-component.definitions';
+import { DatePickerComponent } from '../date-picker';
+import { DatePickerEvent, IDatePickerRenderEvent } from '../date-picker/date-picker.definitions';
 import { Player } from './player.class';
 import { styles } from './rvx-player.style';
 import { template } from './rvx-player.template';
+import { shaka as shaka_player } from './shaka';
 /**
  * RVX Player web component
  * @public
@@ -23,14 +25,16 @@ export class PlayerComponent extends FASTElement {
     @attr public vodStream: string;
 
     @attr public isLive = true;
-    @attr public time = '';
+    @observable public time = '';
     @attr public cameraName = 'Camera';
     @attr public currentDate = new Date();
+
     @attr public currentAllowedDays: string[] = [];
     @attr public currentAllowedMonths: string[] = [];
     @attr public currentAllowedYears: string[] = [];
 
     public player: Player;
+    public datePickerComponent: DatePickerComponent;
 
     private video!: HTMLVideoElement;
     private videoContainer!: HTMLElement;
@@ -51,7 +55,14 @@ export class PlayerComponent extends FASTElement {
         this.vodStream = MediaApi.baseStream ? MediaApi.getVODStream() : this.vodStream;
 
         // Init  player
-        this.player = new Player(this.video, this.videoContainer, this.liveStream, this.vodStream, this.timeUpdateCallBack.bind(this));
+        this.player = new Player(
+            this.video,
+            this.videoContainer,
+            this.liveStream,
+            this.vodStream,
+            this.timeUpdateCallBack.bind(this),
+            this.segmentInitializationCallback.bind(this)
+        );
 
         if (!MediaApi.baseStream) {
             return;
@@ -62,6 +73,8 @@ export class PlayerComponent extends FASTElement {
         const currentYear = this.currentDate.getFullYear();
         const currentMonth = this.currentDate.getMonth() + 1;
         await this.updateMonthAndDates(currentYear, currentMonth);
+
+        this.afterInit = true;
     }
 
     public cameraNameChanged() {
@@ -98,9 +111,9 @@ export class PlayerComponent extends FASTElement {
             this.isLive = event.detail;
         }) as EventListener);
 
-        const datePickerComponent: any = this.shadowRoot?.querySelector('media-date-picker');
+        this.datePickerComponent = this.shadowRoot?.querySelector('media-date-picker');
 
-        datePickerComponent.addEventListener(DatePickerEvent.DATE_CHANGE, (event: CustomEvent) => {
+        this.datePickerComponent.addEventListener(DatePickerEvent.DATE_CHANGE, ((event: CustomEvent) => {
             if (event.detail?.toDateString() !== this.currentDate?.toDateString()) {
                 this.currentDate = event.detail;
                 // Load vod stream
@@ -117,19 +130,15 @@ export class PlayerComponent extends FASTElement {
                 this.isLive = false;
                 // this.initAvailableDates();
             }
-        });
+        }) as EventListener);
 
-        datePickerComponent.addEventListener(DatePickerEvent.RENDER, (event: CustomEvent) => {
+        this.datePickerComponent.addEventListener(DatePickerEvent.RENDER, ((event: CustomEvent) => {
             console.log(event.detail);
             const data = event.detail as IDatePickerRenderEvent;
             if (this.afterInit) {
                 this.updateMonthAndDates(data.year, data.month + 1);
             }
-        });
-
-        this.init();
-
-        this.afterInit = true;
+        }) as EventListener);
     }
 
     private async fetchAvailableYears() {
@@ -146,6 +155,7 @@ export class PlayerComponent extends FASTElement {
         }
 
         this.currentAllowedYears = Object.keys(this.allowedDates);
+        this.datePickerComponent.allowedDates = { ...this.datePickerComponent.allowedDates, years: this.currentAllowedYears.toString() };
     }
 
     private async fetchAvailableMonths(year: number) {
@@ -191,13 +201,26 @@ export class PlayerComponent extends FASTElement {
         this.currentAllowedDays = [];
         this.currentAllowedMonths = [];
 
+        this.datePickerComponent.allowedDates = {
+            ...this.datePickerComponent.allowedDates,
+            days: this.currentAllowedDays.toString(),
+            months: this.currentAllowedMonths.toString()
+        };
         // If this year is available
         if (this.allowedDates[year]) {
             if (this.allowedDates[year].length) {
                 this.currentAllowedMonths = Object.keys(this.allowedDates[year]);
+                this.datePickerComponent.allowedDates = {
+                    ...this.datePickerComponent.allowedDates,
+                    months: this.currentAllowedMonths.toString()
+                };
                 if (this.allowedDates[year][month]) {
                     if (this.allowedDates[year][month].length) {
                         this.currentAllowedDays = this.allowedDates[year][month];
+                        this.datePickerComponent.allowedDates = {
+                            ...this.datePickerComponent.allowedDates,
+                            days: this.currentAllowedDays.toString()
+                        };
                     } else {
                         // get days of this month
                         await this.fetchAvailableDays(year, month);
@@ -215,6 +238,10 @@ export class PlayerComponent extends FASTElement {
         } else {
             // there is no data - keep empty arrays
         }
+    }
+
+    private segmentInitializationCallback(segmentReferences: shaka_player.media.SegmentReference[]) {
+        console.log(segmentReferences);
     }
 
     private timeUpdateCallBack(time: string) {

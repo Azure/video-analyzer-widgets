@@ -34,18 +34,17 @@ export class AvaAPi {
         const headers = { 'Content-Type': 'application/json' };
         headers['Authorization'] = `Bearer ${TokenHandler.avaAPIToken}`;
 
-        const config = {
+        const response = await fetch(url, {
+            credentials: 'include',
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${TokenHandler.avaAPIToken}`
             }
-        };
-        const response = await fetch(url, config);
+        });
         const data = await response.json();
         this.cookieExpiration = new Date(data.expiration);
         this.cookie = await response.headers.get('x-ava-token');
-        console.log(this.cookieExpiration);
         const cookieExpirationTime = this.cookieExpiration.getTime() - new Date(Date.now()).getTime();
         if (cookieExpirationTime < AvaAPi.MAX_SET_TIMEOUT_TIME) {
             this.cookieTimeoutRef = window.setTimeout(this.cookieExpiredHandler.bind(this, cookieExpirationTime));
