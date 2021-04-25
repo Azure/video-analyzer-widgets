@@ -5,3 +5,7 @@ export interface ITimeLineConfig {
     date: Date;
     enableZoom?: boolean;
 }
+
+export enum TimelineEvents {
+    SEGMENT_CHANGE = 'TIMELINE_SEGMENT_CHANGE'
+}

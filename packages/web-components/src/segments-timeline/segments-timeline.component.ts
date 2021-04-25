@@ -4,7 +4,7 @@ import { debounceTime, distinctUntilChanged, filter, map } from 'rxjs/operators'
 import { cloneDeep } from 'lodash-es';
 import { IChartData, IChartOptions } from './svg-progress-chart/svg-progress.definitions';
 import { SVGProgressChart } from './svg-progress-chart/svg-progress.class';
-import { ISegmentsTimelineConfig, IUISegment } from './segments-timeline.definitions';
+import { ISegmentsTimelineConfig, IUISegment, SegmentsTimelineEvents } from './segments-timeline.definitions';
 import { styles } from './segments-timeline.style';
 import { template } from './segments-timeline.template';
 import { closestElement } from '../../../common/utils/elements';
@@ -50,6 +50,7 @@ export class SegmentsTimelineComponent extends FASTElement {
             height: 20
         }
     };
+    private lastActiveSegment: IUISegment;
 
     public constructor(config: ISegmentsTimelineConfig) {
         super();
@@ -184,6 +185,7 @@ export class SegmentsTimelineComponent extends FASTElement {
             top: this.config?.displayOptions?.top
         };
 
+        this.timelineProgress?.activeSegment$?.unsubscribe();
         this.timelineProgress?.destroy();
         this.timelineProgress = new SVGProgressChart(<SVGElement>container, chartOptions);
 
@@ -192,7 +194,18 @@ export class SegmentsTimelineComponent extends FASTElement {
 
         this.timelineProgress.onSetProgress((time: number) => {
             this.currentTime = time;
-            this.$emit('current-time', this.currentTime);
+            this.$emit(SegmentsTimelineEvents.CurrentTimeChanged, this.currentTime);
+        });
+
+        this.timelineProgress.activeSegment$.subscribe((activeSegment) => {
+            if (
+                activeSegment &&
+                activeSegment?.startSeconds !== this.lastActiveSegment?.startSeconds &&
+                activeSegment?.endSeconds !== this.lastActiveSegment?.endSeconds
+            ) {
+                this.lastActiveSegment = activeSegment;
+                this.$emit(SegmentsTimelineEvents.SegmentClicked, activeSegment);
+            }
         });
 
         // Subscribe to on time change -

@@ -2,9 +2,9 @@ import { FASTSlider } from '@microsoft/fast-components';
 import { attr, customElement, FASTElement } from '@microsoft/fast-element';
 import { SegmentsTimelineComponent } from '..';
 import { guid } from '../../../common/utils/guid';
-import { ISegmentsTimelineConfig } from '../segments-timeline/segments-timeline.definitions';
+import { ISegmentsTimelineConfig, SegmentsTimelineEvents } from '../segments-timeline/segments-timeline.definitions';
 import { TimeRulerComponent } from '../time-ruler';
-import { ITimeLineConfig } from './timeline.definitions';
+import { ITimeLineConfig, TimelineEvents } from './timeline.definitions';
 import { styles } from './timeline.style';
 import { template } from './timeline.template';
 
@@ -29,6 +29,15 @@ export class TimelineComponent extends FASTElement {
      */
     @attr public config: ITimeLineConfig;
 
+    /**
+     * current time, indicate the current line time
+     *
+     * @public
+     * @remarks
+     * HTML attribute: current time
+     */
+    @attr public currentTime: number = 0;
+
     public readonly DAY_DURATION_IN_SECONDS = 86400; // 60 (sec) * 60 (min) * 24 (hours)
 
     public zoom: number = 1;
@@ -44,6 +53,12 @@ export class TimelineComponent extends FASTElement {
         setTimeout(() => {
             this.initData();
         });
+    }
+
+    public currentTimeChanged() {
+        if (this.segmentsTimeline) {
+            this.segmentsTimeline.currentTime = this.currentTime;
+        }
     }
 
     public connectedCallback() {
@@ -125,6 +140,11 @@ export class TimelineComponent extends FASTElement {
         };
 
         this.segmentsTimeline.config = config;
+
+        this.segmentsTimeline.addEventListener(SegmentsTimelineEvents.SegmentClicked, ((event: CustomEvent) => {
+            this.$emit(TimelineEvents.SEGMENT_CHANGE, event.detail);
+            event.stopPropagation();
+        }) as EventListener);
     }
 
     private initTimeRuler() {

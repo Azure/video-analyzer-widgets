@@ -1,3 +1,5 @@
+import { SVG_FORWARD_PATH } from '../../../../styles/svg/shapes';
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const shaka = require('shaka-player/dist/shaka-player.ui.debug.js');
 
@@ -31,8 +33,6 @@ export class PlayButton extends shaka.ui.PlayButton {
 }
 
 export class ForwardButton extends shaka.ui.FastForwardButton {
-    private readonly PATH_FORWARD =
-        'm1.461 2.047 5.953 5.953-5.953 5.953-1.414-1.414 4.539-4.539-4.539-4.539zm13.953 5.953-5.953 5.953-1.414-1.414 4.539-4.539-4.539-4.539 1.414-1.414z';
     public constructor(parent: any, controls: any) {
         super(parent, controls);
         this.init();
@@ -42,7 +42,7 @@ export class ForwardButton extends shaka.ui.FastForwardButton {
         this.svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         this.path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         this.path.setAttribute('fill', 'black');
-        this.path.setAttribute('d', this.PATH_FORWARD);
+        this.path.setAttribute('d', SVG_FORWARD_PATH);
         this.svg.appendChild(this.path);
         this.button_.innerText = '';
         this.button_.appendChild(this.svg);
@@ -169,7 +169,7 @@ export class LiveButton extends shaka.ui.Element {
 
     private init() {
         this.button_ = document.createElement('fast-button');
-        this.button_.innerText = 'LIVE';
+        this.button_.innerHTML = '<b>LIVE</b>';
         this.button_.classList.add('live-button-component');
         this.button_.classList.add('live-on');
         this.parent.appendChild(this.button_);

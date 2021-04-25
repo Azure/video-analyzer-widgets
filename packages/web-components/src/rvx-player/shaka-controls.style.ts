@@ -75,6 +75,15 @@ export const stylesShaka = css`
     .shaka-controls-container.live-off {
         height: calc(100% + 48px + 43px);
     }
+    .live-button-component {
+        width: 34px;
+        height: 22px;
+        --outline-width: 0;
+        --design-unit: -1;
+    }
+    .live-button-component button {
+        font-weight: 600 !important;
+    }
     media-timeline {
         z-index: 9;
         background-color: rgb(26, 26, 26);

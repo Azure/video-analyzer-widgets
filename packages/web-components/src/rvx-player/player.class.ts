@@ -4,6 +4,7 @@ import { ICanvasOptions } from '../../../common/canvas/canvas.definitions';
 import { WidgetGeneralError } from '../../../widgets/src';
 import { IUISegment } from '../segments-timeline/segments-timeline.definitions';
 import { TimelineComponent } from '../timeline';
+import { TimelineEvents } from '../timeline/timeline.definitions';
 import { shaka as shaka_player } from './shaka';
 import { BoundingBoxDrawer } from './UI/bounding-box.class';
 import { ForwardButton, FullscreenButton, MuteButton, OverflowMenu, PlayButton, RewindButton } from './UI/buttons.class';
@@ -29,7 +30,7 @@ export class Player {
     private boundingBoxesDrawer: BoundingBoxDrawer;
     private segmentIndex: shaka_player.media.SegmentIndex;
     private segmentReferences: shaka_player.media.SegmentReference[];
-    private configSegmentIndex = 0;
+    private onSegmentChangeListenerRef: (event: CustomEvent) => void;
 
     public set liveStream(value: string) {
         this._liveStream = value;
@@ -109,6 +110,7 @@ export class Player {
     private removeTimelineComponent() {
         if (this.timelineComponent) {
             this.controls.controlsContainer_.removeChild(this.timelineComponent);
+            this.timelineComponent.removeEventListener(TimelineEvents.SEGMENT_CHANGE, this.onSegmentChangeListenerRef as EventListener);
             this.timelineComponent = null;
         }
     }
@@ -156,20 +158,19 @@ export class Player {
             date: this.date
             // enableZoom: true
         };
-        this.configSegmentIndex = 0;
         this.timelineComponent = new TimelineComponent();
         this.controls.controlsContainer_.insertBefore(this.timelineComponent, this.controls.bottomControls_);
+        this.onSegmentChangeListenerRef = this.onSegmentChange.bind(this);
+        this.timelineComponent.addEventListener(TimelineEvents.SEGMENT_CHANGE, this.onSegmentChangeListenerRef as EventListener);
         this.timelineComponent.config = configWithZoom;
     }
 
-    private updateTimeline(segmentIndex: number) {
-        // if (this.timelineComponent?.config?.segments && this.timelineComponent.config.segments.length > segmentIndex) {
-        //     const segments = this.timelineComponent.config.segments;
-        //     segments[this.configSegmentIndex].color = '';
-        //     segments[segmentIndex].color = 'white';
-        //     this.configSegmentIndex = segmentIndex;
-        //     this.timelineComponent.config = { ...this.timelineComponent.config, segments: segments };
-        // }
+    private onSegmentChange(event: CustomEvent) {
+        const segment = event.detail as IUISegment;
+        if (segment) {
+            this.video.currentTime = segment.startSeconds + 1;
+            this.video.play();
+        }
     }
 
     private createButton() {
@@ -373,9 +374,12 @@ export class Player {
     private onTimeSeekUpdate() {
         const displayTime = this.controls.getDisplayTime();
         const time = this.computeClock(displayTime);
-        const indexFromTime = Math.floor(displayTime / 3600);
-        this.updateTimeline(indexFromTime);
         this.timeUpdateCallback(time);
+
+        // if theres a timeline - update time
+        if (this.timelineComponent) {
+            this.timelineComponent.currentTime = displayTime;
+        }
     }
 
     private computeClock(time: number) {

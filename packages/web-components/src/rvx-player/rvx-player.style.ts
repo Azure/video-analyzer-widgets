@@ -51,7 +51,14 @@ export const styles = css`
 
     .live-button-component.live-on {
         color: rgb(26 188 156);
-        border: rgb(26 188 156) 2px solid;
+        border: rgb(26 188 156) 1px solid;
+    }
+
+    .live-button-component.live-off {
+        background: rgb(50 49 48);
+        border: 1px solid rgb(50 49 48);
+        color: rgb(121 119 117);
+        margin: 0px 9px;
     }
 
     svg path {
