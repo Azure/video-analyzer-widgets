@@ -1,4 +1,4 @@
-import { IPoint } from './drawer-canvas.definitions';
+import { DrawerEvents, IPoint } from './drawer-canvas.definitions';
 import { CanvasElement } from '../canvas/canvas.element';
 import { ICanvasOptions } from '../canvas/canvas.definitions';
 
@@ -134,7 +134,7 @@ export class DrawerCanvas extends CanvasElement {
 
     public onDrawComplete() {
         this._isDrawCompleted = true;
-        const customEvent = new CustomEvent('drawerComplete', {
+        const customEvent = new CustomEvent(DrawerEvents.COMPLETE, {
             bubbles: true
         });
         // Trigger event to parent component.

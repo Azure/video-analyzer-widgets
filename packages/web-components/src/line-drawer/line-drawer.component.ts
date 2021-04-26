@@ -1,5 +1,6 @@
 import { attr, customElement, FASTElement } from '@microsoft/fast-element';
 import { ICanvasOptions } from '../../../common/canvas/canvas.definitions';
+import { DrawerEvents } from '../../../common/drawer-canvas/drawer-canvas.definitions';
 import { DrawerCanvas } from './../../../common/drawer-canvas/drawer-canvas.class';
 import { closestElement } from './../../../common/utils/elements';
 import { styles } from './line-drawer.style';
@@ -55,6 +56,13 @@ export class LineDrawerComponent extends FASTElement {
         this.dCanvas.resize();
     }
 
+    public disconnectedCallback() {
+        this.dCanvas.canvas.removeEventListener('mousemove', this.dCanvas.onMouseMove.bind(this.dCanvas));
+        this.dCanvas.canvas.removeEventListener('mouseup', this.dCanvas.onDraw.bind(this.dCanvas));
+        this.dCanvas.canvas.removeEventListener(DrawerEvents.COMPLETE, this.onDrawComplete.bind(this));
+        window.removeEventListener('resize', this.resize);
+    }
+
     private init() {
         const parent = this.$fastController.element.parentElement;
         const width = parent.clientWidth || this.CANVAS_DEFAULT_WIDTH;
@@ -84,26 +92,28 @@ export class LineDrawerComponent extends FASTElement {
     private appendEvents() {
         this.dCanvas.canvas.addEventListener('mousemove', this.dCanvas.onMouseMove.bind(this.dCanvas));
         this.dCanvas.canvas.addEventListener('mouseup', this.dCanvas.onDraw.bind(this.dCanvas));
-        this.dCanvas.canvas.addEventListener('drawerComplete', this.onDrawComplete.bind(this));
+        this.dCanvas.canvas.addEventListener(DrawerEvents.COMPLETE, this.onDrawComplete.bind(this));
 
-        window.addEventListener('resize', () => {
-            const parent = this.$fastController.element.parentElement;
-            const width = parent?.clientWidth || this.CANVAS_DEFAULT_WIDTH;
-            const height = parent?.clientHeight || this.CANVAS_DEFAULT_HEIGHT;
-            this.canvasOptions = {
-                ...this.canvasOptions,
-                height: height,
-                width: width
-            };
+        window.addEventListener('resize', this.resize);
+    }
 
-            this.dCanvas.drawerOptions = this.canvasOptions;
-            this.dCanvas.initBoundingCanvas();
-            this.dCanvas.resize();
-        });
+    private resize() {
+        const parent = this.$fastController.element.parentElement;
+        const width = parent?.clientWidth || this.CANVAS_DEFAULT_WIDTH;
+        const height = parent?.clientHeight || this.CANVAS_DEFAULT_HEIGHT;
+        this.canvasOptions = {
+            ...this.canvasOptions,
+            height: height,
+            width: width
+        };
+
+        this.dCanvas.drawerOptions = this.canvasOptions;
+        this.dCanvas.initBoundingCanvas();
+        this.dCanvas.resize();
     }
 
     private onDrawComplete() {
-        this.$emit('drawerComplete', this.dCanvas.points);
+        this.$emit(DrawerEvents.COMPLETE, this.dCanvas.points);
         this.dCanvas.clearPoints();
     }
 }
