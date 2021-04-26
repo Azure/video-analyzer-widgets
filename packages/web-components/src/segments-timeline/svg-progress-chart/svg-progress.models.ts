@@ -10,7 +10,7 @@ export abstract class Shape {
     public y: number = 0;
     public color: string = '';
     public classList: string[] = [];
-    /* eslint-disable  @typescript-eslint/no-explicit-any */
+    /* eslint-disable-next-line  @typescript-eslint/no-explicit-any */
     public _el: SVGElement | any;
     public className: string = '';
 
