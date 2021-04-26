@@ -71,14 +71,6 @@ export const defaultColorsStyle: ElementStyles = css`
         --ruler-text-color: #444444;
         --ruler-time-color: #c8c6c4;
 
-        /* Layer Label */
-        --layer-label-bg: rgba(17, 16, 15, 0.9);
-        --layer-label-color: #f3f2f1;
-
-        /* Actions Menu */
-        --actions-menu-bg: rgba(17, 16, 15, 0.9);
-        --actions-menu-color: #f3f2f1;
-
         /* Drawer Canvas */
         --drawer-default-line-color: #db4646;
 
