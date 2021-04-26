@@ -1,7 +1,7 @@
 import { DrawerEvents, IPoint } from './drawer-canvas.definitions';
 import { CanvasElement } from '../canvas/canvas.element';
 import { ICanvasOptions } from '../canvas/canvas.definitions';
-import { DrawingColors } from './../../../out/spec/styles/system-providers/ava-design-system-provider.definitions';
+import { DrawingColors } from '../../styles/system-providers/ava-design-system-provider.definitions';
 
 /**
  * DrawerCanvas class is an implementation of CanvasElement
