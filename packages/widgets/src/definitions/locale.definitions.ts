@@ -4,4 +4,4 @@
  * By default, widget use browser's locale, if not defined - uses en-us
  * @public
  */
-export type Locale = 'en-us';
+export type Locale = 'en-us'; // NOTE: more languages will be added

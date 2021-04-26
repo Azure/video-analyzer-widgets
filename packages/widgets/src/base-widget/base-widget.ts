@@ -1,7 +1,7 @@
 import { attr, FASTElement } from '@microsoft/fast-element';
 import { IWidgetBaseConfig } from '../definitions/base-widget-config.definitions';
 
-export abstract class BaseWidget extends FASTElement {
+export class BaseWidget extends FASTElement {
     @attr public config: IWidgetBaseConfig;
     @attr public width: string;
     @attr public height: string;
@@ -22,6 +22,7 @@ export abstract class BaseWidget extends FASTElement {
         this.init();
     }
 
-    public abstract render(): void;
-    protected abstract init(): void;
+    public render(): void {}
+
+    protected init(): void {}
 }
