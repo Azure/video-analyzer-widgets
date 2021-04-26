@@ -74,10 +74,6 @@ export const darkColorsStyle: ElementStyles = css`
         /* Drawer Canvas */
         --drawer-default-line-color: #db4646;
 
-        /* Area Draw */
-        --area-draw-color: #f3f2f1;
-        --area-draw-bg: #201f1e;
-
         /* Date picker */
         --date-picker-holder-bg: #252423;
         --date-picker-text-color: #f3f2f1;
