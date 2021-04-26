@@ -85,5 +85,13 @@ export const defaultColorsStyle: ElementStyles = css`
         --date-picker-divider-color: #484644;
         --date-picker-holder-box-shadow-1: rgba(0, 0, 0, 0.1);
         --date-picker-holder-box-shadow-2: rgba(0, 0, 0, 0.13);
+
+        /* Layer Label */
+        --layer-label-bg: rgba(17, 16, 15, 0.9);
+        --layer-label-color: #f3f2f1;
+
+        /* Actions Menu */
+        --actions-menu-bg: rgba(17, 16, 15, 0.9);
+        --actions-menu-color: #f3f2f1;
     }
 `;
