@@ -3,6 +3,7 @@ import { ICanvasOptions } from '../../../common/canvas/canvas.definitions';
 import { DrawerEvents } from '../../../common/drawer-canvas/drawer-canvas.definitions';
 import { DrawerCanvas } from './../../../common/drawer-canvas/drawer-canvas.class';
 import { closestElement } from './../../../common/utils/elements';
+import { styles } from './line-drawer.style';
 
 /**
  * An line-drawer item.
