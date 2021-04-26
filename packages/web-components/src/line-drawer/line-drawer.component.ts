@@ -31,10 +31,6 @@ export class LineDrawerComponent extends FASTElement {
 
     private canvasOptions: ICanvasOptions;
 
-    public constructor() {
-        super();
-    }
-
     public borderColorChanged() {
         if (this.canvasOptions) {
             setTimeout(() => {
