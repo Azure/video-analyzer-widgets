@@ -4,5 +4,5 @@ export interface IPoint {
 }
 
 export enum DrawerEvents {
-    COMPLETE = 'drawerComplete'
+    COMPLETE = 'DRAWER_ON_COMPLETE'
 }
