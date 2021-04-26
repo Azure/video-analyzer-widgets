@@ -1,6 +1,6 @@
 import { html } from '@microsoft/fast-element';
+import { DatePickerComponent } from './date-picker.component';
 import { GO_TO_ARCHIVE_MAIN_SVG_PATH, GO_TO_ARCHIVE_SUB_SVG_PATH } from '../../../styles/svg/svg.shapes';
-import { DatePickerComponent } from './date-picker';
 
 /**
  * The template for the date picker component.
