@@ -1,11 +1,11 @@
 import { html } from '@microsoft/fast-element';
-import { RVXWidget } from '.';
+import { Player } from '.';
 
 /**
  * The template for the example component.
  * @public
  */
-export const template = html<RVXWidget>`
+export const template = html<Player>`
     <template>
         <ava-design-system-provider
             style="${(x) => (x.width ? 'width: ' + x.width + ';' : '')}

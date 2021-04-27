@@ -3,7 +3,7 @@ import { IWidgetBaseConfig } from '../../definitions/base-widget-config.definiti
 /**
  * RVX config, contains basic configurations for rvx widget.
  */
-export interface IRVXWidgetConfig extends IWidgetBaseConfig {
+export interface IAvaPlayerConfig extends IWidgetBaseConfig {
     /**
      * Account ID
      */

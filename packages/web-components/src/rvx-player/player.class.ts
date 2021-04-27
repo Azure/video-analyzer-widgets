@@ -314,7 +314,7 @@ export class Player {
     }
     private authenticationHandler(type: shaka_player.net.NetworkingEngine.RequestType, request: shaka_player.extern.Request) {
         // request.headers['set-cookie'] = AvaAPi.cookie;
-        // request['allowCrossSiteCredentials'] = true;
+        request['allowCrossSiteCredentials'] = true;
         if (!this._accessToken) {
             return;
         }

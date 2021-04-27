@@ -1,2 +1,2 @@
-export { RVXWidget } from './rvx-widget';
+export { Player } from './rvx-widget';
 export * from './definitions';

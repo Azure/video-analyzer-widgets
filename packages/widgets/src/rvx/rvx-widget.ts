@@ -1,6 +1,6 @@
 import { BaseWidget } from '../base-widget';
 import { customElement, attr } from '@microsoft/fast-element';
-import { IRVXWidgetConfig, RVXEvents } from './definitions';
+import { IAvaPlayerConfig, RVXEvents } from './definitions';
 import { TokenHandler } from '../../../common/services/auth/token-handler.class';
 import { AvaAPi } from '../../../common/services/auth/ava-api.class';
 import { MediaApi } from '../../../common/services/media/media-api.class';
@@ -9,16 +9,16 @@ import { styles } from './rvx-widget.style';
 import { PlayerComponent } from '../../../web-components/src';
 
 @customElement({
-    name: 'rvx-widget',
+    name: 'ava-player',
     template,
     styles
 })
-export class RVXWidget extends BaseWidget {
-    @attr public _config: IRVXWidgetConfig;
+export class Player extends BaseWidget {
+    @attr public _config: IAvaPlayerConfig;
     @attr public width: string;
     @attr public height: string;
 
-    public constructor(width: string = '', height: string = '', inputConfig: IRVXWidgetConfig) {
+    public constructor(width: string = '', height: string = '', inputConfig: IAvaPlayerConfig) {
         super();
         this._config = inputConfig;
         this.width = width;
@@ -40,7 +40,7 @@ export class RVXWidget extends BaseWidget {
         }
     }
 
-    public configure(config: IRVXWidgetConfig) {
+    public configure(config: IAvaPlayerConfig) {
         this._config = config;
         this.init();
     }
@@ -49,7 +49,7 @@ export class RVXWidget extends BaseWidget {
         AvaAPi.fallbackAPIBase = apiBase;
     }
 
-    public async render() {
+    public async load() {
         // Get video
         try {
             await AvaAPi.getVideo()

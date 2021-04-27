@@ -5,32 +5,32 @@
 </head>
 
 <body>
-  <script src="../../../../../dist/ava-widgets-sdk.js"></script>
+  <script src="../../../../../dist/ava-widgets.js"></script>
   <h1>Sample RVX widget</h1>
   <div id="container"
     class="widget-container">
-    <rvx-widget></rvx-widget>
+    <ava-player></ava-player>
   </div>
 </body>
 
 <script>(function () {
-    const rvxWidget = document.querySelector("rvx-widget");
-    rvxWidget.addEventListener('TOKEN_EXPIRED', () => {
+    const avaPlayer = document.querySelector("ava-player");
+    avaPlayer.addEventListener('TOKEN_EXPIRED', () => {
       console.log('token expired');
     });
-    rvxWidget.configure({
-      token: '',
-      accountId: 'fe1bfcde-2787-4621-b20c-a70fc4b53464',
+    avaPlayer.configure({
+      token: 'eyJhbGciOiJSUzI1NiIsImtpZCI6IjU2NUIxQmt0S2k2dXd3OE1vTFAwLTFHV3lEbyIsIng1dCI6IjU2NUIxQmt0S2k2dXd3OE1vTFAwLTFHV3lEbyIsInR5cCI6IkpXVCJ9.eyJuYmYiOjE2MTk0NDEzMzQsImV4cCI6MTY1MDk3NzMzMywiaWF0IjoxNjE5NDQxMzM0LCJpc3MiOiJTYW1wbGVUb2tlblByb3ZpZGVyIiwiYXVkIjoidGVzdCJ9.Ow2-pIgBAtn0AdepmTlWTCLKWLLONl12Ror6oUKWcpeknQXy3vK6KZLGC-w37I3uOlTG1NPU-MOXUkGWtLBAYBJxfqE8qeNHv0_3A69EOXQl1c7BFXxLMpm7SYkwF5dEgGnODKu5xc3UQXdrNEcvh0ZV1MJ5u95GiQf01AjhG_JlZ7YPz2JGGtX0mE7rZIoFRDV2kFxlKa2aUq_KdLy9RpM7fNC3YWwoj0BSYSFgLu8kyk6ax0zgCQu4f2z3UNynPfTEFd7ZVOMhrCJHMBNv2XgqkqiviCkLFn08g7Ibx3JUtQ1G65SJf1-mkAfvXcMFSFR0NorP87b8JWC3k-AhIg',
+      accountId: '87B347BA-7E29-453A-8AC9-ECE8F7C893D1',
       longRegionCode: 'mint1',
-      videoName: 'metricsVidClspr8rhkGjXWIUChbg6g'
+      videoName: 'sample-http-yolov3'
     });
 
-    rvxWidget.width = '920px';
-    rvxWidget.height = '300px';
+    // avaPlayer.width = '920px';
+    // avaPlayer.height = '300px';
 
-    // rvxWidget.apiBase = 'http://localhost:4100/mocks/ava/';
+    // avaPlayer.apiBase = 'http://localhost:4100/mocks/ava/';
 
-    rvxWidget.render();
+    avaPlayer.load();
   })()
 </script>
 
