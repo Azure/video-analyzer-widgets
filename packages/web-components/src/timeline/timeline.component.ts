@@ -2,7 +2,7 @@ import { FASTSlider } from '@microsoft/fast-components';
 import { attr, customElement, FASTElement } from '@microsoft/fast-element';
 import { SegmentsTimelineComponent } from '..';
 import { guid } from '../../../common/utils/guid';
-import { ISegmentsTimelineConfig } from '../segments-timeline/segments-timeline.definitions';
+import { ISegmentsTimelineConfig, IUISegment, SegmentsTimelineEvents } from '../segments-timeline/segments-timeline.definitions';
 import { TimeRulerComponent } from '../time-ruler';
 import { ITimeLineConfig, TimelineEvents } from './timeline.definitions';
 import { styles } from './timeline.style';
@@ -146,6 +146,13 @@ export class TimelineComponent extends FASTElement {
         };
 
         this.segmentsTimeline.config = config;
+
+        // eslint-disable-next-line no-undef
+        this.segmentsTimeline.addEventListener(SegmentsTimelineEvents.SEGMENT_CLICKED, ((event: CustomEvent<IUISegment>) => {
+            this.$emit(TimelineEvents.SEGMENT_CHANGE, event.detail);
+            event.stopPropagation();
+            // eslint-disable-next-line no-undef
+        }) as EventListener);
     }
 
     private initTimeRuler() {

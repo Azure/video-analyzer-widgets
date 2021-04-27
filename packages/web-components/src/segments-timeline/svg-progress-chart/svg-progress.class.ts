@@ -316,7 +316,10 @@ export class SVGProgressChart {
 
     private handleMouseClick(e: MouseEvent) {
         const percent = (e.offsetX / this.options.width) * 100;
-        this.updateActiveRect(this.options.time * (percent / 100));
+        const activeSegment = this.updateActiveRect(this.options.time * (percent / 100));
+
+        // dispatch click event
+        this.activeSegment$.next(activeSegment);
 
         if (!this.options.renderProgress) {
             return;
@@ -327,33 +330,33 @@ export class SVGProgressChart {
         });
     }
 
-    private updateActiveRect(time: number) {
+    private updateActiveRect(time: number): IUISegment {
         if (this.activeRect) {
             const startTime = (this.activeRect.x / 100) * this.options.time;
             const endTime = (this.activeRect.width / 100) * this.options.time + startTime;
             if (startTime <= time && endTime >= time) {
-                return;
+                return null;
             } else {
                 this.activeRect.removeClass('active');
                 this.activeRect = null;
-                this.activeSegment$.next(null);
             }
         }
 
-        this.components.events.forEach((rect) => {
+        for (const rect of this.components.events) {
             const startTime = (rect.x / 100) * this.options.time;
             const endTime = (rect.width / 100) * this.options.time + startTime;
             if (startTime <= time && endTime >= time) {
                 this.activeRect = rect;
                 this.activeRect.addClass('active');
-                this.activeSegment$.next({
+                return {
                     startSeconds: startTime,
                     endSeconds: endTime,
                     color: rect.color
-                });
-                return;
+                };
             }
-        });
+        }
+
+        return null;
     }
 
     private init() {
