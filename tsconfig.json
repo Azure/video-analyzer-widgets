@@ -4,20 +4,26 @@
         "outDir": "./dist",
         "declaration": true,
         "forceConsistentCasingInFileNames": true,
-        "module": "commonjs",
+        "module": "ES2015",
         "noFallthroughCasesInSwitch": true,
         "allowSyntheticDefaultImports": true,
         "noImplicitAny": true,
         "noImplicitReturns": true,
         "removeComments": true,
         "sourceMap": true,
-        "target": "ES6",
-        "lib": ["es2015", "es2016", "es2017", "es2018", "dom"],
+        "target": "ES2015",
+        "lib": ["es2015", "es2016", "es2017", "es2018", "dom", "esnext"],
         "strict": true,
         "esModuleInterop": true,
         "strictNullChecks": false,
         "suppressImplicitAnyIndexErrors": true,
-        "strictPropertyInitialization": false
+        "strictPropertyInitialization": false,
+        "pretty": true,
+        "moduleResolution": "node",
+        "importHelpers": true,
+        "declarationMap": true,
+        "noEmitOnError": true
     },
-    "exclude": ["**/*.stories.ts", "**/*.spec.ts", "node_modules"]
+    "exclude": ["**/*.stories.ts", "**/*.spec.ts", "node_modules"],
+    "include": ["packages"]
 }

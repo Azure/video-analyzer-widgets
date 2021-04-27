@@ -3,7 +3,9 @@ import { defineDesignSystemProvider, designSystemProperty, DesignSystemProviderT
 import { darkColorsStyle, defaultColorsStyle } from '../themes';
 import { AvaDesignSystemProviderEvents, AvaTheme } from './ava-design-system-provider.definitions';
 import { style } from './ava-design-system-provider.style';
-import '../common.scss';
+const commonStyle = require('../common.scss');
+/* eslint-disable-next-line @typescript-eslint/no-unused-expressions */
+commonStyle;
 
 /**
  * AVA design system provider

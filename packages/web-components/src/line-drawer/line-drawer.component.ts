@@ -93,7 +93,7 @@ export class LineDrawerComponent extends FASTElement {
         this.dCanvas.canvas.addEventListener('mousemove', this.dCanvas.onMouseMove.bind(this.dCanvas));
         this.dCanvas.canvas.addEventListener('mouseup', this.dCanvas.onDraw.bind(this.dCanvas));
         this.dCanvas.canvas.addEventListener(DrawerEvents.COMPLETE, this.onDrawComplete.bind(this));
-        window.addEventListener('resize', this.resize);
+        window.addEventListener('resize', this.resize.bind(this));
     }
 
     private resize() {

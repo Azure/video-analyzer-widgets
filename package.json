@@ -1,13 +1,13 @@
 {
     "name": "@media-video-analytics/widgets",
-    "version": "0.0.9",
+    "version": "0.1.0",
     "description": "",
     "main": "./dist/ava-widgets-sdk.js",
     "typings": "./dist/index.d.ts",
     "scripts": {
         "start": "webpack -w",
-        "build": "webpack",
-        "build:prod": "webpack --env=production",
+        "build": "webpack --mode=development",
+        "build:prod": "webpack --mode=production",
         "update-version": "npm version",
         "bump-version": "npm version patch",
         "feed:auth": "npx vsts-npm-auth -config .npmrc",
@@ -16,7 +16,10 @@
         "build-storybook": "build-storybook",
         "test": "tsc --p tsconfig.spec.json && wtr --node-resolve",
         "test:coverage": "tsc --p tsconfig.spec.json && wtr --node-resolve --coverage",
-        "test:watch": "tsc --p tsconfig.spec.json && wtr --node-resolve --watch --preserveWatchOutput"
+        "test:watch": "tsc --p tsconfig.spec.json && wtr --node-resolve --watch --preserveWatchOutput",
+        "analyze": "webpack-bundle-analyzer dist/stats.json",
+        "build-dev:stats": "webpack --mode=development --profile --json > dist/stats.json",
+        "build:stats": "webpack --mode=production --profile --json > dist/stats.json"
     },
     "keywords": [],
     "author": "mediafront",
@@ -38,6 +41,7 @@
         "@web/test-runner": "^0.12.17",
         "@web/test-runner-playwright": "^0.8.4",
         "circular-dependency-plugin": "^5.2.2",
+        "clean-webpack-plugin": "^4.0.0-alpha.0",
         "css-loader": "5.0.2",
         "eslint": "^7.18.0",
         "eslint-webpack-plugin": "^2.4.3",
@@ -47,9 +51,10 @@
         "sass-loader": "10.1.1",
         "style-loader": "1.2.1",
         "ts-loader": "^8.0.11",
-        "url-loader": "^4.1.1",
         "typescript": "^4.2.3",
+        "url-loader": "^4.1.1",
         "webpack": "^5.16.0",
+        "webpack-bundle-analyzer": "^4.4.1",
         "webpack-cli": "^4.4.0"
     },
     "dependencies": {

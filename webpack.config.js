@@ -1,14 +1,15 @@
 const path = require('path');
-const isProduction = process.argv.indexOf('--env=production') > -1;
+const isProduction = process.argv.indexOf('--mode=production') > -1;
 const esLintPlugin = require('eslint-webpack-plugin');
 
 module.exports = {
+    mode: isProduction ? 'production' : 'development',
     entry: {
-        'ava-widgets-sdk': path.join(__dirname, './index.ts')
+        'ava-widgets-sdk': path.join(__dirname, './main.ts')
     },
-    devtool: 'inline-source-map',
+    devtool: isProduction ? false : 'inline-source-map',
     output: {
-        filename: isProduction ? `[name].min.js` : '[name].js',
+        filename: isProduction ? '[name].min.js' : '[name].js',
         // path: path.join(__dirname, './dist'),
         sourceMapFilename: '[name].js.map',
         publicPath: './dist'
@@ -22,7 +23,8 @@ module.exports = {
         })
     ],
     resolve: {
-        extensions: ['.ts', '.js']
+        extensions: ['.ts', '.js'],
+        modules: ['packages', 'node_modules']
     },
     module: {
         rules: [
