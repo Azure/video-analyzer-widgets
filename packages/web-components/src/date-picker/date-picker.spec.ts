@@ -1,6 +1,6 @@
 import { html, fixture, expect } from '@open-wc/testing';
 
-import { DatePickerComponent } from './date-picker';
+import { DatePickerComponent } from './date-picker.component';
 
 DatePickerComponent;
 
