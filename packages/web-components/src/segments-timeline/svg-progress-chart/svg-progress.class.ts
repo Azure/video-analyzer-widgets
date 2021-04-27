@@ -25,6 +25,7 @@ export class SVGProgressChart {
     };
 
     public activeRect: Rect;
+    // todo - change active segment to work with events
     public activeSegment$: BehaviorSubject<IUISegment> = new BehaviorSubject<IUISegment>(null);
 
     public constructor(element?: SVGElement, options?: IChartOptions) {

@@ -51,7 +51,7 @@ export class SegmentsTimelineComponent extends FASTElement {
         }
     };
     private lastActiveSegment: IUISegment;
-    public readonly DAY_DURATION_IN_SECONDS = 86400; // 60 (sec) * 60 (min) * 24 (hours)
+    private readonly DAY_DURATION_IN_SECONDS = 86400; // 60 (sec) * 60 (min) * 24 (hours)
 
     public constructor(config: ISegmentsTimelineConfig) {
         super();
