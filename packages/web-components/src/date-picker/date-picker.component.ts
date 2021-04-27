@@ -20,7 +20,6 @@ export class DatePickerComponent extends FASTElement {
      * HTML attribute: alignRight
      */
     @attr public alignRight = false;
-
     /**
      * Enable UI attribute, when true date picker is shown
      *

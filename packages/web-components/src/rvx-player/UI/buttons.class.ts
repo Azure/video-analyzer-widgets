@@ -1,4 +1,4 @@
-import { SVG_FORWARD_PATH } from '../../../../styles/svg/shapes';
+import { FORWARD_SVG_PATH } from '../../../../styles/svg/svg.shapes';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const shaka = require('shaka-player/dist/shaka-player.ui.debug.js');
@@ -42,7 +42,7 @@ export class ForwardButton extends shaka.ui.FastForwardButton {
         this.svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         this.path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         this.path.setAttribute('fill', 'black');
-        this.path.setAttribute('d', SVG_FORWARD_PATH);
+        this.path.setAttribute('d', FORWARD_SVG_PATH);
         this.svg.appendChild(this.path);
         this.button_.innerText = '';
         this.button_.appendChild(this.svg);

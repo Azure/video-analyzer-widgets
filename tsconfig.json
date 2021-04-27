@@ -19,5 +19,5 @@
         "suppressImplicitAnyIndexErrors": true,
         "strictPropertyInitialization": false
     },
-    "exclude": ["**/*.stories.ts", "**/*.spec.ts", "**/*.d.ts", "node_modules", "dist", "out"]
+    "exclude": ["**/*.stories.ts", "**/*.spec.ts", "node_modules"]
 }

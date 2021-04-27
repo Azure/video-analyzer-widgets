@@ -1,5 +1,5 @@
 import EventEmitter from 'node:events';
-import jwt_decode, { JwtPayload } from 'jwt-decode';
+// import jwt_decode, { JwtPayload } from 'jwt-decode';
 
 export class TokenHandler {
     public static tokenExpiredEvent: EventEmitter;
@@ -44,15 +44,15 @@ export class TokenHandler {
             this.tokenExpiredHandler();
         }
 
-        let tokenExpirationTime;
-        const decoded = jwt_decode(this.avaAPIToken) as JwtPayload;
-        if (decoded.exp === undefined) {
-            tokenExpirationTime = 0;
-        }
+        // let tokenExpirationTime;
+        // const decoded = jwt_decode(this.avaAPIToken) as JwtPayload;
+        // if (decoded.exp === undefined) {
+        //     tokenExpirationTime = 0;
+        // }
 
         const date = new Date(0);
-        date.setUTCSeconds(decoded.exp - 5);
-        tokenExpirationTime = date.getTime() - new Date(Date.now()).getTime();
+        // date.setUTCSeconds(decoded.exp - 5);
+        const tokenExpirationTime = date.getTime() - new Date(Date.now()).getTime();
         if (tokenExpirationTime < TokenHandler.MAX_SET_TIMEOUT_TIME) {
             this.tokenTimeoutRef = window.setTimeout(this.tokenExpiredHandler.bind(this, tokenExpirationTime));
         }

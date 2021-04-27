@@ -12,7 +12,5 @@ declare global {
     // eslint-disable-next-line @typescript-eslint/naming-convention
     export interface Window {
         ava: IAva;
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        fabric?: any;
     }
 }

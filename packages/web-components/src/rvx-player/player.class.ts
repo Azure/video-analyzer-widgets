@@ -345,7 +345,7 @@ export class Player {
         const inferences = JSON.parse(message).inferences;
         for (const iterator of inferences) {
             if (iterator.type === 'MOTION' || iterator.type === 'ENTITY') {
-                const data = iterator.motion.box;
+                const data = iterator?.motion?.box || iterator?.entity?.box;
                 this.boundingBoxesDrawer.addItem(emsg.startTime, data);
             }
         }
