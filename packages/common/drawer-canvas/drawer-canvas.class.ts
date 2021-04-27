@@ -2,6 +2,7 @@ import { IPoint } from './drawer-canvas.definitions';
 import { CanvasElement } from '../canvas/canvas.element';
 import { ICanvasOptions } from '../canvas/canvas.definitions';
 import { WidgetGeneralError } from './../../widgets/src/common/error';
+import { DrawingColors } from '../../styles/system-providers/ava-design-system-provider.definitions';
 
 /**
  * DrawerCanvas class is an implementation of CanvasElement
@@ -27,7 +28,7 @@ export class DrawerCanvas extends CanvasElement {
 
     // Const readyOnly
     private readonly DRAW_LINE = 'round';
-    private readonly DEFAULT_LINE_COLOR = '#DB4646';
+    private readonly DEFAULT_LINE_COLOR = DrawingColors.Red;
     private readonly DEFAULT_FILL_COLOR = 'rgba(219, 70, 70, 0.4)';
     private readonly DEFAULT_DRAW_CURSOR = 'crosshair';
 

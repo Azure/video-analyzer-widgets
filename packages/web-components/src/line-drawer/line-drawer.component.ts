@@ -1,11 +1,12 @@
 import { attr, customElement, FASTElement } from '@microsoft/fast-element';
 import { ICanvasOptions } from '../../../common/canvas/canvas.definitions';
+import { DrawerEvents } from '../../../common/drawer-canvas/drawer-canvas.definitions';
 import { DrawerCanvas } from './../../../common/drawer-canvas/drawer-canvas.class';
 import { closestElement } from './../../../common/utils/elements';
 import { styles } from './line-drawer.style';
 
 /**
- * An media-line-drawer item.
+ * An line-drawer item.
  * @public
  */
 @customElement({
@@ -13,7 +14,6 @@ import { styles } from './line-drawer.style';
     styles
 })
 export class LineDrawerComponent extends FASTElement {
-
     /**
      * Drawing line color.
      *
@@ -24,7 +24,6 @@ export class LineDrawerComponent extends FASTElement {
     @attr public borderColor: string = '';
 
     public dCanvas: DrawerCanvas;
-
     private readonly CANVAS_DEFAULT_HEIGHT = 375;
     private readonly CANVAS_DEFAULT_WIDTH = 250;
     private readonly CANVAS_POSITION = 'relative';
@@ -33,13 +32,6 @@ export class LineDrawerComponent extends FASTElement {
 
     private canvasOptions: ICanvasOptions;
 
-    public constructor() {
-        super();
-    }
-
-    /**
-    * @internal
-    */
     public borderColorChanged() {
         if (this.canvasOptions) {
             setTimeout(() => {
@@ -60,8 +52,14 @@ export class LineDrawerComponent extends FASTElement {
     }
 
     public resetLineDrawer() {
-        // this.dCanvas.clearPoints();
         this.dCanvas.resize();
+    }
+
+    public disconnectedCallback() {
+        this.dCanvas.canvas.removeEventListener('mousemove', this.dCanvas.onMouseMove.bind(this.dCanvas));
+        this.dCanvas.canvas.removeEventListener('mouseup', this.dCanvas.onDraw.bind(this.dCanvas));
+        this.dCanvas.canvas.removeEventListener(DrawerEvents.COMPLETE, this.onDrawComplete.bind(this));
+        window.removeEventListener('resize', this.resize);
     }
 
     private init() {
@@ -69,7 +67,7 @@ export class LineDrawerComponent extends FASTElement {
         const width = parent.clientWidth || this.CANVAS_DEFAULT_WIDTH;
         const height = parent.clientHeight || this.CANVAS_DEFAULT_HEIGHT;
         const designSystem = closestElement('ava-design-system-provider', this.$fastController.element);
-        const borderColor = designSystem ? getComputedStyle(designSystem)?.getPropertyValue('--drawer-line-color') : '';
+        const borderColor = designSystem ? getComputedStyle(designSystem)?.getPropertyValue('--drawer-default-line-color') : '';
         this.canvasOptions = {
             height: height,
             width: width,
@@ -93,26 +91,28 @@ export class LineDrawerComponent extends FASTElement {
     private appendEvents() {
         this.dCanvas.canvas.addEventListener('mousemove', this.dCanvas.onMouseMove.bind(this.dCanvas));
         this.dCanvas.canvas.addEventListener('mouseup', this.dCanvas.onDraw.bind(this.dCanvas));
-        this.dCanvas.canvas.addEventListener('drawerComplete', this.onDrawComplete.bind(this));
+        this.dCanvas.canvas.addEventListener(DrawerEvents.COMPLETE, this.onDrawComplete.bind(this));
 
-        window.addEventListener('resize', () => {
-            const parent = this.$fastController.element.parentElement;
-            const width = parent?.clientWidth || this.CANVAS_DEFAULT_WIDTH;
-            const height = parent?.clientHeight || this.CANVAS_DEFAULT_HEIGHT;
-            this.canvasOptions = {
-                ...this.canvasOptions,
-                height: height,
-                width: width
-            };
+        window.addEventListener('resize', this.resize);
+    }
 
-            this.dCanvas.drawerOptions = this.canvasOptions;
-            this.dCanvas.initBoundingCanvas();
-            this.dCanvas.resize();
-        });
+    private resize() {
+        const parent = this.$fastController.element.parentElement;
+        const width = parent?.clientWidth || this.CANVAS_DEFAULT_WIDTH;
+        const height = parent?.clientHeight || this.CANVAS_DEFAULT_HEIGHT;
+        this.canvasOptions = {
+            ...this.canvasOptions,
+            height: height,
+            width: width
+        };
+
+        this.dCanvas.drawerOptions = this.canvasOptions;
+        this.dCanvas.initBoundingCanvas();
+        this.dCanvas.resize();
     }
 
     private onDrawComplete() {
-        this.$emit('drawerComplete', this.dCanvas?.points);
+        this.$emit(DrawerEvents.COMPLETE, this.dCanvas.points);
         this.dCanvas.clearPoints();
     }
 }
