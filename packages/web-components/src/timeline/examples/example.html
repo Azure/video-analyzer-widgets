@@ -20,7 +20,7 @@
 
 <script>(function () {
         const segments = [
-            { startSeconds: 0, endSeconds: 3600 },
+            { startSeconds: 10, endSeconds: 3600 },
             { startSeconds: 4500, endSeconds: 5000, color: 'red' },
             { startSeconds: 20000, endSeconds: 30000 },
             { startSeconds: 55000, endSeconds: 57000, color: 'blue' },
@@ -48,6 +48,11 @@
 
         mediaTimeLineWithoutZoom.config = configWithoutZoom;
         mediaTimeLineWithZoom.config = configWithZoom;
+
+        window.addEventListener('SEGMENTS_TIMELINE_SEGMENT_CLICKED', (s) => {
+            console.log('SEGMENTS_TIMELINE_SEGMENT_CLICKED');
+            console.log(s);
+        })
     })()
 </script>
 
