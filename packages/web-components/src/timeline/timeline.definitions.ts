@@ -5,3 +5,7 @@ export interface ITimeLineConfig {
     date: Date;
     enableZoom?: boolean;
 }
+
+export enum TimelineEvents {
+    JUMP_TO_NEXT_SEGMENT = 'TIMELINE_JUMP_TO_NEXT_SEGMENT'
+}

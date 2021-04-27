@@ -50,6 +50,7 @@ export class SegmentsTimelineComponent extends FASTElement {
         }
     };
     private lastActiveSegment: IUISegment;
+    public readonly DAY_DURATION_IN_SECONDS = 86400; // 60 (sec) * 60 (min) * 24 (hours)
 
     public constructor(config: ISegmentsTimelineConfig) {
         super();
@@ -167,6 +168,27 @@ export class SegmentsTimelineComponent extends FASTElement {
         );
     }
 
+    public jumpToNextSegment(): boolean {
+        const time = this.lastActiveSegment?.endSeconds || 0;
+
+        if (!this.processedSegments?.length) {
+            return false;
+        }
+
+        const duration = this.config?.data?.duration || 1;
+        for (const segment of this.processedSegments) {
+            const startTime = (segment.x / 100) * duration;
+
+            if (startTime > time) {
+                this.currentTime = startTime;
+                return true;
+            }
+        }
+
+        this.currentTime = this.DAY_DURATION_IN_SECONDS;
+        return false;
+    }
+
     private initSVGProgress() {
         const container = this.$fastController.element.shadowRoot?.querySelector('svg');
         const containerWidth = this.$fastController.element.offsetWidth * (this.config.displayOptions.zoom || 1);
@@ -194,7 +216,7 @@ export class SegmentsTimelineComponent extends FASTElement {
 
         this.timelineProgress.onSetProgress((time: number) => {
             this.currentTime = time;
-            this.$emit(SegmentsTimelineEvents.CurrentTimeChanged, this.currentTime);
+            this.$emit(SegmentsTimelineEvents.CURRENT_TIME_CHANGE, this.currentTime);
         });
 
         this.timelineProgress.activeSegment$.subscribe((activeSegment) => {
@@ -204,7 +226,7 @@ export class SegmentsTimelineComponent extends FASTElement {
                 activeSegment?.endSeconds !== this.lastActiveSegment?.endSeconds
             ) {
                 this.lastActiveSegment = activeSegment;
-                this.$emit(SegmentsTimelineEvents.SegmentClicked, activeSegment);
+                this.$emit(SegmentsTimelineEvents.SEGMENT_CLICKED, activeSegment);
             }
         });
 

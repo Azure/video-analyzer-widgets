@@ -28,6 +28,6 @@ export interface ISegmentsTimelineConfig {
 }
 
 export enum SegmentsTimelineEvents {
-    CurrentTimeChanged = 'SEGMENTS_TIMELINE_CURRENT_TIME_CHANGED',
-    SegmentClicked = 'SEGMENTS_TIMELINE_SEGMENT_CLICKED'
+    CURRENT_TIME_CHANGE = 'SEGMENTS_TIMELINE_CURRENT_TIME_CHANGED',
+    SEGMENT_CLICKED = 'SEGMENTS_TIMELINE_SEGMENT_CLICKED'
 }
