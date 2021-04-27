@@ -14,6 +14,7 @@ export interface IDisplayOptions {
     renderProgress?: boolean;
     timeSmoothing?: number;
     zoom?: number;
+    disableCursor?: boolean; // Disable cursor on un segment parts
 }
 
 export interface ISegmentsTimelineData {

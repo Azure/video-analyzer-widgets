@@ -20,6 +20,8 @@
             <media-segments-timeline id="segments-timeline-with-progress"></media-segments-timeline>
             <h2>Segments Timeline</h2>
             <media-segments-timeline id="segments-timeline"></media-segments-timeline>
+            <h2>Segments Timeline disable cursor</h2>
+            <media-segments-timeline id="segments-timeline-disable-cursor"></media-segments-timeline>
         </div>
     </ava-design-system-provider>
 </body>
@@ -39,6 +41,7 @@
         const segmentsTimelineWithTooltip = document.getElementById("segments-timeline-with-tooltip");
         const segmentsTimelineWithProgress = document.getElementById("segments-timeline-with-progress");
         const segmentsTimeline = document.getElementById("segments-timeline");
+        const segmentsTimelineDisableCursor = document.getElementById("segments-timeline-disable-cursor");
 
         const configWithTooltipProgress = {
             data: {
@@ -99,10 +102,27 @@
             }
         }
 
+        const configDisableCursor = {
+            data: {
+                segments: segments,
+                duration: duration
+            },
+            displayOptions: {
+                height: 42,
+                barHeight: 12,
+                tooltipHeight: 20,
+                top: 0,
+                renderTooltip: true,
+                renderProgress: false,
+                disableCursor: true
+            }
+        }
+
         segmentsTimelineWithTooltipProgress.config = configWithTooltipProgress;
         segmentsTimelineWithTooltip.config = configWithTooltip;
         segmentsTimelineWithProgress.config = configWithProgress;
         segmentsTimeline.config = config;
+        segmentsTimelineDisableCursor.config = configDisableCursor;
 
         segmentsTimelineWithTooltipProgress.addEventListener('SEGMENTS_TIMELINE_CURRENT_TIME_CHANGED', (event) => {
             console.log('segments-timeline-with-tooltip-progress current time changed: ', event.detail);
@@ -118,6 +138,10 @@
 
         segmentsTimeline.addEventListener('SEGMENTS_TIMELINE_CURRENT_TIME_CHANGED', (event) => {
             console.log('segments-timeline current time changed: ', event.detail);
+        })
+
+        segmentsTimelineDisableCursor.addEventListener('SEGMENTS_TIMELINE_CURRENT_TIME_CHANGED', (event) => {
+            console.log('segments-timeline-disable-cursor current time changed: ', event.detail);
         })
 
         window.addEventListener('SEGMENTS_TIMELINE_SEGMENT_CLICKED', (s) => {

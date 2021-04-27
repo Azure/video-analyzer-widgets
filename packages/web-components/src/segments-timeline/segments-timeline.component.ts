@@ -1,7 +1,6 @@
 import { attr, customElement, FASTElement } from '@microsoft/fast-element';
 import { EMPTY, fromEvent, Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter, map } from 'rxjs/operators';
-import { cloneDeep } from 'lodash-es';
 import { IChartData, IChartOptions } from './svg-progress-chart/svg-progress.definitions';
 import { SVGProgressChart } from './svg-progress-chart/svg-progress.class';
 import { ISegmentsTimelineConfig, IUISegment, SegmentsTimelineEvents } from './segments-timeline.definitions';
@@ -103,7 +102,7 @@ export class SegmentsTimelineComponent extends FASTElement {
             ? getComputedStyle(designSystem)?.getPropertyValue('--segments-tooltip-text')
             : this.TOOLTIP_TEXT;
 
-        const segments = cloneDeep(this.config.data.segments);
+        const segments = [...this.config.data.segments];
         for (let i = 0; i < segments.length; i++) {
             let left = Math.min((segments[i].startSeconds / this.config.data.duration) * 100, 100);
             let per = Math.max((segments[i].endSeconds - segments[i].startSeconds) / this.config.data.duration, 0.0051);
@@ -182,7 +181,8 @@ export class SegmentsTimelineComponent extends FASTElement {
             renderTooltip: this.config?.displayOptions?.renderTooltip || false,
             tooltipHeight: this.config?.displayOptions?.tooltipHeight,
             renderProgress: this.config?.displayOptions?.renderProgress || false,
-            top: this.config?.displayOptions?.top
+            top: this.config?.displayOptions?.top,
+            disableCursor: this.config?.displayOptions?.disableCursor || false
         };
 
         this.timelineProgress?.activeSegment$?.unsubscribe();
