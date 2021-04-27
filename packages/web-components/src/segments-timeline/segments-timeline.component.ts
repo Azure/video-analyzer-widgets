@@ -1,4 +1,5 @@
 import { attr, customElement, FASTElement } from '@microsoft/fast-element';
+import { cloneDeep } from 'lodash-es';
 import { EMPTY, fromEvent, Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter, map } from 'rxjs/operators';
 import { IChartData, IChartOptions } from './svg-progress-chart/svg-progress.definitions';
@@ -103,7 +104,7 @@ export class SegmentsTimelineComponent extends FASTElement {
             ? getComputedStyle(designSystem)?.getPropertyValue('--segments-tooltip-text')
             : this.TOOLTIP_TEXT;
 
-        const segments = [...this.config.data.segments];
+        const segments = cloneDeep(this.config.data.segments);
         for (let i = 0; i < segments.length; i++) {
             let left = Math.min((segments[i].startSeconds / this.config.data.duration) * 100, 100);
             let per = Math.max((segments[i].endSeconds - segments[i].startSeconds) / this.config.data.duration, 0.0051);
@@ -185,7 +186,30 @@ export class SegmentsTimelineComponent extends FASTElement {
             }
         }
 
+        this.lastActiveSegment = null;
         this.currentTime = this.DAY_DURATION_IN_SECONDS;
+        return false;
+    }
+
+    public jumpToPreviousSegment(): boolean {
+        const time = this.lastActiveSegment?.startSeconds || this.DAY_DURATION_IN_SECONDS;
+
+        if (!this.processedSegments?.length) {
+            return false;
+        }
+
+        const duration = this.config?.data?.duration || 1;
+        for (const segment of this.processedSegments?.slice().reverse()) {
+            const startTime = (segment.x / 100) * duration;
+            const endTime = (segment.width / 100) * duration + startTime;
+            if (endTime < time) {
+                this.currentTime = startTime;
+                return true;
+            }
+        }
+
+        this.lastActiveSegment = null;
+        this.currentTime = 0;
         return false;
     }
 

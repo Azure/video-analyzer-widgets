@@ -71,6 +71,7 @@ export class TimelineComponent extends FASTElement {
 
         window.removeEventListener('resize', this.resize);
         window.removeEventListener(TimelineEvents.JUMP_TO_NEXT_SEGMENT, this.jumpToNextSegment);
+        window.addEventListener(TimelineEvents.JUMP_TO_PREVIOUS_SEGMENT, this.jumpToPreviousSegment);
         this.fastSlider?.removeEventListener('change', this.fastSliderChange);
     }
 
@@ -99,6 +100,7 @@ export class TimelineComponent extends FASTElement {
 
         window.addEventListener('resize', this.resize.bind(this));
         window.addEventListener(TimelineEvents.JUMP_TO_NEXT_SEGMENT, this.jumpToNextSegment.bind(this));
+        window.addEventListener(TimelineEvents.JUMP_TO_PREVIOUS_SEGMENT, this.jumpToPreviousSegment.bind(this));
         this.fastSlider?.addEventListener('change', this.fastSliderChange.bind(this));
 
         this.initTimeLine();
@@ -106,6 +108,10 @@ export class TimelineComponent extends FASTElement {
 
     public jumpToNextSegment(): boolean {
         return this.segmentsTimeline?.jumpToNextSegment();
+    }
+
+    public jumpToPreviousSegment(): boolean {
+        return this.segmentsTimeline?.jumpToPreviousSegment();
     }
 
     private initTimeLine() {
