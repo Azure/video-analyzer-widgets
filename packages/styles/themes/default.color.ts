@@ -71,6 +71,9 @@ export const defaultColorsStyle: ElementStyles = css`
         --ruler-text-color: #444444;
         --ruler-time-color: #c8c6c4;
 
+        /* Drawer Canvas */
+        --drawer-default-line-color: #db4646;
+
         /* Date picker */
         --date-picker-holder-bg: #252423;
         --date-picker-text-color: #f3f2f1;
