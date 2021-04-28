@@ -70,6 +70,13 @@ export class PolygonDrawerComponent extends FASTElement {
         this.dCanvas.resize();
     }
 
+    public disconnectedCallback() {
+        this.dCanvas.canvas.removeEventListener('mousemove', this.dCanvas.onMouseMove.bind(this.dCanvas));
+        this.dCanvas.canvas.removeEventListener('mouseup', this.dCanvas.onDraw.bind(this.dCanvas));
+        this.dCanvas.canvas.removeEventListener(DrawerEvents.COMPLETE, this.onDrawComplete.bind(this));
+        window.removeEventListener('resize', this.resize);
+    }
+
     private init() {
         const parent = this.$fastController.element.parentElement;
         const width = parent?.clientWidth || this.CANVAS_DEFAULT_WIDTH;
@@ -103,19 +110,22 @@ export class PolygonDrawerComponent extends FASTElement {
         this.dCanvas.canvas.addEventListener('mouseup', this.dCanvas.onDraw.bind(this.dCanvas));
         this.dCanvas.canvas.addEventListener(DrawerEvents.COMPLETE, this.onDrawComplete.bind(this));
 
-        window.addEventListener('resize', () => {
-            const parent = this.$fastController.element.parentElement;
-            const width = parent?.clientWidth || this.CANVAS_DEFAULT_WIDTH;
-            const height = parent?.clientHeight || this.CANVAS_DEFAULT_HEIGHT;
-            this.dCanvas.drawerOptions = {
-                ...this.dCanvas.drawerOptions,
-                height: height,
-                width: width
-            };
+        window.addEventListener('resize', this.resize);
+    }
 
-            this.dCanvas.initBoundingCanvas();
-            this.dCanvas.resize();
-        });
+    private resize() {
+        const parent = this.$fastController.element.parentElement;
+        const width = parent?.clientWidth || this.CANVAS_DEFAULT_WIDTH;
+        const height = parent?.clientHeight || this.CANVAS_DEFAULT_HEIGHT;
+        this.dCanvas.drawerOptions = {
+            ...this.dCanvas.drawerOptions,
+            height: height,
+            width: width
+        };
+
+        this.dCanvas.initBoundingCanvas();
+        this.dCanvas.resize();
+
     }
 
     private onDrawComplete() {
