@@ -98,5 +98,9 @@ export const darkColorsStyle: ElementStyles = css`
         --drawer-line-color: #db4646;
         --drawer-fill-color: rgba(219, 70, 70, 0.4);
 
+        /* Area Draw */
+        --zone-draw-color: #f3f2f1;
+        --zone-draw-bg: #201f1e;
+
     }
 `;
