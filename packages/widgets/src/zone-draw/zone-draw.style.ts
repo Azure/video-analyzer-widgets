@@ -6,7 +6,7 @@ export const styles = css`
         display: grid;
         grid-template-rows: 60px 30px auto 32px;
         padding: 20px 22px;
-        background: var(--area-draw-bg);
+        background: var(--zone-draw-bg);
         color: #a19f9d;
         min-width: 720px;
     }
@@ -14,7 +14,7 @@ export const styles = css`
     .widget-header {
         display: grid;
         grid-template-columns: auto 16px;
-        color: var(--area-draw-color);
+        color: var(--zone-draw-color);
         font-size: 18px;
     }
 
@@ -49,14 +49,14 @@ export const styles = css`
         margin-right: 12px;
     }
 
-    .areas-draw-container {
+    .zones-draw-container {
         height: 100%;
         /* display: inline-grid; */
         /* grid-template-rows: 508px 0; */
         position: relative;
     }
 
-    .draw-area-container {
+    .draw-zone-container {
         width: 100%;
         height: calc(100% - 96px);
         position: absolute;
@@ -66,13 +66,13 @@ export const styles = css`
         display: block;
     }
 
-    .draw-area {
+    .draw-zone {
         position: relative;
         display: block;
         height: 100%;
     }
 
-    .areas-container {
+    .zones-container {
         display: grid;
         width: 100%;
         height: calc(100% - 41px);
@@ -80,7 +80,7 @@ export const styles = css`
         padding: 20px 0;
     }
 
-    .areas-list-container {
+    .zones-list-container {
         padding-left: 12px;
         font-size: 14px;
         overflow: hidden;
@@ -108,7 +108,7 @@ export const styles = css`
     }
 
     media-line-drawer,
-    media-areas-view {
+    media-zones-view {
         position: absolute;
         height: 100%;
     }
