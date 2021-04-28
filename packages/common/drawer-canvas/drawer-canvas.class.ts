@@ -1,4 +1,4 @@
-import { CursorTypes, IPoint } from './drawer-canvas.definitions';
+import { CursorTypes, DrawerEvents, IPoint } from './drawer-canvas.definitions';
 import { CanvasElement } from '../canvas/canvas.element';
 import { ICanvasOptions } from '../canvas/canvas.definitions';
 import { WidgetGeneralError } from './../../widgets/src/common/error';
@@ -32,7 +32,8 @@ export class DrawerCanvas extends CanvasElement {
     private readonly DEFAULT_FILL_COLOR = 'rgba(219, 70, 70, 0.4)';
     private readonly DEFAULT_DRAW_CURSOR = 'crosshair';
     private readonly INITIAL_ANGELS_SUM = 0;
-
+    private readonly PIXELS_DISTANCE_RANGE = 10;
+    private readonly TRIANGLE_ANGLES_SUM = 180;
 
     public constructor(canvasOptions: ICanvasOptions) {
         // Create canvas object
@@ -151,7 +152,7 @@ export class DrawerCanvas extends CanvasElement {
 
     public onDrawComplete() {
         this._isDrawCompleted = true;
-        const customEvent = new CustomEvent('drawerComplete', {
+        const customEvent = new CustomEvent(DrawerEvents.COMPLETE, {
             bubbles: true
         });
         // Trigger event to parent component.
@@ -168,6 +169,7 @@ export class DrawerCanvas extends CanvasElement {
         return this._points;
     }
 
+    // The Function calculate the accurate point by multiply the ratio point by width/height according to x/y relatively.
     private getCalculatedPoint(point: number, multiplierFactor: number) {
         return point * multiplierFactor;
     }
@@ -183,7 +185,7 @@ export class DrawerCanvas extends CanvasElement {
             const clickY = this.getCalculatedPoint(this._points[0].y, this.drawerOptions.height);
             const diffX = Math.abs(lastMouseX - clickX);
             const diffY = Math.abs(lastMouseY - clickY);
-            if (diffX < 10 && diffY < 10) {
+            if (diffX < this.PIXELS_DISTANCE_RANGE && diffY < this.PIXELS_DISTANCE_RANGE) {
                 this.calculateAngles();
                 this.onDrawComplete();
                 return;
@@ -207,7 +209,7 @@ export class DrawerCanvas extends CanvasElement {
     }
 
     private calculateAngles() {
-        const legalAnglesSum = 180 * (this._points?.length - 2);
+        const legalAnglesSum = this.TRIANGLE_ANGLES_SUM * (this._points?.length - 2);
         let polygonAnglesSum = this.INITIAL_ANGELS_SUM;
         const pointsLength = this.points?.length;
         for (const [i, pointA] of this._points.entries()) {
