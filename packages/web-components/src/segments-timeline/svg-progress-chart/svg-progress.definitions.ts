@@ -17,6 +17,7 @@ export interface IChartOptions {
     renderTooltip?: boolean;
     renderProgress?: boolean;
     renderBuffer?: boolean;
+    disableCursor?: boolean; // Disable cursor on un segment parts
 }
 
 export interface IChartData {
@@ -32,7 +33,6 @@ export interface IChartData {
 export interface IProgressBar {
     progress: Rect;
     buffer: Rect;
-    overlay: Rect;
     bar: Rect;
     tooltip: Tooltip;
 }

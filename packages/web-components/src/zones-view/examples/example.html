@@ -1,0 +1,87 @@
+<html lang="en">
+
+<head>
+    <title>Zones View samples</title>
+    </script>
+    <script src="../../../../../dist/ava-widgets-sdk.js"></script>
+</head>
+
+<body>
+    <h1>Zones View samples</h1>
+    <br />
+    <h2>Zones View Component</h2>
+    <ava-design-system-provider theme="dark"
+        use-defaults>
+        <div class="default-wrapper">
+            <media-zones-view id="media-zones-view"></media-zones-view>
+        </div>
+    </ava-design-system-provider>
+    <br />
+</body>
+<script>(function () {
+        const zones = [
+            {
+                points: [
+                    {
+                        x: 0,
+                        y: 0
+                    },
+                    {
+                        x: 0.5,
+                        y: 0.5
+                    }
+                ],
+                color: '#1ABC9C'
+            },
+            {
+                points: [
+                    {
+                        x: 0.9,
+                        y: 0.1
+                    },
+                    {
+                        x: 0.7,
+                        y: 0.8
+                    }
+                ],
+                color: '#DB4646'
+            },
+            {
+                points: [
+                    {
+                        x: 0.8,
+                        y: 0.1
+                    },
+                    {
+                        x: 0.9,
+                        y: 0.8
+                    },
+                    {
+                        x: 0.5,
+                        y: 0.7
+                    }
+                ],
+                color: '#A6C102'
+            },
+            {
+                points: [
+                    {
+                        x: 0.3,
+                        y: 0.1
+                    },
+                    {
+                        x: 0.3,
+                        y: 0.8
+                    }
+                ],
+                color: '#F2880C'
+            },
+        ];
+
+        const mediaZonesView = document.getElementById("media-zones-view");
+
+        mediaZonesView.zones = zones;
+    })()
+</script>
+
+</html>

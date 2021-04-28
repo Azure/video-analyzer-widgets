@@ -2,9 +2,9 @@ import { FASTSlider } from '@microsoft/fast-components';
 import { attr, customElement, FASTElement } from '@microsoft/fast-element';
 import { SegmentsTimelineComponent } from '..';
 import { guid } from '../../../common/utils/guid';
-import { ISegmentsTimelineConfig } from '../segments-timeline/segments-timeline.definitions';
+import { ISegmentsTimelineConfig, IUISegment, SegmentsTimelineEvents } from '../segments-timeline/segments-timeline.definitions';
 import { TimeRulerComponent } from '../time-ruler';
-import { ITimeLineConfig } from './timeline.definitions';
+import { ITimeLineConfig, TimelineEvents } from './timeline.definitions';
 import { styles } from './timeline.style';
 import { template } from './timeline.template';
 
@@ -29,6 +29,15 @@ export class TimelineComponent extends FASTElement {
      */
     @attr public config: ITimeLineConfig;
 
+    /**
+     * current time, indicate the current line time
+     *
+     * @public
+     * @remarks
+     * HTML attribute: current time
+     */
+    @attr public currentTime: number = 0;
+
     public readonly DAY_DURATION_IN_SECONDS = 86400; // 60 (sec) * 60 (min) * 24 (hours)
 
     public zoom: number = 1;
@@ -46,9 +55,24 @@ export class TimelineComponent extends FASTElement {
         });
     }
 
+    public currentTimeChanged() {
+        if (this.segmentsTimeline) {
+            this.segmentsTimeline.currentTime = this.currentTime;
+        }
+    }
+
     public connectedCallback() {
         super.connectedCallback();
         this.initData();
+    }
+
+    public disconnectedCallback() {
+        super.disconnectedCallback();
+
+        window.removeEventListener('resize', this.resize);
+        window.removeEventListener(TimelineEvents.JUMP_TO_NEXT_SEGMENT, this.jumpToNextSegment);
+        window.addEventListener(TimelineEvents.JUMP_TO_PREVIOUS_SEGMENT, this.jumpToPreviousSegment);
+        this.fastSlider?.removeEventListener('change', this.fastSliderChange);
     }
 
     public initData() {
@@ -74,17 +98,20 @@ export class TimelineComponent extends FASTElement {
             this.$fastController.element.style.overflowX = 'hidden';
         }
 
-        window.addEventListener('resize', () => {
-            this.initTimeLine();
-        });
-
-        this.fastSlider?.addEventListener('change', () => {
-            this.zoom = +this.fastSlider.value / this.SLIDER_DENSITY;
-            this.initSegmentsTimeline();
-            this.initTimeRuler();
-        });
+        window.addEventListener('resize', this.resize.bind(this));
+        window.addEventListener(TimelineEvents.JUMP_TO_NEXT_SEGMENT, this.jumpToNextSegment.bind(this));
+        window.addEventListener(TimelineEvents.JUMP_TO_PREVIOUS_SEGMENT, this.jumpToPreviousSegment.bind(this));
+        this.fastSlider?.addEventListener('change', this.fastSliderChange.bind(this));
 
         this.initTimeLine();
+    }
+
+    public jumpToNextSegment(): boolean {
+        return this.segmentsTimeline?.jumpToNextSegment();
+    }
+
+    public jumpToPreviousSegment(): boolean {
+        return this.segmentsTimeline?.jumpToPreviousSegment();
     }
 
     private initTimeLine() {
@@ -125,10 +152,27 @@ export class TimelineComponent extends FASTElement {
         };
 
         this.segmentsTimeline.config = config;
+
+        // eslint-disable-next-line no-undef
+        this.segmentsTimeline.addEventListener(SegmentsTimelineEvents.SEGMENT_CLICKED, ((event: CustomEvent<IUISegment>) => {
+            this.$emit(TimelineEvents.SEGMENT_CHANGE, event.detail);
+            event.stopPropagation();
+            // eslint-disable-next-line no-undef
+        }) as EventListener);
     }
 
     private initTimeRuler() {
         this.timeRuler.startDate = this.config.date || new Date();
         this.timeRuler.zoom = this.zoom;
+    }
+
+    private resize() {
+        this.initTimeLine();
+    }
+
+    private fastSliderChange() {
+        this.zoom = +this.fastSlider.value / this.SLIDER_DENSITY;
+        this.initSegmentsTimeline();
+        this.initTimeRuler();
     }
 }

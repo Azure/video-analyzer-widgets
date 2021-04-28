@@ -14,6 +14,7 @@ export interface IDisplayOptions {
     renderProgress?: boolean;
     timeSmoothing?: number;
     zoom?: number;
+    disableCursor?: boolean; // Disable cursor on un segment parts
 }
 
 export interface ISegmentsTimelineData {
@@ -24,4 +25,9 @@ export interface ISegmentsTimelineData {
 export interface ISegmentsTimelineConfig {
     data: ISegmentsTimelineData;
     displayOptions: IDisplayOptions;
+}
+
+export enum SegmentsTimelineEvents {
+    CURRENT_TIME_CHANGE = 'SEGMENTS_TIMELINE_CURRENT_TIME_CHANGED',
+    SEGMENT_CLICKED = 'SEGMENTS_TIMELINE_SEGMENT_CLICKED'
 }

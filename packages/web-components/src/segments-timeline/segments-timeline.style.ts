@@ -31,7 +31,8 @@ export const svgStyles = css`
         fill: var(--segments-tooltip-text);
     }
 
-    rect {
+    rect,
+    rect.default {
         cursor: pointer;
     }
 

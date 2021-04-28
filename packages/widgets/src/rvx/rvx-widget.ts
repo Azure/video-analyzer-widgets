@@ -10,4 +10,12 @@ export class RVXWidget extends BaseWidget {
             this.shadowRoot.innerHTML = this.greeting;
         }
     }
+
+    public render(): void {
+        throw new Error('Method not implemented.');
+    }
+
+    protected init(): void {
+        throw new Error('Method not implemented.');
+    }
 }
