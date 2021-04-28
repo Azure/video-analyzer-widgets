@@ -4,6 +4,10 @@
 
 The component draws polygon over a canvas HTML element.
 
+Inputs:
+borderColor: string
+fillColor: string
+
 ## Please see examples:
 
 -   [Example](./examples/example.html)

@@ -1,4 +1,3 @@
-
 export interface IPoint {
     x: number;
     y: number;
@@ -7,4 +6,9 @@ export interface IPoint {
 
 export enum DrawerEvents {
     COMPLETE = 'DRAWER_ON_COMPLETE'
+}
+
+export enum CursorTypes {
+    POINTER = 'pointer',
+    CROSSHAIR = 'crosshair'
 }

@@ -6,9 +6,6 @@ The class inherits from Drawer abstract class
 
 Inputs:
 borderColor: string
-canvasWidth: string
-canvasHeight: string
-
 
 ## Code examples:
 

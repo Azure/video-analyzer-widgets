@@ -1,4 +1,4 @@
-import { IPoint } from './drawer-canvas.definitions';
+import { CursorTypes, DrawerEvents, IPoint } from './drawer-canvas.definitions';
 import { CanvasElement } from '../canvas/canvas.element';
 import { ICanvasOptions } from '../canvas/canvas.definitions';
 import { WidgetGeneralError } from './../../widgets/src/common/error';
@@ -23,7 +23,7 @@ export class DrawerCanvas extends CanvasElement {
     private _isDrawCompleted: boolean;
     private _lastMouseX: number = 0;
     private _lastMouseY: number = 0;
-    private _cursors = ['crosshair', 'pointer'];
+    private _cursors = [CursorTypes.CROSSHAIR, CursorTypes.CROSSHAIR];
     private _currentCursor: number = 0;
 
     // Const readyOnly
@@ -31,6 +31,9 @@ export class DrawerCanvas extends CanvasElement {
     private readonly DEFAULT_LINE_COLOR = DrawingColors.Red;
     private readonly DEFAULT_FILL_COLOR = 'rgba(219, 70, 70, 0.4)';
     private readonly DEFAULT_DRAW_CURSOR = 'crosshair';
+    private readonly INITIAL_ANGELS_SUM = 0;
+    private readonly PIXELS_DISTANCE_RANGE = 10;
+    private readonly TRIANGLE_ANGLES_SUM = 180;
 
     public constructor(canvasOptions: ICanvasOptions) {
         // Create canvas object
@@ -149,7 +152,7 @@ export class DrawerCanvas extends CanvasElement {
 
     public onDrawComplete() {
         this._isDrawCompleted = true;
-        const customEvent = new CustomEvent('drawerComplete', {
+        const customEvent = new CustomEvent(DrawerEvents.COMPLETE, {
             bubbles: true
         });
         // Trigger event to parent component.
@@ -166,6 +169,7 @@ export class DrawerCanvas extends CanvasElement {
         return this._points;
     }
 
+    // The Function calculate the accurate point by multiply the ratio point by width/height according to x/y relatively.
     private getCalculatedPoint(point: number, multiplierFactor: number) {
         return point * multiplierFactor;
     }
@@ -181,7 +185,7 @@ export class DrawerCanvas extends CanvasElement {
             const clickY = this.getCalculatedPoint(this._points[0].y, this.drawerOptions.height);
             const diffX = Math.abs(lastMouseX - clickX);
             const diffY = Math.abs(lastMouseY - clickY);
-            if (diffX < 10 && diffY < 10) {
+            if (diffX < this.PIXELS_DISTANCE_RANGE && diffY < this.PIXELS_DISTANCE_RANGE) {
                 this.calculateAngles();
                 this.onDrawComplete();
                 return;
@@ -193,7 +197,7 @@ export class DrawerCanvas extends CanvasElement {
             this._points?.push({
                 x: lastMouseX / this.drawerOptions.width,
                 y: lastMouseY / this.drawerOptions.height,
-                cursor: this._points.length === 0 ? 1 : 0
+                cursor: !this._points.length ? 1 : 0
             });
         }
     }
@@ -205,14 +209,14 @@ export class DrawerCanvas extends CanvasElement {
     }
 
     private calculateAngles() {
-        const legalAnglesSum = 180 * (this._points?.length - 2);
-        let polygonAnglesSum = 0;
+        const legalAnglesSum = this.TRIANGLE_ANGLES_SUM * (this._points?.length - 2);
+        let polygonAnglesSum = this.INITIAL_ANGELS_SUM;
         const pointsLength = this.points?.length;
         for (const [i, pointA] of this._points.entries()) {
-            const index2 = i === 0 ? pointsLength - 1 : i - 1;
-            const index3 = i === 0 ? pointsLength - 2 : i === 1 ? pointsLength - 1 : i - 2;
-            const pointB = this._points[index2];
-            const pointC = this._points[index3];
+            const firstPointIndex = i === 0 ? pointsLength - 1 : i - 1;
+            const secondPointIndex = i === 0 ? pointsLength - 2 : i === 1 ? pointsLength - 1 : i - 2;
+            const pointB = this._points[firstPointIndex];
+            const pointC = this._points[secondPointIndex];
 
             const angle = this.getAngle(
                 {

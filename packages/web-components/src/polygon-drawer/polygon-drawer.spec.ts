@@ -1,4 +1,3 @@
-
 import { html, fixture, expect } from '@open-wc/testing';
 import { PolygonDrawerComponent } from './polygon-drawer.component';
 
