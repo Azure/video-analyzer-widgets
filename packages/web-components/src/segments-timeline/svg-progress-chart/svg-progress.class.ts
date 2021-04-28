@@ -25,6 +25,7 @@ export class SVGProgressChart {
     };
 
     public activeRect: Rect;
+    // todo - change active segment to work with events
     public activeSegment$: BehaviorSubject<IUISegment> = new BehaviorSubject<IUISegment>(null);
 
     public constructor(element?: SVGElement, options?: IChartOptions) {
@@ -45,6 +46,7 @@ export class SVGProgressChart {
             this.options.top = options.renderTooltip ? 10 + this.options.tooltipHeight : 0;
             this.options.renderBuffer = options.renderBuffer;
             this.options.renderProgress = options.renderProgress;
+            this.options.disableCursor = options.disableCursor;
         }
         this.rootElement.setAttribute('height', this.options.height.toString());
         this.rootElement.setAttribute('width', '100%');
@@ -52,7 +54,6 @@ export class SVGProgressChart {
             progressBar: {
                 bar: null,
                 buffer: null,
-                overlay: null,
                 progress: null,
                 tooltip: null
             },
@@ -81,7 +82,7 @@ export class SVGProgressChart {
             return;
         }
 
-        this.components.progressBar.overlay._el.addEventListener('click', (e: MouseEvent) => {
+        this.components.progressBar.bar._el.addEventListener('click', (e: MouseEvent) => {
             const percent = e.offsetX / instance.options.width;
             const time = Math.round(percent * instance.options.time);
             callback(time);
@@ -91,7 +92,11 @@ export class SVGProgressChart {
     public setProgress(time: number) {
         const timeType = typeof time;
 
-        this.updateActiveRect(time);
+        const activeSegment = this.updateActiveRect(time);
+
+        // dispatch click event
+        this.activeSegment$.next(activeSegment);
+
         if (timeType === 'undefined' || !this.options.renderProgress) {
             return;
         }
@@ -121,9 +126,15 @@ export class SVGProgressChart {
     }
 
     public clearEvents() {
-        this.components.progressBar.overlay._el.removeEventListener('click', this.handleMouseClick.bind(this));
-        this.components.progressBar.overlay._el.removeEventListener('mouseleave', this.handleMouseLeave.bind(this));
-        this.components.progressBar.overlay._el.removeEventListener('mousemove', this.handleMouseMove.bind(this));
+        this.components.progressBar.bar._el.removeEventListener('click', this.handleMouseClick.bind(this));
+        this.components.progressBar.bar._el.removeEventListener('mouseleave', this.handleMouseLeave.bind(this));
+        this.components.progressBar.bar._el.removeEventListener('mousemove', this.handleMouseMove.bind(this));
+
+        this.components.events.forEach((e) => {
+            e._el.removeEventListener('click', this.handleMouseClick.bind(this));
+            e._el.removeEventListener('mouseleave', this.handleMouseLeave.bind(this));
+            e._el.removeEventListener('mousemove', this.handleMouseMove.bind(this));
+        });
     }
 
     public setWidth(w?: number) {
@@ -183,12 +194,16 @@ export class SVGProgressChart {
                 newEvent.type = event.type;
                 newEvent.addClass(event.type || 'default');
                 this.components.events.push(newEvent);
-                if (this.components.progressBar.overlay) {
+                if (this.components.progressBar.tooltip) {
                     // prepend
-                    this.components.progressBar.overlay._el.parentNode.insertBefore(newEvent._el, this.components.progressBar.overlay._el);
+                    this.components.progressBar.tooltip._el.parentNode.insertBefore(newEvent._el, this.components.progressBar.tooltip._el);
                 } else {
                     this.rootElement.appendChild(newEvent._el);
                 }
+
+                newEvent._el.addEventListener('click', this.handleMouseClick.bind(this));
+                newEvent._el.addEventListener('mouseleave', this.handleMouseLeave.bind(this));
+                newEvent._el.addEventListener('mousemove', this.handleMouseMove.bind(this));
             }
         });
     }
@@ -329,11 +344,9 @@ export class SVGProgressChart {
             } else {
                 this.activeRect.removeClass('active');
                 this.activeRect = null;
-                // this.activeSegment$.next(null);
             }
         }
 
-        // this.components.events.forEach((rect) => {
         for (const rect of this.components.events) {
             const startTime = (rect.x / 100) * this.options.time;
             const endTime = (rect.width / 100) * this.options.time + startTime;
@@ -387,23 +400,21 @@ export class SVGProgressChart {
             this.setData(this.options.data);
         }
 
-        // 5. Create overlay on top of everything for catching events
-        const overlay = new Rect(this.options.barHeight * 3, 100, 0, this.options.tooltipHeight, 'rgba(255,255,255,0)');
-        overlay.addClass('overlay');
-        this.components.progressBar.overlay = overlay;
-        this.rootElement.appendChild(overlay._el);
-
-        // 6. Create the tooltip
+        // 5. Create the tooltip
         if (this.options.renderTooltip) {
             const tooltip = new Tooltip(this.options.tooltipHeight, this.options.tooltipHeight * 2.4, 0, 2, '00:00:00');
             this.components.progressBar.tooltip = tooltip;
             this.rootElement.appendChild(tooltip._el);
         }
 
-        // Add event listeners
-        overlay._el.addEventListener('click', this.handleMouseClick.bind(this));
-        overlay._el.addEventListener('mouseleave', this.handleMouseLeave.bind(this));
-        overlay._el.addEventListener('mousemove', this.handleMouseMove.bind(this));
+        // 6. Add event listeners
+        bar._el.addEventListener('mouseleave', this.handleMouseLeave.bind(this));
+        bar._el.addEventListener('mousemove', this.handleMouseMove.bind(this));
+        if (this.options.disableCursor) {
+            bar._el.style.cursor = 'not-allowed';
+        } else {
+            bar._el.addEventListener('click', this.handleMouseClick.bind(this));
+        }
 
         this.rootElement.setAttribute('class', 'show');
     }

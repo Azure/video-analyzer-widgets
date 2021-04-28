@@ -33,8 +33,8 @@ describe('SegmentsTimelineComponent', () => {
         el.config = configWithTooltipProgress;
         setTimeout(() => {
             expect(el.config).to.equal(configWithTooltipProgress);
-            // Should contain 8 elements 1 for bar 1 for overlay 1 for progress 1 for tooltip 4 for segments
-            expect(el.shadowRoot.querySelector('svg').childElementCount).to.equal(8);
+            // Should contain 7 elements 1 for bar 1 for progress 1 for tooltip 4 for segments
+            expect(el.shadowRoot.querySelector('svg').childElementCount).to.equal(7);
         });
     });
 
@@ -53,8 +53,8 @@ describe('SegmentsTimelineComponent', () => {
         el.config = configWithTooltipProgress;
         setTimeout(() => {
             expect(el.config).to.equal(configWithTooltipProgress);
-            // Should contain 7 elements 1 for bar 1 for overlay 1 for progress 4 for segments
-            expect(el.shadowRoot.querySelector('svg').childElementCount).to.equal(7);
+            // Should contain 6 elements 1 for bar 1 for progress 4 for segments
+            expect(el.shadowRoot.querySelector('svg').childElementCount).to.equal(6);
         });
     });
 
@@ -74,8 +74,8 @@ describe('SegmentsTimelineComponent', () => {
 
         setTimeout(() => {
             expect(el.config).to.equal(configWithTooltipProgress);
-            // Should contain 7 elements 1 for bar 1 for overlay 1 for tooltip 4 for segments
-            expect(el.shadowRoot.querySelector('svg').childElementCount).to.equal(7);
+            // Should contain 6 elements 1 for bar 1 for tooltip 4 for segments
+            expect(el.shadowRoot.querySelector('svg').childElementCount).to.equal(6);
         });
     });
 
@@ -96,8 +96,8 @@ describe('SegmentsTimelineComponent', () => {
 
         setTimeout(() => {
             expect(el.config).to.equal(configWithTooltipProgress);
-            // Should contain 6 elements 1 for bar 1 for overlay 4 for segments
-            expect(el.shadowRoot.querySelector('svg').childElementCount).to.equal(6);
+            // Should contain 5 elements 1 for bar 4 for segments
+            expect(el.shadowRoot.querySelector('svg').childElementCount).to.equal(5);
         });
     });
 

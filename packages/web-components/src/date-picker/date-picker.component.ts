@@ -2,6 +2,7 @@ import { attr, customElement, FASTElement, observable } from '@microsoft/fast-el
 import { DatePickerEvent, IAllowedDates, IDatePickerRenderEvent } from './date-picker.definitions';
 import { styles } from './date-picker.style';
 import { template } from './date-picker.template';
+
 /**
  * Date picker component
  * @public

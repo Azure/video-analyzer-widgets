@@ -1,7 +1,7 @@
 import { attr, customElement, FASTElement } from '@microsoft/fast-element';
+import { cloneDeep } from 'lodash-es';
 import { EMPTY, fromEvent, Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter, map } from 'rxjs/operators';
-import { cloneDeep } from 'lodash-es';
 import { IChartData, IChartOptions } from './svg-progress-chart/svg-progress.definitions';
 import { SVGProgressChart } from './svg-progress-chart/svg-progress.class';
 import { ISegmentsTimelineConfig, IUISegment, SegmentsTimelineEvents } from './segments-timeline.definitions';
@@ -51,6 +51,7 @@ export class SegmentsTimelineComponent extends FASTElement {
         }
     };
     private lastActiveSegment: IUISegment;
+    private readonly DAY_DURATION_IN_SECONDS = 86400; // 60 (sec) * 60 (min) * 24 (hours)
 
     public constructor(config: ISegmentsTimelineConfig) {
         super();
@@ -168,6 +169,50 @@ export class SegmentsTimelineComponent extends FASTElement {
         );
     }
 
+    public jumpToNextSegment(): boolean {
+        const time = this.lastActiveSegment?.endSeconds || 0;
+
+        if (!this.processedSegments?.length) {
+            return false;
+        }
+
+        const duration = this.config?.data?.duration || 1;
+        for (const segment of this.processedSegments) {
+            const startTime = (segment.x / 100) * duration;
+
+            if (startTime > time) {
+                this.currentTime = startTime;
+                return true;
+            }
+        }
+
+        this.lastActiveSegment = null;
+        this.currentTime = this.DAY_DURATION_IN_SECONDS;
+        return false;
+    }
+
+    public jumpToPreviousSegment(): boolean {
+        const time = this.lastActiveSegment?.startSeconds || this.DAY_DURATION_IN_SECONDS;
+
+        if (!this.processedSegments?.length) {
+            return false;
+        }
+
+        const duration = this.config?.data?.duration || 1;
+        for (const segment of this.processedSegments?.slice().reverse()) {
+            const startTime = (segment.x / 100) * duration;
+            const endTime = (segment.width / 100) * duration + startTime;
+            if (endTime < time) {
+                this.currentTime = startTime;
+                return true;
+            }
+        }
+
+        this.lastActiveSegment = null;
+        this.currentTime = 0;
+        return false;
+    }
+
     private initSVGProgress() {
         const container = this.$fastController.element.shadowRoot?.querySelector('svg');
         const containerWidth = this.$fastController.element.offsetWidth * (this.config.displayOptions.zoom || 1);
@@ -182,7 +227,8 @@ export class SegmentsTimelineComponent extends FASTElement {
             renderTooltip: this.config?.displayOptions?.renderTooltip || false,
             tooltipHeight: this.config?.displayOptions?.tooltipHeight,
             renderProgress: this.config?.displayOptions?.renderProgress || false,
-            top: this.config?.displayOptions?.top
+            top: this.config?.displayOptions?.top,
+            disableCursor: this.config?.displayOptions?.disableCursor || false
         };
 
         this.timelineProgress?.activeSegment$?.unsubscribe();
@@ -194,7 +240,7 @@ export class SegmentsTimelineComponent extends FASTElement {
 
         this.timelineProgress.onSetProgress((time: number) => {
             this.currentTime = time;
-            this.$emit(SegmentsTimelineEvents.CurrentTimeChanged, this.currentTime);
+            this.$emit(SegmentsTimelineEvents.CURRENT_TIME_CHANGE, this.currentTime);
         });
 
         this.timelineProgress.activeSegment$.subscribe((activeSegment) => {
@@ -204,7 +250,7 @@ export class SegmentsTimelineComponent extends FASTElement {
                 activeSegment?.endSeconds !== this.lastActiveSegment?.endSeconds
             ) {
                 this.lastActiveSegment = activeSegment;
-                this.$emit(SegmentsTimelineEvents.SegmentClicked, activeSegment);
+                this.$emit(SegmentsTimelineEvents.SEGMENT_CLICKED, activeSegment);
             }
         });
 
