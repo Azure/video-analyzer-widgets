@@ -10,11 +10,11 @@ export const template = html<PlayerComponent>`
         <div class="upper-bounding">
             <span class="col camera-name">${(x) => x.cameraName}</span>
             <div class="date-picker col">
-                <span>${(x) => x.time}</span>
+                <span class="time-container">${(x) => x.time}</span>
                 <media-date-picker
                     class="date-picker-component"
                     alignRight="${true}"
-                    inputDate="${(x) => x.currentDate}"
+                    inputDate="${(x) => x.currentDate.toUTCString()}"
                 ></media-date-picker>
             </div>
         </div>

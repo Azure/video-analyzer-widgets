@@ -20,7 +20,7 @@ import {
 } from './UI/buttons.factory';
 const shaka = require('shaka-player/dist/shaka-player.ui.debug.js');
 export class Player {
-    private isLive = true;
+    private isLive = false; // TODO : when RTSP plugin will be ready, set to true
     private _accessToken = '';
     private player: shaka_player.Player = Object.create(null);
     private controls: any;
@@ -88,10 +88,6 @@ export class Player {
             this.removeTimelineComponent();
         } else {
             await this.load(this._vodStream, true);
-            setTimeout(() => {
-                this.removeTimelineComponent();
-                this.createTimelineComponent();
-            });
         }
         if (this.boundingBoxesDrawer) {
             this.boundingBoxesDrawer.clearInstances();
@@ -99,42 +95,46 @@ export class Player {
         this.isLive = isLive;
         document.dispatchEvent(new CustomEvent('player_live', { detail: this.isLive }));
 
-        // think on better solution
-        this.controls.elements_[5].isLive = this.isLive;
-        this.controls.elements_[5].button_.classList.add(this.isLive ? 'live-on' : 'live-off');
-        this.controls.elements_[5].button_.classList.remove(this.isLive ? 'live-off' : 'live-on');
-        this.controls.controlsContainer_.classList.add(this.isLive ? 'live-on' : 'live-off');
-        this.controls.controlsContainer_.classList.remove(this.isLive ? 'live-off' : 'live-on');
+        // TODO : add back after RTSP plugin integration
+        // this.controls.elements_[5].isLive = this.isLive;
+        // this.controls.elements_[5].button_.classList.add(this.isLive ? 'live-on' : 'live-off');
+        // this.controls.elements_[5].button_.classList.remove(this.isLive ? 'live-off' : 'live-on');
+        // this.controls.controlsContainer_.classList.add(this.isLive ? 'live-on' : 'live-off');
+        // this.controls.controlsContainer_.classList.remove(this.isLive ? 'live-off' : 'live-on');
     }
 
     private removeTimelineComponent() {
         if (this.timelineComponent) {
             this.controls.controlsContainer_.removeChild(this.timelineComponent);
             this.timelineComponent.removeEventListener(TimelineEvents.SEGMENT_CHANGE, this.onSegmentChangeListenerRef as EventListener);
+            this.timelineComponent.removeEventListener(TimelineEvents.CURRENT_TIME_CHANGE, this.onTimeChange.bind(this) as EventListener);
             this.timelineComponent = null;
         }
     }
 
     private createTimelineComponent() {
+        if (!this.segmentReferences) {
+            return;
+        }
         // go over reference
         const segments = [];
         for (const iterator of this.segmentReferences) {
             const segmentEnd = iterator.getEndTime();
             const segmentStart = iterator.getStartTime();
             // const segmentStartRange = 3600 * segments.length;
-            const segmentEndRange = 3600 * segments.length;
+            // const segmentEndRange = 3600 * segments.length;
             if (segments.length) {
                 // If the difference between two segments is less then 5 minutes - merge
                 const prevSegmentEnd = segments[segments.length - 1].endSeconds;
-                // If this segment started a new hour
-                if (segmentStart >= segmentEndRange) {
+                if (segmentStart - prevSegmentEnd <= 10) {
+                    // merge
+                    segments[segments.length - 1].endSeconds = segmentEnd;
+                } else {
+                    // add new segment
                     segments.push({
                         startSeconds: segmentStart,
                         endSeconds: segmentEnd
                     });
-                } else if (segmentStart - prevSegmentEnd <= 300) {
-                    // merge
-                    segments[segments.length - 1].endSeconds = segmentEnd;
                 }
             } else {
                 // first segment
@@ -156,12 +156,12 @@ export class Player {
         const configWithZoom = {
             segments: segments,
             date: this.date
-            // enableZoom: true
         };
         this.timelineComponent = new TimelineComponent();
         this.controls.controlsContainer_.insertBefore(this.timelineComponent, this.controls.bottomControls_);
         this.onSegmentChangeListenerRef = this.onSegmentChange.bind(this);
         this.timelineComponent.addEventListener(TimelineEvents.SEGMENT_CHANGE, this.onSegmentChangeListenerRef as EventListener);
+        this.timelineComponent.addEventListener(TimelineEvents.CURRENT_TIME_CHANGE, this.onTimeChange.bind(this) as EventListener);
         this.timelineComponent.config = configWithZoom;
     }
 
@@ -170,6 +170,12 @@ export class Player {
         if (segment) {
             this.video.currentTime = segment.startSeconds + 1;
             this.video.play();
+        }
+    }
+
+    private onTimeChange(event: CustomEvent<number>) {
+        if (event.detail) {
+            this.video.currentTime = event.detail;
         }
     }
 
@@ -206,13 +212,11 @@ export class Player {
 
         LiveButtonFactory.callBack = async (isLive: boolean) => {
             this.toggleLiveMode(isLive);
-            // document.dispatchEvent(new CustomEvent('player_live', { detail: this.isLive }));
         };
         shaka.ui.Controls.registerElement('live', new LiveButtonFactory());
 
         BodyTrackingButtonFactory.callBack = (isOn: boolean) => {
             this.toggleBodyTracking(isOn);
-            // document.dispatchEvent(new CustomEvent('player_live', { detail: this.isLive }));
         };
         shaka.ui.Controls.registerElement('bodyTracking', new BodyTrackingButtonFactory());
     }
@@ -237,7 +241,7 @@ export class Player {
                 'rewind',
                 'play_pause',
                 'fast_forward',
-                'live',
+                // 'live', // TODO : add after RTSP plugin
                 'mute',
                 'volume',
                 // 'time_and_duration',
@@ -273,13 +277,6 @@ export class Player {
 
         this.player.addEventListener('emsg', this.onShakaMetadata.bind(this));
 
-        // Load live first
-        // if (this.isLive) {
-        //     this.load(this._liveStream, true);
-        // } else {
-        //     this.load(this._vodStream, false);
-        // }
-
         await this.toggleLiveMode(this.isLive);
     }
 
@@ -313,8 +310,7 @@ export class Player {
         this.boundingBoxesDrawer = null;
     }
     private authenticationHandler(type: shaka_player.net.NetworkingEngine.RequestType, request: shaka_player.extern.Request) {
-        // request.headers['set-cookie'] = AvaAPi.cookie;
-        request['allowCrossSiteCredentials'] = true;
+        // request['allowCrossSiteCredentials'] = true;
         if (!this._accessToken) {
             return;
         }
@@ -368,6 +364,14 @@ export class Player {
         if (reference) {
             this.timestampOffset = reference.timestampOffset * -1000;
             this.controls.addEventListener('timeandseekrangeupdated', this.onTimeSeekUpdate.bind(this));
+        }
+
+        // If not live mode, init timeline
+        if (!this.isLive) {
+            // First, update current time
+            this.onTimeSeekUpdate();
+            this.removeTimelineComponent();
+            this.createTimelineComponent();
         }
     }
 

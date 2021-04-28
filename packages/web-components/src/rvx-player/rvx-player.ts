@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 /* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { attr, customElement, FASTElement, observable } from '@microsoft/fast-element';
+import { attr, customElement, DOM, FASTElement, observable } from '@microsoft/fast-element';
 import { toInteger } from 'lodash-es';
 import { MediaApi } from '../../../common/services/media/media-api.class';
 import { IAvailableMediaResponse, Precision } from '../../../common/services/media/media.definitions';
@@ -37,6 +37,7 @@ export class PlayerComponent extends FASTElement {
     public datePickerComponent: DatePickerComponent;
 
     private video!: HTMLVideoElement;
+    private timeContainer!: HTMLElement;
     private videoContainer!: HTMLElement;
     private allowedDates: any = [];
     private afterInit = false;
@@ -75,6 +76,17 @@ export class PlayerComponent extends FASTElement {
         await this.updateMonthAndDates(currentYear, currentMonth);
 
         this.afterInit = true;
+
+        // TODO : remove after RTSP integration is done
+        // Select the last recorded date
+        if (this.currentAllowedYears.length && this.currentAllowedMonths.length && this.currentAllowedDays.length) {
+            const lastYear = this.currentAllowedYears[this.currentAllowedYears.length - 1];
+            const lastMonth = this.currentAllowedMonths[this.currentAllowedMonths.length - 1];
+            const lastDay = this.currentAllowedDays[this.currentAllowedDays.length - 1];
+            this.datePickerComponent.inputDate = new Date(
+                Date.UTC(parseInt(lastYear, 10), parseInt(lastMonth, 10) - 1, parseInt(lastDay, 10))
+            ).toUTCString();
+        }
     }
 
     public cameraNameChanged() {
@@ -102,6 +114,8 @@ export class PlayerComponent extends FASTElement {
 
         this.video = this.shadowRoot?.querySelector('#player-video') as HTMLVideoElement;
         this.videoContainer = this.shadowRoot?.querySelector('.video-container') as HTMLElement;
+        this.timeContainer = this.shadowRoot?.querySelector('.time-container') as HTMLElement;
+
         this.connected = true;
         if (!this.video) {
             return;
@@ -245,6 +259,15 @@ export class PlayerComponent extends FASTElement {
     }
 
     private timeUpdateCallBack(time: string) {
-        this.time = time;
+        if (this.time === time) {
+            return;
+        }
+        console.log('in time update');
+
+        DOM.queueUpdate(() => {
+            this.time = time;
+            this.timeContainer.innerText = this.time;
+        });
+        DOM.nextUpdate();
     }
 }

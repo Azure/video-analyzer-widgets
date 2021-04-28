@@ -145,6 +145,11 @@ export class TimelineComponent extends FASTElement {
             this.$emit(TimelineEvents.SEGMENT_CHANGE, event.detail);
             event.stopPropagation();
         }) as EventListener);
+
+        this.segmentsTimeline.addEventListener(SegmentsTimelineEvents.CurrentTimeChanged, ((event: CustomEvent<number>) => {
+            this.$emit(TimelineEvents.CURRENT_TIME_CHANGE, event.detail);
+            event.stopPropagation();
+        }) as EventListener);
     }
 
     private initTimeRuler() {

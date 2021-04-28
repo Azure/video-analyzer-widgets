@@ -7,5 +7,6 @@ export interface ITimeLineConfig {
 }
 
 export enum TimelineEvents {
-    SEGMENT_CHANGE = 'TIMELINE_SEGMENT_CHANGE'
+    SEGMENT_CHANGE = 'TIMELINE_SEGMENT_CHANGE',
+    CURRENT_TIME_CHANGE = 'TIMELINE_CURRENT_TIME_CHANGE'
 }
