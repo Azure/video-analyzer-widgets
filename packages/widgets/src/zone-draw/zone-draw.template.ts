@@ -11,11 +11,6 @@ export const template = html<ZoneDrawWidget>`
     <template>
         <div class="widget-header">
             <span>Zone of interest</span>
-            <fast-button aria-label="Close" title="Close" @click="${(x) => x.close()}">
-                <svg>
-                    <path d="${CLOSE_BIG_SVG_PATH}"></path>
-                </svg>
-            </fast-button>
         </div>
         <div class="draw-options-container">
             <div class="draw-buttons">

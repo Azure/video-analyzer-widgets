@@ -1,5 +1,4 @@
 import { IPoint } from '../../../common/drawer-canvas/drawer-canvas.definitions';
-import { DrawingColors } from '../../../styles/system-providers/ava-design-system-provider.definitions';
 import { IWidgetBaseConfig } from '../definitions/base-widget-config.definitions';
 
 /**
