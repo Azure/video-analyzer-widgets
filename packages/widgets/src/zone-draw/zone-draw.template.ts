@@ -10,7 +10,7 @@ import { CLOSE_BIG_SVG_PATH, POLYGON_SVG_PATH, LINE_SVG_PATH } from '../../../st
 export const template = html<ZoneDrawWidget>`
     <template>
         <div class="widget-header">
-            <span>Area of interest</span>
+            <span>Zone of interest</span>
             <fast-button aria-label="Close" title="Close" @click="${(x) => x.close()}">
                 <svg>
                     <path d="${CLOSE_BIG_SVG_PATH}"></path>
@@ -42,11 +42,11 @@ export const template = html<ZoneDrawWidget>`
             </div>
             <span>Draw a ${(x) => (x.isLineDrawMode ? 'line' : 'polygon')}</span>
         </div>
-        <div class="areas-container">
-            <div class="areas-draw-container">
-                <div class="draw-area-container">
-                    <div class="draw-area">
-                        <media-areas-view></media-areas-view>
+        <div class="zones-container">
+            <div class="zones-draw-container">
+                <div class="draw-zone-container">
+                    <div class="draw-zone">
+                        <media-zones-view></media-zones-view>
                         ${when(
     (x) => x.showDrawer && x.isReady,
     html`
@@ -70,9 +70,9 @@ export const template = html<ZoneDrawWidget>`
                     <img src="assets/video-demo.png" width="100%" />
                 </div>
             </div>
-            <div class="areas-list-container">
+            <div class="zones-list-container">
                 <ul class="labels-list"></ul>
-                ${when((x) => x.isLabelsListEmpty, html`<span>Draw polygons or lines around the area of interest in the frame.</span> `)}
+                ${when((x) => x.isLabelsListEmpty, html`<span>Draw polygons or lines around the zone of interest in the frame.</span> `)}
             </div>
         </div>
         <div class="action-buttons">

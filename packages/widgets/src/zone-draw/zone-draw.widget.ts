@@ -7,14 +7,14 @@ import { LayerLabelComponent } from '../../../web-components/src/layer-label/lay
 import { ILayerLabelConfig, LayerLabelMode } from '../../../web-components/src/layer-label/layer-label.definitions';
 import { LineDrawerComponent } from '../../../web-components/src/line-drawer/line-drawer.component';
 import { PolygonDrawerComponent } from '../../../web-components/src/polygon-drawer/polygon-drawer.component';
-import { AreaDrawMode, IArea, IZoneDrawWidgetConfig, IAreaOutput } from './zone-draw.definitions';
+import { ZoneDrawMode, IZone, IZoneDrawWidgetConfig, IZoneOutput } from './zone-draw.definitions';
 import { styles } from './zone-draw.style';
 import { template } from './zone-draw.template';
 import { ZonesViewComponent } from './../../../web-components/src/zones-view/zones-view.component';
 import { DELETE_SVG_PATH, RENAME_SVG_PATH } from '../../../styles/svg/svg.shapes';
 
 @customElement({
-    name: 'area-draw-widget',
+    name: 'zone-draw-widget',
     template,
     styles
 })
@@ -23,7 +23,7 @@ export class ZoneDrawWidget extends FASTElement {
     public config: IZoneDrawWidgetConfig;
 
     @observable
-    public areas: IArea[] = [];
+    public zones: IZone[] = [];
     @observable
     public isReady = false;
     @observable
@@ -35,11 +35,11 @@ export class ZoneDrawWidget extends FASTElement {
     @observable
     isLabelsListEmpty = true;
 
-    public areaDrawMode = AreaDrawMode.Line;
+    public zoneDrawMode = ZoneDrawMode.Line;
 
-    private readonly MAX_AREAS = 10;
+    private readonly MAX_ZONES = 10;
 
-    private areasView: ZonesViewComponent;
+    private zonesView: ZonesViewComponent;
     private lineDrawer: LineDrawerComponent;
     private polygonDrawer: PolygonDrawerComponent;
     private labelsList: HTMLElement;
@@ -54,7 +54,7 @@ export class ZoneDrawWidget extends FASTElement {
         super.connectedCallback();
 
         this.isReady = true;
-        this.initAreaDrawComponents();
+        this.initZoneDrawComponents();
         window.addEventListener('resize', () => {
             const rvxContainer = this.shadowRoot.querySelector('.rvx-widget-container');
             this.labelsList.style.maxHeight = `${rvxContainer.clientHeight}px`;
@@ -64,12 +64,12 @@ export class ZoneDrawWidget extends FASTElement {
             console.log(e);
             switch (e.detail?.type) {
                 case UIActionType.RENAME:
-                    this.renameArea(e.detail.id);
+                    this.renameZone(e.detail.id);
                     console.log('RENAME');
                     return;
                 case UIActionType.DELETE:
                     console.log('DELETE');
-                    this.deleteArea(e.detail.id);
+                    this.deleteZone(e.detail.id);
                     return;
             }
         });
@@ -77,9 +77,9 @@ export class ZoneDrawWidget extends FASTElement {
         window.addEventListener('labelTextChanged', (e: any) => {
             console.log('labelTextChanged');
             console.log(e);
-            for (const area of this.areas) {
-                if (area.id === e.detail.id) {
-                    area.name = e.detail.name;
+            for (const zone of this.zones) {
+                if (zone.id === e.detail.id) {
+                    zone.name = e.detail.name;
                     return;
                 }
             }
@@ -89,7 +89,7 @@ export class ZoneDrawWidget extends FASTElement {
     public configChanged() {
         setTimeout(() => {
             if (this.isReady) {
-                this.initAreaDrawComponents();
+                this.initZoneDrawComponents();
             }
         });
     }
@@ -108,12 +108,12 @@ export class ZoneDrawWidget extends FASTElement {
         });
     }
 
-    private initAreaDrawComponents() {
+    private initZoneDrawComponents() {
         if (!this.labelsList) {
             this.labelsList = this.shadowRoot.querySelector('.labels-list');
         }
 
-        this.initAreas();
+        this.initZones();
     }
 
     public close() {
@@ -121,15 +121,15 @@ export class ZoneDrawWidget extends FASTElement {
     }
     public save() {
         console.log('save');
-        const outputs = this.getAreasOutputs();
+        const outputs = this.getZonesOutputs();
         console.log(outputs);
-        this.$emit('areaDrawComplete', outputs);
+        this.$emit('zoneDrawComplete', outputs);
     }
     public done() {
         console.log('done');
-        const outputs = this.getAreasOutputs();
+        const outputs = this.getZonesOutputs();
         console.log(outputs);
-        this.$emit('areaDrawComplete', outputs);
+        this.$emit('zoneDrawComplete', outputs);
     }
 
     private initDrawer() {
@@ -164,7 +164,7 @@ export class ZoneDrawWidget extends FASTElement {
 
     private drawerComplete(e: any) {
         console.log(e.detail);
-        this.createArea([...e.detail]);
+        this.createZone([...e.detail]);
     }
 
     public toggleDrawMode() {
@@ -175,44 +175,44 @@ export class ZoneDrawWidget extends FASTElement {
         // }, 50);
     }
 
-    private initAreas() {
+    private initZones() {
         if (this.config) {
-            for (const area of this.config.areas) {
-                this.addArea(area);
+            for (const zone of this.config.zones) {
+                this.addZone(zone);
             }
         }
 
         this.isDirty = false;
-        if (!this.areasView) {
-            this.areasView = this.shadowRoot.querySelector('media-areas-view');
+        if (!this.zonesView) {
+            this.zonesView = this.shadowRoot.querySelector('media-zones-view');
         }
 
-        if (this.areas.length) {
-            this.areasView.zones = [...this.areas];
+        if (this.zones.length) {
+            this.zonesView.zones = [...this.zones];
         }
     }
 
-    private createArea(points: IPoint[]) {
-        const area: IArea = {
+    private createZone(points: IPoint[]) {
+        const zone: IZone = {
             id: guid(),
-            name: this.getNewAreaName(),
+            name: this.getNewZoneName(),
             color: this.getNextColor(),
             points: [...points]
         };
 
-        this.addArea(area);
+        this.addZone(zone);
     }
 
-    private addArea(newArea: IArea) {
-        const area: IArea = {
-            id: newArea.id || guid(),
-            name: newArea.name || this.getNewAreaName(),
-            color: newArea.color || this.getNextColor(),
-            points: [...newArea.points]
+    private addZone(newZone: IZone) {
+        const zone: IZone = {
+            id: newZone.id || guid(),
+            name: newZone.name || this.getNewZoneName(),
+            color: newZone.color || this.getNextColor(),
+            points: [...newZone.points]
         };
 
-        this.areas.push(area);
-        this.areasView.zones = [...this.areas];
+        this.zones.push(zone);
+        this.zonesView.zones = [...this.zones];
 
         if (this.lineDrawer) {
             this.lineDrawer.borderColor = this.getNextColor();
@@ -220,7 +220,7 @@ export class ZoneDrawWidget extends FASTElement {
             this.polygonDrawer?.setAttribute('borderColor', this.getNextColor());
         }
 
-        if (this.areas.length === this.MAX_AREAS) {
+        if (this.zones.length === this.MAX_ZONES) {
             this.showDrawer = false;
             this.destroyDrawer();
         }
@@ -228,44 +228,44 @@ export class ZoneDrawWidget extends FASTElement {
         this.isLabelsListEmpty = false;
         this.isDirty = true;
 
-        this.addLabel(area);
+        this.addLabel(zone);
     }
 
-    private deleteArea(id: string) {
-        this.areas = this.areas.filter((area) => area.id !== id);
-        this.areasView.zones = [...this.areas];
+    private deleteZone(id: string) {
+        this.zones = this.zones.filter((zone) => zone.id !== id);
+        this.zonesView.zones = [...this.zones];
         this.removeLabel(id);
-        this.isLabelsListEmpty = this.areas.length === 0;
+        this.isLabelsListEmpty = this.zones.length === 0;
 
         if (!this.showDrawer) {
             this.showDrawer = true;
         }
     }
 
-    private getNewAreaName(): string {
-        return `${this.isLineDrawMode ? 'Line' : 'Area'} ${this.labelListIndex++}`;
+    private getNewZoneName(): string {
+        return `${this.isLineDrawMode ? 'Line' : 'Zone'} ${this.labelListIndex++}`;
     }
 
     private getNextColor(): string {
         for (const color of Object.values(DrawingColors)) {
-            const area = this.areas.filter((a) => a.color === color);
-            if (!area.length) {
+            const zone = this.zones.filter((a) => a.color === color);
+            if (!zone.length) {
                 return color;
             }
         }
         return '';
     }
 
-    private addLabel(area: IArea) {
+    private addLabel(zone: IZone) {
         const li = window.document.createElement('li');
         const layerLabel = <LayerLabelComponent>window.document.createElement('media-layer-label');
-        li.id = area.id;
-        layerLabel.config = this.getLabelConfig(area);
+        li.id = zone.id;
+        layerLabel.config = this.getLabelConfig(zone);
         li.appendChild(layerLabel);
         this.labelsList.appendChild(li);
     }
 
-    private renameArea(id: string) {
+    private renameZone(id: string) {
         const li = this.shadowRoot.getElementById(id);
         const layerLabel = <LayerLabelComponent>li.querySelector('media-layer-label');
         layerLabel.editMode = true;
@@ -278,12 +278,12 @@ export class ZoneDrawWidget extends FASTElement {
         this.labelsList.removeChild(li);
     }
 
-    public getLabelConfig(area: IArea): ILayerLabelConfig {
-        console.log(area);
+    public getLabelConfig(zone: IZone): ILayerLabelConfig {
+        console.log(zone);
         return {
-            id: area.id,
-            label: area.name,
-            color: area.color,
+            id: zone.id,
+            label: zone.name,
+            color: zone.color,
             mode: LayerLabelMode.Actions,
             actions: [
                 {
@@ -300,20 +300,20 @@ export class ZoneDrawWidget extends FASTElement {
         };
     }
 
-    private getAreasOutputs(): IAreaOutput[] {
-        const outputs: IAreaOutput[] = [];
-        for (const area of this.areas) {
-            const output: IAreaOutput = {
+    private getZonesOutputs(): IZoneOutput[] {
+        const outputs: IZoneOutput[] = [];
+        for (const zone of this.zones) {
+            const output: IZoneOutput = {
                 '@type': '#Microsoft.VideoAnalyzer',
-                name: area.name
+                name: zone.name
             };
 
-            if (area.points.length === 2) {
+            if (zone.points.length === 2) {
                 output['@type'] += '.NamedLineString';
-                output.line = area.points;
+                output.line = zone.points;
             } else {
                 output['@type'] += '.NamedPolygonString';
-                output.polygon = area.points;
+                output.polygon = zone.points;
             }
 
             outputs.push(output);

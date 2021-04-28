@@ -3,23 +3,23 @@ import { DrawingColors } from '../../../styles/system-providers/ava-design-syste
 import { IWidgetBaseConfig } from '../definitions/base-widget-config.definitions';
 
 /**
- * AreaDraw config, contains basic configurations for AreaDraw widget.
+ * ZoneDraw config, contains basic configurations for ZoneDraw widget.
  */
 export interface IZoneDrawWidgetConfig extends IWidgetBaseConfig {
     /**
-     * This the areas
+     * This the zones
      */
-    areas?: IArea[];
+    zones?: IZone[];
 }
 
-export interface IArea {
+export interface IZone {
     id: string;
     name: string;
     color: string;
     points: IPoint[];
 }
 
-export enum AreaDrawMode {
+export enum ZoneDrawMode {
     Line = 'line',
     Polygon = 'polygon'
 }
@@ -37,7 +37,7 @@ export enum ColorsRanking {
     Orange = 9
 }
 
-export interface IAreaOutput {
+export interface IZoneOutput {
     '@type': string;
     name: string;
     polygon?: IPoint[];

@@ -19,18 +19,18 @@
 </head>
 
 <body>
-  <h1>Area Draw Widget</h1>
+  <h1>Zone Draw Widget</h1>
   <br />
   <div class="default-wrapper">
     <ava-design-system-provider theme="dark"
       use-defaults>
-      <area-draw-widget id="area-draw-widget"></area-draw-widget>
+      <zone-draw-widget id="zone-draw-widget"></zone-draw-widget>
     </ava-design-system-provider>
   </div>
   <br />
 </body>
 <script>(function () {
-    const areas = [
+    const zones = [
       {
         id: '1',
         points: [
@@ -84,9 +84,9 @@
       },
     ];
 
-    const zoneDrawWidget = document.getElementById("area-draw-widget");
+    const zoneDrawWidget = document.getElementById("zone-draw-widget");
 
-    // zoneDrawWidget.config = { areas: areas };
+    // zoneDrawWidget.config = { zones: zones };
   })()
 </script>
 
