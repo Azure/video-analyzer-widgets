@@ -1,4 +1,4 @@
-import { IPoint } from './drawer-canvas.definitions';
+import { CursorTypes, IPoint } from './drawer-canvas.definitions';
 import { CanvasElement } from '../canvas/canvas.element';
 import { ICanvasOptions } from '../canvas/canvas.definitions';
 import { WidgetGeneralError } from './../../widgets/src/common/error';
@@ -23,7 +23,7 @@ export class DrawerCanvas extends CanvasElement {
     private _isDrawCompleted: boolean;
     private _lastMouseX: number = 0;
     private _lastMouseY: number = 0;
-    private _cursors = ['crosshair', 'pointer'];
+    private _cursors = [CursorTypes.CROSSHAIR, CursorTypes.CROSSHAIR];
     private _currentCursor: number = 0;
 
     // Const readyOnly
@@ -31,6 +31,7 @@ export class DrawerCanvas extends CanvasElement {
     private readonly DEFAULT_LINE_COLOR = DrawingColors.Red;
     private readonly DEFAULT_FILL_COLOR = 'rgba(219, 70, 70, 0.4)';
     private readonly DEFAULT_DRAW_CURSOR = 'crosshair';
+
 
     public constructor(canvasOptions: ICanvasOptions) {
         // Create canvas object

@@ -1,5 +1,6 @@
 import { customElement, FASTElement, attr } from '@microsoft/fast-element';
 import { ICanvasOptions } from '../../../common/canvas/canvas.definitions';
+import { CursorTypes } from '../../../common/drawer-canvas/drawer-canvas.definitions';
 import { DrawerCanvas } from './../../../common/drawer-canvas/drawer-canvas.class';
 import { closestElement } from './../../../common/utils/elements';
 
@@ -34,7 +35,7 @@ export class PolygonDrawerComponent extends FASTElement {
     private readonly CANVAS_DEFAULT_HEIGHT = 375;
     private readonly CANVAS_DEFAULT_WIDTH = 250;
     private readonly CANVAS_POSITION = 'relative';
-    private readonly CURSOR_TYPE = 'crosshair';
+    private readonly CURSOR_TYPE = CursorTypes.CROSSHAIR;
     private readonly LINE_WIDTH = 2;
     private readonly POINTS_LIMIT = 10;
 
