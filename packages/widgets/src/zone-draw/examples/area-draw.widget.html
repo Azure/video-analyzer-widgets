@@ -1,0 +1,93 @@
+<html lang="en">
+
+<head>
+  <title>Line Drawer samples</title>
+  <style>
+    media-line-drawer {
+      border: 1px solid black;
+      position: absolute;
+    }
+
+    .default-wrapper,
+    .predefined-values-wrapper {
+      width: 100%;
+      background: aliceblue;
+    }
+  </style>
+  </script>
+  <script src="../../../../../dist/ava-widgets-sdk.js"></script>
+</head>
+
+<body>
+  <h1>Area Draw Widget</h1>
+  <br />
+  <div class="default-wrapper">
+    <ava-design-system-provider theme="dark"
+      use-defaults>
+      <area-draw-widget id="area-draw-widget"></area-draw-widget>
+    </ava-design-system-provider>
+  </div>
+  <br />
+</body>
+<script>(function () {
+    const areas = [
+      {
+        id: '1',
+        points: [
+          {
+            x: 0,
+            y: 0
+          },
+          {
+            x: 0.5,
+            y: 0.5
+          }
+        ]
+      },
+      {
+        id: '2',
+        points: [
+          {
+            x: 0.9,
+            y: 0.1
+          },
+          {
+            x: 0.7,
+            y: 0.8
+          }
+        ]
+      },
+      {
+        id: '3',
+        points: [
+          {
+            x: 0.8,
+            y: 0.1
+          },
+          {
+            x: 0.9,
+            y: 0.8
+          }
+        ]
+      },
+      {
+        points: [
+          {
+            x: 0.3,
+            y: 0.1
+          },
+          {
+            x: 0.3,
+            y: 0.8
+          }
+        ]
+      },
+    ];
+
+    const zoneDrawWidget = document.getElementById("area-draw-widget");
+
+    // zoneDrawWidget.config = { areas: areas };
+  })()
+</script>
+
+</html>
