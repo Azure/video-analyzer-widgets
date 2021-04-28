@@ -1,6 +1,6 @@
 import { customElement, FASTElement, attr } from '@microsoft/fast-element';
 import { ICanvasOptions } from '../../../common/canvas/canvas.definitions';
-import { CursorTypes } from '../../../common/drawer-canvas/drawer-canvas.definitions';
+import { CursorTypes, DrawerEvents } from '../../../common/drawer-canvas/drawer-canvas.definitions';
 import { DrawerCanvas } from './../../../common/drawer-canvas/drawer-canvas.class';
 import { closestElement } from './../../../common/utils/elements';
 
@@ -72,8 +72,8 @@ export class PolygonDrawerComponent extends FASTElement {
 
     private init() {
         const parent = this.$fastController.element.parentElement;
-        const width = parent.clientWidth || this.CANVAS_DEFAULT_WIDTH;
-        const height = parent.clientHeight || this.CANVAS_DEFAULT_HEIGHT;
+        const width = parent?.clientWidth || this.CANVAS_DEFAULT_WIDTH;
+        const height = parent?.clientHeight || this.CANVAS_DEFAULT_HEIGHT;
         const designSystem = closestElement('ava-design-system-provider', this.$fastController.element);
         const borderColor = designSystem ? getComputedStyle(designSystem)?.getPropertyValue('--drawer-line-color') : '';
         const fillColor = designSystem ? getComputedStyle(designSystem)?.getPropertyValue('--drawer-fill-color') : '';
@@ -101,7 +101,7 @@ export class PolygonDrawerComponent extends FASTElement {
     private appendEvents() {
         this.dCanvas.canvas.addEventListener('mousemove', this.dCanvas.onMouseMove.bind(this.dCanvas));
         this.dCanvas.canvas.addEventListener('mouseup', this.dCanvas.onDraw.bind(this.dCanvas));
-        this.dCanvas.canvas.addEventListener('drawerComplete', this.onDrawComplete.bind(this));
+        this.dCanvas.canvas.addEventListener(DrawerEvents.COMPLETE, this.onDrawComplete.bind(this));
 
         window.addEventListener('resize', () => {
             const parent = this.$fastController.element.parentElement;
@@ -119,7 +119,7 @@ export class PolygonDrawerComponent extends FASTElement {
     }
 
     private onDrawComplete() {
-        this.$emit('drawerComplete', this.dCanvas?.points);
+        this.$emit(DrawerEvents.COMPLETE, this.dCanvas?.points);
         this.dCanvas.clearPoints();
     }
 }
