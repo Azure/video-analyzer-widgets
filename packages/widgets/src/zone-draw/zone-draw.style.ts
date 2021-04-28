@@ -16,6 +16,7 @@ export const styles = css`
         grid-template-columns: auto 16px;
         color: var(--zone-draw-color);
         font-size: 18px;
+        font-weight: 600;
     }
 
     .widget-header > fast-button,
