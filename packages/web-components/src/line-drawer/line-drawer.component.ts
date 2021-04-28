@@ -37,7 +37,6 @@ export class LineDrawerComponent extends FASTElement {
             setTimeout(() => {
                 this.canvasOptions.lineColor = this.borderColor;
                 this.dCanvas.drawerOptions = this.canvasOptions;
-
                 this.resetLineDrawer();
             });
         }
