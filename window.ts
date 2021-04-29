@@ -1,8 +1,8 @@
-import { RVXWidget } from './packages/widgets/src';
+import { Player } from './packages/widgets/src';
 
 declare global {
     interface IWidgets {
-        rvx: typeof RVXWidget;
+        player: typeof Player;
     }
 
     interface IAva {

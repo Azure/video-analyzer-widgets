@@ -153,9 +153,14 @@ export class TimelineComponent extends FASTElement {
 
         this.segmentsTimeline.config = config;
 
-        // eslint-disable-next-line no-undef
         this.segmentsTimeline.addEventListener(SegmentsTimelineEvents.SEGMENT_CLICKED, ((event: CustomEvent<IUISegment>) => {
             this.$emit(TimelineEvents.SEGMENT_CHANGE, event.detail);
+            event.stopPropagation();
+            // eslint-disable-next-line no-undef
+        }) as EventListener);
+
+        this.segmentsTimeline.addEventListener(SegmentsTimelineEvents.CURRENT_TIME_CHANGE, ((event: CustomEvent<number>) => {
+            this.$emit(TimelineEvents.CURRENT_TIME_CHANGE, event.detail);
             event.stopPropagation();
             // eslint-disable-next-line no-undef
         }) as EventListener);

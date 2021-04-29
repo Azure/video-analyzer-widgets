@@ -1,11 +1,27 @@
 import { IWidgetBaseConfig } from '../../definitions/base-widget-config.definitions';
 
 /**
- * Insights config, contains basic configurations for insights widget.
+ * RVX config, contains basic configurations for rvx widget.
  */
-export interface IRvxWidgetConfig extends IWidgetBaseConfig {
+export interface IAvaPlayerConfig extends IWidgetBaseConfig {
     /**
-     * This is an example
+     * Account ID
      */
-    sources?: string[];
+    accountId: string;
+    /**
+     * Embedded video name
+     */
+    videoName: string;
+    /**
+     * long region code
+     */
+    longRegionCode: string;
+    /**
+     * AVA API token
+     */
+    token?: string;
+}
+
+export enum RVXEvents {
+    TOKEN_EXPIRED = 'TOKEN_EXPIRED'
 }

@@ -4,8 +4,8 @@ export enum DatePickerEvent {
 }
 
 export interface IDatePickerRenderEvent {
-    month: Date;
-    year: Date;
+    month: number;
+    year: number;
 }
 
 export interface IAllowedDates {

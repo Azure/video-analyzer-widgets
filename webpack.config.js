@@ -5,12 +5,12 @@ const esLintPlugin = require('eslint-webpack-plugin');
 module.exports = {
     mode: isProduction ? 'production' : 'development',
     entry: {
-        'ava-widgets-sdk': path.join(__dirname, './main.ts')
+        'ava-widgets': [path.join(__dirname, './index.ts'), path.join(__dirname, './main.ts')]
     },
     devtool: isProduction ? false : 'inline-source-map',
     output: {
         filename: isProduction ? '[name].min.js' : '[name].js',
-        // path: path.join(__dirname, './dist'),
+        path: path.join(__dirname, './dist'),
         sourceMapFilename: '[name].js.map',
         publicPath: './dist'
     },

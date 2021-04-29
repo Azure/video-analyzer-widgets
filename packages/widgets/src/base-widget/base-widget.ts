@@ -9,8 +9,8 @@ export class BaseWidget extends FASTElement {
     public constructor(config: IWidgetBaseConfig) {
         super();
         this.config = config;
-        this.width = config.width || '';
-        this.height = config.height || '';
+        this.width = config?.width || '100%';
+        this.height = config?.height || '100%';
 
         if (this.config) {
             this.init();

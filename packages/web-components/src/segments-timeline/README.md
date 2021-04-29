@@ -37,4 +37,5 @@ config input contains:
 
 ## Please see examples:
 
--   [Example](./examples/example.html)
+-   [Example 1](./examples/example.html)
+-   [Example 2](./examples/example2.html)

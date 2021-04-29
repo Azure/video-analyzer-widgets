@@ -24,6 +24,10 @@ export const styles = css`
         font-weight: 400;
     }
 
+    .ms-DatePicker.right .ms-DatePicker-holder {
+        right: 0;
+    }
+
     .ms-DatePicker-monthOption,
     .ms-DatePicker-yearOption {
         background-color: var(--date-picker-holder-bg);
