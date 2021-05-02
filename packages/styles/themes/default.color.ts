@@ -90,7 +90,7 @@ export const defaultColorsStyle: ElementStyles = css`
         --layer-label-bg: rgba(17, 16, 15, 0.9);
         --layer-label-color: #f3f2f1;
 
-         /* Actions Menu */
+        /* Actions Menu */
         --actions-menu-bg: rgba(17, 16, 15, 0.9);
         --actions-menu-color: #f3f2f1;
 
@@ -99,7 +99,7 @@ export const defaultColorsStyle: ElementStyles = css`
         --drawer-fill-color: rgba(219, 70, 70, 0.4);
 
         /* Area Draw */
-        --zone-draw-color: #f3f2f1;
+        --zone-draw-color: #a19f9d;
         --zone-draw-bg: #201f1e;
     }
 `;

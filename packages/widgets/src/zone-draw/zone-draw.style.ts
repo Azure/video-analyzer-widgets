@@ -7,7 +7,7 @@ export const styles = css`
         grid-template-rows: 30px auto 32px;
         padding: 20px 22px;
         background: var(--zone-draw-bg);
-        color: #a19f9d;
+        color: var(--zone-draw-color);
         min-width: 720px;
     }
 
@@ -68,6 +68,12 @@ export const styles = css`
         overflow-y: auto;
     }
 
+    .rvx-widget-container {
+        width: 100%;
+        background: black;
+        min-height: 200px;
+    }
+
     .action-buttons {
         justify-content: flex-end;
         display: flex;
@@ -77,10 +83,8 @@ export const styles = css`
     .action-buttons > fast-button {
         width: 75px;
         height: 32px;
-        border: 1px solid rgba(255, 255, 255, 0.54);
         box-sizing: border-box;
         border-radius: 2px;
-        background: #1a1a1a;
         margin-left: 12px;
     }
 

@@ -12,8 +12,8 @@ export interface IZoneDrawWidgetConfig extends IWidgetBaseConfig {
 }
 
 export interface IZone {
-    id: string;
-    name: string;
+    id?: string;
+    name?: string;
     color: string;
     points: IPoint[];
 }

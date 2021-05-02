@@ -1,6 +1,6 @@
 import { html, when } from '@microsoft/fast-element';
 import { ZoneDrawWidget } from './zone-draw.widget';
-import { CLOSE_BIG_SVG_PATH, POLYGON_SVG_PATH, LINE_SVG_PATH } from '../../../styles/svg/svg.shapes';
+import { POLYGON_SVG_PATH, LINE_SVG_PATH } from '../../../styles/svg/svg.shapes';
 
 /**
  * The template for the actions menu component.
@@ -45,11 +45,11 @@ export const template = html<ZoneDrawWidget>`
                                 ${(x) => {
                                     if (x.isLineDrawMode) {
                                         return html`<media-line-drawer
-                                            connectedCallback="${(x) => x.lineDrawerConnectedCallback()}"
+                                            connectedCallback="${x.drawerConnectedCallback()}"
                                         ></media-line-drawer>`;
                                     } else {
                                         return html`<media-polygon-drawer
-                                            connectedCallback="${(x) => x.lineDrawerConnectedCallback()}"
+                                            connectedCallback="${x.drawerConnectedCallback()}"
                                         ></media-polygon-drawer>`;
                                     }
                                 }}
@@ -59,7 +59,6 @@ export const template = html<ZoneDrawWidget>`
                 </div>
                 <div class="rvx-widget-container">
                     <!-- rvx widget -->
-                    <img src="assets/video-demo.png" width="100%" />
                 </div>
             </div>
             <div class="zones-list-container">

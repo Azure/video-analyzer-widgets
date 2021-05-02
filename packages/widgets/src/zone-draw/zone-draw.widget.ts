@@ -29,11 +29,11 @@ export class ZoneDrawWidget extends FASTElement {
     @observable
     public isDirty = false;
     @observable
-    showDrawer = true;
+    public showDrawer = true;
     @observable
-    isLineDrawMode = true;
+    public isLineDrawMode = true;
     @observable
-    isLabelsListEmpty = true;
+    public isLabelsListEmpty = true;
 
     public zoneDrawMode = ZoneDrawMode.Line;
 
@@ -76,16 +76,22 @@ export class ZoneDrawWidget extends FASTElement {
         });
     }
 
-    public lineDrawerConnectedCallback() {
+    public drawerConnectedCallback() {
         setTimeout(() => {
             this.initDrawer();
         });
     }
 
-    public polygonDrawerConnectedCallback() {
-        setTimeout(() => {
-            this.initDrawer();
-        });
+    public save() {
+        const outputs = this.getZonesOutputs();
+        /* eslint-disable-next-line  no-console */
+        console.log('save', outputs);
+        this.$emit(ZoneDrawEvents.Save, outputs);
+    }
+
+    public toggleDrawMode() {
+        this.destroyDrawer();
+        this.isLineDrawMode = !this.isLineDrawMode;
     }
 
     private initZoneDrawComponents() {
@@ -94,12 +100,6 @@ export class ZoneDrawWidget extends FASTElement {
         }
 
         this.initZones();
-    }
-
-    public save() {
-        const outputs = this.getZonesOutputs();
-        console.log('save', outputs);
-        this.$emit(ZoneDrawEvents.Save, outputs);
     }
 
     private initDrawer() {
@@ -132,8 +132,8 @@ export class ZoneDrawWidget extends FASTElement {
         }
     }
 
+    /* eslint-disable-next-line  @typescript-eslint/no-explicit-any */
     private drawerComplete(e: any) {
-        console.log(e.detail);
         this.createZone([...e.detail]);
     }
 
@@ -142,34 +142,26 @@ export class ZoneDrawWidget extends FASTElement {
         this.labelsList.style.maxHeight = `${rvxContainer.clientHeight}px`;
     }
 
+    /* eslint-disable-next-line  @typescript-eslint/no-explicit-any */
     private labelActionClicked(e: any) {
-        console.log(e);
-
         switch (e.detail?.type) {
             case UIActionType.RENAME:
                 this.renameZone(e.detail.id);
-                console.log('RENAME');
                 return;
             case UIActionType.DELETE:
-                console.log('DELETE');
                 this.deleteZone(e.detail.id);
                 return;
         }
     }
 
+    /* eslint-disable-next-line  @typescript-eslint/no-explicit-any */
     private labelTextChanged(e: any) {
-        console.log(e);
         for (const zone of this.zones) {
             if (zone.id === e.detail.id) {
                 zone.name = e.detail.name;
                 return;
             }
         }
-    }
-
-    public toggleDrawMode() {
-        this.destroyDrawer();
-        this.isLineDrawMode = !this.isLineDrawMode;
     }
 
     private initZones() {
@@ -273,8 +265,7 @@ export class ZoneDrawWidget extends FASTElement {
         this.labelsList.removeChild(li);
     }
 
-    public getLabelConfig(zone: IZone): ILayerLabelConfig {
-        console.log(zone);
+    private getLabelConfig(zone: IZone): ILayerLabelConfig {
         return {
             id: zone.id,
             label: zone.name,

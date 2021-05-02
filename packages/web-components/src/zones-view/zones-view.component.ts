@@ -1,7 +1,8 @@
 import { attr, customElement, FASTElement } from '@microsoft/fast-element';
 import { styles } from './zones-view.style';
 import { ZonesCanvas } from './zones-canvas.class';
-import { IZone, IZonesOptions } from './zones-view.definitions';
+import { IZonesOptions } from './zones-view.definitions';
+import { IZone } from '../../../widgets/src/zone-draw/zone-draw.definitions';
 
 /**
  * An zones view.

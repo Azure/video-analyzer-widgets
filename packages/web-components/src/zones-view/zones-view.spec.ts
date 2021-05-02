@@ -1,7 +1,8 @@
 import { html, fixture, expect } from '@open-wc/testing';
+import { IZone } from '../../../widgets/src/zone-draw/zone-draw.definitions';
 import { ZonesCanvas } from './zones-canvas.class';
 import { ZonesViewComponent } from './zones-view.component';
-import { IZone, IZonesOptions } from './zones-view.definitions';
+import { IZonesOptions } from './zones-view.definitions';
 
 ZonesViewComponent;
 
