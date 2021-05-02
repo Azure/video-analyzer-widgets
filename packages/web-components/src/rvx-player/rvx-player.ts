@@ -5,6 +5,7 @@ import { attr, customElement, DOM, FASTElement, observable } from '@microsoft/fa
 import { toInteger } from 'lodash-es';
 import { MediaApi } from '../../../common/services/media/media-api.class';
 import { IAvailableMediaResponse, Precision } from '../../../common/services/media/media.definitions';
+import { WidgetGeneralError } from '../../../widgets/src';
 import { DatePickerComponent } from '../date-picker';
 import { DatePickerEvent, IDatePickerRenderEvent } from '../date-picker/date-picker.definitions';
 import { PlayerWrapper } from './player.class';
@@ -47,7 +48,7 @@ export class PlayerComponent extends FASTElement {
         super();
     }
 
-    public async init() {
+    public async init(allowCrossSiteCredentials = true, accessToken?: string) {
         if (!this.connected) {
             return;
         }
@@ -55,19 +56,39 @@ export class PlayerComponent extends FASTElement {
         this.liveStream = MediaApi.baseStream ? MediaApi.getLiveStream() : this.liveStream;
         this.vodStream = MediaApi.baseStream ? MediaApi.getVODStream() : this.vodStream;
 
+        // Reload player
+        if (this.player) {
+            this.player.destroy();
+            this.player = null;
+        }
+
         // Init  player
         this.player = new PlayerWrapper(
             this.video,
             this.videoContainer,
             this.liveStream,
             this.vodStream,
-            this.timeUpdateCallBack.bind(this),
-            this.segmentInitializationCallback.bind(this)
+            this.timeUpdateCallBack.bind(this)
         );
+
+        if (accessToken) {
+            this.player.accessToken = accessToken;
+        }
+        this.player.allowCrossCred = allowCrossSiteCredentials;
 
         if (!MediaApi.baseStream) {
             return;
         }
+        await this.initializeAvailableMedia();
+    }
+
+    public setPlaybackAuthorization(accessToken: string) {
+        if (accessToken) {
+            this.player.accessToken = accessToken;
+        }
+    }
+
+    public async initializeAvailableMedia() {
         await this.fetchAvailableYears();
 
         // First initialization - init month and dates
@@ -158,58 +179,83 @@ export class PlayerComponent extends FASTElement {
     }
 
     private async fetchAvailableYears() {
-        const availableYears = await MediaApi.getAvailableMedia(Precision.YEAR);
-        const yearRanges: IAvailableMediaResponse = await availableYears.json();
+        const availableYears = await MediaApi.getAvailableMedia(Precision.YEAR, null, this.player.allowCrossCred, this.player.accessToken);
+        try {
+            const yearRanges: IAvailableMediaResponse = await availableYears.json();
 
-        for (const range of yearRanges.timeRanges) {
-            const start = toInteger(range.start);
-            const end = toInteger(range.end);
-            // Fill years between start-end
-            for (let index = start; index <= end; index++) {
-                this.allowedDates[index] = [];
+            for (const range of yearRanges.timeRanges) {
+                const start = toInteger(range.start);
+                const end = toInteger(range.end);
+                // Fill years between start-end
+                for (let index = start; index <= end; index++) {
+                    this.allowedDates[index] = [];
+                }
             }
-        }
 
-        this.currentAllowedYears = Object.keys(this.allowedDates);
-        this.datePickerComponent.allowedDates = { ...this.datePickerComponent.allowedDates, years: this.currentAllowedYears.toString() };
+            this.currentAllowedYears = Object.keys(this.allowedDates);
+            this.datePickerComponent.allowedDates = {
+                ...this.datePickerComponent.allowedDates,
+                years: this.currentAllowedYears.toString()
+            };
+        } catch (error) {
+            throw new WidgetGeneralError('Cannot parse available media');
+        }
     }
 
     private async fetchAvailableMonths(year: number) {
         // Take available months according to year
-        const availableMonths = await MediaApi.getAvailableMedia(Precision.MONTH, {
-            start: new Date(year, 1),
-            end: new Date(year, 12)
-        });
-        const monthRanges: IAvailableMediaResponse = await availableMonths.json();
+        try {
+            const availableMonths = await MediaApi.getAvailableMedia(
+                Precision.MONTH,
+                {
+                    start: new Date(year, 1),
+                    end: new Date(year, 12)
+                },
+                this.player.allowCrossCred,
+                this.player.accessToken
+            );
+            const monthRanges: IAvailableMediaResponse = await availableMonths.json();
 
-        // Get last available month
-        for (const range of monthRanges.timeRanges) {
-            const start = new Date(range.start).getMonth() + 1;
-            const end = new Date(range.end).getMonth() + 1;
-            // Fill years between start-end
-            for (let index = start; index <= end; index++) {
-                this.allowedDates[year][index] = [];
+            // Get last available month
+            for (const range of monthRanges.timeRanges) {
+                const start = new Date(range.start).getMonth() + 1;
+                const end = new Date(range.end).getMonth() + 1;
+                // Fill years between start-end
+                for (let index = start; index <= end; index++) {
+                    this.allowedDates[year][index] = [];
+                }
             }
+        } catch (error) {
+            throw new WidgetGeneralError('Cannot parse available media');
         }
     }
 
     private async fetchAvailableDays(year: number, month: number) {
-        // fetch available days
-        const availableDays = await MediaApi.getAvailableMedia(Precision.DAY, {
-            start: new Date(`${year} ${month} Z`),
-            end: new Date(year, month)
-        });
+        try {
+            // fetch available days
+            const availableDays = await MediaApi.getAvailableMedia(
+                Precision.DAY,
+                {
+                    start: new Date(`${year} ${month} Z`),
+                    end: new Date(year, month)
+                },
+                this.player.allowCrossCred,
+                this.player.accessToken
+            );
 
-        const dayRanges: IAvailableMediaResponse = await availableDays.json();
+            const dayRanges: IAvailableMediaResponse = await availableDays.json();
 
-        this.allowedDates[year][month] = [];
-        for (const range of dayRanges.timeRanges) {
-            const start = new Date(range.start).getDate();
-            const end = new Date(range.end).getDate();
-            // Fill years between start-end
-            for (let index = start; index <= end; index++) {
-                this.allowedDates[year][month].push(index);
+            this.allowedDates[year][month] = [];
+            for (const range of dayRanges.timeRanges) {
+                const start = new Date(range.start).getDate();
+                const end = new Date(range.end).getDate();
+                // Fill years between start-end
+                for (let index = start; index <= end; index++) {
+                    this.allowedDates[year][month].push(index);
+                }
             }
+        } catch (error) {
+            throw new WidgetGeneralError('Cannot parse available media');
         }
     }
 
@@ -255,16 +301,10 @@ export class PlayerComponent extends FASTElement {
             // there is no data - keep empty arrays
         }
     }
-
-    private segmentInitializationCallback(segmentReferences: shaka_player.media.SegmentReference[]) {
-        console.log(segmentReferences);
-    }
-
     private timeUpdateCallBack(time: string) {
-        if (this.time === time) {
+        if (this.time === time || !time) {
             return;
         }
-        console.log('in time update');
 
         DOM.queueUpdate(() => {
             this.time = time;

@@ -18,16 +18,21 @@
     avaPlayer.addEventListener('TOKEN_EXPIRED', () => {
       console.log('token expired');
     });
-    avaPlayer.configure({
-      token: 'eyJhbGciOiJSUzI1NiIsImtpZCI6IjFzemVmSnlHSWlTSGNWcWQ4Q041WVNGaGptOCIsIng1dCI6IjFzemVmSnlHSWlTSGNWcWQ4Q041WVNGaGptOCIsInR5cCI6IkpXVCJ9.eyJuYmYiOjE2MTk2MzgyNzIsImV4cCI6MTY1MTE3NDI2OSwiaWF0IjoxNjE5NjM4MjcyLCJpc3MiOiJTYW1wbGVUb2tlblByb3ZpZGVyIiwiYXVkIjoidGVzdCJ9.gznXMKIqxoxH_I9Nf-JWwiwJ926joeJfysbVcUvEveJWDhSNCuods0ELUvjReQgKr150Pe1dTZYXYU6NKDM6A1UK3KWQW1vf7iUTmf8FfKgMyUvQq_BzlCfV79WRy4XK2vY49wIIw3XdxiXbJhoMiHaezt678-Fn7mzoG6aR1d_P8rIqGDinAY1-9ryvB4Aoq8mC7MP9ZHnDZ4Q_8dLEYmnuOK4R21kOHFkLa6D8wxAdrKPrRt7CtktlKiE-8WVhJKjIFW92PHIaYEx4I14L5D0AiCLfH4DFEsVVlST7vOLuNxcgRx_t0aw10EGmntHqW-UHOlCa8xuB4t25c_imvg',
-      accountId: 'B43E0A43-33FF-4959-9B5F-6C213B8626F2',
-      longRegionCode: 'mint1',
-      videoName: 'sample-CVR-with-motion'
-    });
+    // avaPlayer.configure({
+    //   accountId: 'D7138B56-B234-4D75-9F72-3B3812306716',
+    //   longRegionCode: 'mint1',
+    //   videoName: 'video_4QGCm8S8i0een2RibQ0FVw'
+    // });
 
     // avaPlayer.width = '920px';
     // avaPlayer.height = '300px';
 
+    const source = {
+      authenticationToken: 'myToken',
+      allowCrossSiteCredentials: false,
+      src: 'http://v1-6-5.shaka-player-demo.appspot.com/assets/car-20120827-manifest.mpd?_=1619710221766'
+    }
+    avaPlayer.setSource(source);
     avaPlayer.load();
   })()
 </script>

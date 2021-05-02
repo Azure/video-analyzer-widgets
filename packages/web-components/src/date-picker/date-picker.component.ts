@@ -177,21 +177,26 @@ export class DatePickerComponent extends FASTElement {
             return;
         }
 
-        setTimeout(() => {
-            const DatePickerElements = this.shadowRoot.querySelectorAll('.ms-DatePicker');
-            this.datePicker = new window['fabric']['DatePicker'](DatePickerElements[0]);
-
-            this.datePicker.picker.on('open', this.onDateOpen.bind(this));
-            this.datePicker.picker.on('set', this.onDateChange.bind(this));
-            this.datePicker.picker.on('render', this.onRenderDates.bind(this));
-
-            // Show date picker only after initialization
-            this.enableUI = true;
-
+        try {
             setTimeout(() => {
-                this.datePicker.picker.set('select', this.date);
+                const DatePickerElements = this.shadowRoot.querySelectorAll('.ms-DatePicker');
+                this.datePicker = new window['fabric']['DatePicker'](DatePickerElements[0]);
+
+                this.datePicker.picker.on('open', this.onDateOpen.bind(this));
+                this.datePicker.picker.on('set', this.onDateChange.bind(this));
+                this.datePicker.picker.on('render', this.onRenderDates.bind(this));
+
+                // Show date picker only after initialization
+                this.enableUI = true;
+
+                setTimeout(() => {
+                    this.datePicker.picker.set('select', this.date);
+                });
             });
-        });
+        } catch (error) {
+            // eslint-disable-next-line no-console
+            console.log(error);
+        }
     }
 
     private onRenderDates() {

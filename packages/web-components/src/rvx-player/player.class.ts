@@ -22,8 +22,10 @@ const shaka = require('shaka-player/dist/shaka-player.ui.debug.js');
 export class PlayerWrapper {
     private isLive = false; // TODO : when RTSP plugin will be ready, set to true
     private _accessToken = '';
+    private _mimeType: MimeType;
     private player: shaka_player.Player = Object.create(null);
     private controls: any;
+    private _allowCrossCred = true;
     private timestampOffset: number;
     private date: Date;
     private timelineComponent: TimelineComponent;
@@ -32,21 +34,12 @@ export class PlayerWrapper {
     private segmentReferences: shaka_player.media.SegmentReference[];
     private onSegmentChangeListenerRef: (event: CustomEvent) => void;
 
-    public set liveStream(value: string) {
-        this._liveStream = value;
-    }
-
-    public set vodStream(value: string) {
-        this._vodStream = value;
-    }
-
     public constructor(
         private video: HTMLVideoElement,
         private videoContainer: HTMLElement,
         private _liveStream: string,
         private _vodStream: string,
-        private timeUpdateCallback: (time: string) => void,
-        private segmentInitializationCallback: (segmentReferences: shaka_player.media.SegmentReference[]) => void
+        private timeUpdateCallback: (time: string) => void
     ) {
         // Install built-in polyfills to patch browser incompatibilities.
         shaka.polyfill.installAll();
@@ -61,6 +54,30 @@ export class PlayerWrapper {
         }
     }
 
+    public set liveStream(value: string) {
+        this._liveStream = value;
+    }
+
+    public set vodStream(value: string) {
+        this._vodStream = value;
+    }
+
+    public set allowCrossCred(value: boolean) {
+        this._allowCrossCred = value;
+    }
+
+    public get allowCrossCred() {
+        return this._allowCrossCred;
+    }
+
+    public set mimeType(value: MimeType) {
+        this._mimeType = value;
+    }
+
+    public get mimeType() {
+        return this._mimeType;
+    }
+
     public play() {
         this.video.play();
     }
@@ -69,9 +86,17 @@ export class PlayerWrapper {
         this._accessToken = accessToken;
     }
 
+    public get accessToken() {
+        return this._accessToken;
+    }
+
     public async load(url: string, play = false) {
         try {
-            await this.player.load(url);
+            if (this.mimeType) {
+                await this.player.load(url, null, this.mimeType);
+            } else {
+                await this.player.load(url);
+            }
 
             if (play) {
                 this.video.play();
@@ -80,6 +105,11 @@ export class PlayerWrapper {
             // eslint-disable-next-line no-console
             console.log(error.message);
         }
+    }
+
+    public destroy() {
+        this.player.unload();
+        this.player.destroy();
     }
 
     public async toggleLiveMode(isLive: boolean) {
@@ -264,7 +294,7 @@ export class PlayerWrapper {
         };
 
         // Set up authentication handler
-        this.player.getNetworkingEngine().registerRequestFilter(this.authenticationHandler);
+        this.player.getNetworkingEngine().registerRequestFilter(this.authenticationHandler.bind(this));
         // Setting up shaka player UI
         const ui = new shaka.ui.Overlay(this.player, this.videoContainer, this.video);
         ui.configure(uiConfig);
@@ -313,19 +343,15 @@ export class PlayerWrapper {
         this.boundingBoxesDrawer.clear();
         this.boundingBoxesDrawer = null;
     }
+
     private authenticationHandler(type: shaka_player.net.NetworkingEngine.RequestType, request: shaka_player.extern.Request) {
-        request['allowCrossSiteCredentials'] = true;
+        request['allowCrossSiteCredentials'] = this._allowCrossCred;
         if (!this._accessToken) {
             return;
         }
 
-        // Add authentication
-        if (
-            type === shaka_player.net.NetworkingEngine.RequestType.MANIFEST ||
-            type === shaka_player.net.NetworkingEngine.RequestType.SEGMENT
-        ) {
-            request.headers['Authentication'] = `Bearer  ${this._accessToken}`;
-        }
+        // Add authorization header
+        request.headers['Authorization'] = `Bearer ${this._accessToken}`;
     }
 
     private onShakaMetadata(event: shaka_player.PlayerEvents.EmsgEvent) {

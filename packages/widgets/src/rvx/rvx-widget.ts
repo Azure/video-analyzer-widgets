@@ -7,6 +7,7 @@ import { MediaApi } from '../../../common/services/media/media-api.class';
 import { template } from './rvx-widget.template';
 import { styles } from './rvx-widget.style';
 import { PlayerComponent } from '../../../web-components/src/rvx-player';
+import { ISource } from '../../../web-components/src/rvx-player/rvx-player.definitions';
 
 @customElement({
     name: 'ava-player',
@@ -15,6 +16,8 @@ import { PlayerComponent } from '../../../web-components/src/rvx-player';
 })
 export class Player extends BaseWidget {
     @attr public config: IAvaPlayerConfig;
+    private loaded = false;
+    private source: ISource = null;
 
     public constructor(config: IAvaPlayerConfig) {
         super(config);
@@ -36,11 +39,35 @@ export class Player extends BaseWidget {
         this.init();
     }
 
+    public setSource(source: ISource) {
+        this.source = source;
+        MediaApi.baseStream = this.source.src;
+        if (this.loaded) {
+            const rvxPlayer: PlayerComponent = this.shadowRoot.querySelector('rvx-player');
+            rvxPlayer.init(this.source.allowCrossSiteCredentials, this.source.authenticationToken);
+        }
+    }
+
+    public setPlaybackAuthorization(token: string) {
+        const rvxPlayer: PlayerComponent = this.shadowRoot.querySelector('rvx-player');
+
+        rvxPlayer.setPlaybackAuthorization(token);
+    }
+
     public set apiBase(apiBase: string) {
         AvaAPi.fallbackAPIBase = apiBase;
     }
 
     public async load() {
+        this.loaded = true;
+        const rvxPlayer: PlayerComponent = this.shadowRoot.querySelector('rvx-player');
+
+        // If set source state
+        if (this.source) {
+            rvxPlayer.init(this.source.allowCrossSiteCredentials, this.source.authenticationToken);
+            return;
+        }
+        // Configuration state - work with AVA API
         // Get video
         try {
             await AvaAPi.getVideo()
@@ -55,7 +82,7 @@ export class Player extends BaseWidget {
                         // Authorize video
                         await AvaAPi.authorize();
 
-                        this.initPlayer();
+                        rvxPlayer.init();
                     }
                 })
                 .catch((error: Error) => {

@@ -267,6 +267,7 @@ export const stylesFabric = css`
     }
 
     .ms-DatePicker-goToday {
+        display: none;
         bottom: 9px;
         color: var(--date-picker-text-color);
         cursor: pointer;

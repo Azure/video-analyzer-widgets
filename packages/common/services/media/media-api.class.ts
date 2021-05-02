@@ -35,7 +35,12 @@ export class MediaApi {
         return `${this.baseStream}/manifest(format=${format}${range_query})${extension}`;
     }
 
-    public static getAvailableMedia(precision: Precision, range: ITimeRange = null): Promise<Response> {
+    public static getAvailableMedia(
+        precision: Precision,
+        range: ITimeRange = null,
+        allowCrossSiteCredentials = true,
+        token?: string
+    ): Promise<Response> {
         // time ranges are required for month, day and full
         if ((precision === Precision.MONTH || precision === Precision.DAY || precision === Precision.FULL) && !range) {
             throw Error('wrong parameters');
@@ -46,9 +51,19 @@ export class MediaApi {
         }`;
         const url = `${this.baseStream}/availableMedia${range_query}`;
 
-        return fetch(url, {
-            credentials: 'include'
-        });
+        // eslint-disable-next-line no-undef
+        const requestInit: RequestInit = {};
+
+        if (allowCrossSiteCredentials) {
+            requestInit.credentials = 'include';
+        }
+
+        if (token) {
+            requestInit.headers = {
+                Authorization: `Bearer ${token}`
+            };
+        }
+        return fetch(url, requestInit);
     }
 
     private static extractDate(date: Date, precision: Precision) {

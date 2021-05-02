@@ -1,8 +1,7 @@
+import { WidgetGeneralError } from '../../../widgets/src';
 import { TokenHandler } from './token-handler.class';
 
 export class AvaAPi {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    public static cookie: any;
     private static _accountID = '';
     private static _longRegionCode = '';
     private static _videoName = '';
@@ -43,11 +42,13 @@ export class AvaAPi {
             }
         });
         const data = await response.json();
-        this.cookieExpiration = new Date(data.expiration);
-        this.cookie = await response.headers.get('x-ava-token');
+        if (!data.ExpirationDate) {
+            throw new WidgetGeneralError('Invalid cookie expiration');
+        }
+        this.cookieExpiration = new Date(data.ExpirationDate);
         const cookieExpirationTime = this.cookieExpiration.getTime() - new Date(Date.now()).getTime();
         if (cookieExpirationTime < AvaAPi.MAX_SET_TIMEOUT_TIME) {
-            this.cookieTimeoutRef = window.setTimeout(this.cookieExpiredHandler.bind(this, cookieExpirationTime));
+            this.cookieTimeoutRef = window.setTimeout(this.cookieExpiredHandler.bind(this), cookieExpirationTime);
         }
     }
 
@@ -95,15 +96,15 @@ export class AvaAPi {
     }
 
     public static set accountID(value) {
-        console.log('account id set', value);
         AvaAPi._accountID = value;
     }
 
     private static cookieExpiredHandler() {
-        // First, check if cookie expired
-        if (new Date().valueOf() >= this.cookieExpiration?.valueOf() || false) {
-            // Authorize
-            this.authorize();
-        }
+        // Clear timeout
+        window.clearTimeout(this.cookieTimeoutRef);
+        this.cookieTimeoutRef = 0;
+
+        // Authorize
+        this.authorize();
     }
 }

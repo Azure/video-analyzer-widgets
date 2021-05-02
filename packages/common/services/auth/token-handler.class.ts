@@ -48,13 +48,15 @@ export class TokenHandler {
         const decoded = jwt_decode(this.avaAPIToken) as JwtPayload;
         if (decoded.exp === undefined) {
             tokenExpirationTime = 0;
+            this.tokenExpiredHandler();
+            return;
         }
 
         const date = new Date(0);
         date.setUTCSeconds(decoded.exp - 5);
         tokenExpirationTime = date.getTime() - new Date(Date.now()).getTime();
         if (tokenExpirationTime < TokenHandler.MAX_SET_TIMEOUT_TIME) {
-            this.tokenTimeoutRef = window.setTimeout(this.tokenExpiredHandler.bind(this, tokenExpirationTime));
+            this.tokenTimeoutRef = window.setTimeout(this.tokenExpiredHandler.bind(this), tokenExpirationTime);
         }
     }
 }
