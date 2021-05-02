@@ -16,7 +16,7 @@ module.exports = {
         libraryTarget: 'umd'
     },
     optimization: {
-        minimize: false
+        minimize: isProduction
     },
     plugins: [
         new esLintPlugin({
