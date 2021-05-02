@@ -56,8 +56,7 @@ export class ZonesCanvas extends CanvasElement {
 
     public resize(): void {
         this.setCanvasSize(this.zonesOptions.width, this.zonesOptions.height);
-        // todo - uncomment after line drawer changed checked in
-        // this.setContextStyle();
+        this.setContextStyle();
         this.draw();
     }
 }

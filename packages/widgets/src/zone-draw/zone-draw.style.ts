@@ -4,35 +4,18 @@ export const styles = css`
     :host {
         font-family: var(--font-family);
         display: grid;
-        grid-template-rows: 60px 30px auto 32px;
+        grid-template-rows: 30px auto 32px;
         padding: 20px 22px;
         background: var(--zone-draw-bg);
         color: #a19f9d;
         min-width: 720px;
     }
 
-    .widget-header {
-        display: grid;
-        grid-template-columns: auto 16px;
-        color: var(--zone-draw-color);
-        font-size: 18px;
-        font-weight: 600;
-    }
-
-    .widget-header > fast-button,
     .draw-buttons > fast-button {
         min-width: 16px;
         align-items: center;
         justify-content: center;
         background: transparent;
-    }
-
-    .widget-header > fast-button {
-        width: 16px;
-        height: 16px;
-    }
-
-    .draw-buttons > fast-button {
         width: 30px;
         height: 30px;
     }
@@ -52,8 +35,6 @@ export const styles = css`
 
     .zones-draw-container {
         height: 100%;
-        /* display: inline-grid; */
-        /* grid-template-rows: 508px 0; */
         position: relative;
     }
 
@@ -61,7 +42,6 @@ export const styles = css`
         width: 100%;
         height: calc(100% - 96px);
         position: absolute;
-        /* z-index: 10; */
         padding-bottom: 48px;
         padding-top: 47px;
         display: block;

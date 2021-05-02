@@ -1,13 +1,13 @@
 import { customElement, attr, FASTElement, observable } from '@microsoft/fast-element';
-import { IPoint } from '../../../common/drawer-canvas/drawer-canvas.definitions';
+import { DrawerEvents, IPoint } from '../../../common/drawer-canvas/drawer-canvas.definitions';
 import { guid } from '../../../common/utils/guid';
 import { DrawingColors } from '../../../styles/system-providers/ava-design-system-provider.definitions';
 import { UIActionType } from '../../../web-components/src/actions-menu/actions-menu.definitions';
 import { LayerLabelComponent } from '../../../web-components/src/layer-label/layer-label.component';
-import { ILayerLabelConfig, LayerLabelMode } from '../../../web-components/src/layer-label/layer-label.definitions';
+import { ILayerLabelConfig, LayerLabelEvents, LayerLabelMode } from '../../../web-components/src/layer-label/layer-label.definitions';
 import { LineDrawerComponent } from '../../../web-components/src/line-drawer/line-drawer.component';
 import { PolygonDrawerComponent } from '../../../web-components/src/polygon-drawer/polygon-drawer.component';
-import { ZoneDrawMode, IZone, IZoneDrawWidgetConfig, IZoneOutput } from './zone-draw.definitions';
+import { ZoneDrawMode, IZone, IZoneDrawWidgetConfig, IZoneOutput, ZoneDrawEvents } from './zone-draw.definitions';
 import { styles } from './zone-draw.style';
 import { template } from './zone-draw.template';
 import { ZonesViewComponent } from './../../../web-components/src/zones-view/zones-view.component';
@@ -49,41 +49,23 @@ export class ZoneDrawWidget extends FASTElement {
         super();
     }
 
-    // Only after creation of the template, the canvas element is created and assigned to DOM
     public connectedCallback() {
         super.connectedCallback();
 
         this.isReady = true;
         this.initZoneDrawComponents();
-        window.addEventListener('resize', () => {
-            const rvxContainer = this.shadowRoot.querySelector('.rvx-widget-container');
-            this.labelsList.style.maxHeight = `${rvxContainer.clientHeight}px`;
-        });
 
-        window.addEventListener('labelActionClicked', (e: any) => {
-            console.log(e);
-            switch (e.detail?.type) {
-                case UIActionType.RENAME:
-                    this.renameZone(e.detail.id);
-                    console.log('RENAME');
-                    return;
-                case UIActionType.DELETE:
-                    console.log('DELETE');
-                    this.deleteZone(e.detail.id);
-                    return;
-            }
-        });
+        window.addEventListener('resize', this.resize.bind(this));
+        this.$fastController?.element?.addEventListener(LayerLabelEvents.labelActionClicked, this.labelActionClicked.bind(this));
+        this.$fastController?.element?.addEventListener(LayerLabelEvents.labelTextChanged, this.labelTextChanged.bind(this));
+    }
 
-        window.addEventListener('labelTextChanged', (e: any) => {
-            console.log('labelTextChanged');
-            console.log(e);
-            for (const zone of this.zones) {
-                if (zone.id === e.detail.id) {
-                    zone.name = e.detail.name;
-                    return;
-                }
-            }
-        });
+    public disconnectedCallback() {
+        super.disconnectedCallback();
+
+        window.removeEventListener('resize', this.resize);
+        this.$fastController?.element?.removeEventListener(LayerLabelEvents.labelActionClicked, this.labelActionClicked);
+        this.$fastController?.element?.removeEventListener(LayerLabelEvents.labelTextChanged, this.labelTextChanged);
     }
 
     public configChanged() {
@@ -95,14 +77,12 @@ export class ZoneDrawWidget extends FASTElement {
     }
 
     public lineDrawerConnectedCallback() {
-        console.log('lineDrawerConnectedCallback');
         setTimeout(() => {
             this.initDrawer();
         });
     }
 
     public polygonDrawerConnectedCallback() {
-        console.log('lineDrawerConnectedCallback');
         setTimeout(() => {
             this.initDrawer();
         });
@@ -116,20 +96,10 @@ export class ZoneDrawWidget extends FASTElement {
         this.initZones();
     }
 
-    public close() {
-        console.log('close');
-    }
     public save() {
-        console.log('save');
         const outputs = this.getZonesOutputs();
-        console.log(outputs);
-        this.$emit('zoneDrawComplete', outputs);
-    }
-    public done() {
-        console.log('done');
-        const outputs = this.getZonesOutputs();
-        console.log(outputs);
-        this.$emit('zoneDrawComplete', outputs);
+        console.log('save', outputs);
+        this.$emit(ZoneDrawEvents.Save, outputs);
     }
 
     private initDrawer() {
@@ -141,23 +111,23 @@ export class ZoneDrawWidget extends FASTElement {
 
             this.lineDrawer?.setAttribute('borderColor', this.getNextColor());
 
-            this.lineDrawer?.addEventListener('drawerComplete', this.drawerComplete.bind(this));
+            this.lineDrawer?.addEventListener(DrawerEvents.COMPLETE, this.drawerComplete.bind(this));
         } else {
             // init polygon drawer
             this.polygonDrawer = this.shadowRoot.querySelector('media-polygon-drawer');
 
             this.polygonDrawer?.setAttribute('borderColor', this.getNextColor());
 
-            this.polygonDrawer?.addEventListener('drawerComplete', this.drawerComplete.bind(this));
+            this.polygonDrawer?.addEventListener(DrawerEvents.COMPLETE, this.drawerComplete.bind(this));
         }
     }
 
     private destroyDrawer() {
         if (this.isLineDrawMode) {
-            this.lineDrawer?.removeEventListener('drawerComplete', this.drawerComplete);
+            this.lineDrawer?.removeEventListener(DrawerEvents.COMPLETE, this.drawerComplete);
             this.lineDrawer = null;
         } else {
-            this.polygonDrawer?.removeEventListener('drawerComplete', this.drawerComplete);
+            this.polygonDrawer?.removeEventListener(DrawerEvents.COMPLETE, this.drawerComplete);
             this.polygonDrawer = null;
         }
     }
@@ -167,12 +137,39 @@ export class ZoneDrawWidget extends FASTElement {
         this.createZone([...e.detail]);
     }
 
+    private resize() {
+        const rvxContainer = this.shadowRoot.querySelector('.rvx-widget-container');
+        this.labelsList.style.maxHeight = `${rvxContainer.clientHeight}px`;
+    }
+
+    private labelActionClicked(e: any) {
+        console.log(e);
+
+        switch (e.detail?.type) {
+            case UIActionType.RENAME:
+                this.renameZone(e.detail.id);
+                console.log('RENAME');
+                return;
+            case UIActionType.DELETE:
+                console.log('DELETE');
+                this.deleteZone(e.detail.id);
+                return;
+        }
+    }
+
+    private labelTextChanged(e: any) {
+        console.log(e);
+        for (const zone of this.zones) {
+            if (zone.id === e.detail.id) {
+                zone.name = e.detail.name;
+                return;
+            }
+        }
+    }
+
     public toggleDrawMode() {
         this.destroyDrawer();
         this.isLineDrawMode = !this.isLineDrawMode;
-        // setTimeout(() => {
-        //     this.initDrawer();
-        // }, 50);
     }
 
     private initZones() {
@@ -270,8 +267,6 @@ export class ZoneDrawWidget extends FASTElement {
         const layerLabel = <LayerLabelComponent>li.querySelector('media-layer-label');
         layerLabel.editMode = true;
     }
-
-    private labelActionClicked(e: any) { }
 
     private removeLabel(id: string) {
         const li = this.shadowRoot.getElementById(id);

@@ -9,9 +9,6 @@ import { CLOSE_BIG_SVG_PATH, POLYGON_SVG_PATH, LINE_SVG_PATH } from '../../../st
 /* eslint-disable  @typescript-eslint/indent */
 export const template = html<ZoneDrawWidget>`
     <template>
-        <div class="widget-header">
-            <span>Zone of interest</span>
-        </div>
         <div class="draw-options-container">
             <div class="draw-buttons">
                 <fast-button
@@ -43,21 +40,21 @@ export const template = html<ZoneDrawWidget>`
                     <div class="draw-zone">
                         <media-zones-view></media-zones-view>
                         ${when(
-    (x) => x.showDrawer && x.isReady,
-    html`
+                            (x) => x.showDrawer && x.isReady,
+                            html`
                                 ${(x) => {
-            if (x.isLineDrawMode) {
-                return html`<media-line-drawer
+                                    if (x.isLineDrawMode) {
+                                        return html`<media-line-drawer
                                             connectedCallback="${(x) => x.lineDrawerConnectedCallback()}"
                                         ></media-line-drawer>`;
-            } else {
-                return html`<media-polygon-drawer
+                                    } else {
+                                        return html`<media-polygon-drawer
                                             connectedCallback="${(x) => x.lineDrawerConnectedCallback()}"
                                         ></media-polygon-drawer>`;
-            }
-        }}
+                                    }
+                                }}
                             `
-)}
+                        )}
                     </div>
                 </div>
                 <div class="rvx-widget-container">
@@ -73,9 +70,6 @@ export const template = html<ZoneDrawWidget>`
         <div class="action-buttons">
             <fast-button ?disabled="${(x) => !x.isDirty}" aria-label="Save" title="Save" @click="${(x) => x.save()}">
                 Save
-            </fast-button>
-            <fast-button aria-label="Done" title="Done" @click="${(x) => x.done()}">
-                Done
             </fast-button>
         </div>
     </template>

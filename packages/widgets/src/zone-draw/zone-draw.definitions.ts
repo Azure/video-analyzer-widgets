@@ -23,22 +23,13 @@ export enum ZoneDrawMode {
     Polygon = 'polygon'
 }
 
-export enum ColorsRanking {
-    Red = 0,
-    LightBlue = 1,
-    Yellow = 2,
-    Magenta = 3,
-    Teal = 4,
-    Purple = 5,
-    Lime = 6,
-    Blue = 7,
-    Green = 8,
-    Orange = 9
-}
-
 export interface IZoneOutput {
     '@type': string;
     name: string;
     polygon?: IPoint[];
     line?: IPoint[];
+}
+
+export enum ZoneDrawEvents {
+    Save = 'ZONE_DRAW_SAVE_CLICKED'
 }
