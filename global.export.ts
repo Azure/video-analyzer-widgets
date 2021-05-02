@@ -1,5 +1,6 @@
-import { RVXWidget } from './packages/widgets/src';
+import { RVXWidget, ZoneDrawWidget } from './packages/widgets/src';
 
-window.ava = window.ava || { widgets: { rvx: RVXWidget } };
-window.ava.widgets = window.ava.widgets || { rvx: RVXWidget };
+window.ava = window.ava || { widgets: { rvx: RVXWidget, zoneDraw: ZoneDrawWidget } };
+window.ava.widgets = window.ava.widgets || { rvx: RVXWidget, zoneDraw: ZoneDrawWidget };
 window.ava.widgets.rvx = RVXWidget;
+window.ava.widgets.zoneDraw = ZoneDrawWidget;
