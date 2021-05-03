@@ -20,6 +20,10 @@ export const styles = css`
         height: 30px;
     }
 
+    .draw-zone-title {
+        font-size: 14px;
+    }
+
     .draw-options-container {
         display: inline-flex;
         align-items: center;
