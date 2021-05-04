@@ -23,7 +23,7 @@ export class DrawerCanvas extends CanvasElement {
     private _isDrawCompleted: boolean;
     private _lastMouseX: number = 0;
     private _lastMouseY: number = 0;
-    private _cursors = [CursorTypes.CROSSHAIR, CursorTypes.CROSSHAIR];
+    private _cursors = [CursorTypes.CROSSHAIR, CursorTypes.POINTER];
     private _currentCursor: number = 0;
 
     // Const readyOnly
