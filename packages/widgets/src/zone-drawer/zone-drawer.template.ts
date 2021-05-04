@@ -1,5 +1,5 @@
 import { html, when } from '@microsoft/fast-element';
-import { ZoneDrawWidget } from './zone-draw.widget';
+import { ZoneDrawerWidget } from './zone-drawer.widget';
 import { POLYGON_SVG_PATH, LINE_SVG_PATH } from '../../../styles/svg/svg.shapes';
 
 /**
@@ -7,7 +7,7 @@ import { POLYGON_SVG_PATH, LINE_SVG_PATH } from '../../../styles/svg/svg.shapes'
  * @public
  */
 /* eslint-disable  @typescript-eslint/indent */
-export const template = html<ZoneDrawWidget>`
+export const template = html<ZoneDrawerWidget>`
     <template>
         <div class="draw-options-container">
             <div class="draw-buttons">
@@ -40,21 +40,21 @@ export const template = html<ZoneDrawWidget>`
                     <div class="draw-zone">
                         <media-zones-view></media-zones-view>
                         ${when(
-                            (x) => x.showDrawer && x.isReady,
-                            html`
+    (x) => x.showDrawer && x.isReady,
+    html`
                                 ${(x) => {
-                                    if (x.isLineDrawMode) {
-                                        return html`<media-line-drawer
+            if (x.isLineDrawMode) {
+                return html`<media-line-drawer
                                             connectedCallback="${x.drawerConnectedCallback()}"
                                         ></media-line-drawer>`;
-                                    } else {
-                                        return html`<media-polygon-drawer
+            } else {
+                return html`<media-polygon-drawer
                                             connectedCallback="${x.drawerConnectedCallback()}"
                                         ></media-polygon-drawer>`;
-                                    }
-                                }}
+            }
+        }}
                             `
-                        )}
+)}
                     </div>
                 </div>
                 <div class="rvx-widget-container">

@@ -1,10 +1,10 @@
 import { html, fixture, expect } from '@open-wc/testing';
-import { IZone, IZoneDrawWidgetConfig } from './zone-draw.definitions';
-import { ZoneDrawWidget } from './zone-draw.widget';
+import { IZone, IZoneDrawerWidgetConfig } from './zone-drawer.definitions';
+import { ZoneDrawerWidget } from './zone-drawer.widget';
 
-ZoneDrawWidget;
+ZoneDrawerWidget;
 
-describe('ZoneDrawWidget', () => {
+describe('ZoneDrawerWidget', () => {
     const zones: IZone[] = [
         {
             points: [
@@ -51,18 +51,18 @@ describe('ZoneDrawWidget', () => {
         }
     ];
 
-    const configWithZones: IZoneDrawWidgetConfig = {
+    const configWithZones: IZoneDrawerWidgetConfig = {
         zones: zones
     };
 
     it('passes the a11y audit', async () => {
-        const el = await fixture<ZoneDrawWidget>(html`<zone-draw-widget></zone-draw-widget>`);
+        const el = await fixture<ZoneDrawerWidget>(html`<zone-draw-widget></zone-draw-widget>`);
 
         await expect(el).shadowDom.to.be.accessible();
     });
 
     it('widget zones should equal the config zones length', async () => {
-        const el = await fixture<ZoneDrawWidget>(html`<zone-draw-widget></zone-draw-widget>`);
+        const el = await fixture<ZoneDrawerWidget>(html`<zone-draw-widget></zone-draw-widget>`);
 
         el.config = configWithZones;
         setTimeout(() => {
@@ -71,7 +71,7 @@ describe('ZoneDrawWidget', () => {
     });
 
     it('labels-list elements count should equal the config zones length', async () => {
-        const el = await fixture<ZoneDrawWidget>(html`<zone-draw-widget></zone-draw-widget>`);
+        const el = await fixture<ZoneDrawerWidget>(html`<zone-draw-widget></zone-draw-widget>`);
 
         el.config = configWithZones;
         const labelsList = el.shadowRoot.querySelector('.labels-list');
@@ -81,7 +81,7 @@ describe('ZoneDrawWidget', () => {
     });
 
     it('toggleDrawMode should change isLineDrawMode', async () => {
-        const el = await fixture<ZoneDrawWidget>(html`<zone-draw-widget></zone-draw-widget>`);
+        const el = await fixture<ZoneDrawerWidget>(html`<zone-draw-widget></zone-draw-widget>`);
 
         const isLineDrawMode = el.isLineDrawMode;
         el.toggleDrawMode();

@@ -2,7 +2,7 @@ import { attr, customElement, FASTElement } from '@microsoft/fast-element';
 import { styles } from './zones-view.style';
 import { ZonesCanvas } from './zones-canvas.class';
 import { IZonesOptions } from './zones-view.definitions';
-import { IZone } from '../../../widgets/src/zone-draw/zone-draw.definitions';
+import { IZone } from '../../../widgets/src/zone-drawer/zone-drawer.definitions';
 
 /**
  * An zones view.

@@ -1,5 +1,5 @@
 import { FASTButton, FASTMenu, FASTMenuItem } from '@microsoft/fast-components';
-import { ZoneDrawWidget } from '.';
+import { ZoneDrawerWidget } from '.';
 import { AvaDesignSystemProvider } from '../../../styles';
 import { ZonesViewComponent, LineDrawerComponent, LayerLabelComponent } from '../../../web-components/src';
 import { PolygonDrawerComponent } from '../../../web-components/src/polygon-drawer/polygon-drawer.component';
@@ -11,7 +11,7 @@ interface ITemplate {
 }
 
 // Prevent tree-shaking
-ZoneDrawWidget;
+ZoneDrawerWidget;
 AvaDesignSystemProvider;
 FASTButton;
 ZonesViewComponent;
@@ -21,16 +21,16 @@ LayerLabelComponent;
 FASTMenu;
 FASTMenuItem;
 
-const ZoneDrawWidgetTemplate = (data: ITemplate) => {
+const ZoneDrawerWidgetTemplate = (data: ITemplate) => {
     const designSystem = document.createElement('ava-design-system-provider') as AvaDesignSystemProvider;
-    const zonesDraw = document.createElement('zone-draw-widget') as ZoneDrawWidget;
+    const zonesDraw = document.createElement('zone-draw-widget') as ZoneDrawerWidget;
 
     designSystem.theme = data.darkTheme ? 'dark' : '';
     designSystem.appendChild(zonesDraw);
     return designSystem;
 };
 
-export const ZoneDraw = (args: ITemplate) => ZoneDrawWidgetTemplate(args);
+export const ZoneDraw = (args: ITemplate) => ZoneDrawerWidgetTemplate(args);
 
 export default {
     title: 'Zone Draw Widget',

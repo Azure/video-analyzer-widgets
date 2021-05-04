@@ -1,4 +1,4 @@
-import { customElement, attr, FASTElement, observable } from '@microsoft/fast-element';
+import { customElement, attr, observable } from '@microsoft/fast-element';
 import { DrawerEvents, IPoint } from '../../../common/drawer-canvas/drawer-canvas.definitions';
 import { guid } from '../../../common/utils/guid';
 import { DrawingColors } from '../../../styles/system-providers/ava-design-system-provider.definitions';
@@ -7,20 +7,22 @@ import { LayerLabelComponent } from '../../../web-components/src/layer-label/lay
 import { ILayerLabelConfig, LayerLabelEvents, LayerLabelMode } from '../../../web-components/src/layer-label/layer-label.definitions';
 import { LineDrawerComponent } from '../../../web-components/src/line-drawer/line-drawer.component';
 import { PolygonDrawerComponent } from '../../../web-components/src/polygon-drawer/polygon-drawer.component';
-import { ZoneDrawMode, IZone, IZoneDrawWidgetConfig, IZoneOutput, ZoneDrawEvents } from './zone-draw.definitions';
-import { styles } from './zone-draw.style';
-import { template } from './zone-draw.template';
-import { ZonesViewComponent } from './../../../web-components/src/zones-view/zones-view.component';
+import { IZone, IZoneDrawerWidgetConfig, ZoneDrawerWidgetEvents, IZoneOutput, ILineZone, IPolygonZone, ZoneDrawerMode } from './zone-drawer.definitions';
+import { styles } from './zone-drawer.style';
+import { template } from './zone-drawer.template';
+import { ZonesViewComponent } from '../../../web-components/src/zones-view/zones-view.component';
 import { DELETE_SVG_PATH, RENAME_SVG_PATH } from '../../../styles/svg/svg.shapes';
+import { BaseWidget } from '../base-widget/base-widget';
 
 @customElement({
-    name: 'zone-draw-widget',
+    name: 'zone-drawer-widget',
     template,
     styles
 })
-export class ZoneDrawWidget extends FASTElement {
+export class ZoneDrawerWidget extends BaseWidget {
+    /* override */
     @attr
-    public config: IZoneDrawWidgetConfig;
+    public config: IZoneDrawerWidgetConfig;
 
     @observable
     public zones: IZone[] = [];
@@ -35,8 +37,6 @@ export class ZoneDrawWidget extends FASTElement {
     @observable
     public isLabelsListEmpty = true;
 
-    public zoneDrawMode = ZoneDrawMode.Line;
-
     private readonly MAX_ZONES = 10;
 
     private zonesView: ZonesViewComponent;
@@ -45,9 +45,9 @@ export class ZoneDrawWidget extends FASTElement {
     private labelsList: HTMLElement;
     private labelListIndex = 1;
 
-    public constructor() {
-        super();
-    }
+    /* public constructor() {
+        super()
+    } */
 
     public connectedCallback() {
         super.connectedCallback();
@@ -84,9 +84,8 @@ export class ZoneDrawWidget extends FASTElement {
 
     public save() {
         const outputs = this.getZonesOutputs();
-        /* eslint-disable-next-line  no-console */
-        console.log('save', outputs);
-        this.$emit(ZoneDrawEvents.Save, outputs);
+        console.log(outputs);
+        this.$emit(ZoneDrawerWidgetEvents.SAVE, outputs);
     }
 
     public toggleDrawMode() {
@@ -99,7 +98,7 @@ export class ZoneDrawWidget extends FASTElement {
             this.labelsList = this.shadowRoot.querySelector('.labels-list');
         }
 
-        this.initZones();
+        this.init();
     }
 
     private initDrawer() {
@@ -164,7 +163,8 @@ export class ZoneDrawWidget extends FASTElement {
         }
     }
 
-    private initZones() {
+    // @override
+    protected init() {
         if (this.config) {
             for (const zone of this.config.zones) {
                 this.addZone(zone);
@@ -216,11 +216,14 @@ export class ZoneDrawWidget extends FASTElement {
 
         this.isLabelsListEmpty = false;
         this.isDirty = true;
-
+        const output = this.getZoneOutputByType(zone.name, zone.points);
+        console.log(output);
+        this.$emit(ZoneDrawerWidgetEvents.ADDED_ZONE, output);
         this.addLabel(zone);
     }
 
     private deleteZone(id: string) {
+        const deletedZone = this.zones.find((zone) => zone.id === id);
         this.zones = this.zones.filter((zone) => zone.id !== id);
         this.zonesView.zones = [...this.zones];
         this.removeLabel(id);
@@ -229,10 +232,13 @@ export class ZoneDrawWidget extends FASTElement {
         if (!this.showDrawer) {
             this.showDrawer = true;
         }
+        const output = this.getZoneOutputByType(deletedZone.name, deletedZone.points);
+        console.log(output);
+        this.$emit(ZoneDrawerWidgetEvents.REMOVED_ZONE, output);
     }
 
     private getNewZoneName(): string {
-        return `${this.isLineDrawMode ? 'Line' : 'Zone'} ${this.labelListIndex++}`;
+        return `${this.isLineDrawMode ? ZoneDrawerMode.Line : ZoneDrawerMode.Polygon} ${this.labelListIndex++}`;
     }
 
     private getNextColor(): string {
@@ -289,22 +295,37 @@ export class ZoneDrawWidget extends FASTElement {
     private getZonesOutputs(): IZoneOutput[] {
         const outputs: IZoneOutput[] = [];
         for (const zone of this.zones) {
-            const output: IZoneOutput = {
-                '@type': '#Microsoft.VideoAnalyzer',
-                name: zone.name
-            };
-
+            let output: ILineZone | IPolygonZone;
             if (zone.points.length === 2) {
-                output['@type'] += '.NamedLineString';
-                output.line = zone.points;
+                // ILineZone
+                output = this.getZoneOutputByType(zone.name, zone.points);
             } else {
-                output['@type'] += '.NamedPolygonString';
-                output.polygon = zone.points;
+                // IPolygonZone
+                output = this.getZoneOutputByType(zone.name, zone.points);
             }
-
             outputs.push(output);
         }
-
         return outputs;
+    }
+
+    private getZoneOutputByType(name: any, points: IPoint[]): ILineZone | IPolygonZone {
+        let output: ILineZone | IPolygonZone;
+        switch (name) {
+            case ZoneDrawerMode.Line:
+                output = {
+                    '@type': '#Microsoft.VideoAnalyzer.NamedLineString',
+                    name: name,
+                    line: points
+                }
+                break;
+            case ZoneDrawerMode.Polygon:
+                output = {
+                    '@type': '#Microsoft.VideoAnalyzer.NamedPolygonString',
+                    name: name,
+                    line: points
+                }
+                break;
+        }
+        return output;
     }
 }
