@@ -11,6 +11,8 @@ export const styles = css`
         --density: 4;
         --design-unit: 2;
         --base-height-multiplier: 12;
+        height: auto;
+        padding-bottom: calc(48px + 43px);
     }
 
     ${stylesShaka}

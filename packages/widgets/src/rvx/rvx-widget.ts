@@ -7,7 +7,7 @@ import { MediaApi } from '../../../common/services/media/media-api.class';
 import { template } from './rvx-widget.template';
 import { styles } from './rvx-widget.style';
 import { PlayerComponent } from '../../../web-components/src/rvx-player';
-import { ISource } from '../../../web-components/src/rvx-player/rvx-player.definitions';
+import { ControlPanelElements, ISource } from '../../../web-components/src/rvx-player/rvx-player.definitions';
 
 @customElement({
     name: 'ava-player',
@@ -18,6 +18,7 @@ export class Player extends BaseWidget {
     @attr public config: IAvaPlayerConfig;
     private loaded = false;
     private source: ISource = null;
+    private allowedControllers: ControlPanelElements[] = null;
 
     public constructor(config: IAvaPlayerConfig) {
         super(config);
@@ -54,7 +55,7 @@ export class Player extends BaseWidget {
         MediaApi.baseStream = this.source.src;
         if (this.loaded) {
             const rvxPlayer: PlayerComponent = this.shadowRoot.querySelector('rvx-player');
-            rvxPlayer.init(this.source.allowCrossSiteCredentials, this.source.authenticationToken);
+            rvxPlayer.init(this.source.allowCrossSiteCredentials, this.source.authenticationToken, this.allowedControllers);
         }
     }
 
@@ -74,7 +75,7 @@ export class Player extends BaseWidget {
 
         // If set source state
         if (this.source) {
-            rvxPlayer.init(this.source.allowCrossSiteCredentials, this.source.authenticationToken);
+            rvxPlayer.init(this.source.allowCrossSiteCredentials, this.source.authenticationToken, this.allowedControllers);
             return;
         }
         // Configuration state - work with AVA API
@@ -92,7 +93,7 @@ export class Player extends BaseWidget {
                         // Authorize video
                         await AvaAPi.authorize();
 
-                        rvxPlayer.init();
+                        rvxPlayer.init(true, '', this.allowedControllers);
                     }
                 })
                 .catch((error: Error) => {
@@ -115,6 +116,7 @@ export class Player extends BaseWidget {
         AvaAPi.accountID = this.config?.accountId;
         AvaAPi.longRegionCode = this.config?.longRegionCode;
         AvaAPi.videoName = this.config?.videoName;
+        this.allowedControllers = this.config.playerControllers;
     }
 
     private handelFallback() {
@@ -126,7 +128,7 @@ export class Player extends BaseWidget {
 
     private initPlayer() {
         const rvxPlayer: PlayerComponent = this.shadowRoot.querySelector('rvx-player');
-        rvxPlayer.init();
+        rvxPlayer.init(true, '', this.allowedControllers);
     }
 
     private tokenExpiredCallback() {

@@ -64,7 +64,7 @@ export const darkColorsStyle: ElementStyles = css`
         --segments-color: #605e5c;
         --segments-tooltip: #323130;
         --segments-tooltip-text: #f7f7f7;
-        --segments-active-color: white;
+        --segments-active-color: #e1dfdd;
 
         /* Time Ruler */
         --ruler-small-scale-color: #8a8886;

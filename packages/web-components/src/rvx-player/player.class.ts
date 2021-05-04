@@ -5,20 +5,12 @@ import { WidgetGeneralError } from '../../../widgets/src';
 import { IUISegment } from '../segments-timeline/segments-timeline.definitions';
 import { TimelineComponent } from '../timeline';
 import { TimelineEvents } from '../timeline/timeline.definitions';
+import { ControlPanelElements } from './rvx-player.definitions';
 import { shaka as shaka_player } from './shaka';
+import { AVAPlayerUILayer } from './UI/ava-ui-layer.class';
 import { BoundingBoxDrawer } from './UI/bounding-box.class';
-import { ForwardButton, FullscreenButton, MuteButton, OverflowMenu, PlayButton, RewindButton } from './UI/buttons.class';
-import {
-    BodyTrackingButtonFactory,
-    ForwardButtonFactory,
-    FullscreenButtonFactory,
-    LiveButtonFactory,
-    MuteButtonFactory,
-    OverflowMenuFactory,
-    PlayButtonFactory,
-    RewindButtonFactory
-} from './UI/buttons.factory';
 const shaka = require('shaka-player/dist/shaka-player.ui.debug.js');
+
 export class PlayerWrapper {
     private isLive = false; // TODO : when RTSP plugin will be ready, set to true
     private _accessToken = '';
@@ -33,13 +25,15 @@ export class PlayerWrapper {
     private segmentIndex: shaka_player.media.SegmentIndex;
     private segmentReferences: shaka_player.media.SegmentReference[];
     private onSegmentChangeListenerRef: (event: CustomEvent) => void;
+    private avaUILayer: AVAPlayerUILayer;
 
     public constructor(
         private video: HTMLVideoElement,
         private videoContainer: HTMLElement,
         private _liveStream: string,
         private _vodStream: string,
-        private timeUpdateCallback: (time: string) => void
+        private timeUpdateCallback: (time: string) => void,
+        private allowedControllers: ControlPanelElements[]
     ) {
         // Install built-in polyfills to patch browser incompatibilities.
         shaka.polyfill.installAll();
@@ -133,8 +127,8 @@ export class PlayerWrapper {
         // this.controls.elements_[5].isLive = this.isLive;
         // this.controls.elements_[5].button_.classList.add(this.isLive ? 'live-on' : 'live-off');
         // this.controls.elements_[5].button_.classList.remove(this.isLive ? 'live-off' : 'live-on');
-        // this.controls.controlsContainer_.classList.add(this.isLive ? 'live-on' : 'live-off');
-        // this.controls.controlsContainer_.classList.remove(this.isLive ? 'live-off' : 'live-on');
+        this.controls.controlsContainer_.classList.add(this.isLive ? 'live-on' : 'live-off');
+        this.controls.controlsContainer_.classList.remove(this.isLive ? 'live-off' : 'live-on');
     }
 
     private removeTimelineComponent() {
@@ -217,48 +211,6 @@ export class PlayerWrapper {
         }
     }
 
-    private createButton() {
-        return document.createElement('fast-button');
-    }
-
-    private addUILayer() {
-        shaka.util.Dom.createButton = this.createButton;
-
-        shaka.ui.PlayButton = PlayButton;
-        shaka.ui.PlayButton.Factory = PlayButtonFactory;
-        shaka.ui.Controls.registerElement('play_pause', new shaka.ui.PlayButton.Factory());
-
-        shaka.ui.FastForwardButton = ForwardButton;
-        shaka.ui.FastForwardButton.Factory = ForwardButtonFactory;
-        shaka.ui.Controls.registerElement('fast_forward', new shaka.ui.FastForwardButton.Factory());
-
-        shaka.ui.RewindButton = RewindButton;
-        shaka.ui.RewindButton.Factory = RewindButtonFactory;
-        shaka.ui.Controls.registerElement('rewind', new shaka.ui.RewindButton.Factory());
-
-        shaka.ui.FullscreenButton = FullscreenButton;
-        shaka.ui.FullscreenButton.Factory = FullscreenButtonFactory;
-        shaka.ui.Controls.registerElement('fullscreen', new shaka.ui.FullscreenButton.Factory());
-
-        shaka.ui.MuteButton = MuteButton;
-        shaka.ui.MuteButton.Factory = MuteButtonFactory;
-        shaka.ui.Controls.registerElement('mute', new shaka.ui.MuteButton.Factory());
-
-        shaka.ui.OverflowMenu = OverflowMenu;
-        shaka.ui.OverflowMenu.Factory = OverflowMenuFactory;
-        shaka.ui.Controls.registerElement('overflow_menu', new shaka.ui.OverflowMenu.Factory());
-
-        LiveButtonFactory.callBack = async (isLive: boolean) => {
-            this.toggleLiveMode(isLive);
-        };
-        shaka.ui.Controls.registerElement('live', new LiveButtonFactory());
-
-        BodyTrackingButtonFactory.callBack = (isOn: boolean) => {
-            this.toggleBodyTracking(isOn);
-        };
-        shaka.ui.Controls.registerElement('bodyTracking', new BodyTrackingButtonFactory());
-    }
-
     private toggleBodyTracking(isOn: boolean) {
         if (isOn) {
             this.addBoundingBoxLayer();
@@ -268,40 +220,22 @@ export class PlayerWrapper {
     }
 
     private async init() {
-        this.addUILayer();
+        this.avaUILayer = new AVAPlayerUILayer(
+            shaka,
+            this.toggleLiveMode.bind(this),
+            this.toggleBodyTracking.bind(this),
+            this.allowedControllers
+        );
 
         // Getting reference to video and video container on DOM
         // Initialize shaka player
         this.player = new shaka.Player(this.video);
 
-        const uiConfig = {
-            controlPanelElements: [
-                'rewind',
-                'play_pause',
-                'fast_forward',
-                // 'live', // TODO : add after RTSP plugin
-                'mute',
-                'volume',
-                // 'time_and_duration',
-                'spacer',
-                'bodyTracking',
-                'overflow_menu',
-                'fullscreen'
-            ],
-            addBigPlayButton: false,
-            overflowMenuButtons: ['playback_rate', 'captions', 'quality', 'language', 'cast'],
-            seekBarColors: {
-                base: 'rgba(255, 255, 255, 0.3)',
-                buffered: 'rgba(0, 255, 255, 0.54)',
-                played: '#F3F2F1'
-            }
-        };
-
         // Set up authentication handler
         this.player.getNetworkingEngine().registerRequestFilter(this.authenticationHandler.bind(this));
         // Setting up shaka player UI
         const ui = new shaka.ui.Overlay(this.player, this.videoContainer, this.video);
-        ui.configure(uiConfig);
+        ui.configure(this.avaUILayer.uiConfiguration);
         this.controls = ui.getControls();
         this.controls.bottomControls_.insertBefore(
             this.controls.bottomControls_.childNodes[2],
@@ -397,7 +331,7 @@ export class PlayerWrapper {
         const reference = this.segmentIndex.get(index);
         if (reference) {
             this.timestampOffset = reference.timestampOffset * -1000;
-            this.controls.addEventListener('timeandseekrangeupdated', this.onTimeSeekUpdate.bind(this));
+            this.video.addEventListener('timeupdate', this.onTimeSeekUpdate.bind(this));
         }
 
         // If not live mode, init timeline
@@ -410,7 +344,7 @@ export class PlayerWrapper {
     }
 
     private onTimeSeekUpdate() {
-        const displayTime = this.controls.getDisplayTime();
+        const displayTime = this.video.currentTime;
         const time = this.computeClock(displayTime);
         this.timeUpdateCallback(time);
 

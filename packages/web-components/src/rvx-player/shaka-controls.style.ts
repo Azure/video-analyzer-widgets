@@ -157,7 +157,6 @@ export const stylesShaka = css`
         bottom: 0;
         /* opacity: 0; */
         transition: opacity cubic-bezier(0.4, 0, 0.6, 1) 0.6s;
-        background: linear-gradient(to top, #000 0, rgba(0, 0, 0, 0) 15%);
     }
     .shaka-controls-container[casting='true'] .shaka-scrim-container,
     .shaka-controls-container[shown='true'] .shaka-scrim-container {

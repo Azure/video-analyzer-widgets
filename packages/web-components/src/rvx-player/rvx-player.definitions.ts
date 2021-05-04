@@ -13,3 +13,16 @@ export interface ISource {
     // Source Url
     src: string;
 }
+
+export enum ControlPanelElements {
+    REWIND = 'rewind',
+    PLAY_PAUSE = 'play_pause',
+    FAST_FORWARD = 'fast_forward',
+    // LIVE = 'live',
+    MUTE = 'mute',
+    VOLUME = 'volume',
+    SPACER = 'spacer',
+    BODY_TRACKING = 'body_tracking',
+    OVERFLOW_MENU = 'overflow_menu',
+    FULLSCREEN = 'fullscreen'
+}
