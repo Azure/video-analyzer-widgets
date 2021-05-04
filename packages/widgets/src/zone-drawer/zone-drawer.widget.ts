@@ -4,10 +4,16 @@ import { guid } from '../../../common/utils/guid';
 import { DrawingColors } from '../../../styles/system-providers/ava-design-system-provider.definitions';
 import { UIActionType } from '../../../web-components/src/actions-menu/actions-menu.definitions';
 import { LayerLabelComponent } from '../../../web-components/src/layer-label/layer-label.component';
-import { ILayerLabelConfig, LayerLabelEvents, LayerLabelMode } from '../../../web-components/src/layer-label/layer-label.definitions';
+import {
+    ILayerLabelConfig, ILayerLabelOutputEvent,
+    LayerLabelEvents, LayerLabelMode
+} from '../../../web-components/src/layer-label/layer-label.definitions';
 import { LineDrawerComponent } from '../../../web-components/src/line-drawer/line-drawer.component';
 import { PolygonDrawerComponent } from '../../../web-components/src/polygon-drawer/polygon-drawer.component';
-import { IZone, IZoneDrawerWidgetConfig, ZoneDrawerWidgetEvents, IZoneOutput, ILineZone, IPolygonZone, ZoneDrawerMode } from './zone-drawer.definitions';
+import {
+    IZone, IZoneDrawerWidgetConfig, ZoneDrawerWidgetEvents,
+    IZoneOutput, ILineZone, IPolygonZone, ZoneDrawerMode
+} from './zone-drawer.definitions';
 import { styles } from './zone-drawer.style';
 import { template } from './zone-drawer.template';
 import { ZonesViewComponent } from '../../../web-components/src/zones-view/zones-view.component';
@@ -45,8 +51,8 @@ export class ZoneDrawerWidget extends BaseWidget {
     private labelsList: HTMLElement;
     private labelListIndex = 1;
 
-    public constructor() {
-        super();
+    public constructor(config: IZoneDrawerWidgetConfig) {
+        super(config);
     }
 
     public connectedCallback() {
@@ -57,7 +63,8 @@ export class ZoneDrawerWidget extends BaseWidget {
 
         window.addEventListener('resize', this.resize.bind(this));
         this.$fastController?.element?.addEventListener(LayerLabelEvents.labelActionClicked, this.labelActionClicked.bind(this));
-        this.$fastController?.element?.addEventListener(LayerLabelEvents.labelTextChanged, this.labelTextChanged.bind(this));
+        // eslint-disable-next-line no-undef
+        this.$fastController?.element?.addEventListener(LayerLabelEvents.labelTextChanged, this.labelTextChanged.bind(this) as EventListener);
     }
 
     public disconnectedCallback() {
@@ -65,7 +72,8 @@ export class ZoneDrawerWidget extends BaseWidget {
 
         window.removeEventListener('resize', this.resize);
         this.$fastController?.element?.removeEventListener(LayerLabelEvents.labelActionClicked, this.labelActionClicked);
-        this.$fastController?.element?.removeEventListener(LayerLabelEvents.labelTextChanged, this.labelTextChanged);
+        // eslint-disable-next-line no-undef
+        this.$fastController?.element?.removeEventListener(LayerLabelEvents.labelTextChanged, this.labelTextChanged as EventListener);
     }
 
     public configChanged() {
@@ -92,6 +100,24 @@ export class ZoneDrawerWidget extends BaseWidget {
         this.isLineDrawMode = !this.isLineDrawMode;
     }
 
+    // @override
+    protected init() {
+        if (this.config) {
+            for (const zone of this.config.zones) {
+                this.addZone(zone);
+            }
+        }
+
+        this.isDirty = false;
+        if (!this.zonesView) {
+            this.zonesView = this.shadowRoot.querySelector('media-zones-view');
+        }
+
+        if (this.zones.length) {
+            this.zonesView.zones = [...this.zones];
+        }
+    }
+
     private initZoneDrawComponents() {
         if (!this.labelsList) {
             this.labelsList = this.shadowRoot.querySelector('.labels-list');
@@ -108,30 +134,32 @@ export class ZoneDrawerWidget extends BaseWidget {
             this.lineDrawer = this.shadowRoot.querySelector('media-line-drawer');
 
             this.lineDrawer?.setAttribute('borderColor', this.getNextColor());
-
-            this.lineDrawer?.addEventListener(DrawerEvents.COMPLETE, this.drawerComplete.bind(this));
+            // eslint-disable-next-line no-undef
+            this.lineDrawer?.addEventListener(DrawerEvents.COMPLETE, this.drawerComplete.bind(this) as EventListener);
         } else {
             // init polygon drawer
             this.polygonDrawer = this.shadowRoot.querySelector('media-polygon-drawer');
 
             this.polygonDrawer?.setAttribute('borderColor', this.getNextColor());
-
-            this.polygonDrawer?.addEventListener(DrawerEvents.COMPLETE, this.drawerComplete.bind(this));
+            // eslint-disable-next-line no-undef
+            this.polygonDrawer?.addEventListener(DrawerEvents.COMPLETE, this.drawerComplete.bind(this) as EventListener);
         }
     }
 
     private destroyDrawer() {
         if (this.isLineDrawMode) {
-            this.lineDrawer?.removeEventListener(DrawerEvents.COMPLETE, this.drawerComplete);
+            // eslint-disable-next-line no-undef
+            this.lineDrawer?.removeEventListener(DrawerEvents.COMPLETE, this.drawerComplete as EventListener);
             this.lineDrawer = null;
         } else {
-            this.polygonDrawer?.removeEventListener(DrawerEvents.COMPLETE, this.drawerComplete);
+            // eslint-disable-next-line no-undef
+            this.polygonDrawer?.removeEventListener(DrawerEvents.COMPLETE, this.drawerComplete as EventListener);
             this.polygonDrawer = null;
         }
     }
 
     /* eslint-disable-next-line  @typescript-eslint/no-explicit-any */
-    private drawerComplete(e: any) {
+    private drawerComplete(e: CustomEvent<IPoint[]>) {
         this.createZone([...e.detail]);
     }
 
@@ -153,30 +181,12 @@ export class ZoneDrawerWidget extends BaseWidget {
     }
 
     /* eslint-disable-next-line  @typescript-eslint/no-explicit-any */
-    private labelTextChanged(e: any) {
+    private labelTextChanged(e: CustomEvent<ILayerLabelOutputEvent>) {
         for (const zone of this.zones) {
             if (zone.id === e.detail.id) {
                 zone.name = e.detail.name;
                 return;
             }
-        }
-    }
-
-    // @override
-    protected init() {
-        if (this.config) {
-            for (const zone of this.config.zones) {
-                this.addZone(zone);
-            }
-        }
-
-        this.isDirty = false;
-        if (!this.zonesView) {
-            this.zonesView = this.shadowRoot.querySelector('media-zones-view');
-        }
-
-        if (this.zones.length) {
-            this.zonesView.zones = [...this.zones];
         }
     }
 
@@ -307,7 +317,7 @@ export class ZoneDrawerWidget extends BaseWidget {
         return outputs;
     }
 
-    private getZoneOutputByType(type: ZoneDrawerMode, name: any, points: IPoint[]): ILineZone | IPolygonZone {
+    private getZoneOutputByType(type: ZoneDrawerMode, name: string, points: IPoint[]): ILineZone | IPolygonZone {
         let output: ILineZone | IPolygonZone;
         switch (type) {
             case ZoneDrawerMode.Line:
@@ -315,14 +325,14 @@ export class ZoneDrawerWidget extends BaseWidget {
                     '@type': '#Microsoft.VideoAnalyzer.NamedLineString',
                     name: name,
                     line: points
-                }
+                };
                 break;
             case ZoneDrawerMode.Polygon:
                 output = {
                     '@type': '#Microsoft.VideoAnalyzer.NamedPolygonString',
                     name: name,
                     line: points
-                }
+                };
                 break;
         }
         return output;
