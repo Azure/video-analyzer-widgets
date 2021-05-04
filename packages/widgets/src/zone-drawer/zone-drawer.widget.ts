@@ -95,14 +95,14 @@ export class ZoneDrawerWidget extends BaseWidget {
         this.$emit(ZoneDrawerWidgetEvents.SAVE, outputs);
     }
 
-    public toggleDrawMode() {
+    public toggleDrawerMode() {
         this.destroyDrawer();
         this.isLineDrawMode = !this.isLineDrawMode;
     }
 
     // @override
     protected init() {
-        if (this.config) {
+        if (this.config && this.config.zones) {
             for (const zone of this.config.zones) {
                 this.addZone(zone);
             }

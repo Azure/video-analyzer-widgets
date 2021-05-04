@@ -56,13 +56,13 @@ describe('ZoneDrawerWidget', () => {
     };
 
     it('passes the a11y audit', async () => {
-        const el = await fixture<ZoneDrawerWidget>(html`<zone-draw-widget></zone-draw-widget>`);
+        const el = await fixture<ZoneDrawerWidget>(html`<zone-drawer-widget></zone-drawer-widget>`);
 
         await expect(el).shadowDom.to.be.accessible();
     });
 
     it('widget zones should equal the config zones length', async () => {
-        const el = await fixture<ZoneDrawerWidget>(html`<zone-draw-widget></zone-draw-widget>`);
+        const el = await fixture<ZoneDrawerWidget>(html`<zone-drawer-widget></zone-drawer-widget>`);
 
         el.config = configWithZones;
         setTimeout(() => {
@@ -71,7 +71,7 @@ describe('ZoneDrawerWidget', () => {
     });
 
     it('labels-list elements count should equal the config zones length', async () => {
-        const el = await fixture<ZoneDrawerWidget>(html`<zone-draw-widget></zone-draw-widget>`);
+        const el = await fixture<ZoneDrawerWidget>(html`<zone-drawer-widget></zone-drawer-widget>`);
 
         el.config = configWithZones;
         const labelsList = el.shadowRoot.querySelector('.labels-list');
@@ -80,11 +80,11 @@ describe('ZoneDrawerWidget', () => {
         });
     });
 
-    it('toggleDrawMode should change isLineDrawMode', async () => {
-        const el = await fixture<ZoneDrawerWidget>(html`<zone-draw-widget></zone-draw-widget>`);
+    it('toggleDrawerMode should change isLineDrawMode', async () => {
+        const el = await fixture<ZoneDrawerWidget>(html`<zone-drawer-widget></zone-drawer-widget>`);
 
         const isLineDrawMode = el.isLineDrawMode;
-        el.toggleDrawMode();
+        el.toggleDrawerMode();
         expect(el.isLineDrawMode).to.equal(!isLineDrawMode);
     });
 });
