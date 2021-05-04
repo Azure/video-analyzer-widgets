@@ -71,9 +71,6 @@ export const defaultColorsStyle: ElementStyles = css`
         --ruler-text-color: #444444;
         --ruler-time-color: #c8c6c4;
 
-        /* Drawer Canvas */
-        --drawer-default-line-color: #db4646;
-
         /* Date picker */
         --date-picker-holder-bg: #252423;
         --date-picker-text-color: #f3f2f1;
@@ -88,5 +85,17 @@ export const defaultColorsStyle: ElementStyles = css`
         --date-picker-divider-color: #484644;
         --date-picker-holder-box-shadow-1: rgba(0, 0, 0, 0.1);
         --date-picker-holder-box-shadow-2: rgba(0, 0, 0, 0.13);
+
+        /* Layer Label */
+        --layer-label-bg: rgba(17, 16, 15, 0.9);
+        --layer-label-color: #f3f2f1;
+
+        /* Actions Menu */
+        --actions-menu-bg: rgba(17, 16, 15, 0.9);
+        --actions-menu-color: #f3f2f1;
+
+        /* Drawer Canvas */
+        --drawer-line-color: #db4646;
+        --drawer-fill-color: rgba(219, 70, 70, 0.4);
     }
 `;
