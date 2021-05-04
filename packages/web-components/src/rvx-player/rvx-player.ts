@@ -130,6 +130,14 @@ export class PlayerComponent extends FASTElement {
         });
     }
 
+    public play() {
+        this.player?.play();
+    }
+
+    public pause() {
+        this.player?.pause();
+    }
+
     public async connectedCallback() {
         super.connectedCallback();
 

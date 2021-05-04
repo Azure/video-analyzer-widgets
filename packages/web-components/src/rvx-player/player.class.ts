@@ -78,6 +78,10 @@ export class PlayerWrapper {
         return this._mimeType;
     }
 
+    public pause() {
+        this.video.pause();
+    }
+
     public play() {
         this.video.play();
     }

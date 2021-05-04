@@ -34,6 +34,16 @@ export class Player extends BaseWidget {
         }
     }
 
+    public play() {
+        const rvxPlayer: PlayerComponent = this.shadowRoot.querySelector('rvx-player');
+        rvxPlayer.play();
+    }
+
+    public pause() {
+        const rvxPlayer: PlayerComponent = this.shadowRoot.querySelector('rvx-player');
+        rvxPlayer.pause();
+    }
+
     public configure(config: IAvaPlayerConfig) {
         this.config = config;
         this.init();
