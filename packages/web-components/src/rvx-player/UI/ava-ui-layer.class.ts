@@ -4,10 +4,13 @@ import {
     BodyTrackingButtonFactory,
     ForwardButtonFactory,
     FullscreenButtonFactory,
+    HoursLabelFactory,
     LiveButtonFactory,
     MuteButtonFactory,
+    NextDayButtonFactory,
     OverflowMenuFactory,
     PlayButtonFactory,
+    PrevDayButtonFactory,
     RewindButtonFactory
 } from './buttons.factory';
 
@@ -24,6 +27,9 @@ export class AVAPlayerUILayer {
             // 'live', // TODO : add after RTSP plugin
             ControlPanelElements.MUTE,
             ControlPanelElements.VOLUME,
+            ControlPanelElements.PREVIOUS_DAY,
+            ControlPanelElements.NEXT_DAY,
+            ControlPanelElements.HOURS_LABEL,
             ControlPanelElements.SPACER,
             ControlPanelElements.BODY_TRACKING,
             ControlPanelElements.OVERFLOW_MENU,
@@ -43,6 +49,8 @@ export class AVAPlayerUILayer {
         private shaka: any,
         private toggleLiveMode: (isLive: boolean) => void,
         private toggleBodyTracking: (isOn: boolean) => void,
+        private nextDayCallBack: () => void,
+        private prevDayCallBack: () => void,
         private allowedControllers: ControlPanelElements[]
     ) {
         this.createControllers();
@@ -112,6 +120,18 @@ export class AVAPlayerUILayer {
             this.toggleBodyTracking(isOn);
         };
         this.shaka.ui.Controls.registerElement(ControlPanelElements.BODY_TRACKING, new BodyTrackingButtonFactory());
+
+        NextDayButtonFactory.callBack = () => {
+            this.nextDayCallBack();
+        };
+        this.shaka.ui.Controls.registerElement(ControlPanelElements.NEXT_DAY, new NextDayButtonFactory());
+
+        PrevDayButtonFactory.callBack = () => {
+            this.prevDayCallBack();
+        };
+        this.shaka.ui.Controls.registerElement(ControlPanelElements.PREVIOUS_DAY, new PrevDayButtonFactory());
+
+        this.shaka.ui.Controls.registerElement(ControlPanelElements.HOURS_LABEL, new HoursLabelFactory());
     }
 
     private createButton() {

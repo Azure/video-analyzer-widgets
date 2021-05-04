@@ -1,4 +1,4 @@
-import { BodyTracking, LiveButton } from './buttons.class';
+import { BodyTracking, HoursLabel, LiveButton, NextDayButton, PrevDayButton } from './buttons.class';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const shaka = require('shaka-player/dist/shaka-player.ui.debug.js');
@@ -50,5 +50,25 @@ export class BodyTrackingButtonFactory {
     public static callBack: (isOn: boolean) => void;
     public create(rootElement: any, controls: any) {
         return new BodyTracking(rootElement, controls, BodyTrackingButtonFactory.callBack);
+    }
+}
+
+export class NextDayButtonFactory {
+    public static callBack: () => void;
+    public create(rootElement: any, controls: any) {
+        return new NextDayButton(rootElement, controls, NextDayButtonFactory.callBack);
+    }
+}
+
+export class PrevDayButtonFactory {
+    public static callBack: () => void;
+    public create(rootElement: any, controls: any) {
+        return new PrevDayButton(rootElement, controls, PrevDayButtonFactory.callBack);
+    }
+}
+
+export class HoursLabelFactory {
+    public create(rootElement: any, controls: any) {
+        return new HoursLabel(rootElement, controls);
     }
 }

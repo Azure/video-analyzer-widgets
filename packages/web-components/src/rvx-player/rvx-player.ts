@@ -162,6 +162,14 @@ export class PlayerComponent extends FASTElement {
             this.classList.remove(!this.isLive ? 'live-on' : 'live-off');
         }) as EventListener);
 
+        document.addEventListener('player_next_day', () => {
+            this.selectNextDay();
+        });
+
+        document.addEventListener('player_prev_day', () => {
+            this.selectPrevDay();
+        });
+
         this.datePickerComponent = this.shadowRoot?.querySelector('media-date-picker');
 
         this.datePickerComponent.addEventListener(DatePickerEvent.DATE_CHANGE, ((event: CustomEvent<Date>) => {
@@ -178,6 +186,41 @@ export class PlayerComponent extends FASTElement {
                 this.updateMonthAndDates(data.year, data.month + 1);
             }
         }) as EventListener);
+    }
+
+    private async selectNextDay() {
+        const nextDay = new Date(this.currentDate);
+        nextDay.setDate(nextDay.getDate() + 1);
+
+        await this.adjustNewDate(nextDay);
+    }
+
+    private async selectPrevDay() {
+        const prevDay = new Date(this.currentDate);
+        prevDay.setDate(prevDay.getDate() - 1);
+
+        await this.adjustNewDate(prevDay);
+    }
+
+    private async adjustNewDate(date: Date) {
+        const adjustedDateYear = date.getUTCFullYear();
+        const adjustedDateMonth = date.getUTCMonth() + 1;
+        const adjustedDateDay = date.getUTCDate();
+        // First, check if it available
+        if (this.allowedDates[adjustedDateYear] && this.allowedDates[adjustedDateYear][adjustedDateMonth]) {
+            const allowedDays = this.allowedDates[adjustedDateYear][adjustedDateMonth];
+            if (allowedDays.indexOf(adjustedDateDay) > -1) {
+                this.datePickerComponent.inputDate = date.toUTCString();
+            } else if (!allowedDays.length) {
+                // Need to fetch data there is no data for this month
+                await this.fetchAvailableDays(adjustedDateYear, adjustedDateMonth);
+                await this.updateMonthAndDates(adjustedDateYear, adjustedDateMonth);
+
+                if (this.allowedDates[adjustedDateYear][adjustedDateMonth].indexOf(adjustedDateDay) > -1) {
+                    this.datePickerComponent.inputDate = date.toUTCString();
+                }
+            }
+        }
     }
 
     private updateVODStream() {

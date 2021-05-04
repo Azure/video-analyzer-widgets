@@ -1,4 +1,6 @@
 import {
+    ARROW_LEFT_PATH,
+    ARROW_RIGHT_PATH,
     FORWARD_SVG_PATH,
     FULL_OFF_PATH,
     FULL_PATH,
@@ -169,6 +171,66 @@ export class LiveButton extends shaka.ui.Element {
             this.isLive = !this.isLive;
             this.callBack(this.isLive);
         });
+    }
+}
+
+export class NextDayButton extends shaka.ui.Element {
+    public constructor(parent: any, controls: any, private callBack: () => void) {
+        super(parent, controls);
+        this.init();
+    }
+
+    private init() {
+        this.button_ = document.createElement('fast-button');
+        // Create SVG
+        this.svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        this.path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+
+        this.path.setAttribute('d', ARROW_RIGHT_PATH);
+        this.button_.classList.add('next-day-button');
+        this.svg.appendChild(this.path);
+        this.button_.appendChild(this.svg);
+        this.parent.appendChild(this.button_);
+        this.eventManager.listen(this.button_, 'click', () => {
+            this.callBack();
+        });
+    }
+}
+
+export class PrevDayButton extends shaka.ui.Element {
+    public constructor(parent: any, controls: any, private callBack: () => void) {
+        super(parent, controls);
+        this.init();
+    }
+
+    private init() {
+        this.button_ = document.createElement('fast-button');
+        // Create SVG
+        this.svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        this.path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+
+        this.path.setAttribute('d', ARROW_LEFT_PATH);
+        this.button_.classList.add('prev-day-button');
+        this.svg.appendChild(this.path);
+        this.button_.appendChild(this.svg);
+        this.parent.appendChild(this.button_);
+        this.eventManager.listen(this.button_, 'click', () => {
+            this.callBack();
+        });
+    }
+}
+
+export class HoursLabel extends shaka.ui.Element {
+    public constructor(parent: any, controls: any) {
+        super(parent, controls);
+        this.init();
+    }
+
+    private init() {
+        this.button_ = document.createElement('span');
+        this.button_.innerHTML = '24 hours';
+        this.button_.classList.add('hours-label');
+        this.parent.appendChild(this.button_);
     }
 }
 

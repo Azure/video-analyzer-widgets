@@ -219,11 +219,21 @@ export class PlayerWrapper {
         }
     }
 
+    private onClickNextDay() {
+        document.dispatchEvent(new CustomEvent('player_next_day'));
+    }
+
+    private onClickPrevDay() {
+        document.dispatchEvent(new CustomEvent('player_prev_day'));
+    }
+
     private async init() {
         this.avaUILayer = new AVAPlayerUILayer(
             shaka,
             this.toggleLiveMode.bind(this),
             this.toggleBodyTracking.bind(this),
+            this.onClickNextDay.bind(this),
+            this.onClickPrevDay.bind(this),
             this.allowedControllers
         );
 

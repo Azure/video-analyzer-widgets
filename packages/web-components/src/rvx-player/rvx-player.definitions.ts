@@ -24,5 +24,8 @@ export enum ControlPanelElements {
     SPACER = 'spacer',
     BODY_TRACKING = 'body_tracking',
     OVERFLOW_MENU = 'overflow_menu',
-    FULLSCREEN = 'fullscreen'
+    FULLSCREEN = 'fullscreen',
+    NEXT_DAY = 'next_day',
+    PREVIOUS_DAY = 'previous_day',
+    HOURS_LABEL = 'hours_label'
 }

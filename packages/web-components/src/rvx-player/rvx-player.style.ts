@@ -44,6 +44,25 @@ export const styles = css`
     .shaka-volume-bar-container {
         height: 2px;
         border-radius: 0;
+        opacity: 0;
+        width: 0;
+    }
+
+    .shaka-volume-bar-container:hover {
+        opacity: 1;
+        width: 100px;
+    }
+
+    @media (max-width: 560px) {
+        .shaka-volume-bar-container {
+            display: none;
+        }
+    }
+
+    .shaka-mute-button:hover + .shaka-volume-bar-container {
+        transition: all 0.25s linear;
+        opacity: 1;
+        width: 100px;
     }
 
     .live-button-component .control .content {
@@ -61,6 +80,21 @@ export const styles = css`
         border: 1px solid rgb(50 49 48);
         color: rgb(121 119 117);
         margin: 0px 9px;
+    }
+
+    .prev-day-button {
+        margin-left: 93px;
+    }
+
+    .prev-day-button,
+    .next-day-button {
+        border: 1px solid rgb(138 136 134);
+        border-radius: 2px;
+    }
+
+    .hours-label {
+        color: #f3f2f1;
+        padding-left: 9px;
     }
 
     svg path {
