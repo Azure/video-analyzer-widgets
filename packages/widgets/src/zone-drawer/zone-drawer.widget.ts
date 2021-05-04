@@ -45,9 +45,9 @@ export class ZoneDrawerWidget extends BaseWidget {
     private labelsList: HTMLElement;
     private labelListIndex = 1;
 
-    /* public constructor() {
-        super()
-    } */
+    public constructor() {
+        super();
+    }
 
     public connectedCallback() {
         super.connectedCallback();
@@ -84,7 +84,6 @@ export class ZoneDrawerWidget extends BaseWidget {
 
     public save() {
         const outputs = this.getZonesOutputs();
-        console.log(outputs);
         this.$emit(ZoneDrawerWidgetEvents.SAVE, outputs);
     }
 
@@ -184,6 +183,7 @@ export class ZoneDrawerWidget extends BaseWidget {
     private createZone(points: IPoint[]) {
         const zone: IZone = {
             id: guid(),
+            type: this.isLineDrawMode ? ZoneDrawerMode.Line : ZoneDrawerMode.Polygon,
             name: this.getNewZoneName(),
             color: this.getNextColor(),
             points: [...points]
@@ -197,7 +197,8 @@ export class ZoneDrawerWidget extends BaseWidget {
             id: newZone.id || guid(),
             name: newZone.name || this.getNewZoneName(),
             color: newZone.color || this.getNextColor(),
-            points: [...newZone.points]
+            points: [...newZone.points],
+            type: newZone.type
         };
 
         this.zones.push(zone);
@@ -216,8 +217,7 @@ export class ZoneDrawerWidget extends BaseWidget {
 
         this.isLabelsListEmpty = false;
         this.isDirty = true;
-        const output = this.getZoneOutputByType(zone.name, zone.points);
-        console.log(output);
+        const output = this.getZoneOutputByType(zone.type, zone.name, zone.points);
         this.$emit(ZoneDrawerWidgetEvents.ADDED_ZONE, output);
         this.addLabel(zone);
     }
@@ -232,13 +232,12 @@ export class ZoneDrawerWidget extends BaseWidget {
         if (!this.showDrawer) {
             this.showDrawer = true;
         }
-        const output = this.getZoneOutputByType(deletedZone.name, deletedZone.points);
-        console.log(output);
+        const output = this.getZoneOutputByType(deletedZone.type, deletedZone.name, deletedZone.points);
         this.$emit(ZoneDrawerWidgetEvents.REMOVED_ZONE, output);
     }
 
     private getNewZoneName(): string {
-        return `${this.isLineDrawMode ? ZoneDrawerMode.Line : ZoneDrawerMode.Polygon} ${this.labelListIndex++}`;
+        return `${this.isLineDrawMode ? 'Line' : 'Zone'} ${this.labelListIndex++}`;
     }
 
     private getNextColor(): string {
@@ -298,19 +297,19 @@ export class ZoneDrawerWidget extends BaseWidget {
             let output: ILineZone | IPolygonZone;
             if (zone.points.length === 2) {
                 // ILineZone
-                output = this.getZoneOutputByType(zone.name, zone.points);
+                output = this.getZoneOutputByType(zone.type, zone.name, zone.points);
             } else {
                 // IPolygonZone
-                output = this.getZoneOutputByType(zone.name, zone.points);
+                output = this.getZoneOutputByType(zone.type, zone.name, zone.points);
             }
             outputs.push(output);
         }
         return outputs;
     }
 
-    private getZoneOutputByType(name: any, points: IPoint[]): ILineZone | IPolygonZone {
+    private getZoneOutputByType(type: ZoneDrawerMode, name: any, points: IPoint[]): ILineZone | IPolygonZone {
         let output: ILineZone | IPolygonZone;
-        switch (name) {
+        switch (type) {
             case ZoneDrawerMode.Line:
                 output = {
                     '@type': '#Microsoft.VideoAnalyzer.NamedLineString',

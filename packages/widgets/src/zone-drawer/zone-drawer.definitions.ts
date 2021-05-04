@@ -20,6 +20,7 @@ export interface IZone {
     name?: string;
     color: string;
     points: IPoint[];
+    type?: ZoneDrawerMode;
 }
 
 export interface IZoneOutput {

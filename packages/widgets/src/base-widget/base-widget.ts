@@ -6,11 +6,11 @@ export class BaseWidget extends FASTElement {
     @attr public width: string;
     @attr public height: string;
 
-    public constructor(config: IWidgetBaseConfig) {
+    public constructor() {
         super();
-        this.config = config;
-        this.width = config.width || '';
-        this.height = config.height || '';
+        // this.config = config;
+        this.width = this.config?.width || '';
+        this.height = this.config?.height || '';
 
         if (this.config) {
             this.init();
