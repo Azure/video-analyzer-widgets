@@ -32,7 +32,7 @@ export const template = html<ZoneDrawWidget>`
                     </svg>
                 </fast-button>
             </div>
-            <span class="draw-zone-title">Draw a ${(x) => (x.isLineDrawMode ? 'line' : 'polygon')}</span>
+            <span>Draw a ${(x) => (x.isLineDrawMode ? 'line' : 'polygon')}</span>
         </div>
         <div class="zones-container">
             <div class="zones-draw-container">
