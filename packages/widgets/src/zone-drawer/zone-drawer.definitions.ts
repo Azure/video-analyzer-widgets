@@ -1,5 +1,6 @@
 import { IPoint } from '../../../common/drawer-canvas/drawer-canvas.definitions';
 import { IWidgetBaseConfig } from '../definitions/base-widget-config.definitions';
+import { Player } from './../rvx/rvx-widget';
 
 /**
  * ZoneDraw config, contains basic configurations for ZoneDraw widget.
@@ -13,7 +14,7 @@ export interface IZoneDrawerWidgetConfig extends IWidgetBaseConfig {
     /*
      * For integration with the player
      */
-    // playerWidgetElement: Player;
+    playerWidgetElement?: Player;
 }
 
 export interface IZone {

@@ -19,6 +19,7 @@ import { template } from './zone-drawer.template';
 import { ZonesViewComponent } from '../../../web-components/src/zones-view/zones-view.component';
 import { DELETE_SVG_PATH, RENAME_SVG_PATH } from '../../../styles/svg/svg.shapes';
 import { BaseWidget } from '../base-widget/base-widget';
+import { Player } from './../rvx/rvx-widget';
 
 @customElement({
     name: 'zone-drawer-widget',
@@ -56,8 +57,7 @@ export class ZoneDrawerWidget extends BaseWidget {
     }
 
     public connectedCallback() {
-        super.connectedCallback();
-
+        super.connectedCallback()
         this.isReady = true;
         this.initZoneDrawComponents();
 
@@ -116,6 +116,28 @@ export class ZoneDrawerWidget extends BaseWidget {
         if (this.zones.length) {
             this.zonesView.zones = [...this.zones];
         }
+
+        this.initPlayer();
+    }
+
+    private initPlayer() {
+        setTimeout(() => {
+            // Option 1 - the player is part of the config
+            if (this.config?.playerWidgetElement) {
+                // Init config with player width and height
+
+            } else {
+                // Option 2 - the player is a directive
+                const tempPlayer = this.querySelector('ava-player');
+                if (tempPlayer) {
+                    this.config.playerWidgetElement = tempPlayer as Player;
+                } else {
+                    // Handle error - throw
+                    return;
+                }
+            }
+            this.config.playerWidgetElement.width = '760px';
+        });
     }
 
     private initZoneDrawComponents() {
