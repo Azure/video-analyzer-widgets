@@ -98,7 +98,9 @@
 
     const zoneDrawerWidget = document.querySelector("zone-drawer-widget");
 
-    zoneDrawerWidget.configure();
+    zoneDrawerWidget.configure({
+      zones: zones
+    });
 
     zoneDrawerWidget.load();
 

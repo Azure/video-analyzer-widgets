@@ -105,6 +105,11 @@ export class ZoneDrawerWidget extends BaseWidget {
         this.isLineDrawMode = !this.isLineDrawMode;
     }
 
+    public configure(config: IZoneDrawerWidgetConfig) {
+        this.config = config;
+        this.init();
+    }
+
     // @override
     protected init() {
         if (this.config?.zones) {
