@@ -255,11 +255,17 @@ export class PlayerWrapper {
         // Listen for error events.
         this.player.addEventListener('error', this.onErrorEvent.bind(this));
         this.player.addEventListener('trackschanged', this.onTrackChange.bind(this));
-        // this.player.addEventListener('loaded', this.loaded.bind(this));
 
         this.player.addEventListener('emsg', this.onShakaMetadata.bind(this));
 
         await this.toggleLiveMode(this.isLive);
+
+        // Add bounding box drawer
+        const options: ICanvasOptions = {
+            height: this.video.clientHeight,
+            width: this.video.clientWidth
+        };
+        this.boundingBoxesDrawer = new BoundingBoxDrawer(options, this.video);
     }
 
     private onWindowResize() {
@@ -268,28 +274,16 @@ export class PlayerWrapper {
     }
 
     private addBoundingBoxLayer() {
-        const options: ICanvasOptions = {
-            height: this.video.clientHeight,
-            width: this.video.clientWidth
-        };
-        this.boundingBoxesDrawer = new BoundingBoxDrawer(options, this.video);
-        this.boundingBoxesDrawer.canvas.style.position = 'absolute';
-        this.boundingBoxesDrawer.canvas.style.zIndex = '1';
-        this.boundingBoxesDrawer.canvas.style.pointerEvents = 'none';
+        // Add canvas to screen
         this.videoContainer.prepend(this.boundingBoxesDrawer.canvas);
         window.addEventListener('resize', this.onWindowResize.bind(this));
-        this.boundingBoxesDrawer.playAnimation();
+        this.boundingBoxesDrawer.on();
     }
 
     private removeBoundingBoxLayer() {
-        if (!this.boundingBoxesDrawer) {
-            return;
-        }
-
         window.removeEventListener('resize', this.onWindowResize.bind(this));
         this.videoContainer.removeChild(this.boundingBoxesDrawer.canvas);
-        this.boundingBoxesDrawer.clear();
-        this.boundingBoxesDrawer = null;
+        this.boundingBoxesDrawer.off();
     }
 
     private authenticationHandler(type: shaka_player.net.NetworkingEngine.RequestType, request: shaka_player.extern.Request) {
