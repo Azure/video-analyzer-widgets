@@ -155,7 +155,7 @@ export class Tooltip extends Shape implements IShowable {
         text.textContent = this.text;
         text.setAttribute('x', `${this.x + this.width / 2 - 20}`);
         text.setAttribute('y', `${this.y + this.height / 2 + 4}`);
-        text.setAttribute('fill', 'var(--segments-color)');
+        text.setAttribute('fill', 'var(--segments-tooltip-text)');
         this.components.text = text;
         this.components.path = path;
 

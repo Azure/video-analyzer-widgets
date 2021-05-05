@@ -10,7 +10,7 @@ export const template = html<DatePickerComponent>`
     <template>
         <div class="ms-DatePicker ${(x) => (x.enableUI ? 'show' : 'hide')}">
             <div class="ms-TextField">
-                <fast-button class="ms-TextField-field">
+                <fast-button class="ms-TextField-field" appearance="stealth">
                     <svg>
                         <path d="${GO_TO_ARCHIVE_MAIN_SVG_PATH}"></path>
                         <path d="${GO_TO_ARCHIVE_SUB_SVG_PATH}"></path>
