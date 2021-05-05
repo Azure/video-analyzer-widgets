@@ -1,17 +1,21 @@
 # Build inteligent video applications with AVA widgets
 
-In this tutorial you will learn how to use Azure Video Analyzer Player widget within your application. 
+In this tutorial you will learn how to use Azure Video Analyzer Player widget within your application.
 you'll be editing an existing HTML static website. If you'd like to follow the step-by-step guide, you'll need some tools. Start with a code editor like Visual Studio Code. You'll also need a local development server. A simple way to set one up is to use the Live Server extension for VS Code.
 
-
 # Suggested pre-reading
-* [Web Components](https://developer.mozilla.org/en-US/docs/Web/Web_Components)
-* [TypeScript](https://www.typescriptlang.org)
+
+-   [Web Components](https://developer.mozilla.org/en-US/docs/Web/Web_Components)
+-   [TypeScript](https://www.typescriptlang.org)
 
 # Prerequisites
+
 Prerequisites for this tutorial are:
-* [NodeJS](https://nodejs.org/en/download/)
-* [Visual Studio Code](https://code.visualstudio.com/) on your development machine.
+
+-   [NodeJS](https://nodejs.org/en/download/)
+-   [Visual Studio Code](https://code.visualstudio.com/) on your development machine.
+-   [Azure Subscription](#TBD)
+-   [AVA Account setup in Azure](#TBD)
 
 # Concepts
 
@@ -21,10 +25,9 @@ Prerequisites for this tutorial are:
 
 ## Web Widget
 
-An (HTML) widget is a visual component that can be embeddable within an HTML page. It uses HTML, CSS and JavaScript in order to render itself on the host page. Widgets let the user to interact with them and enrich the user interface with extended functionality. 
+An (HTML) widget is a visual component that can be embeddable within an HTML page. It uses HTML, CSS and JavaScript in order to render itself on the host page. Widgets let the user to interact with them and enrich the user interface with extended functionality.
 
 [DIAGRAM PLACEHOLDER]
-
 
 # Setting up your development environment
 
@@ -46,21 +49,23 @@ This will make your browser to import the needed code at runtime.
     </body>
 </html>
 ```
-Now, you can use it within your application just by adding the ```html <ava-player> ``` tag in your html.
+
+Now, you can use it within your application just by adding the `html <ava-player>` tag in your html,
+Same as you add native html tag.
 
 ```html
  <body>
 	<ava-player><ava-player>
   </body>
-  ```
+```
 
 Optionaly you can import the pacakge yourself at build time, using `npm`. in order to do that please run
 
 ```bash
-npm install @azure/video-analyzer/widgets` 
+npm install @azure/video-analyzer/widgets`
 ```
-After you have installed the widgets pacakge you can easily import it within your application code, and start using it
 
+After you have installed the widgets pacakge you can easily import it within your application code, and start using it
 
 ```typescript
 import { Player } from '@video-analyzer/widgets';
@@ -69,33 +74,34 @@ const avaPlayer = new Player();
 document.firstElementChild.appendChild(avaPlayer).
 
 ```
+
 Native Javascript is supported as well:
 
 ```html
-  <script>
-  (function () {
-    // Access global widgets library and create player instance
-    const avaPlayer = new ava.widgets.player();
+<script>
+    (function () {
+        // Access global widgets library and create player instance
+        const avaPlayer = new ava.widgets.player();
 
-    // Dynamically add the player to the DOM
-    document.firstElementChild.appendChild(avaPlayer);
-  })();
+        // Dynamically add the player to the DOM
+        document.firstElementChild.appendChild(avaPlayer);
+    })();
 </script>
 ```
 
 After you understand how to add the widget code to your application / html page and create a player, now lets implement a real world scenario and make the player connect to Video Analyzer account.
 
 # Configuring the player with your Video Analyzer account
-In order to configure the player to play the content that was feed into your Video Analyzer pipeline you will first need to setup Video Analyzer account. 
-please follow the folowing steps:
 
-* Set up Video Analyzer account
-* Create access policy
-* Generate access token
-* Grab the video you would like to stream with the AVA Player
+In order to configure the player to play the content that was feed into your Video Analyzer pipeline you will first need to setup Video Analyzer account.
+Before you can initialize the player with your Video Analyzer account please complete the folowing steps:
+
+1. Set up Video Analyzer account
+2. Create access policy
+3. Generate access token
+4. Grab the video you would like to stream with the AVA Player
 
 Once you have all this information, you can configure the player before you load it.
-
 
 ```typescript
 const avaPlayer = new Player();
@@ -114,7 +120,26 @@ Next, load the player
 avaPlayer.load();
 ```
 
+The player widget will be rendered on the page.
+for debugging we recommend to check devtools (F12) for console errors.
+
 # Setup player authorization
-TBD
+
+In order to make the player communicating with Video Analyzer API you have to provide it with an access token. (JWT token)
+
+Once you have that access token, you need to add that to the player configuration before calling the `load` function.
+
+## Refreshing the access token
+
+In order to refrehs the access token you need to call your player instace `setAccessToken` method:
+
+```typescript
+avaPlayer.setAccessToken('<NEW-ACCESS-TOKEN>');
+```
+
+We recomend that you will set an interval based on your access token expiry time and get a new token before the current is expired.
+
+One the player gets the access token, it uses it in order to get the playback authorization token.
+for learning more about the widget API please [read more](https://github.com/video-analyzer/widgets)
 
 # Using Player widget in React application
