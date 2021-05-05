@@ -18,7 +18,12 @@ export const template = html<PlayerComponent>`
                 ></media-date-picker>
             </div>
         </div>
-        <div shaka-controls="true" class="video-container ${(x) => (x.isLive ? 'live' : 'vod')}">
+        <span class="error">theres seems to be a problem. Please try again later</span>
+        <div
+            shaka-controls="true"
+            class="video-container 
+            ${(x) => (x.isLive ? 'live' : 'vod')}"
+        >
             <video id="player-video"></video>
         </div>
     </template>

@@ -12,7 +12,24 @@ export const styles = css`
         --design-unit: 2;
         --base-height-multiplier: 12;
         height: auto;
+    }
+
+    .error {
+        display: none;
+    }
+
+    :host(.live-off) {
         padding-bottom: calc(48px + 43px);
+    }
+
+    :host(.error) {
+        background: black;
+    }
+
+    :host(.error) .error {
+        text-align: center;
+        vertical-align: middle;
+        display: block;
     }
 
     ${stylesShaka}

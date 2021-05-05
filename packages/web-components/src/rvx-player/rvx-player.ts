@@ -37,6 +37,7 @@ export class PlayerComponent extends FASTElement {
 
     public player: PlayerWrapper;
     public datePickerComponent: DatePickerComponent;
+    public hasError = false;
 
     private video!: HTMLVideoElement;
     private timeContainer!: HTMLElement;
@@ -262,6 +263,8 @@ export class PlayerComponent extends FASTElement {
                 years: this.currentAllowedYears.toString()
             };
         } catch (error) {
+            this.hasError = true;
+            this.classList.add('error');
             throw new WidgetGeneralError('Cannot parse available media');
         }
     }
@@ -292,6 +295,8 @@ export class PlayerComponent extends FASTElement {
                 }
             }
         } catch (error) {
+            this.hasError = true;
+            this.classList.add('error');
             throw new WidgetGeneralError('Cannot parse available media');
         }
     }
@@ -326,6 +331,8 @@ export class PlayerComponent extends FASTElement {
                 }
             }
         } catch (error) {
+            this.hasError = true;
+            this.classList.add('error');
             throw new WidgetGeneralError('Cannot parse available media');
         }
     }
