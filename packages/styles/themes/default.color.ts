@@ -98,8 +98,9 @@ export const defaultColorsStyle: ElementStyles = css`
         --drawer-line-color: #db4646;
         --drawer-fill-color: rgba(219, 70, 70, 0.4);
 
-        /* Area Draw */
+        /* Zone Draw */
         --zone-draw-color: #a19f9d;
         --zone-draw-bg: #201f1e;
+        --zone-draw-selected-btn: #486444;
     }
 `;

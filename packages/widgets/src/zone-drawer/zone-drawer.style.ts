@@ -27,7 +27,7 @@ export const styles = css`
 
     .draw-buttons {
         display: inline-flex;
-        border: 1px solid #8a8886;
+        border: 1px solid var(--ruler-small-scale-color);
         box-sizing: border-box;
         border-radius: 2px;
         margin-right: 12px;
@@ -89,7 +89,7 @@ export const styles = css`
     }
 
     fast-button.selected {
-        background: #484644;
+        background: var(--zone-draw-selected-btn);
     }
 
     media-line-drawer,
