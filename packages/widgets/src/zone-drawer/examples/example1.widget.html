@@ -97,6 +97,13 @@
 
         const zoneDrawerWidget = document.getElementById("zone-drawer-widget");
 
+        zoneDrawerWidget.configure(
+            {
+                zones: zones
+            }
+        );
+
+        zoneDrawerWidget.load();
         // zoneDrawerWidget.config = { zones: zones };
     })()
 </script>

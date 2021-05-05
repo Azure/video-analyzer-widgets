@@ -34,6 +34,8 @@ export class ZoneDrawerWidget extends BaseWidget {
     @observable
     public zones: IZone[] = [];
     @observable
+    public playerWidgetElement: Player;
+    @observable
     public isReady = false;
     @observable
     public isDirty = false;
@@ -57,9 +59,8 @@ export class ZoneDrawerWidget extends BaseWidget {
     }
 
     public connectedCallback() {
-        super.connectedCallback()
+        super.connectedCallback();
         this.isReady = true;
-        this.initZoneDrawComponents();
 
         window.addEventListener('resize', this.resize.bind(this));
         this.$fastController?.element?.addEventListener(LayerLabelEvents.labelActionClicked, this.labelActionClicked.bind(this));
@@ -76,12 +77,16 @@ export class ZoneDrawerWidget extends BaseWidget {
         this.$fastController?.element?.removeEventListener(LayerLabelEvents.labelTextChanged, this.labelTextChanged as EventListener);
     }
 
-    public configChanged() {
+    public load() {
         setTimeout(() => {
             if (this.isReady) {
                 this.initZoneDrawComponents();
             }
         });
+    }
+
+    public configChanged() {
+        this.initConfiguration();
     }
 
     public drawerConnectedCallback() {
@@ -102,7 +107,7 @@ export class ZoneDrawerWidget extends BaseWidget {
 
     // @override
     protected init() {
-        if (this.config && this.config.zones) {
+        if (this.config?.zones) {
             for (const zone of this.config.zones) {
                 this.addZone(zone);
             }
@@ -120,14 +125,16 @@ export class ZoneDrawerWidget extends BaseWidget {
         this.initPlayer();
     }
 
+    private initConfiguration() {
+        if (this.config.playerWidgetElement) {
+            this.playerWidgetElement = this.config.playerWidgetElement;
+        }
+    }
+
     private initPlayer() {
         setTimeout(() => {
-            // Option 1 - the player is part of the config
-            if (this.config?.playerWidgetElement) {
-                // Init config with player width and height
-
-            } else {
-                // Option 2 - the player is a directive
+            if (!this.config?.playerWidgetElement) {
+                // If player wasn't send with configuration - take from DOM
                 const tempPlayer = this.querySelector('ava-player');
                 if (tempPlayer) {
                     this.config.playerWidgetElement = tempPlayer as Player;
