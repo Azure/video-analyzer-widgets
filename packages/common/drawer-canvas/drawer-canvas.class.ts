@@ -23,7 +23,7 @@ export class DrawerCanvas extends CanvasElement {
     private _isDrawCompleted: boolean;
     private _lastMouseX: number = 0;
     private _lastMouseY: number = 0;
-    private _cursors = [CursorTypes.CROSSHAIR, CursorTypes.CROSSHAIR];
+    private _cursors = [CursorTypes.CROSSHAIR, CursorTypes.POINTER];
     private _currentCursor: number = 0;
 
     // Const readyOnly
@@ -185,7 +185,8 @@ export class DrawerCanvas extends CanvasElement {
             const clickY = this.getCalculatedPoint(this._points[0].y, this.drawerOptions.height);
             const diffX = Math.abs(lastMouseX - clickX);
             const diffY = Math.abs(lastMouseY - clickY);
-            if (diffX < this.PIXELS_DISTANCE_RANGE && diffY < this.PIXELS_DISTANCE_RANGE) {
+            if ((diffX < this.PIXELS_DISTANCE_RANGE && diffY < this.PIXELS_DISTANCE_RANGE) ||
+                this._points.length === this._pointsLimit - 1) {
                 this.calculateAngles();
                 this.onDrawComplete();
                 return;

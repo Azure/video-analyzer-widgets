@@ -1,4 +1,5 @@
-import { LineDrawerComponent } from '.';
+
+import { LineDrawerComponent } from './line-drawer.component';
 
 interface ITemplate {
     borderColor: string;

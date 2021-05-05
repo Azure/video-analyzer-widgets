@@ -1,8 +1,10 @@
+import { ZoneDrawerWidget } from './packages/widgets/src';
 import { Player } from './packages/widgets/src';
 
 declare global {
     interface IWidgets {
         player: typeof Player;
+        zoneDrawer: typeof ZoneDrawerWidget;
     }
 
     interface IAva {

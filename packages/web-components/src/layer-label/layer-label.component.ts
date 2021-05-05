@@ -3,7 +3,7 @@ import { ActionsMenuComponent } from '../actions-menu';
 import { ActionsMenuEvents } from '../actions-menu/actions-menu.definitions';
 import { EditableTextFieldComponent } from '../editable-text-field/editable-text-field.component';
 import { EditableTextFieldEvents } from '../editable-text-field/editable-text-field.definitions';
-import { ILayerLabelConfig, LayerLabelEvents, LayerLabelMode } from './layer-label.definitions';
+import { ILayerLabelConfig, ILayerLabelOutputEvent, LayerLabelEvents, LayerLabelMode } from './layer-label.definitions';
 import { styles } from './layer-label.style';
 import { template } from './layer-label.template';
 
@@ -74,7 +74,8 @@ export class LayerLabelComponent extends FASTElement {
             this.editableTextField = <EditableTextFieldComponent>this.shadowRoot?.querySelector('media-editable-text-field');
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             this.editableTextField?.addEventListener(EditableTextFieldEvents.TextChanged, (e: any) => {
-                this.$emit(LayerLabelEvents.labelTextChanged, { name: e.detail, id: this.config.id });
+                const output: ILayerLabelOutputEvent = { name: e.detail, id: this.config.id };
+                this.$emit(LayerLabelEvents.labelTextChanged, output);
                 this.editMode = false;
             });
         }
