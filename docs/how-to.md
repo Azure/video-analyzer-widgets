@@ -114,9 +114,11 @@ avaPlayer.configure({
 });
 ```
 
-Next, load the player
+The Player instance will return a custom `HTMLElement`.
+Next, append the player element to your relevant DOM position, and call load.
 
 ```typescript
+document.firstElementChild.appendChild(avaPlayer);
 avaPlayer.load();
 ```
 
@@ -125,21 +127,28 @@ for debugging we recommend to check devtools (F12) for console errors.
 
 # Setup player authorization
 
-In order to make the player communicating with Video Analyzer API you have to provide it with an access token. (JWT token)
+In order to make the player communicating with Video Analyzer API you have to provide it with an access token (JWT token) as you can see above in config phase.
 
 Once you have that access token, you need to add that to the player configuration before calling the `load` function.
 
 ## Refreshing the access token
 
-In order to refrehs the access token you need to call your player instace `setAccessToken` method:
+You have two ways of refreshing the access token (after you have generated new one)
 
-```typescript
-avaPlayer.setAccessToken('<NEW-ACCESS-TOKEN>');
-```
-
-We recomend that you will set an interval based on your access token expiry time and get a new token before the current is expired.
+1. Actively calling widget method `setAccessToken`
+    ```typescript
+    avaPlayer.setAccessToken('<NEW-ACCESS-TOKEN>');
+    ```
+2. Acting apon `TOKEN_EXPIRED` event by listening to this event
+    ```typescript
+    avaPlayer.addEventListener(PlayerEvents.TOKEN_EXPIRED, () => {
+        avaPlayer.setAccessToken('<YOUR-NEW-TOKEN>');
+    });
+    ```
+    - The `TOKEN_EXPIRED` event will dispatched 5 seconds before the token is going to be expired.
+    - We recommend to set the event listener before calling the `load` function.
 
 One the player gets the access token, it uses it in order to get the playback authorization token.
-for learning more about the widget API please [read more](https://github.com/video-analyzer/widgets)
+for learning more about the widget API please [read more](https://github.com/video-analyzer/widgets) here.
 
 # Using Player widget in React application
