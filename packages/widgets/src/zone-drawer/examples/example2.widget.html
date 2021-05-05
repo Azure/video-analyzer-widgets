@@ -17,7 +17,7 @@
   <script>
 
   </script>
-  <script src="../../../../../dist/ava-widgets-sdk.js"></script>
+  <script src="../../../../../dist/ava-widgets.js"></script>
 </head>
 
 <body>
@@ -96,7 +96,11 @@
       },
     ];
 
-    const zoneDrawerWidget = document.getElementById("zone-drawer-widget");
+    const zoneDrawerWidget = document.querySelector("zone-drawer-widget");
+
+    zoneDrawerWidget.configure();
+
+    zoneDrawerWidget.load();
 
     // zoneDrawerWidget.config = { zones: zones };
   })()
