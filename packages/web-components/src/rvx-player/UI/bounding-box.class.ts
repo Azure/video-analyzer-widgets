@@ -4,23 +4,34 @@ import { CanvasElement } from '../../../../common/canvas/canvas.element';
 
 export class BoundingBoxDrawer extends CanvasElement {
     public data: any = [];
-    private rafId: number;
+    private requestAnimFrameCounter: number;
     private timeToInstances: ITimeToInstance = [];
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     public constructor(options: ICanvasOptions, private video: HTMLVideoElement) {
         super(options);
-        this.canvas.width = this.video.clientWidth;
-        this.canvas.height = this.video.clientHeight;
+        this.setCanvasSize(options.width, options.height);
+    }
 
-        // this.video.addEventListener('timeupdate', this.onTimeUpdate.bind(this));
+    // Start the animation
+    public on() {
+        this.playAnimation();
+
+        // Add listeners to play and pause
         this.video.addEventListener('play', this.playAnimation.bind(this));
         this.video.addEventListener('pause', this.pauseAnimation.bind(this));
     }
 
-    public clear() {
+    public setCanvasStyle() {
+        this.canvas.style.position = 'absolute';
+        this.canvas.style.zIndex = '1';
+        this.canvas.style.pointerEvents = 'none';
+    }
+
+    // Stop the animation
+    public off() {
         this.pauseAnimation();
-        this.video.removeEventListener('play', this.playAnimation);
-        this.video.removeEventListener('pause', this.pauseAnimation);
+        this.video.removeEventListener('play', this.playAnimation.bind(this));
+        this.video.removeEventListener('pause', this.pauseAnimation.bind(this));
     }
 
     public clearInstances() {
@@ -28,36 +39,16 @@ export class BoundingBoxDrawer extends CanvasElement {
     }
 
     public addItem(time: number, instance: any) {
-        if (!this.timeToInstances[time.toFixed(6)]) {
-            this.timeToInstances[time.toFixed(6)] = [];
+        // Add new item to pack
+        if (!this.timeToInstances[time?.toFixed(6)]) {
+            this.timeToInstances[time?.toFixed(6)] = [];
         }
 
-        this.timeToInstances[time.toFixed(6)].push(instance);
+        this.timeToInstances[time?.toFixed(6)].push(instance);
     }
 
-    public draw(): void {
-        // throw new Error('Method not implemented.');
-    }
-    public resize(): void {
-        // Clear canvas
-        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.canvas.width = this.video.clientWidth;
-        this.canvas.height = this.video.clientHeight;
-    }
-
-    public playAnimation() {
-        this.rafId = window.requestAnimationFrame(this.onAnimUpdate.bind(this));
-        // this.snapshotMediator.playAnimation();
-    }
-
-    private pauseAnimation() {
-        window.cancelAnimationFrame(this.rafId);
-        this.rafId = 0;
-        // this.snapshotMediator.pauseAnimation();
-    }
-
-    private onAnimUpdate() {
-        if (!this.rafId) {
+    public draw() {
+        if (!this.requestAnimFrameCounter) {
             return;
         }
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -105,18 +96,26 @@ export class BoundingBoxDrawer extends CanvasElement {
         // const snapshotContext = this.snapshotMediator.Snapshot();
         // this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
         // this.context.drawImage(snapshotContext, 0, 0);
-        this.rafId = window.requestAnimationFrame(this.onAnimUpdate.bind(this));
+        this.requestAnimFrameCounter = window.requestAnimationFrame(this.draw.bind(this));
     }
 
-    private onTimeUpdate() {
-        // Get data
-        // const playerTime = this.video.currentTime;
-        // const trackedItems = [];
-        // // const zeroPad = (num, places) => String(num).padStart(places, '0');
-        // for (const item of this.data) {
-        //     trackedItems.push(new TrackedItem(item.instances, 'rgba(0, 0, 0, 0.87)', 'item'));
-        // }
-        // this.snapshotMediator.trackedItems = trackedItems;
+    public resize(): void {
+        // Clear canvas
+        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.canvas.width = this.video.clientWidth;
+        this.canvas.height = this.video.clientHeight;
+    }
+
+    public playAnimation() {
+        if (this.requestAnimFrameCounter) {
+            this.pauseAnimation();
+        }
+        this.requestAnimFrameCounter = window.requestAnimationFrame(this.draw.bind(this));
+    }
+
+    private pauseAnimation() {
+        window.cancelAnimationFrame(this.requestAnimFrameCounter);
+        this.requestAnimFrameCounter = 0;
     }
 }
 
