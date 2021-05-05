@@ -17,8 +17,8 @@ import {
 import { styles } from './zone-drawer.style';
 import { template } from './zone-drawer.template';
 import { ZonesViewComponent } from '../../../web-components/src/zones-view/zones-view.component';
-import { DELETE_SVG_PATH, RENAME_SVG_PATH } from '../../../styles/svg/svg.shapes';
 import { BaseWidget } from '../base-widget/base-widget';
+import { ZoneDrawerActions } from './actions';
 
 @customElement({
     name: 'zone-drawer-widget',
@@ -26,7 +26,6 @@ import { BaseWidget } from '../base-widget/base-widget';
     styles
 })
 export class ZoneDrawerWidget extends BaseWidget {
-    /* override */
     @attr
     public config: IZoneDrawerWidgetConfig;
 
@@ -286,18 +285,7 @@ export class ZoneDrawerWidget extends BaseWidget {
             label: zone.name,
             color: zone.color,
             mode: LayerLabelMode.Actions,
-            actions: [
-                {
-                    label: 'Rename',
-                    svgPath: RENAME_SVG_PATH,
-                    type: UIActionType.RENAME
-                },
-                {
-                    label: 'Delete',
-                    svgPath: DELETE_SVG_PATH,
-                    type: UIActionType.DELETE
-                }
-            ]
+            actions: ZoneDrawerActions
         };
     }
 

@@ -29,7 +29,7 @@ export interface IZoneOutput {
     name: string;
 }
 
-type ZoneType = '#Microsoft.VideoAnalyzer.NamedPolygonString' | '#Microsoft.VideoAnalyzer.NamedLineString';
+export type ZoneType = '#Microsoft.VideoAnalyzer.NamedPolygonString' | '#Microsoft.VideoAnalyzer.NamedLineString';
 
 export interface IPolygonZone extends IZoneOutput {
     polygon: IPoint[];

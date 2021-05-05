@@ -11,23 +11,15 @@ interface ITemplate {
 }
 
 // Prevent tree-shaking
-// eslint-disable-next-line @typescript-eslint/no-unused-expressions
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 ZoneDrawerWidget;
-// eslint-disable-next-line @typescript-eslint/no-unused-expressions
 AvaDesignSystemProvider;
-// eslint-disable-next-line @typescript-eslint/no-unused-expressions
 FASTButton;
-// eslint-disable-next-line @typescript-eslint/no-unused-expressions
 ZonesViewComponent;
-// eslint-disable-next-line @typescript-eslint/no-unused-expressions
 LineDrawerComponent;
-// eslint-disable-next-line @typescript-eslint/no-unused-expressions
 PolygonDrawerComponent;
-// eslint-disable-next-line @typescript-eslint/no-unused-expressions
 LayerLabelComponent;
-// eslint-disable-next-line @typescript-eslint/no-unused-expressions
 FASTMenu;
-// eslint-disable-next-line @typescript-eslint/no-unused-expressions
 FASTMenuItem;
 
 const ZoneDrawerWidgetTemplate = (data: ITemplate) => {
