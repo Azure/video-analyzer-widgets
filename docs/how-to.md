@@ -152,3 +152,5 @@ One the player gets the access token, it uses it in order to get the playback au
 for learning more about the widget API please [read more](https://github.com/video-analyzer/widgets) here.
 
 # Using Player widget in React application
+
+Please refer to this [link](https://github.com/benbakhar/ava-demo)
