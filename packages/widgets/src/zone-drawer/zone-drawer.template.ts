@@ -42,7 +42,7 @@ export const template = html<ZoneDrawerWidget>`
                         ${when(
                             (x) => x.showDrawer && x.isReady,
                             html`
-                                                        ${(x) => {
+                                ${(x) => {
                                     if (x.isLineDrawMode) {
                                         return html`<media-line-drawer connectedCallback="${x.drawerConnectedCallback()}">
                                         </media-line-drawer>`;
@@ -50,7 +50,7 @@ export const template = html<ZoneDrawerWidget>`
                                         return html`<media-polygon-drawer connectedCallback="${x.drawerConnectedCallback()}">
                                         </media-polygon-drawer>`;
                                     }
-                            }}`
+                                }}`
                         )}
                     </div>
                 </div>
