@@ -100,10 +100,7 @@ export class SVGProgressChart {
             time = Math.ceil(time);
         }
 
-        const activeSegment = this.updateActiveRect(time);
-        if (this._activeSegmentCallback && activeSegment) {
-            this._activeSegmentCallback({ ...activeSegment, time: time });
-        }
+        this.updateActiveRect(time);
 
         if (timeType === 'undefined' || !this.options.renderProgress) {
             return;
