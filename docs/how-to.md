@@ -15,7 +15,7 @@ Prerequisites for this tutorial are:
 -   [NodeJS](https://nodejs.org/en/download/)
 -   [Visual Studio Code](https://code.visualstudio.com/) on your development machine.
 -   [Azure Subscription](#TBD)
--   [AVA Account setup in Azure](#TBD)
+-   [AVA Account setup in Azure](https://review.docs.microsoft.com/en-us/azure/azure-video-analyzer/video-analyzer-docs/overview?branch=release-azure-video-analyzer)
 
 # Concepts
 
@@ -102,6 +102,14 @@ Before you can initialize the player with your Video Analyzer account please com
 4. Grab the video you would like to stream with the AVA Player
 
 Once you have all this information, you can configure the player before you load it.
+You will have to provide the widget with all required fields:
+
+| Name           | Type   | Default | Description                                             |
+| -------------- | ------ | ------- | ------------------------------------------------------- |
+| token          | string |         | Your AVA trusted access token for the widget            |
+| videoName      | string |         | The video name as appears in the video analyzer account |
+| longRegionCode |        |         | The video analyzer account region                       |
+| accountId      |        |         | The video analyzer account id                           |
 
 ```typescript
 const avaPlayer = new Player();
@@ -125,9 +133,9 @@ avaPlayer.load();
 The player widget will be rendered on the page.
 for debugging we recommend to check devtools (F12) for console errors.
 
-# Setup player authorization
+# Player Authorization
 
-In order to make the player communicating with Video Analyzer API you have to provide it with an access token (JWT token) as you can see above in config phase.
+In order to make the player communicating with Video Analyzer API, and get the video playback athorization token you have to provide it with trusted access token (JWT token) that you need to generate as you can see above in config phase.
 
 Once you have that access token, you need to add that to the player configuration before calling the `load` function.
 
@@ -154,3 +162,9 @@ for learning more about the widget API please [read more](https://github.com/vid
 # Using Player widget in React application
 
 Please refer to this [link](https://github.com/benbakhar/ava-demo)
+
+# Demo
+
+You test the player widget in the [demo page](https://aka.ms/ava-widgets-demo)
+
+# Bundling and packaging - TBD
