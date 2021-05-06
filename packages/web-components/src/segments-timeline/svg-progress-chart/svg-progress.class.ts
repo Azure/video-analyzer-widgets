@@ -94,23 +94,24 @@ export class SVGProgressChart {
 
     public setProgress(time: number) {
         const timeType = typeof time;
-        if (timeType === 'undefined' || !this.options.renderProgress) {
-            return;
-        }
         // Make sure the time not pass the max duration
         time = Math.min(time, this.options.time);
         if (Math.abs(time - this.options.time) < 0.5) {
             time = Math.ceil(time);
         }
 
-        // Make sure value is max 100%.
-        const value = Math.min((time / this.options.time) * 100, 100);
-        this.components.progressBar.progress.moveTo(value);
-
         const activeSegment = this.updateActiveRect(time);
         if (this._activeSegmentCallback && activeSegment) {
             this._activeSegmentCallback({ ...activeSegment, time: time });
         }
+
+        if (timeType === 'undefined' || !this.options.renderProgress) {
+            return;
+        }
+
+        // Make sure value is max 100%.
+        const value = Math.min((time / this.options.time) * 100, 100);
+        this.components.progressBar.progress.moveTo(value);
     }
 
     public setPreBuffer(time: number) {
