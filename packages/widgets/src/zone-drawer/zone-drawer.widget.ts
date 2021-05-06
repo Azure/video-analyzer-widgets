@@ -5,14 +5,21 @@ import { DrawingColors } from '../../../styles/system-providers/ava-design-syste
 import { UIActionType } from '../../../web-components/src/actions-menu/actions-menu.definitions';
 import { LayerLabelComponent } from '../../../web-components/src/layer-label/layer-label.component';
 import {
-    ILayerLabelConfig, ILayerLabelOutputEvent,
-    LayerLabelEvents, LayerLabelMode
+    ILayerLabelConfig,
+    ILayerLabelOutputEvent,
+    LayerLabelEvents,
+    LayerLabelMode
 } from '../../../web-components/src/layer-label/layer-label.definitions';
 import { LineDrawerComponent } from '../../../web-components/src/line-drawer/line-drawer.component';
 import { PolygonDrawerComponent } from '../../../web-components/src/polygon-drawer/polygon-drawer.component';
 import {
-    IZone, IZoneDrawerWidgetConfig, ZoneDrawerWidgetEvents,
-    IZoneOutput, ILineZone, IPolygonZone, ZoneDrawerMode
+    IZone,
+    IZoneDrawerWidgetConfig,
+    ZoneDrawerWidgetEvents,
+    IZoneOutput,
+    ILineZone,
+    IPolygonZone,
+    ZoneDrawerMode
 } from './zone-drawer.definitions';
 import { styles } from './zone-drawer.style';
 import { template } from './zone-drawer.template';
@@ -29,7 +36,7 @@ import { Player } from './../rvx/rvx-widget';
 export class ZoneDrawerWidget extends BaseWidget {
     /* override */
     @attr
-    public config: IZoneDrawerWidgetConfig;
+    public config: IZoneDrawerWidgetConfig = {};
 
     @observable
     public zones: IZone[] = [];
@@ -53,6 +60,7 @@ export class ZoneDrawerWidget extends BaseWidget {
     private polygonDrawer: PolygonDrawerComponent;
     private labelsList: HTMLElement;
     private labelListIndex = 1;
+    private resizeObserver: ResizeObserver;
 
     public constructor(config: IZoneDrawerWidgetConfig) {
         super(config);
@@ -62,32 +70,30 @@ export class ZoneDrawerWidget extends BaseWidget {
         super.connectedCallback();
         this.isReady = true;
 
-        window.addEventListener('resize', this.resize.bind(this));
-        this.$fastController?.element?.addEventListener(LayerLabelEvents.labelActionClicked, this.labelActionClicked.bind(this));
-        // eslint-disable-next-line no-undef
-        this.$fastController?.element?.addEventListener(LayerLabelEvents.labelTextChanged, this.labelTextChanged.bind(this) as EventListener);
+        const parent = this.$fastController?.element?.parentElement;
+        this.resizeObserver = new ResizeObserver(this.resize.bind(this));
+        this.resizeObserver.observe(parent);
+
+        this.initZoneDrawComponents();
     }
 
     public disconnectedCallback() {
         super.disconnectedCallback();
 
-        window.removeEventListener('resize', this.resize);
-        this.$fastController?.element?.removeEventListener(LayerLabelEvents.labelActionClicked, this.labelActionClicked);
-        // eslint-disable-next-line no-undef
-        this.$fastController?.element?.removeEventListener(LayerLabelEvents.labelTextChanged, this.labelTextChanged as EventListener);
+        this.resizeObserver.disconnect();
     }
 
     public load() {
         setTimeout(() => {
             if (this.isReady) {
-                this.initZoneDrawComponents();
+                this.init();
             }
         });
     }
 
-    public configChanged() {
-        this.initConfiguration();
-    }
+    // public configChanged() {
+    //     this.initConfiguration();
+    // }
 
     public drawerConnectedCallback() {
         setTimeout(() => {
@@ -98,6 +104,7 @@ export class ZoneDrawerWidget extends BaseWidget {
     public save() {
         const outputs = this.getZonesOutputs();
         this.$emit(ZoneDrawerWidgetEvents.SAVE, outputs);
+        console.log(outputs);
     }
 
     public toggleDrawerMode() {
@@ -112,26 +119,24 @@ export class ZoneDrawerWidget extends BaseWidget {
 
     // @override
     protected init() {
+        this.isDirty = false;
+
+        if (this.zones.length) {
+            this.zonesView.zones = [...this.zones];
+            this.isLabelsListEmpty = false;
+        }
+
         if (this.config?.zones) {
             for (const zone of this.config.zones) {
                 this.addZone(zone);
             }
         }
 
-        this.isDirty = false;
-        if (!this.zonesView) {
-            this.zonesView = this.shadowRoot.querySelector('media-zones-view');
-        }
-
-        if (this.zones.length) {
-            this.zonesView.zones = [...this.zones];
-        }
-
-        this.initPlayer();
+        // this.initPlayer();
     }
 
     private initConfiguration() {
-        if (this.config.playerWidgetElement) {
+        if (this.config?.playerWidgetElement) {
             this.playerWidgetElement = this.config.playerWidgetElement;
         }
     }
@@ -153,11 +158,13 @@ export class ZoneDrawerWidget extends BaseWidget {
     }
 
     private initZoneDrawComponents() {
+        if (!this.zonesView) {
+            this.zonesView = this.shadowRoot.querySelector('media-zones-view');
+        }
+
         if (!this.labelsList) {
             this.labelsList = this.shadowRoot.querySelector('.labels-list');
         }
-
-        this.init();
     }
 
     private initDrawer() {
@@ -198,8 +205,10 @@ export class ZoneDrawerWidget extends BaseWidget {
     }
 
     private resize() {
-        const rvxContainer = this.shadowRoot.querySelector('.rvx-widget-container');
-        this.labelsList.style.maxHeight = `${rvxContainer.clientHeight}px`;
+        if (this.labelsList) {
+            const rvxContainer = this.shadowRoot.querySelector('.rvx-widget-container');
+            this.labelsList.style.maxHeight = `${rvxContainer.clientHeight}px`;
+        }
     }
 
     /* eslint-disable-next-line  @typescript-eslint/no-explicit-any */
@@ -215,7 +224,7 @@ export class ZoneDrawerWidget extends BaseWidget {
     }
 
     /* eslint-disable-next-line  @typescript-eslint/no-explicit-any */
-    private labelTextChanged(e: CustomEvent<ILayerLabelOutputEvent>) {
+    private labelTextChanged(e: any) {
         for (const zone of this.zones) {
             if (zone.id === e.detail.id) {
                 zone.name = e.detail.name;
@@ -301,6 +310,9 @@ export class ZoneDrawerWidget extends BaseWidget {
         layerLabel.config = this.getLabelConfig(zone);
         li.appendChild(layerLabel);
         this.labelsList.appendChild(li);
+
+        layerLabel.addEventListener(LayerLabelEvents.labelActionClicked, this.labelActionClicked.bind(this));
+        layerLabel.addEventListener(LayerLabelEvents.labelTextChanged, this.labelTextChanged.bind(this));
     }
 
     private renameZone(id: string) {
@@ -311,6 +323,9 @@ export class ZoneDrawerWidget extends BaseWidget {
 
     private removeLabel(id: string) {
         const li = this.shadowRoot.getElementById(id);
+        const layerLabel = <LayerLabelComponent>li.querySelector('media-layer-label');
+        layerLabel.removeEventListener(LayerLabelEvents.labelActionClicked, this.labelActionClicked);
+        layerLabel.addEventListener(LayerLabelEvents.labelTextChanged, this.labelTextChanged);
         this.labelsList.removeChild(li);
     }
 

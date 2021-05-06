@@ -45,6 +45,10 @@ export abstract class CanvasElement {
         this.context.lineWidth = this.options?.lineWidth || 1;
     }
 
+    public clear() {
+        this.context?.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    }
+
     private getFontSize() {
         return this.options.fontSize ? +this.options.fontSize.split('px')[0] * this.ratio : 12;
     }

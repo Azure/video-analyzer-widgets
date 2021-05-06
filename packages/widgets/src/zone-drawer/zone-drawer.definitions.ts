@@ -14,7 +14,7 @@ export interface IZoneDrawerWidgetConfig extends IWidgetBaseConfig {
     /*
      * For integration with the player
      */
-    playerWidgetElement: Player;
+    playerWidgetElement?: Player;
 }
 
 export interface IZone {

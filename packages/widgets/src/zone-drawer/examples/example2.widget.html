@@ -1,44 +1,40 @@
 <html lang="en">
 
 <head>
-  <title>Line Drawer samples</title>
-  <style>
-    media-line-drawer {
-      border: 1px solid black;
-      position: absolute;
-    }
-
-    .default-wrapper,
-    .predefined-values-wrapper {
-      width: 100%;
-      background: aliceblue;
-    }
-  </style>
+  <title>Zone Drawer Widget samples</title>
   <script>
 
   </script>
+  <script type="module"
+    src="https://unpkg.com/@microsoft/fast-components"></script>
   <script src="../../../../../dist/ava-widgets.js"></script>
+  <style>
+    fast-dialog {
+      --dialog-height: auto;
+      --dialog-width: auto;
+    }
+  </style>
 </head>
 
 <body>
-  <h1>Zone Draw Widget with config</h1>
-  <br />
-  <fast-button aria-label="Open zone draw dialog"
-    title="Open zone draw dialog"></fast-button>
 
-  <fast-dialog id="example1"
-    class="example-dialog"
-    aria-label="Simple modal dialog"
-    modal="true">
-    <div class="default-wrapper">
-      <ava-design-system-provider theme="dark"
-        use-defaults>
-        <zone-drawer-widget id="zone-draw-widget">
-          <ava-player></ava-player>
-        </zone-drawer-widget>
-      </ava-design-system-provider>
-    </div>
-  </fast-dialog>
+  <ava-design-system-provider theme="dark"
+    use-defaults>
+    <h1>Zone Draw Widget with config</h1>
+    <!-- <br />
+    <fast-dialog id="example1"
+      class="example-dialog"
+      aria-label="Simple modal dialog"
+      modal="true">
+    </fast-dialog> -->
+    <h1>Zone Draw Widget</h1>
+    <zone-drawer-widget id="zone-draw-widget">
+      <ava-player slot="player"
+        id="ava-player-widget"></ava-player>
+    </zone-drawer-widget>
+  </ava-design-system-provider>
+  <div class="default-wrapper">
+  </div>
   <br />
 </body>
 <script>(function () {
@@ -97,12 +93,39 @@
     ];
 
     const zoneDrawerWidget = document.querySelector("zone-drawer-widget");
+    const playerWidget = document.querySelector("ava-player");
 
-    zoneDrawerWidget.configure({
-      zones: zones
+    playerWidget.configure({
+      token: 'eyJhbGciOiJSUzI1NiIsImtpZCI6IjFzemVmSnlHSWlTSGNWcWQ4Q041WVNGaGptOCIsIng1dCI6IjFzemVmSnlHSWlTSGNWcWQ4Q041WVNGaGptOCIsInR5cCI6IkpXVCJ9.eyJuYmYiOjE2MTk2MzgyNzIsImV4cCI6MTY1MTE3NDI2OSwiaWF0IjoxNjE5NjM4MjcyLCJpc3MiOiJTYW1wbGVUb2tlblByb3ZpZGVyIiwiYXVkIjoidGVzdCJ9.gznXMKIqxoxH_I9Nf-JWwiwJ926joeJfysbVcUvEveJWDhSNCuods0ELUvjReQgKr150Pe1dTZYXYU6NKDM6A1UK3KWQW1vf7iUTmf8FfKgMyUvQq_BzlCfV79WRy4XK2vY49wIIw3XdxiXbJhoMiHaezt678-Fn7mzoG6aR1d_P8rIqGDinAY1-9ryvB4Aoq8mC7MP9ZHnDZ4Q_8dLEYmnuOK4R21kOHFkLa6D8wxAdrKPrRt7CtktlKiE-8WVhJKjIFW92PHIaYEx4I14L5D0AiCLfH4DFEsVVlST7vOLuNxcgRx_t0aw10EGmntHqW-UHOlCa8xuB4t25c_imvg',
+      accountId: 'b43e0a4333ff49599b5f6c213b8626f2',
+      longRegionCode: 'mint1',
+      videoName: 'live-yolov3-tracker',
+      playerControllers: [
+        'rewind',
+        'play_pause',
+        'fast_forward',
+        'mute',
+        'volume',
+        'spacer',
+        'next_day',
+        'previous_day',
+        'hours_label'
+      ]
     });
 
-    zoneDrawerWidget.load();
+
+    // const source = {
+    //   authenticationToken: 'myToken',
+    //   allowCrossSiteCredentials: false,
+    //   src: 'http://v1-6-5.shaka-player-demo.appspot.com/assets/car-20120827-manifest.mpd?_=1619710221766'
+    // }
+    // playerWidget.setSource(source);
+    playerWidget.load();
+    // zoneDrawerWidget.configure({
+    //   zones: zones
+    // });
+
+    // zoneDrawerWidget.load();
 
     // zoneDrawerWidget.config = { zones: zones };
   })()

@@ -17,7 +17,7 @@ export class BaseWidget extends FASTElement {
         if (this.config) {
             this.init();
         } else {
-            this.config = Object.create(null);
+            // this.config = Object.create(null);
         }
     }
 

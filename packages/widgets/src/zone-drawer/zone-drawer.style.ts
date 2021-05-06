@@ -40,10 +40,10 @@ export const styles = css`
 
     .draw-zone-container {
         width: 100%;
-        height: calc(100% - 96px);
+        height: calc(100% - 91px);
         position: absolute;
-        padding-bottom: 48px;
-        padding-top: 47px;
+        padding-bottom: 42px;
+        padding-top: 49px;
         display: block;
     }
 
@@ -72,6 +72,11 @@ export const styles = css`
         width: 100%;
         background: black;
         min-height: 200px;
+        display: inline-grid;
+    }
+
+    ava-player {
+        display: flex;
     }
 
     .action-buttons {
@@ -93,6 +98,7 @@ export const styles = css`
     }
 
     media-line-drawer,
+    media-polygon-drawer,
     media-zones-view {
         position: absolute;
         height: 100%;

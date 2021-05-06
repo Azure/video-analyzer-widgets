@@ -7,11 +7,9 @@ import { Player } from './rvx-widget';
  */
 export const template = html<Player>`
     <template>
-        <ava-design-system-provider theme="dark" use-defaults>
-            <rvx-player
-                cameraName="${(x) => x.config?.videoName}"
-                style="${(x) => (x.width ? 'width: ' + x.width + ';' : '')}"
-            ></rvx-player>
-        </ava-design-system-provider>
+        <rvx-player
+            cameraName="${(x) => x.config?.videoName}"
+            style="${(x) => (x.width ? 'width: ' + x.width + ';' : '')}"
+        ></rvx-player>
     </template>
 `;

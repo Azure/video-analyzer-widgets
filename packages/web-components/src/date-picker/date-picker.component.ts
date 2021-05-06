@@ -100,16 +100,16 @@ export class DatePickerComponent extends FASTElement {
 
     public disconnectedCallback() {
         // Remove all elements
-        this.shadowRoot.removeChild(this.shadowRoot.querySelector('#date-picker-css-link'));
-        this.shadowRoot.removeChild(document.querySelector('#jquery-script'));
+        // this.shadowRoot?.removeChild(this.shadowRoot.querySelector('#date-picker-css-link'));
+        // this.shadowRoot?.removeChild(document.querySelector('#jquery-script'));
         const datePickerSRC = document.querySelector('#date-picker-src-link');
         if (datePickerSRC) {
-            this.shadowRoot.removeChild(datePickerSRC);
+            this.shadowRoot?.removeChild(datePickerSRC);
         }
 
         const pickerDateSRC = document.querySelector('#picker-date-src-link');
         if (pickerDateSRC) {
-            this.shadowRoot.removeChild(pickerDateSRC);
+            this.shadowRoot?.removeChild(pickerDateSRC);
         }
     }
 

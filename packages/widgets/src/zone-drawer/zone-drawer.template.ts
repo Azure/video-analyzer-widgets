@@ -18,7 +18,8 @@ export const template = html<ZoneDrawerWidget>`
                     @click="${(x) => x.toggleDrawerMode()}"
                 >
                     <svg>
-                        <path d="${POLYGON_SVG_PATH}"></path>כ
+                        <path d="${POLYGON_SVG_PATH}"></path>
+                        כ
                     </svg>
                 </fast-button>
                 <fast-button
@@ -40,25 +41,26 @@ export const template = html<ZoneDrawerWidget>`
                     <div class="draw-zone">
                         <media-zones-view></media-zones-view>
                         ${when(
-    (x) => x.showDrawer && x.isReady,
-    html`
+                            (x) => x.showDrawer && x.isReady,
+                            html`
                                 ${(x) => {
-            if (x.isLineDrawMode) {
-                return html`<media-line-drawer
-                                            connectedCallback="${x.drawerConnectedCallback()}"
+                                    if (x.isLineDrawMode) {
+                                        return html`<media-line-drawer
+                                            connectedCallback="${(x) => x.drawerConnectedCallback()}"
                                         ></media-line-drawer>`;
-            } else {
-                return html`<media-polygon-drawer
-                                            connectedCallback="${x.drawerConnectedCallback()}"
+                                    } else {
+                                        return html`<media-polygon-drawer
+                                            connectedCallback="${(x) => x.drawerConnectedCallback()}"
                                         ></media-polygon-drawer>`;
-            }
-        }}
+                                    }
+                                }}
                             `
-)}
+                        )}
                     </div>
                 </div>
                 <div class="rvx-widget-container">
                     <!-- rvx widget -->
+                    <slot name="player"></slot>
                 </div>
             </div>
             <div class="zones-list-container">
@@ -67,9 +69,7 @@ export const template = html<ZoneDrawerWidget>`
             </div>
         </div>
         <div class="action-buttons">
-            <fast-button ?disabled="${(x) => !x.isDirty}" aria-label="Save" title="Save" @click="${(x) => x.save()}">
-                Save
-            </fast-button>
+            <fast-button ?disabled="${(x) => !x.isDirty}" appearance="accent" aria-label="Save" title="Save" @click="${(x) => x.save()}"> Save </fast-button>
         </div>
     </template>
 `;
