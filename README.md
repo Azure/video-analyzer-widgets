@@ -286,7 +286,7 @@ https://aka.ms/ava-widgets-demo
 ##### Typescript usage:
 
 ```typescript
-import { Player } from '@video-analyzer/widgets';
+import { ZoneDrawerWidget } from '@video-analyzer/widgets';
 ```
 
 ### Getting Started
@@ -366,7 +366,7 @@ document.firstElementChild.appendChild(zoneDrawer).
     </body>
     <script>
         (function () {
-                // Get player instance
+                // Get zone drawer widget instance
                 const avaZoneDrawer = document.querySelector("ava-zone-drawer");
 
                 // Init draw-zone with zones object is optional
@@ -453,7 +453,7 @@ document.firstElementChild.appendChild(zoneDrawer).
                             }
                         ];
 
-                        // Create new player widget
+                        // Create new zone drawer widget
                         const zoneDrawer = new window.ava.widgets.zoneDrawer({zones: zones});
 
                         widgetContainer.appendChild(zoneDrawer)
