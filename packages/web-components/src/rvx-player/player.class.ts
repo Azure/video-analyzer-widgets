@@ -174,13 +174,6 @@ export class PlayerWrapper {
                 };
                 segments.push(segment);
             }
-            // if (segmentStart >= segmentStartRange && segmentEnd <= segmentEndRange) {
-            //     const segment: IUISegment = {
-            //         startSeconds: segments.length ? segments[segments.length - 1].startSeconds : segmentStart,
-            //         endSeconds: segmentEnd
-            //     };
-            //     segments.push(segment);
-            // }
         }
 
         const configWithZoom = {

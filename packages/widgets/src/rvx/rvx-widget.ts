@@ -24,10 +24,6 @@ export class Player extends BaseWidget {
         super(config);
     }
 
-    public widgetConfigChanged() {
-        this.init();
-    }
-
     public setAccessToken(token: string) {
         if (token) {
             this.config.token = token;
@@ -120,15 +116,9 @@ export class Player extends BaseWidget {
     }
 
     private handelFallback() {
-        // Init media API as fallback
-        MediaApi.baseStream =
-            'https://amsts71mediaarmacfgqhd-ts711.streaming.media.azure-test.net/527754db-43ab-4357-9fda-8959121d3a5e/test.ism';
-        this.initPlayer();
-    }
-
-    private initPlayer() {
         const rvxPlayer: PlayerComponent = this.shadowRoot.querySelector('rvx-player');
         rvxPlayer.init(true, '', this.allowedControllers);
+        rvxPlayer.handleError();
     }
 
     private tokenExpiredCallback() {

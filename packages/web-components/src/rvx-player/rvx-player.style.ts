@@ -130,7 +130,7 @@ export const styles = css`
 
     video {
         width: 100%;
-        height: 100%;
+        min-height: calc(100% * 9 / 16);
         background: black;
     }
 

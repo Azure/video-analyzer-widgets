@@ -18,7 +18,7 @@ export const template = html<PlayerComponent>`
                 ></media-date-picker>
             </div>
         </div>
-        <span class="error">theres seems to be a problem. Please try again later</span>
+        <span class="error">Theres seems to be a problem. Please try again later</span>
         <div
             shaka-controls="true"
             class="video-container 

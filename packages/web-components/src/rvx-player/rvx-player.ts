@@ -145,6 +145,10 @@ export class PlayerComponent extends FASTElement {
         this.player?.pause();
     }
 
+    public handleError() {
+        this.hasError = true;
+        this.classList.add('error');
+    }
     public async connectedCallback() {
         super.connectedCallback();
 
@@ -263,8 +267,7 @@ export class PlayerComponent extends FASTElement {
                 years: this.currentAllowedYears.toString()
             };
         } catch (error) {
-            this.hasError = true;
-            this.classList.add('error');
+            this.handleError();
             throw new WidgetGeneralError('Cannot parse available media');
         }
     }
@@ -295,8 +298,7 @@ export class PlayerComponent extends FASTElement {
                 }
             }
         } catch (error) {
-            this.hasError = true;
-            this.classList.add('error');
+            this.handleError();
             throw new WidgetGeneralError('Cannot parse available media');
         }
     }
@@ -331,8 +333,7 @@ export class PlayerComponent extends FASTElement {
                 }
             }
         } catch (error) {
-            this.hasError = true;
-            this.classList.add('error');
+            this.handleError();
             throw new WidgetGeneralError('Cannot parse available media');
         }
     }

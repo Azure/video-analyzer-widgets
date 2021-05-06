@@ -340,7 +340,7 @@ export class SVGProgressChart {
             const startTime = (this.activeRect.x / 100) * this.options.time;
             const endTime = (this.activeRect.width / 100) * this.options.time + startTime;
             if (startTime <= time && endTime >= time) {
-                return null;
+                // it is the same segment
             } else {
                 this.activeRect.removeClass('active');
                 this.activeRect = null;

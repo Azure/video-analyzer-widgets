@@ -12,78 +12,22 @@ This is the Azure video analyzer widgets repo, containing web component packages
 
 A collection of widgets (web components) using Azure Video Analyzer platform capabilities and APIs
 
-## Prerequisites
-
-###### NOTE: this is relevant during development mode. After releasing to GITHUB, the flow will be updated.
-
-1. #### For consuming at runtime:
-
-    In this option, you can **build the library yourself** or **import the library from a blob**.
-    _For building AVA widgets library_, please make sure you have access to the following repo - [AVA-Widgets](https://dev.azure.com/MediaWidgets/AVA%20Widgets)
-    If not, please reach out to @Nofar Edan or @Ori Ziv to get access.
-
-    _For importing the library from a blob_, please use the following file: https://salmon-mushroom-072389f0f.azurestaticapps.net/scripts.js
-
-2. #### For consuming as NPM package from Azure private feed:
-
-    Please make sure you have access to [AVA-Widgets](https://dev.azure.com/MediaWidgets/AVA%20Widgets/_packaging?_a=feed&feed=Media-AVA-Widgets) private feed.
-
-    Then, connect to AVA-widgets feed:
-
-    1. Enter [AVA-Widgets](https://dev.azure.com/MediaWidgets/AVA%20Widgets/_packaging?_a=feed&feed=Media-AVA-Widgets)
-    2. Click on ‘Connect to feed’
-    3. Select 'npm'
-    4. Follow installation steps.
-
 ## Installing AVA library
 
-###### NOTE: this is relevant during development mode. After releasing to GITHUB, the flow will be updated.
-
-1. #### For building the library yourself:
-
-    1. Clone repo code: [AVA-Widgets](https://dev.azure.com/MediaWidgets/AVA%20Widgets)
-    2. Once cloned, enter repository location and write the following commands:
+1. #### For consuming as NPM package from npm:
+    1. Install the library:
         ```
-        npm install
-        ```
-        ```
-        npm run build
-        ```
-        Once build is done, enter _/dist_ folder, there you will find _ava-widgets.js_ file.
-
-2. #### For importing the library from a blob, you can skip this step.
-
-3. #### For consuming as NPM package from Azure private feed:
-    1. Create in your application an _.npmrc_ file and follow the steps in [Prerequisites](/widgets#for-consuming-as-npm-package-from-azure-private-feed)
-    2. Install the library:
-        ```
-            npm install @video-analyzer/widgets
+            npm install video-analyzer-widgets
         ```
 
 ### `AVA player widget`
 
 ### Import
 
-##### Native JS usage:
-
-Import ava-widgets.js / https://salmon-mushroom-072389f0f.azurestaticapps.net/scripts.js to your HTML file:
-
-```html live
-<head>
-    <script async type="”module”" src="./ava-widgets.js"></script>
-</head>
-```
-
-```html live
-<head>
-    <script async type="”module”" src="https://salmon-mushroom-072389f0f.azurestaticapps.net/scripts.js"></script>
-</head>
-```
-
 ##### Typescript usage:
 
 ```typescript
-import { Player } from '@video-analyzer/widgets';
+import { Player } from 'video-analyzer-widgets';
 ```
 
 ### Getting Started
@@ -100,25 +44,10 @@ Creating using HTML:
 
 Creating dynamically:
 
-##### Native JS usage:
-
-```html live
-<head>
-    <script async type="”module”" src="https://salmon-mushroom-072389f0f.azurestaticapps.net/scripts.js"></script>
-</head>
-<body></body>
-<script>
-    (function () {
-        const avaPlayer = new window.ava.widgets.player();
-        document.firstElementChild.appendChild(avaPlayer);
-    })();
-</script>
-```
-
 ##### Typescript usage:
 
 ```typescript
-import { Player } from '@video-analyzer/widgets';
+import { Player } from 'video-analyzer-widgets';
 
 const avaPlayer = new Player();
 document.firstElementChild.appendChild(avaPlayer).
@@ -153,9 +82,6 @@ document.firstElementChild.appendChild(avaPlayer).
 1.  _Basic usage snippet:_ create a player widget with native JS code, configure the widget and load the data.
 
     ```html live
-    <head>
-        <script async type="”module”" src="https://salmon-mushroom-072389f0f.azurestaticapps.net/scripts.js"></script>
-    </head>
     <body>
         <ava-player></ava-player>
     </body>
@@ -180,9 +106,6 @@ document.firstElementChild.appendChild(avaPlayer).
 2.  _Token refresh snippet:_ create a widget with native JS code, configure the widget and load the data. Once AVA-API token is expired, update the token.
 
     ```html live
-    <head>
-        <script async type="”module”" src="https://salmon-mushroom-072389f0f.azurestaticapps.net/scripts.js"></script>
-    </head>
     <body>
         <ava-player widget="”920px”" height="”300px”"></ava-player>
     </body>
@@ -214,9 +137,6 @@ document.firstElementChild.appendChild(avaPlayer).
 3.  _Dynamically creating the widget:_ create a widget dynamically with native JS code, without using configure function.
 
     ```html live
-    <head>
-        <script async type="”module”" src="https://salmon-mushroom-072389f0f.azurestaticapps.net/scripts.js"></script>
-    </head>
     <body>
         <div id="”widget-container”"></div>
     </body>
@@ -249,7 +169,7 @@ document.firstElementChild.appendChild(avaPlayer).
     1. Go to your _src/main.ts_ file and add the following code:
 
         ```typescript
-        import { Player } from '@video-analyzer/widgets';
+        import { Player } from 'video-analyzer-widgets';
 
         /*
          * Ensure that tree-shaking doesn't remove this component from * the bundle.
@@ -275,7 +195,3 @@ document.firstElementChild.appendChild(avaPlayer).
         </template>
         ```
         Alternatively, you can create a new instance of the widget using typescript, and add it to the DOM.
-
-### Demo application:
-
-https://aka.ms/ava-widgets-demo

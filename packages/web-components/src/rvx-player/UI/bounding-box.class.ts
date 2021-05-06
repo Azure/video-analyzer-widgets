@@ -10,10 +10,12 @@ export class BoundingBoxDrawer extends CanvasElement {
     public constructor(options: ICanvasOptions, private video: HTMLVideoElement) {
         super(options);
         this.setCanvasSize(options.width, options.height);
+        this.setCanvasStyle();
     }
 
     // Start the animation
     public on() {
+        this.setCanvasSize(this.video.clientWidth, this.video.clientHeight);
         this.playAnimation();
 
         // Add listeners to play and pause
@@ -102,8 +104,10 @@ export class BoundingBoxDrawer extends CanvasElement {
     public resize(): void {
         // Clear canvas
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.canvas.width = this.video.clientWidth;
-        this.canvas.height = this.video.clientHeight;
+        setTimeout(() => {
+            this.canvas.width = this.video.clientWidth;
+            this.canvas.height = this.video.clientHeight;
+        });
     }
 
     public playAnimation() {
