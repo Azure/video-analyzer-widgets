@@ -94,10 +94,6 @@ export class SVGProgressChart {
 
     public setProgress(time: number) {
         const timeType = typeof time;
-
-        // dispatch click event
-        // this.activeSegment$.next(activeSegment);
-
         if (timeType === 'undefined' || !this.options.renderProgress) {
             return;
         }
