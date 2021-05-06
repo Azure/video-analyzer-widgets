@@ -33,8 +33,8 @@
         <div class="default-wrapper">
             <ava-design-system-provider theme="dark"
                 use-defaults>
-                <zone-drawer-widget id="zone-draw-widget">
-                </zone-drawer-widget>
+                <ava-zone-drawer id="zone-draw-widget">
+                </ava-zone-drawer>
             </ava-design-system-provider>
         </div>
     </fast-dialog>
@@ -95,7 +95,7 @@
             },
         ];
 
-        const zoneDrawerWidget = document.querySelector("zone-drawer-widget");
+        const zoneDrawerWidget = document.querySelector("ava-zone-drawer");
 
         zoneDrawerWidget.configure();
 

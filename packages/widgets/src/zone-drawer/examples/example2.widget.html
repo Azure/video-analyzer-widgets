@@ -28,10 +28,10 @@
       modal="true">
     </fast-dialog> -->
     <h1>Zone Draw Widget</h1>
-    <zone-drawer-widget id="zone-draw-widget">
+    <ava-zone-drawer id="zone-draw-widget">
       <ava-player slot="player"
         id="ava-player-widget"></ava-player>
-    </zone-drawer-widget>
+    </ava-zone-drawer>
   </ava-design-system-provider>
   <div class="default-wrapper">
   </div>
@@ -92,7 +92,7 @@
       },
     ];
 
-    const zoneDrawerWidget = document.querySelector("zone-drawer-widget");
+    const zoneDrawerWidget = document.querySelector("ava-zone-drawer");
     const playerWidget = document.querySelector("ava-player");
 
     playerWidget.configure({

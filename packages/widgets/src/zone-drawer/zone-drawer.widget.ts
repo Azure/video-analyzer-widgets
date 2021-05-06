@@ -29,7 +29,7 @@ import { BaseWidget } from '../base-widget/base-widget';
 import { Player } from './../rvx/rvx-widget';
 
 @customElement({
-    name: 'zone-drawer-widget',
+    name: 'ava-zone-drawer',
     template,
     styles
 })
