@@ -9,11 +9,6 @@ export interface IZoneDrawerWidgetConfig extends IWidgetBaseConfig {
      * This the zones
      */
     zones?: IZone[];
-
-    /*
-     * For integration with the player
-     */
-    // playerWidgetElement: Player;
 }
 
 export interface IZone {

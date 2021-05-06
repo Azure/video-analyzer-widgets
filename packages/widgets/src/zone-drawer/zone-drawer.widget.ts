@@ -21,7 +21,7 @@ import { BaseWidget } from '../base-widget/base-widget';
 import { ZoneDrawerActions } from './actions';
 
 @customElement({
-    name: 'zone-drawer-widget',
+    name: 'ava-zone-drawer',
     template,
     styles
 })

@@ -296,7 +296,7 @@ Creating using HTML:
 
 ```html live
   <body>
-	<zone-drawer-widget><zone-drawer-widget>
+	<ava-zone-drawer><ava-zone-drawer>
   </body>
 ```
 Creating dynamically:
