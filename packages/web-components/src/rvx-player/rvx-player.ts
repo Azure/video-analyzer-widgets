@@ -13,6 +13,8 @@ import { ControlPanelElements } from './rvx-player.definitions';
 import { styles } from './rvx-player.style';
 import { template } from './rvx-player.template';
 
+DatePickerComponent;
+
 /**
  * RVX Player web component
  * @public

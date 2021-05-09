@@ -8,6 +8,10 @@ import { template } from './rvx-widget.template';
 import { styles } from './rvx-widget.style';
 import { PlayerComponent } from '../../../web-components/src/rvx-player';
 import { ControlPanelElements, ISource } from '../../../web-components/src/rvx-player/rvx-player.definitions';
+import { AvaDesignSystemProvider } from '../../../styles';
+
+AvaDesignSystemProvider;
+PlayerComponent;
 
 @customElement({
     name: 'ava-player',

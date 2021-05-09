@@ -2,7 +2,7 @@
     "name": "@video-analyzer/widgets",
     "version": "0.2.3",
     "description": "",
-    "main": "./dist/ava-widgets.js",
+    "main": "./dist/ava-widgets.min.js",
     "typings": "./dist/index.d.ts",
     "scripts": {
         "start": "webpack -w",
@@ -46,18 +46,19 @@
         "eslint": "^7.18.0",
         "eslint-webpack-plugin": "^2.4.3",
         "html-webpack-plugin": "^5.0.0-beta.6",
+        "jest": "^26.6.3",
         "lit-html": "^1.3.0",
         "node-sass": "5.0.0",
         "sass-loader": "10.1.1",
         "style-loader": "1.2.1",
         "ts-loader": "^8.0.11",
+        "tslib": "^1.11.1",
         "typescript": "^4.2.3",
         "url-loader": "^4.1.1",
         "webpack": "^5.16.0",
+        "webpack-bundle-analyzer": "^4.4.1",
         "webpack-cli": "^4.6.0",
-        "jest": "^26.6.3",
-        "tslib": "^1.11.1",
-        "webpack-bundle-analyzer": "^4.4.1"
+        "webpack-merge": "^5.7.3"
     },
     "dependencies": {
         "@fluentui/web-components": "^0.20.2",

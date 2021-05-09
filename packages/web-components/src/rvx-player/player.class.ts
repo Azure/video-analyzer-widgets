@@ -11,6 +11,7 @@ import { AVAPlayerUILayer } from './UI/ava-ui-layer.class';
 import { BoundingBoxDrawer } from './UI/bounding-box.class';
 const shaka = require('shaka-player/dist/shaka-player.ui.debug.js');
 
+TimelineComponent;
 export class PlayerWrapper {
     private isLive = false; // TODO : when RTSP plugin will be ready, set to true
     private _accessToken = '';

@@ -1,5 +1,11 @@
 import { Player } from './packages/widgets/src/rvx/rvx-widget';
+import { FASTButton, FASTMenu, FASTMenuItem } from '@microsoft/fast-components';
 
-window.ava = window.ava || { widgets: { player: Player } };
-window.ava.widgets = window.ava.widgets || { player: Player };
-window.ava.widgets.player = Player;
+Player;
+FASTButton;
+FASTMenu;
+FASTMenuItem;
+
+export const widgets = {
+    player: Player
+};
