@@ -33,8 +33,8 @@ export const styles = css`
 
     .ms-DatePicker-monthOption.is-highlighted,
     .ms-DatePicker-yearOption.is-highlighted {
-        background-color: var(--date-picker-bg-today);
-        color: var(--date-picker-text-color-today);
+        background-color: var(--date-picker-selected-press);
+        color: var(--date-picker-text-color) !important;
     }
 
     .ms-DatePicker-holder {
@@ -56,16 +56,12 @@ export const styles = css`
         color: var(--date-picker-text-color);
     }
 
-    .ms-DatePicker-day--selected {
-        color: var(--date-picker-text-color-today); !important;
-    }
-
     .ms-DatePicker-yearOption.js-changeDate.disabled,
     .ms-DatePicker-monthOption.js-changeDate.disabled,
     .ms-DatePicker-day.ms-DatePicker-day--infocus.disabled,
     .ms-DatePicker-day.ms-DatePicker-day--outfocus {
         pointer-events: none;
         cursor: not-allowed;
-        color: var(--date-picker-focus-text-color-hover);
+        color: var(--date-picker-disabled-color);
     }
 `;
