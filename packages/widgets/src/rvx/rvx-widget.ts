@@ -109,8 +109,7 @@ export class Player extends BaseWidget {
             TokenHandler.avaAPIToken = this.config.token;
         }
 
-        AvaAPi.accountID = this.config?.accountId;
-        AvaAPi.longRegionCode = this.config?.longRegionCode;
+        AvaAPi.clientApiEndpointUrl = this.config?.clientApiEndpointUrl;
         AvaAPi.videoName = this.config?.videoName;
         this.allowedControllers = this.config.playerControllers;
     }

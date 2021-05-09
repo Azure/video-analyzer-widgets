@@ -6,17 +6,13 @@ import { IWidgetBaseConfig } from '../../definitions/base-widget-config.definiti
  */
 export interface IAvaPlayerConfig extends IWidgetBaseConfig {
     /**
-     * Account ID
-     */
-    accountId: string;
-    /**
      * Embedded video name
      */
     videoName: string;
     /**
-     * long region code
+     * AVA API endpoint
      */
-    longRegionCode: string;
+    clientApiEndpointUrl: string;
     /**
      * AVA API token
      */
