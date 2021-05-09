@@ -12,6 +12,7 @@ export interface IDisplayOptions {
     top?: number;
     renderTooltip?: boolean;
     renderProgress?: boolean;
+    renderSeek?: boolean;
     timeSmoothing?: number;
     zoom?: number;
     disableCursor?: boolean; // Disable cursor on un segment parts

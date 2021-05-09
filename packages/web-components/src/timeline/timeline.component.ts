@@ -147,20 +147,16 @@ export class TimelineComponent extends FASTElement {
                 top: 0,
                 renderTooltip: false,
                 renderProgress: false,
+                renderSeek: true,
                 zoom: this.zoom
             }
         };
 
         this.segmentsTimeline.config = config;
 
-        this.segmentsTimeline.addEventListener(SegmentsTimelineEvents.SEGMENT_CLICKED, ((event: CustomEvent<IUISegment>) => {
+        this.segmentsTimeline.addEventListener(SegmentsTimelineEvents.SEGMENT_CLICKED, ((event: CustomEvent) => {
             this.$emit(TimelineEvents.SEGMENT_CHANGE, event.detail);
-            event.stopPropagation();
-            // eslint-disable-next-line no-undef
-        }) as EventListener);
-
-        this.segmentsTimeline.addEventListener(SegmentsTimelineEvents.CURRENT_TIME_CHANGE, ((event: CustomEvent<number>) => {
-            this.$emit(TimelineEvents.CURRENT_TIME_CHANGE, event.detail);
+            this.$emit(TimelineEvents.CURRENT_TIME_CHANGE, event.detail.time);
             event.stopPropagation();
             // eslint-disable-next-line no-undef
         }) as EventListener);

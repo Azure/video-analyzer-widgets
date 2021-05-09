@@ -141,6 +141,16 @@ export class OverflowMenu extends shaka.ui.OverflowMenu {
         this.init();
     }
 
+    public createChildren_() {
+        super.createChildren_();
+        const settingsLabel = document.createElement('label');
+        settingsLabel.classList.add('settings-header');
+        const settingsSpan = document.createElement('span');
+        settingsSpan.innerText = 'Settings';
+        settingsLabel.prepend(settingsSpan);
+        this.overflowMenu_.prepend(settingsLabel);
+    }
+
     private init() {
         // Create SVG
         this.svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
@@ -150,6 +160,20 @@ export class OverflowMenu extends shaka.ui.OverflowMenu {
         this.svg.appendChild(this.path);
         this.overflowMenuButton_.innerText = '';
         this.overflowMenuButton_.appendChild(this.svg);
+
+        const backToButtons = this.controls.getVideoContainer().getElementsByClassName('shaka-back-to-overflow-button');
+        for (const button of backToButtons) {
+            const icon = button.querySelector('.material-icons-round');
+            if (icon) {
+                button.removeChild(icon);
+            }
+            const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            path.setAttribute('fill', 'black');
+            path.setAttribute('d', ARROW_LEFT_PATH);
+            svg.appendChild(path);
+            button.prepend(svg);
+        }
     }
 }
 
@@ -244,9 +268,9 @@ export class BodyTracking extends shaka.ui.Element {
 
     public updateIcon_() {
         if (this.isOn) {
-            this.path.style['fill'] = 'red';
+            this.button_.classList.add('body-tracking-on');
         } else {
-            this.path.style['fill'] = 'white';
+            this.button_.classList.remove('body-tracking-on');
         }
     }
 

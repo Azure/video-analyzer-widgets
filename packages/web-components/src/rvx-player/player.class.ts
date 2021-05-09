@@ -127,6 +127,10 @@ export class PlayerWrapper {
         // this.controls.elements_[5].isLive = this.isLive;
         // this.controls.elements_[5].button_.classList.add(this.isLive ? 'live-on' : 'live-off');
         // this.controls.elements_[5].button_.classList.remove(this.isLive ? 'live-off' : 'live-on');
+        this.updateControlsClassList();
+    }
+
+    private updateControlsClassList() {
         this.controls.controlsContainer_.classList.add(this.isLive ? 'live-on' : 'live-off');
         this.controls.controlsContainer_.classList.remove(this.isLive ? 'live-off' : 'live-on');
     }
@@ -142,6 +146,11 @@ export class PlayerWrapper {
         }
     }
 
+    private extractRealTime(time: number) {
+        const currentDate = new Date(this.timestampOffset + time * 1000);
+        return currentDate.getHours() * 3600 + currentDate.getMinutes() * 60 + currentDate.getSeconds();
+    }
+
     private createTimelineComponent() {
         if (!this.segmentReferences) {
             return;
@@ -149,8 +158,9 @@ export class PlayerWrapper {
         // go over reference
         const segments = [];
         for (const iterator of this.segmentReferences) {
-            const segmentEnd = iterator.getEndTime();
-            const segmentStart = iterator.getStartTime();
+            const segmentEnd = this.extractRealTime(iterator.getEndTime());
+            const segmentStart = this.extractRealTime(iterator.getStartTime());
+
             // const segmentStartRange = 3600 * segments.length;
             // const segmentEndRange = 3600 * segments.length;
             if (segments.length) {
@@ -191,16 +201,20 @@ export class PlayerWrapper {
     }
 
     private onSegmentChange(event: CustomEvent) {
-        const segment = event.detail as IUISegment;
+        const segment = event.detail as any;
         if (segment) {
-            this.video.currentTime = segment.startSeconds + 1;
+            const currentDate = new Date(this.timestampOffset);
+            const dateInSeconds = currentDate.getHours() * 3600 + currentDate.getMinutes() * 60 + currentDate.getSeconds();
+            this.video.currentTime = dateInSeconds - segment.startSeconds + 1;
             this.video.play();
         }
     }
 
     private onTimeChange(event: CustomEvent<number>) {
+        const currentDate = new Date(this.timestampOffset);
+        const dateInSeconds = currentDate.getHours() * 3600 + currentDate.getMinutes() * 60 + currentDate.getSeconds();
         if (event.detail) {
-            this.video.currentTime = event.detail;
+            this.video.currentTime = event.detail - dateInSeconds;
         }
     }
 
@@ -251,14 +265,13 @@ export class PlayerWrapper {
 
         this.player.addEventListener('emsg', this.onShakaMetadata.bind(this));
 
-        await this.toggleLiveMode(this.isLive);
-
         // Add bounding box drawer
         const options: ICanvasOptions = {
             height: this.video.clientHeight,
             width: this.video.clientWidth
         };
         this.boundingBoxesDrawer = new BoundingBoxDrawer(options, this.video);
+        this.updateControlsClassList();
     }
 
     private onWindowResize() {
@@ -307,6 +320,12 @@ export class PlayerWrapper {
         for (const iterator of inferences) {
             if (iterator.type === 'MOTION' || iterator.type === 'ENTITY') {
                 const data = iterator?.motion?.box || iterator?.entity?.box;
+                if (iterator.type === 'ENTITY') {
+                    data.entity = {
+                        id: iterator.entity.id || iterator.sequenceId,
+                        tag: iterator.entity.tag.value
+                    };
+                }
                 this.boundingBoxesDrawer.addItem(emsg.startTime, data);
             }
         }
@@ -347,7 +366,7 @@ export class PlayerWrapper {
 
         // if theres a timeline - update time
         if (this.timelineComponent) {
-            this.timelineComponent.currentTime = displayTime;
+            this.timelineComponent.currentTime = this.extractRealTime(displayTime);
         }
     }
 

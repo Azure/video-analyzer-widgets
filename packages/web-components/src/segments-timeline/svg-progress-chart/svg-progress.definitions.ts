@@ -1,4 +1,4 @@
-import { Rect, Tooltip } from './svg-progress.models';
+import { SeekBar, Rect, Tooltip } from './svg-progress.models';
 
 // interfaces
 export interface IShowable {
@@ -16,6 +16,7 @@ export interface IChartOptions {
     top?: number;
     renderTooltip?: boolean;
     renderProgress?: boolean;
+    renderSeek?: boolean;
     renderBuffer?: boolean;
     disableCursor?: boolean; // Disable cursor on un segment parts
 }
@@ -34,6 +35,7 @@ export interface IProgressBar {
     progress: Rect;
     buffer: Rect;
     bar: Rect;
+    seekBar: SeekBar;
     tooltip: Tooltip;
 }
 

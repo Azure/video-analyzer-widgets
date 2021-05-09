@@ -227,11 +227,11 @@ export class SegmentsTimelineComponent extends FASTElement {
             renderTooltip: this.config?.displayOptions?.renderTooltip || false,
             tooltipHeight: this.config?.displayOptions?.tooltipHeight,
             renderProgress: this.config?.displayOptions?.renderProgress || false,
+            renderSeek: this.config?.displayOptions?.renderSeek || false,
             top: this.config?.displayOptions?.top,
             disableCursor: this.config?.displayOptions?.disableCursor || false
         };
 
-        this.timelineProgress?.activeSegment$?.unsubscribe();
         this.timelineProgress?.destroy();
         this.timelineProgress = new SVGProgressChart(<SVGElement>container, chartOptions);
 
@@ -243,16 +243,10 @@ export class SegmentsTimelineComponent extends FASTElement {
             this.$emit(SegmentsTimelineEvents.CURRENT_TIME_CHANGE, this.currentTime);
         });
 
-        this.timelineProgress.activeSegment$.subscribe((activeSegment) => {
-            if (
-                activeSegment &&
-                activeSegment?.startSeconds !== this.lastActiveSegment?.startSeconds &&
-                activeSegment?.endSeconds !== this.lastActiveSegment?.endSeconds
-            ) {
-                this.lastActiveSegment = activeSegment;
-                this.$emit(SegmentsTimelineEvents.SEGMENT_CLICKED, activeSegment);
-            }
-        });
+        this.timelineProgress.activeSegmentCallback = (activeSegment: any) => {
+            this.lastActiveSegment = activeSegment;
+            this.$emit(SegmentsTimelineEvents.SEGMENT_CLICKED, activeSegment);
+        };
 
         // Subscribe to on time change -
         this.onTimeChange().subscribe((e: Event) => {

@@ -29,7 +29,17 @@ export class MediaApi {
 
         let range_query = '';
         if (range) {
-            range_query = `,starttime=${range.start.toISOString()},endtime=${range.end.toISOString()}`;
+            const startDay = this.convertDateToIso(
+                range.start.getUTCFullYear(),
+                range.start.getUTCMonth() + 1,
+                range.start.getUTCDate() + 1
+            );
+            const endDay = this.convertDateToIso(range.end.getUTCFullYear(), range.end.getUTCMonth() + 1, range.end.getUTCDate() + 1);
+            range_query = `,starttime=${startDay},endtime=${endDay}`;
+            range_query = `,starttime=${this.extractDate(range.start, Precision.DAY)},endtime=${this.extractDate(
+                range.end,
+                Precision.DAY
+            )}`;
         }
 
         return `${this.baseStream}/manifest(format=${format}${range_query})${extension}`;
@@ -67,16 +77,21 @@ export class MediaApi {
     }
 
     private static extractDate(date: Date, precision: Precision) {
-        const value = date.toISOString();
+        const currentUTCYear = date.getUTCFullYear();
+        const currentUTCMonth = date.getUTCMonth() + 1;
+        const currentUTCDate = date.getUTCDate();
+        // const value = date.toISOString();
 
-        if (precision === Precision.YEAR) {
-            return value.substring(0, 4);
-        } else if (precision === Precision.MONTH) {
-            return value.substring(0, 7);
+        if (precision === Precision.MONTH) {
+            return `${currentUTCYear}-${currentUTCMonth > 9 ? currentUTCMonth : '0' + currentUTCMonth}`;
         } else if (precision === Precision.DAY) {
-            return value.substring(0, 10);
+            return this.convertDateToIso(currentUTCYear, currentUTCMonth, currentUTCDate);
         } else {
-            return value;
+            return '';
         }
+    }
+
+    private static convertDateToIso(year: number, month: number, day: number) {
+        return `${year}-${month > 9 ? month : '0' + month}-${day > 9 ? day : '0' + day}`;
     }
 }

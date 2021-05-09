@@ -244,17 +244,17 @@ export const stylesShaka = css`
         color: #fff;
         cursor: default;
     }
-    .shaka-controls-container button:focus,
+    .shaka-controls-container fast-button:focus,
     .shaka-controls-container input:focus {
         outline: 1px solid Highlight;
         outline: 1px solid -webkit-focus-ring-color;
     }
-    .shaka-controls-container button:-moz-focus-inner,
+    .shaka-controls-container fast-button:-moz-focus-inner,
     .shaka-controls-container input:-moz-focus-outer {
         outline: 0;
         border: 0;
     }
-    .shaka-controls-container:not(.shaka-keyboard-navigation) button:focus,
+    .shaka-controls-container:not(.shaka-keyboard-navigation) fast-button:focus,
     .shaka-controls-container:not(.shaka-keyboard-navigation) input:focus {
         outline: 0;
     }
@@ -338,6 +338,9 @@ export const stylesShaka = css`
         display: none;
     }
     .shaka-range-element::-ms-fill-upper {
+        display: none;
+    }
+    .shaka-server-side-ad-container {
         display: none;
     }
     .shaka-seek-bar-container {
@@ -443,33 +446,55 @@ export const stylesShaka = css`
         display: flex;
         flex-direction: column;
         position: absolute;
-        z-index: 2;
         right: 15px;
-        bottom: 30px;
+        bottom: 42px;
+        height: 169px;
+        background: rgb(17 16 15 / 90%);
+        z-index: 10;
     }
-    .shaka-controls-container[casting='true'] .shaka-overflow-menu.shaka-displayed,
-    .shaka-controls-container[casting='true'] .shaka-settings-menu.shaka-displayed,
-    .shaka-controls-container[shown='true'] .shaka-overflow-menu.shaka-displayed,
-    .shaka-controls-container[shown='true'] .shaka-settings-menu.shaka-displayed {
+    .shaka-controls-container[casting='true'] .shaka-overflow-menu,
+    .shaka-controls-container[casting='true'] .shaka-settings-menu,
+    .shaka-controls-container[shown='true'] .shaka-overflow-menu,
+    .shaka-controls-container[shown='true'] .shaka-settings-menu {
         opacity: 1;
     }
-    .shaka-overflow-menu button,
-    .shaka-settings-menu button {
+    .shaka-settings-menu.shaka-playback-rates {
+        height: auto;
+        max-height: inherit;
+    }
+    .shaka-overflow-menu fast-button,
+    .shaka-settings-menu fast-button {
         font-size: 14px;
-        background: 0 0;
-        color: #000;
+        line-height: 20px;
+        color: rgb(161 159 157);
         border: none;
-        min-height: 30px;
-        padding: 3.5px 6px;
+        height: 20px;
+        padding: 8px;
         display: flex;
         align-items: center;
     }
-    .shaka-overflow-menu button:hover,
-    .shaka-settings-menu button:hover {
+    fast-button.body-tracking-on:after {
+        content: '';
+        display: block;
+        height: 4px;
+        width: 28px;
+        margin: 0 2px;
+        position: absolute;
+        bottom: 1px;
+        background-color: #8a8886;
+    }
+    .shaka-settings-menu fast-button.shaka-back-to-overflow-button {
+        border-bottom: 1px solid rgb(96 94 92);
+    }
+    .shaka-overflow-menu:not(.shaka-hidden) {
+        opacity: 1;
+    }
+    .shaka-overflow-menu fast-button:hover,
+    .shaka-settings-menu fast-button:hover {
         background: #e0e0e0;
     }
-    .shaka-keyboard-navigation .shaka-overflow-menu button:focus,
-    .shaka-keyboard-navigation .shaka-settings-menu button:focus {
+    .shaka-keyboard-navigation .shaka-overflow-menu fast-button:focus,
+    .shaka-keyboard-navigation .shaka-settings-menu fast-button:focus {
         background: #e0e0e0;
     }
     .shaka-overflow-menu i,
@@ -477,29 +502,72 @@ export const stylesShaka = css`
         padding-left: 10px;
         padding-right: 10px;
     }
+    .shaka-audio-languages fast-button,
+    .shaka-resolutions fast-button,
+    .shaka-playback-rates fast-button,
+    .shaka-overflow-menu fast-button {
+        --outline-width: 0;
+        --focus-outline-width: 0;
+    }
+    .shaka-audio-languages fast-button svg,
+    .shaka-resolutions fast-button svg,
+    .shaka-playback-rates fast-button svg {
+        padding-right: 8px;
+    }
+    .shaka-audio-languages fast-button svg path,
+    .shaka-resolutions fast-button svg path,
+    .shaka-playback-rates fast-button svg path {
+        fill: #a19f9d;
+    }
+    .shaka-overflow-menu .settings-header {
+        padding: 8px;
+        font-size: 14px;
+        border-bottom: 1px solid rgb(96 94 92);
+        color: rgb(161 159 157);
+    }
+    .shaka-overflow-menu fast-button .material-icons-round {
+        display: none;
+    }
+    .shaka-audio-languages fast-button::part(control),
+    .shaka-resolutions fast-button::part(control),
+    .shaka-playback-rates fast-button::part(control),
+    .shaka-overflow-menu fast-button::part(control) {
+        display: inline-block;
+        padding: 0px;
+        border: none;
+    }
     .shaka-overflow-menu.shaka-low-position,
     .shaka-settings-menu.shaka-low-position {
         bottom: 15px;
+    }
+    .material-icons-round.shaka-chosen-item {
+        font-style: normal;
+        font-size: 0px !important;
+    }
+    .material-icons-round.shaka-chosen-item:before {
+        font-family: 'avarvx-icons';
+        content: '\\e008';
+        font-size: 16px;
     }
     .shaka-overflow-menu span {
         text-align: left;
     }
     .shaka-overflow-button-label {
         position: relative;
-        display: flex;
-        flex-direction: column;
+        display: grid;
+        grid-template-rows: auto;
+        grid-template-columns: auto 50px;
     }
     .shaka-current-selection-span {
-        color: rgba(0, 0, 0, 0.54);
+        color: rgb(161, 159, 157);
+        justify-self: end;
+        font-weight: 600;
     }
     .shaka-settings-menu span {
         margin-left: 54px;
     }
     .shaka-back-to-overflow-button span {
         margin-left: 0;
-    }
-    .shaka-back-to-overflow-button i {
-        padding-right: 20px;
     }
     .shaka-auto-span {
         left: 17px;
@@ -543,7 +611,7 @@ export const stylesShaka = css`
     .shaka-video-container:not([shaka-controls='true']) .shaka-ad-controls {
         display: none;
     }
-    .shaka-ad-controls button,
+    .shaka-ad-controls fast-button,
     .shaka-ad-controls div {
         color: #fff;
         font-size: initial;

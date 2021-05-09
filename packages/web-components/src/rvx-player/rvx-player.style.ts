@@ -12,24 +12,30 @@ export const styles = css`
         --design-unit: 2;
         --base-height-multiplier: 12;
         height: auto;
+        position: relative;
     }
 
     .error {
         display: none;
+        position: absolute;
+        z-index: 10;
+        height: calc(100% - 48px - 43px);
+        width: 100%;
     }
 
     :host(.live-off) {
         padding-bottom: calc(48px + 43px);
     }
 
+    :host(.loading),
     :host(.error) {
         background: black;
     }
 
     :host(.error) .error {
-        text-align: center;
-        vertical-align: middle;
-        display: block;
+        align-items: center;
+        display: flex;
+        justify-content: center;
     }
 
     ${stylesShaka}

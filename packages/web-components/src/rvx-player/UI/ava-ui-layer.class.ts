@@ -36,7 +36,7 @@ export class AVAPlayerUILayer {
             ControlPanelElements.FULLSCREEN
         ],
         addBigPlayButton: false,
-        overflowMenuButtons: ['playback_rate', 'captions', 'quality', 'language', 'cast'],
+        overflowMenuButtons: ['playback_rate', 'captions', 'quality', 'language'],
         seekBarColors: {
             base: 'rgba(255, 255, 255, 0.3)',
             buffered: 'rgba(0, 255, 255, 0.54)',

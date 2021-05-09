@@ -2,7 +2,6 @@
 /* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { attr, customElement, DOM, FASTElement, observable } from '@microsoft/fast-element';
-import { toInteger } from 'lodash-es';
 import { MediaApi } from '../../../common/services/media/media-api.class';
 import { IAvailableMediaResponse, Precision } from '../../../common/services/media/media.definitions';
 import { WidgetGeneralError } from '../../../widgets/src';
@@ -53,6 +52,9 @@ export class PlayerComponent extends FASTElement {
     }
 
     public async init(allowCrossSiteCredentials = true, accessToken?: string, allowedControllers?: ControlPanelElements[]) {
+        // Add loading mode
+        this.classList.add('loading');
+
         if (!this.connected) {
             return;
         }
@@ -85,6 +87,11 @@ export class PlayerComponent extends FASTElement {
             return;
         }
         await this.initializeAvailableMedia();
+
+        await this.player.toggleLiveMode(this.isLive);
+
+        // Add loading mode
+        this.classList.remove('loading');
     }
 
     public setPlaybackAuthorization(accessToken: string) {
@@ -98,12 +105,12 @@ export class PlayerComponent extends FASTElement {
 
         // First initialization - init month and dates
         const currentYear = this.currentDate.getUTCFullYear();
+        // Get month and add 1 because months starts from 0
         const currentMonth = this.currentDate.getUTCMonth() + 1;
         await this.updateMonthAndDates(currentYear, currentMonth);
 
         this.afterInit = true;
 
-        // TODO : remove after RTSP integration is done
         // Select the last recorded date
         if (this.currentAllowedYears.length && this.currentAllowedMonths.length && this.currentAllowedDays.length) {
             const lastYear = this.currentAllowedYears[this.currentAllowedYears.length - 1];
@@ -111,9 +118,7 @@ export class PlayerComponent extends FASTElement {
             const lastDay = this.currentAllowedDays[this.currentAllowedDays.length - 1];
             const date = new Date(Date.UTC(parseInt(lastYear, 10), parseInt(lastMonth, 10) - 1, parseInt(lastDay, 10)));
             // Get previous day
-            date.setDate(date.getDate() - 1);
             this.datePickerComponent.inputDate = date.toUTCString();
-            this.updateVODStream();
         }
     }
 
@@ -149,6 +154,7 @@ export class PlayerComponent extends FASTElement {
         this.hasError = true;
         this.classList.add('error');
     }
+
     public async connectedCallback() {
         super.connectedCallback();
 
@@ -229,6 +235,9 @@ export class PlayerComponent extends FASTElement {
     }
 
     private updateVODStream() {
+        if (!this.afterInit) {
+            return;
+        }
         // Load vod stream
         const nextDay = new Date(this.currentDate);
         nextDay.setDate(this.currentDate.getDate() + 1);
@@ -253,8 +262,8 @@ export class PlayerComponent extends FASTElement {
             const yearRanges: IAvailableMediaResponse = await availableYears.json();
 
             for (const range of yearRanges.timeRanges) {
-                const start = toInteger(range.start);
-                const end = toInteger(range.end);
+                const start = parseFloat(range.start);
+                const end = parseFloat(range.end);
                 // Fill years between start-end
                 for (let index = start; index <= end; index++) {
                     this.allowedDates[index] = [];
@@ -290,8 +299,8 @@ export class PlayerComponent extends FASTElement {
 
             // Get last available month
             for (const range of monthRanges.timeRanges) {
-                const start = new Date(range.start).getMonth() + 1;
-                const end = new Date(range.end).getMonth() + 1;
+                const start = parseFloat(range.start?.substring(range.start.length - 2, range.start.length));
+                const end = parseFloat(range.end?.substring(range.end.length - 2, range.end.length));
                 // Fill years between start-end
                 for (let index = start; index <= end; index++) {
                     this.allowedDates[year][index] = [];
@@ -325,8 +334,8 @@ export class PlayerComponent extends FASTElement {
 
             this.allowedDates[year][month] = [];
             for (const range of dayRanges.timeRanges) {
-                const start = new Date(range.start).getDate();
-                const end = new Date(range.end).getDate();
+                const start = parseFloat(range.start?.substring(range.start.length - 2, range.start.length));
+                const end = parseFloat(range.end?.substring(range.end.length - 2, range.end.length));
                 // Fill years between start-end
                 for (let index = start; index <= end; index++) {
                     this.allowedDates[year][month].push(index);

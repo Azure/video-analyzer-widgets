@@ -53,6 +53,9 @@ export class BoundingBoxDrawer extends CanvasElement {
         if (!this.requestAnimFrameCounter) {
             return;
         }
+
+        this.context.globalCompositeOperation = 'destination-over';
+        this.context.save();
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.canvas.width = this.video.clientWidth;
         this.canvas.height = this.video.clientHeight;
@@ -61,43 +64,68 @@ export class BoundingBoxDrawer extends CanvasElement {
 
         // Take times
         const times = Object.keys(this.timeToInstances);
-        let currentInstances = [];
+        let currentInstances: IInstanceData[] = [];
+        let previousInstances: IInstanceData[] = [];
         for (let index = 0; index < times.length - 1; index++) {
             const timespan1 = times[index];
             const timespan2 = times[index + 1];
             if (currentTime >= Number(timespan1) && currentTime <= Number(timespan2)) {
+                previousInstances = [...currentInstances];
                 currentInstances = this.timeToInstances[timespan1];
             }
         }
 
-        for (const box of currentInstances) {
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
+        for (let index = 0; index < currentInstances.length; index++) {
+            const instanceData = currentInstances[index];
+            const prevBoxPlace = previousInstances[index];
+            if (prevBoxPlace) {
+                const gapX = Math.abs(instanceData.l - prevBoxPlace.l);
+                const gapY = Math.abs(instanceData.t - prevBoxPlace.t);
+                if (gapY <= 5 && gapY <= 5) {
+                    this.context.arc(gapX, gapY, 50, 0, 180);
+                }
+            }
+
             this.context.lineWidth = 2;
             this.context.lineJoin = 'miter';
             this.context.strokeStyle = 'rgba(0, 0, 0, 0.87)';
-            const x = Math.floor(box.l * this.canvas.width);
-            const y = Math.floor(box.t * this.canvas.height);
-            const w = Math.floor(box.w * this.canvas.width);
-            const h = Math.floor(box.h * this.canvas.height);
-            // draw dashed rectangle for motion.
-            // this.context.setLineDash([5, 2]);
+            const x = Math.floor(instanceData.l * this.canvas.width);
+            const y = Math.floor(instanceData.t * this.canvas.height);
+            const w = Math.floor(instanceData.w * this.canvas.width);
+            const h = Math.floor(instanceData.h * this.canvas.height);
             this.context.strokeRect(x, y, w, h);
 
             this.context.lineWidth = 1;
             this.context.strokeStyle = 'rgba(255, 255, 255, 0.74)';
             this.context.strokeRect(x + 2, y + 2, w - 4, h - 4);
 
+            const cornerRadius = 5;
             this.context.fillStyle = 'rgba(0, 0, 0, 0.74)';
             this.context.strokeStyle = 'rgba(0, 0, 0, 0.74)';
             this.context.lineJoin = 'round';
-            this.context.lineWidth = 5;
-            // this.context.setLineDash([]);
+            this.context.lineWidth = cornerRadius;
+
+            if (instanceData.entity) {
+                let label = `${instanceData.entity.tag} ${instanceData.entity.id || ''}`;
+                let labelWidth = this.displayTextWidth(label, 'Segoe UI');
+                if (labelWidth > w) {
+                    label = `${label.substring(0, 10)}...`;
+                    labelWidth = this.displayTextWidth(label, 'Segoe UI');
+                }
+                this.context.strokeRect(x + 4, y - 18 + cornerRadius / 2, labelWidth, 18 - cornerRadius);
+                this.context.fillRect(x + 4, y - 18 + cornerRadius / 2, labelWidth, 18 - cornerRadius);
+
+                this.context.font = '700 10px Segoe UI';
+
+                this.context.fillStyle = 'white';
+
+                this.context.fillText(label, x + 4, y - 6);
+            }
+
+            this.context.restore();
         }
 
-        // Find the objects time
-        // take snap shot
-        // const snapshotContext = this.snapshotMediator.Snapshot();
-        // this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        // this.context.drawImage(snapshotContext, 0, 0);
         this.requestAnimFrameCounter = window.requestAnimationFrame(this.draw.bind(this));
     }
 
@@ -105,8 +133,7 @@ export class BoundingBoxDrawer extends CanvasElement {
         // Clear canvas
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
         setTimeout(() => {
-            this.canvas.width = this.video.clientWidth;
-            this.canvas.height = this.video.clientHeight;
+            this.setCanvasSize(this.video.clientWidth, this.video.clientHeight);
         });
     }
 
@@ -120,6 +147,14 @@ export class BoundingBoxDrawer extends CanvasElement {
     private pauseAnimation() {
         window.cancelAnimationFrame(this.requestAnimFrameCounter);
         this.requestAnimFrameCounter = 0;
+    }
+
+    private displayTextWidth(text: string, font: string) {
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        context.font = font;
+        const metrics = context.measureText(text);
+        return metrics.width;
     }
 }
 
@@ -143,4 +178,17 @@ export class Point {
     public y: number;
 
     public constructor() {}
+}
+
+export interface IInstanceData {
+    h: number;
+    l: number;
+    t: number;
+    w: number;
+    entity?: IEntity;
+}
+
+export interface IEntity {
+    id: number;
+    tag: string;
 }
