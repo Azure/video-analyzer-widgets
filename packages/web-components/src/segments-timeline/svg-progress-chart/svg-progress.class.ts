@@ -1,4 +1,3 @@
-import { BehaviorSubject } from 'rxjs';
 import { IUISegment } from '../segments-timeline.definitions';
 import { IChartData, IChartOptions, IComponentTree, Colors } from './svg-progress.definitions';
 import { Rect, Tooltip } from './svg-progress.models';
@@ -25,8 +24,9 @@ export class SVGProgressChart {
     };
 
     public activeRect: Rect;
-    // todo - change active segment to work with events
-    public activeSegment$: BehaviorSubject<IUISegment> = new BehaviorSubject<IUISegment>(null);
+    public activeSegment: IUISegment;
+    /* eslint-disable-next-line  @typescript-eslint/no-explicit-any */
+    public _activeSegmentCallback: any;
 
     public constructor(element?: SVGElement, options?: IChartOptions) {
         if (!element) {
@@ -63,6 +63,10 @@ export class SVGProgressChart {
         this.init();
     }
 
+    public set activeSegmentCallback(callback: Function) {
+        this._activeSegmentCallback = callback;
+    }
+
     public addClass(cls: string) {
         if ('classList' in this.rootElement) {
             this.rootElement.classList.add(cls);
@@ -91,19 +95,16 @@ export class SVGProgressChart {
 
     public setProgress(time: number) {
         const timeType = typeof time;
-
-        const activeSegment = this.updateActiveRect(time);
-
-        // dispatch click event
-        this.activeSegment$.next(activeSegment);
-
-        if (timeType === 'undefined' || !this.options.renderProgress) {
-            return;
-        }
         // Make sure the time not pass the max duration
         time = Math.min(time, this.options.time);
         if (Math.abs(time - this.options.time) < 0.5) {
             time = Math.ceil(time);
+        }
+
+        this.activeSegment = this.updateActiveRect(time);
+
+        if (timeType === 'undefined' || !this.options.renderProgress) {
+            return;
         }
 
         // Make sure value is max 100%.
@@ -321,10 +322,11 @@ export class SVGProgressChart {
 
     private handleMouseClick(e: MouseEvent) {
         const percent = (e.offsetX / this.options.width) * 100;
-        const activeSegment = this.updateActiveRect(this.options.time * (percent / 100));
-
-        // dispatch click event
-        this.activeSegment$.next(activeSegment);
+        const time = this.options.time * (percent / 100);
+        this.activeSegment = this.updateActiveRect(time);
+        if (this._activeSegmentCallback && this.activeSegment) {
+            this._activeSegmentCallback({ segment: this.activeSegment, time: time });
+        }
 
         if (!this.options.renderProgress) {
             return;
@@ -340,7 +342,11 @@ export class SVGProgressChart {
             const startTime = (this.activeRect.x / 100) * this.options.time;
             const endTime = (this.activeRect.width / 100) * this.options.time + startTime;
             if (startTime <= time && endTime >= time) {
-                return null;
+                return {
+                    startSeconds: startTime,
+                    endSeconds: endTime,
+                    color: this.activeRect.color
+                };
             } else {
                 this.activeRect.removeClass('active');
                 this.activeRect = null;
