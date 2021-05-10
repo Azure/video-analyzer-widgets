@@ -1,6 +1,7 @@
 import { ZonesViewComponent } from '.';
 import { AvaDesignSystemProvider } from '../../../styles';
-import { IZone } from './zones-view.definitions';
+import { IZone } from '../../../widgets/src/zone-drawer/zone-drawer.definitions';
+
 interface ITemplate {
     darkTheme?: boolean;
     width?: number;
