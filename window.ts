@@ -1,8 +1,9 @@
-import { RVXWidget } from './packages/widgets/src';
+import { RVXWidget, ZoneDrawerWidget } from './packages/widgets/src';
 
 declare global {
     interface IWidgets {
         rvx: typeof RVXWidget;
+        zoneDrawer: typeof ZoneDrawerWidget;
     }
 
     interface IAva {

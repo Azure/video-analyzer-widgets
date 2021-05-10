@@ -279,3 +279,48 @@ document.firstElementChild.appendChild(avaPlayer).
 ### Demo application:
 
 https://aka.ms/ava-widgets-demo
+
+### `AVA Zone Drawer widget`
+
+##### Typescript usage:
+
+```typescript
+import { Player } from '@video-analyzer/widgets';
+```
+
+### Getting Started
+
+Zone Drawer widget is a web-component that can be created using HTML or dynamically.
+
+Creating using HTML:
+
+```html live
+  <body>
+	<ava-zone-drawer><ava-zone-drawer>
+  </body>
+```
+Creating dynamically:
+
+##### Native JS usage:
+
+```html live
+<head>
+    <script async type="”module”" src="https://salmon-mushroom-072389f0f.azurestaticapps.net/scripts.js"></script>
+</head>
+<body></body>
+<script>
+    (function () {
+        const zoneDrawer = new window.ava.widgets.zoneDrawer();
+        document.firstElementChild.appendChild(zoneDrawer);
+    })();
+</script>
+```
+
+##### Typescript usage:
+
+```typescript
+import { ZoneDrawer } from '@video-analyzer/widgets';
+
+const zoneDrawer = new ZoneDrawer();
+document.firstElementChild.appendChild(zoneDrawer).
+```
