@@ -236,7 +236,7 @@ export class ZoneDrawerWidget extends BaseWidget {
         this.zones = this.zones.filter((zone) => zone.id !== id);
         this.zonesView.zones = [...this.zones];
         this.removeLabel(id);
-        this.isLabelsListEmpty = this.zones.length === 0;
+        this.isLabelsListEmpty = !this.zones.length;
 
         if (!this.showDrawer) {
             this.showDrawer = true;
