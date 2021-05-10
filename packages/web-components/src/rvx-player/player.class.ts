@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ICanvasOptions } from '../../../common/canvas/canvas.definitions';
 import { WidgetGeneralError } from '../../../widgets/src';
-import { IUISegment } from '../segments-timeline/segments-timeline.definitions';
+import { IUISegment, IUISegmentEventData } from '../segments-timeline/segments-timeline.definitions';
 import { TimelineComponent } from '../timeline';
 import { TimelineEvents } from '../timeline/timeline.definitions';
 import { ControlPanelElements } from './rvx-player.definitions';
@@ -200,12 +200,12 @@ export class PlayerWrapper {
         this.timelineComponent.config = configWithZoom;
     }
 
-    private onSegmentChange(event: CustomEvent) {
-        const segment = event.detail as any;
-        if (segment) {
+    private onSegmentChange(event: CustomEvent<IUISegmentEventData>) {
+        const segmentEventData = event.detail;
+        if (segmentEventData) {
             const currentDate = new Date(this.timestampOffset);
             const dateInSeconds = currentDate.getHours() * 3600 + currentDate.getMinutes() * 60 + currentDate.getSeconds();
-            this.video.currentTime = dateInSeconds - segment.startSeconds + 1;
+            this.video.currentTime = dateInSeconds - segmentEventData.segment.startSeconds + 1;
             this.video.play();
         }
     }

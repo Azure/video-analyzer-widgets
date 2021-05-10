@@ -25,6 +25,7 @@ export class SVGProgressChart {
     };
 
     public activeRect: Rect;
+    public activeSegment: IUISegment;
     /* eslint-disable-next-line  @typescript-eslint/no-explicit-any */
     public _activeSegmentCallback: any;
 
@@ -103,7 +104,7 @@ export class SVGProgressChart {
             time = Math.ceil(time);
         }
 
-        this.updateActiveRect(time);
+        this.activeSegment = this.updateActiveRect(time);
 
         this.setProgressBarProgress(timeType, time);
         this.setSeekBarProgress(timeType, time);
@@ -343,9 +344,9 @@ export class SVGProgressChart {
     private handleMouseClick(e: MouseEvent) {
         const percent = (e.offsetX / this.options.width) * 100;
         const time = this.options.time * (percent / 100);
-        const activeSegment = this.updateActiveRect(time);
-        if (this._activeSegmentCallback && activeSegment) {
-            this._activeSegmentCallback({ ...activeSegment, time: time });
+        this.activeSegment = this.updateActiveRect(time);
+        if (this._activeSegmentCallback && this.activeSegment) {
+            this._activeSegmentCallback({ segment: this.activeSegment, time: time });
         }
 
         if (this.options.renderProgress) {
