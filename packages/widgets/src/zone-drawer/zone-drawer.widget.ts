@@ -6,7 +6,6 @@ import { UIActionType } from '../../../web-components/src/actions-menu/actions-m
 import { LayerLabelComponent } from '../../../web-components/src/layer-label/layer-label.component';
 import {
     ILayerLabelConfig,
-    ILayerLabelOutputEvent,
     LayerLabelEvents,
     LayerLabelMode
 } from '../../../web-components/src/layer-label/layer-label.definitions';
@@ -91,10 +90,6 @@ export class ZoneDrawerWidget extends BaseWidget {
         });
     }
 
-    // public configChanged() {
-    //     this.initConfiguration();
-    // }
-
     public drawerConnectedCallback() {
         setTimeout(() => {
             this.initDrawer();
@@ -104,7 +99,6 @@ export class ZoneDrawerWidget extends BaseWidget {
     public save() {
         const outputs = this.getZonesOutputs();
         this.$emit(ZoneDrawerWidgetEvents.SAVE, outputs);
-        console.log(outputs);
     }
 
     public toggleDrawerMode() {
@@ -131,8 +125,6 @@ export class ZoneDrawerWidget extends BaseWidget {
                 this.addZone(zone);
             }
         }
-
-        // this.initPlayer();
     }
 
     private initConfiguration() {

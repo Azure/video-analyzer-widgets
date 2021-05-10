@@ -15,19 +15,16 @@ export const template = html<ZoneDrawerWidget>`
                     class=${(x) => (!x.isLineDrawMode ? 'selected' : '')}
                     aria-label="Polygon"
                     title="Polygon"
-                    @click="${(x) => x.toggleDrawerMode()}"
-                >
+                    @click="${(x) => x.toggleDrawerMode()}">
                     <svg>
                         <path d="${POLYGON_SVG_PATH}"></path>
-                        כ
                     </svg>
                 </fast-button>
                 <fast-button
                     class=${(x) => (x.isLineDrawMode ? 'selected' : '')}
                     aria-label="Line"
                     title="Line"
-                    @click="${(x) => x.toggleDrawerMode()}"
-                >
+                    @click="${(x) => x.toggleDrawerMode()}">
                     <svg>
                         <path d="${LINE_SVG_PATH}"></path>
                     </svg>
@@ -69,7 +66,8 @@ export const template = html<ZoneDrawerWidget>`
             </div>
         </div>
         <div class="action-buttons">
-            <fast-button ?disabled="${(x) => !x.isDirty}" appearance="accent" aria-label="Save" title="Save" @click="${(x) => x.save()}"> Save </fast-button>
+            <fast-button ?disabled="${(x) => !x.isDirty}"
+            appearance="accent" aria-label="Save" title="Save" @click="${(x) => x.save()}"> Save </fast-button>
         </div>
     </template>
 `;

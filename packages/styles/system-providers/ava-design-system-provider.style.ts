@@ -121,8 +121,4 @@ export const style = css`
         --zone-draw-color: #a19f9d;
         --zone-draw-bg: #201f1e;
     }
-
-    :host > fast-button([appearance="accent"][disabled]) {
-        --accent-fill-rest: red;
-    }
 `;
