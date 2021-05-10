@@ -124,40 +124,36 @@ export const stylesFabric = css`
 
     .ms-DatePicker-day--today {
         position: relative;
-
-        background: var(--date-picker-bg-today);
-        color: var(--date-picker-text-color-today);
+        border-radius: 50% !important;
+        background: var(--date-picker-today-bg) !important;
+        color: var(--date-picker-today-color);
     }
 
     .ms-DatePicker-day--disabled:before {
-        border-top-color: var(--date-picker-disabled-text-color);
+        border-top-color: var(--date-picker-disabled-color);
     }
 
     .ms-DatePicker-day--outfocus {
         font-weight: 400;
-        color: var(--date-picker-out-focus-text-color);
     }
 
     .ms-DatePicker-weekday,
     .ms-DatePicker-day.ms-DatePicker-day--infocus {
-        color: var(--date-picker-focus-text-color);
+        color: var(--date-picker-text-color);
     }
 
     .ms-DatePicker-day--infocus:hover,
     .ms-DatePicker-day--outfocus:hover {
         cursor: pointer;
-        background: var(date-picker-focus-bg-color-hover);
-
-        color: var(--date-picker-focus-text-color-hover);
+        background: var(--date-picker-selected-hover);
+        border-radius: 0;
     }
 
     .ms-DatePicker-day--highlighted:hover,
     .ms-DatePicker-picker--focused .ms-DatePicker-day--highlighted {
         cursor: pointer;
-
-        border-radius: 50%;
-        color: var(--date-picker-text-color-today);
-        background: var(--date-picker-bg-today);
+        border-radius: 0px;
+        background: var(--date-picker-selected-press);
     }
 
     .ms-DatePicker-day--highlighted.ms-DatePicker-day--disabled,
@@ -232,7 +228,7 @@ export const stylesFabric = css`
 
         font-weight: 600;
         font-size: var(--type-ramp-base-font-size);
-        color: var(--date-picker-text-color);
+        color: var(--date-picker-tittle-color);
     }
 
     .ms-DatePicker-currentYear:hover {
@@ -262,7 +258,7 @@ export const stylesFabric = css`
 
     .ms-DatePicker-monthOption:hover,
     .ms-DatePicker-yearOption:hover {
-        background-color: var(--date-picker-focus-month-hover-bg);
+        background-color: var(--date-picker-selected-hover);
         outline: 1px solid transparent;
     }
 
@@ -280,6 +276,11 @@ export const stylesFabric = css`
 
     .ms-DatePicker-goToday:hover {
         outline: 1px solid transparent;
+        color: var(--date-picker-today-bg);
+    }
+
+    .ms-DatePicker-goToday:focus {
+        outline: 1px solid var(--secondary-focus);
     }
 
     .ms-DatePicker.is-pickingYears .ms-DatePicker-dayPicker,

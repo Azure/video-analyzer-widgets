@@ -11,6 +11,7 @@ import { IAction } from './actions-menu.definitions';
 export const template = html<ActionsMenuComponent>`
     <template>
         <fast-button
+            appearance="stealth"
             aria-label="Options"
             title="Options"
             @focusout="${(x, c) => x.handleFocusOut(c.event as FocusEvent)}"
