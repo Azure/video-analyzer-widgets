@@ -4,7 +4,7 @@ import { EMPTY, fromEvent, Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter, map } from 'rxjs/operators';
 import { IChartData, IChartOptions } from './svg-progress-chart/svg-progress.definitions';
 import { SVGProgressChart } from './svg-progress-chart/svg-progress.class';
-import { ISegmentsTimelineConfig, IUISegment, SegmentsTimelineEvents } from './segments-timeline.definitions';
+import { ISegmentsTimelineConfig, IUISegment, IUISegmentEventData, SegmentsTimelineEvents } from './segments-timeline.definitions';
 import { styles } from './segments-timeline.style';
 import { template } from './segments-timeline.template';
 import { closestElement } from '../../../common/utils/elements';
@@ -50,7 +50,6 @@ export class SegmentsTimelineComponent extends FASTElement {
             height: 20
         }
     };
-    private lastActiveSegment: IUISegment;
     private readonly DAY_DURATION_IN_SECONDS = 86400; // 60 (sec) * 60 (min) * 24 (hours)
 
     public constructor(config: ISegmentsTimelineConfig) {
@@ -170,7 +169,7 @@ export class SegmentsTimelineComponent extends FASTElement {
     }
 
     public jumpToNextSegment(): boolean {
-        const time = this.lastActiveSegment?.endSeconds || 0;
+        const time = this.timelineProgress?.activeSegment?.endSeconds || 0;
 
         if (!this.processedSegments?.length) {
             return false;
@@ -186,13 +185,13 @@ export class SegmentsTimelineComponent extends FASTElement {
             }
         }
 
-        this.lastActiveSegment = null;
+        this.timelineProgress.activeSegment = null;
         this.currentTime = this.DAY_DURATION_IN_SECONDS;
         return false;
     }
 
     public jumpToPreviousSegment(): boolean {
-        const time = this.lastActiveSegment?.startSeconds || this.DAY_DURATION_IN_SECONDS;
+        const time = this.timelineProgress?.activeSegment?.startSeconds || this.DAY_DURATION_IN_SECONDS;
 
         if (!this.processedSegments?.length) {
             return false;
@@ -208,7 +207,7 @@ export class SegmentsTimelineComponent extends FASTElement {
             }
         }
 
-        this.lastActiveSegment = null;
+        this.timelineProgress.activeSegment = null;
         this.currentTime = 0;
         return false;
     }
@@ -231,7 +230,6 @@ export class SegmentsTimelineComponent extends FASTElement {
             disableCursor: this.config?.displayOptions?.disableCursor || false
         };
 
-        this.timelineProgress?.activeSegment$?.unsubscribe();
         this.timelineProgress?.destroy();
         this.timelineProgress = new SVGProgressChart(<SVGElement>container, chartOptions);
 
@@ -243,16 +241,9 @@ export class SegmentsTimelineComponent extends FASTElement {
             this.$emit(SegmentsTimelineEvents.CURRENT_TIME_CHANGE, this.currentTime);
         });
 
-        this.timelineProgress.activeSegment$.subscribe((activeSegment) => {
-            if (
-                activeSegment &&
-                activeSegment?.startSeconds !== this.lastActiveSegment?.startSeconds &&
-                activeSegment?.endSeconds !== this.lastActiveSegment?.endSeconds
-            ) {
-                this.lastActiveSegment = activeSegment;
-                this.$emit(SegmentsTimelineEvents.SEGMENT_CLICKED, activeSegment);
-            }
-        });
+        this.timelineProgress.activeSegmentCallback = (segmentEvent: IUISegmentEventData) => {
+            this.$emit(SegmentsTimelineEvents.SEGMENT_CLICKED, segmentEvent);
+        };
 
         // Subscribe to on time change -
         this.onTimeChange().subscribe((e: Event) => {
