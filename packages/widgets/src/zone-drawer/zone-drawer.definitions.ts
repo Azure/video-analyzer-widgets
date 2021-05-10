@@ -1,6 +1,5 @@
 import { IPoint } from '../../../common/drawer-canvas/drawer-canvas.definitions';
 import { IWidgetBaseConfig } from '../definitions/base-widget-config.definitions';
-import { Player } from './../rvx/rvx-widget';
 
 /**
  * ZoneDraw config, contains basic configurations for ZoneDraw widget.
@@ -10,11 +9,6 @@ export interface IZoneDrawerWidgetConfig extends IWidgetBaseConfig {
      * This the zones
      */
     zones?: IZone[];
-
-    /*
-     * For integration with the player
-     */
-    playerWidgetElement?: Player;
 }
 
 export interface IZone {
@@ -30,7 +24,7 @@ export interface IZoneOutput {
     name: string;
 }
 
-type ZoneType = '#Microsoft.VideoAnalyzer.NamedPolygonString' | '#Microsoft.VideoAnalyzer.NamedLineString';
+export type ZoneType = '#Microsoft.VideoAnalyzer.NamedPolygonString' | '#Microsoft.VideoAnalyzer.NamedLineString';
 
 export interface IPolygonZone extends IZoneOutput {
     polygon: IPoint[];

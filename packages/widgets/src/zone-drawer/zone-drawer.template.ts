@@ -3,7 +3,7 @@ import { ZoneDrawerWidget } from './zone-drawer.widget';
 import { POLYGON_SVG_PATH, LINE_SVG_PATH } from '../../../styles/svg/svg.shapes';
 
 /**
- * The template for the actions menu component.
+ * The template for the zone drawer widget
  * @public
  */
 /* eslint-disable  @typescript-eslint/indent */

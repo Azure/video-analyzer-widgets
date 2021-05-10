@@ -23,9 +23,9 @@ import {
 import { styles } from './zone-drawer.style';
 import { template } from './zone-drawer.template';
 import { ZonesViewComponent } from '../../../web-components/src/zones-view/zones-view.component';
-import { DELETE_SVG_PATH, RENAME_SVG_PATH } from '../../../styles/svg/svg.shapes';
 import { BaseWidget } from '../base-widget/base-widget';
 import { Player } from './../rvx/rvx-widget';
+import { ZoneDrawerActions } from './actions';
 
 @customElement({
     name: 'ava-zone-drawer',
@@ -33,7 +33,6 @@ import { Player } from './../rvx/rvx-widget';
     styles
 })
 export class ZoneDrawerWidget extends BaseWidget {
-    /* override */
     @attr
     public config: IZoneDrawerWidgetConfig = {};
 
@@ -125,28 +124,6 @@ export class ZoneDrawerWidget extends BaseWidget {
                 this.addZone(zone);
             }
         }
-    }
-
-    private initConfiguration() {
-        if (this.config?.playerWidgetElement) {
-            this.playerWidgetElement = this.config.playerWidgetElement;
-        }
-    }
-
-    private initPlayer() {
-        setTimeout(() => {
-            if (!this.config?.playerWidgetElement) {
-                // If player wasn't send with configuration - take from DOM
-                const tempPlayer = this.querySelector('ava-player');
-                if (tempPlayer) {
-                    this.config.playerWidgetElement = tempPlayer as Player;
-                } else {
-                    // Handle error - throw
-                    return;
-                }
-            }
-            this.config.playerWidgetElement.width = '760px';
-        });
     }
 
     private initZoneDrawComponents() {
@@ -272,7 +249,7 @@ export class ZoneDrawerWidget extends BaseWidget {
         this.zones = this.zones.filter((zone) => zone.id !== id);
         this.zonesView.zones = [...this.zones];
         this.removeLabel(id);
-        this.isLabelsListEmpty = this.zones.length === 0;
+        this.isLabelsListEmpty = !this.zones.length;
 
         if (!this.showDrawer) {
             this.showDrawer = true;
@@ -327,18 +304,7 @@ export class ZoneDrawerWidget extends BaseWidget {
             label: zone.name,
             color: zone.color,
             mode: LayerLabelMode.Actions,
-            actions: [
-                {
-                    label: 'Rename',
-                    svgPath: RENAME_SVG_PATH,
-                    type: UIActionType.RENAME
-                },
-                {
-                    label: 'Delete',
-                    svgPath: DELETE_SVG_PATH,
-                    type: UIActionType.DELETE
-                }
-            ]
+            actions: ZoneDrawerActions
         };
     }
 
