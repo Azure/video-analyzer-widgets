@@ -78,7 +78,6 @@ export class AvaAPi {
     }
 
     public static set videoName(value) {
-        console.log('videoName id set', value);
         AvaAPi._videoName = value;
     }
 
@@ -87,7 +86,6 @@ export class AvaAPi {
     }
 
     public static set longRegionCode(value) {
-        console.log('longRegionCode id set', value);
         AvaAPi._longRegionCode = value;
     }
 

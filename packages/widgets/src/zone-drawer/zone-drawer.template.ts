@@ -66,7 +66,8 @@ export const template = html<ZoneDrawerWidget>`
             </div>
         </div>
         <div class="action-buttons">
-            <fast-button ?disabled="${(x) => !x.isDirty}" appearance="accent" aria-label="Save" title="Save" @click="${(x) => x.save()}"> Save </fast-button>
+            <fast-button ?disabled="${(x) => !x.isDirty}"
+            appearance="accent" aria-label="Save" title="Save" @click="${(x) => x.save()}"> Save </fast-button>
         </div>
     </template>
 `;

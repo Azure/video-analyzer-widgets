@@ -1,4 +1,3 @@
-
 import { LineDrawerComponent } from './line-drawer.component';
 
 interface ITemplate {
