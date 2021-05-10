@@ -88,10 +88,6 @@ export const styles = css`
         margin-left: 12px;
     }
 
-    fast-button.selected {
-        background: var(--zone-draw-selected-btn);
-    }
-
     media-line-drawer,
     media-zones-view {
         position: absolute;

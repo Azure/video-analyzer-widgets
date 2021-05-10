@@ -120,6 +120,5 @@ export const style = css`
         /* Area Draw */
         --zone-draw-color: #a19f9d;
         --zone-draw-bg: #201f1e;
-        --zone-draw-selected-btn: #486444;
     }
 `;
