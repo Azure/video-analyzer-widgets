@@ -58,8 +58,10 @@ export class ZonesViewComponent extends FASTElement {
 
     public disconnectedCallback() {
         super.disconnectedCallback();
-        this.shadowRoot?.removeChild(this.zonesCanvas.canvas);
-        this.zonesCanvas = null;
+        if (this.zonesCanvas) {
+            this.shadowRoot.removeChild(this.zonesCanvas.canvas);
+            this.zonesCanvas = null;
+        }
 
         this.resizeObserver.disconnect();
     }

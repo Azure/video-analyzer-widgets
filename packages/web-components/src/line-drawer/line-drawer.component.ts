@@ -53,14 +53,14 @@ export class LineDrawerComponent extends FASTElement {
     }
 
     public resetLineDrawer() {
-        this.dCanvas.resize();
+        this.dCanvas?.resize();
     }
 
     public disconnectedCallback() {
-        this.dCanvas.canvas.removeEventListener('mousemove', this.dCanvas.onMouseMove.bind(this.dCanvas));
-        this.dCanvas.canvas.removeEventListener('mouseup', this.dCanvas.onDraw.bind(this.dCanvas));
-        this.dCanvas.canvas.removeEventListener(DrawerEvents.COMPLETE, this.onDrawComplete.bind(this));
-        this.resizeObserver.disconnect();
+        this.dCanvas?.canvas.removeEventListener('mousemove', this.dCanvas.onMouseMove.bind(this.dCanvas));
+        this.dCanvas?.canvas.removeEventListener('mouseup', this.dCanvas.onDraw.bind(this.dCanvas));
+        this.dCanvas?.canvas.removeEventListener(DrawerEvents.COMPLETE, this.onDrawComplete.bind(this));
+        this.resizeObserver?.disconnect();
     }
 
     private init() {
