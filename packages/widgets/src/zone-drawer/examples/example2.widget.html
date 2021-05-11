@@ -3,7 +3,15 @@
 <head>
   <title>Zone Drawer Widget samples</title>
   <script>
+                          // Open the dialog
+                          window.openDialog = () => {
+                            document.getElementById("example1").hidden = false;
+                          };
 
+                          window.closeDialog = () => {
+                            document.getElementById("example1").hidden = true;
+                          };
+  
   </script>
   <script type="module"
     src="https://unpkg.com/@microsoft/fast-components"></script>
@@ -17,23 +25,28 @@
 </head>
 
 <body>
-
   <ava-design-system-provider theme="dark"
-    use-defaults>
-    <!-- <br />
-    <fast-dialog id="example1"
-      class="example-dialog"
-      aria-label="Simple modal dialog"
-      modal="true">
-    </fast-dialog> -->
-    <h1>Zone Draw Widget with config</h1>
+  use-defaults>
+  <h1>Zone Draw Widget with config and dialog</h1>
+  <fast-button appearance="primary"
+    onclick="openDialog()">Open Dialog</fast-button>
+
+  <fast-dialog id="example1"
+    class="example-dialog"
+    aria-label="Simple modal dialog"
+    modal="true"
+    hidden>
+    <!-- <fast-button aria-label="Close" title="Close" onclick="closeDialog()">
+      <svg>
+          <path d="${CLOSE_BIG_SVG_PATH}"></path>
+      </svg>
+  </fast-button> -->
     <ava-zone-drawer id="zone-draw-widget">
       <ava-player slot="player"
         id="ava-player-widget"></ava-player>
     </ava-zone-drawer>
-  </ava-design-system-provider>
-  <div class="default-wrapper">
-  </div>
+</fast-dialog>
+</ava-design-system-provider>
   <br />
 </body>
 <script>(function () {
