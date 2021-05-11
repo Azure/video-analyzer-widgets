@@ -3,15 +3,14 @@
 <head>
   <title>Zone Drawer Widget samples</title>
   <script>
-                          // Open the dialog
-                          window.openDialog = () => {
-                            document.getElementById("example1").hidden = false;
-                          };
+        // Open the dialog
+        window.openDialog = () => {
+          document.getElementById("example1").hidden = false;
+        };
 
-                          window.closeDialog = () => {
-                            document.getElementById("example1").hidden = true;
-                          };
-  
+        window.closeDialog = () => {
+          document.getElementById("example1").hidden = true;
+        };
   </script>
   <script type="module"
     src="https://unpkg.com/@microsoft/fast-components"></script>
@@ -21,6 +20,22 @@
       --dialog-height: auto;
       --dialog-width: auto;
     }
+
+    .dialog-top {
+      background: var(--zone-draw-bg);
+      padding: 24px 0px 0px 24px;
+      display: inline-grid;
+      width: 735px;
+      grid-template-columns: auto 40px;
+    }
+
+    .dialog-title {
+      color: var(--type-primary);
+      font-size: 18px;
+      font-weight: 600;
+      margin: auto 0;
+    }
+
   </style>
 </head>
 
@@ -36,11 +51,21 @@
     aria-label="Simple modal dialog"
     modal="true"
     hidden>
-    <!-- <fast-button aria-label="Close" title="Close" onclick="closeDialog()">
-      <svg>
-          <path d="${CLOSE_BIG_SVG_PATH}"></path>
-      </svg>
-  </fast-button> -->
+    <div class="dialog-top">
+      <div class="dialog-title">
+        Area of interest
+      </div>
+      <fast-button class="close-btn"
+        aria-label="Close"
+        title="Close"
+        onclick="closeDialog()">
+        <svg>
+            <path
+              d="M8.711 8l5.391 5.398-0.703 0.703-5.398-5.391-5.398 5.391-0.703-0.703 5.391-5.398-5.391-5.398 0.703-0.703 5.398 5.391 5.398-5.391 0.703 0.703-5.391 5.398z">
+            </path>
+        </svg>
+    </fast-button>
+    </div>
     <ava-zone-drawer id="zone-draw-widget">
       <ava-player slot="player"
         id="ava-player-widget"></ava-player>
