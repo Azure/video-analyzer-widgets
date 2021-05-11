@@ -12,6 +12,7 @@ packages/web-components/src/**/*.stories.ts
 
 # Never lint spec
 packages/web-components/src/**/*.spec.ts
+packages/widgets/src/**/*.spec.ts
 
 # Never lint test build output
 out

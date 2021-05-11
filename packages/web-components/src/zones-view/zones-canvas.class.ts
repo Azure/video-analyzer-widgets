@@ -32,6 +32,7 @@ export class ZonesCanvas extends CanvasElement {
         for (const zone of this.zonesOptions.zones) {
             this.context.beginPath();
             this.context.strokeStyle = zone.color;
+            this.context.globalAlpha = 1;
             this.context.moveTo(
                 zone.points[0].x * this.zonesOptions.width * this.ratio,
                 zone.points[0].y * this.zonesOptions.height * this.ratio
@@ -47,7 +48,7 @@ export class ZonesCanvas extends CanvasElement {
                     zone.points[0].y * this.zonesOptions.height * this.ratio
                 );
                 this.context.fillStyle = zone.color;
-                this.context.globalAlpha = 0.5;
+                this.context.globalAlpha = 0.4;
                 this.context.fill();
             }
             this.context.stroke();
@@ -56,8 +57,7 @@ export class ZonesCanvas extends CanvasElement {
 
     public resize(): void {
         this.setCanvasSize(this.zonesOptions.width, this.zonesOptions.height);
-        // todo - uncomment after line drawer changed checked in
-        // this.setContextStyle();
+        this.setContextStyle();
         this.draw();
     }
 }
