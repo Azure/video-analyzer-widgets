@@ -120,5 +120,8 @@ export const style = css`
         /* Zone Draw */
         --zone-draw-color: var(--type-tertiary);
         --zone-draw-bg: var(--bg-dialog);
+
+        /* Player widget */
+        --player-background: var(--bg-video);
     }
 `;

@@ -46,6 +46,5 @@ export const darkColorsStyle: ElementStyles = css`
         --type-tertiary: rgba(161, 159, 157, 1);
         --type-disabled: rgba(121, 119, 117, 1);
         --type-disabled-alt: rgba(72, 70, 68, 1);
-        --player-background: #000000;
     }
 `;
