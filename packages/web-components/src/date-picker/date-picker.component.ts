@@ -101,15 +101,15 @@ export class DatePickerComponent extends FASTElement {
     public disconnectedCallback() {
         // Remove all elements
         this.shadowRoot.removeChild(this.shadowRoot.querySelector('#date-picker-css-link'));
-        this.shadowRoot.removeChild(document.querySelector('#jquery-script'));
+        document.head.removeChild(document.querySelector('#jquery-script'));
         const datePickerSRC = document.querySelector('#date-picker-src-link');
         if (datePickerSRC) {
-            this.shadowRoot.removeChild(datePickerSRC);
+            document.head.removeChild(datePickerSRC);
         }
 
         const pickerDateSRC = document.querySelector('#picker-date-src-link');
         if (pickerDateSRC) {
-            this.shadowRoot.removeChild(pickerDateSRC);
+            document.head.removeChild(pickerDateSRC);
         }
     }
 
@@ -148,8 +148,8 @@ export class DatePickerComponent extends FASTElement {
         };
 
         jquerySrcLink.onload = () => {
-            this.shadowRoot.appendChild(pickerDateSrcLink);
-            this.shadowRoot.appendChild(datePickerSrcLink);
+            document.head.appendChild(pickerDateSrcLink);
+            document.head.appendChild(datePickerSrcLink);
             this.jquerySrcLoaded = true;
         };
 
@@ -158,7 +158,7 @@ export class DatePickerComponent extends FASTElement {
             this.createDatePicker();
         };
 
-        this.shadowRoot.appendChild(jquerySrcLink);
+        document.head.appendChild(jquerySrcLink);
         this.shadowRoot.appendChild(datePickerCSS);
     }
 
@@ -191,7 +191,7 @@ export class DatePickerComponent extends FASTElement {
                 setTimeout(() => {
                     this.datePicker.picker.set('select', this.date);
                 });
-            }, 100);
+            });
         } catch (error) {
             // eslint-disable-next-line no-console
             console.error(error);

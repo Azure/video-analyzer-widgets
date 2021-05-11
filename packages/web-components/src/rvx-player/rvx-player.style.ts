@@ -18,7 +18,7 @@ export const styles = css`
     .error {
         display: none;
         position: absolute;
-        z-index: 10;
+        z-index: 1;
         height: calc(100% - 48px - 43px);
         width: 100%;
     }
