@@ -2,7 +2,7 @@ import { html } from '@microsoft/fast-element';
 import { PlayerComponent } from '.';
 
 /**
- * The template for the example component.
+ * Player component
  * @public
  */
 export const template = html<PlayerComponent>`
@@ -11,11 +11,7 @@ export const template = html<PlayerComponent>`
             <span class="col camera-name">${(x) => x.cameraName}</span>
             <div class="date-picker col">
                 <span class="time-container">${(x) => x.time}</span>
-                <media-date-picker
-                    class="date-picker-component"
-                    alignRight="${true}"
-                    inputDate="${(x) => x.currentDate.toUTCString()}"
-                ></media-date-picker>
+                <media-date-picker class="date-picker-component" alignRight="${true}"></media-date-picker>
             </div>
         </div>
         <span class="error">Theres seems to be a problem. Please try again later</span>

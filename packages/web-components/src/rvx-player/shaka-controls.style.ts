@@ -17,16 +17,16 @@ export const stylesShaka = css`
         display: flex;
     }
     .shaka-video-container .material-icons-round {
-        font-family: 'Segoe UI';
+        font-family: var(--font-family);
         font-size: 24px;
     }
     .shaka-video-container * {
-        font-family: 'Segoe UI';
+        font-family: var(--font-family);
     }
     .shaka-video-container:fullscreen {
         width: 100%;
         height: 100%;
-        background-color: #000;
+        background-color: var(--player-background);
     }
     .shaka-video-container:fullscreen .shaka-text-container {
         font-size: 4.4vmin;
@@ -34,7 +34,7 @@ export const stylesShaka = css`
     .shaka-video-container:-webkit-full-screen {
         width: 100%;
         height: 100%;
-        background-color: #000;
+        background-color: var(--player-background);
     }
     .shaka-video-container:-webkit-full-screen .shaka-text-container {
         font-size: 4.4vmin;
@@ -42,7 +42,7 @@ export const stylesShaka = css`
     .shaka-video-container:-moz-full-screen {
         width: 100%;
         height: 100%;
-        background-color: #000;
+        background-color: var(--player-background);
     }
     .shaka-video-container:-moz-full-screen .shaka-text-container {
         font-size: 4.4vmin;
@@ -50,7 +50,7 @@ export const stylesShaka = css`
     .shaka-video-container:-ms-fullscreen {
         width: 100%;
         height: 100%;
-        background-color: #000;
+        background-color: var(--player-background);
     }
     .shaka-video-container:-ms-fullscreen .shaka-text-container {
         font-size: 4.4vmin;
@@ -86,7 +86,7 @@ export const stylesShaka = css`
     }
     media-timeline {
         z-index: 9;
-        background-color: rgb(26, 26, 26);
+        background-color: var(--bg-controls);
     }
     .shaka-video-container:not([shaka-controls='true']) .shaka-controls-container {
         display: none;
@@ -102,13 +102,12 @@ export const stylesShaka = css`
         padding: 0;
         padding-bottom: 2.5%;
         z-index: 1;
-        background-color: #161514;
+        background-color: var(--bg-controls);
         padding: 0px 0px 8px !important;
     }
     .shaka-controls-button-panel {
         padding: 0 14px;
         height: auto;
-
         margin: 0;
         display: flex;
         flex-direction: row;
@@ -219,7 +218,6 @@ export const stylesShaka = css`
         height: 0;
         margin: 0;
         border-radius: 50%;
-        box-shadow: rgba(0, 0, 0, 0.1) 0 0 20px 0;
         border: none;
         background-size: 50%;
         background-repeat: no-repeat;
@@ -436,8 +434,6 @@ export const stylesShaka = css`
         overflow-x: hidden;
         overflow-y: auto;
         white-space: nowrap;
-        background: #fff;
-        box-shadow: 0 1px 9px 0 rgba(0, 0, 0, 0.4);
         border-radius: 2px;
         max-height: 250px;
         min-width: 180px;
@@ -449,7 +445,7 @@ export const stylesShaka = css`
         right: 15px;
         bottom: 42px;
         height: 169px;
-        background: rgb(17 16 15 / 90%);
+        background: var(--overlay);
         z-index: 10;
     }
     .shaka-controls-container[casting='true'] .shaka-overflow-menu,
@@ -466,7 +462,7 @@ export const stylesShaka = css`
     .shaka-settings-menu fast-button {
         font-size: 14px;
         line-height: 20px;
-        color: rgb(161 159 157);
+        color: var(--type-tertiary);
         border: none;
         height: 20px;
         padding: 8px;
@@ -484,7 +480,7 @@ export const stylesShaka = css`
         background-color: #8a8886;
     }
     .shaka-settings-menu fast-button.shaka-back-to-overflow-button {
-        border-bottom: 1px solid rgb(96 94 92);
+        border-bottom: 1px solid var(--divider);
     }
     .shaka-overflow-menu:not(.shaka-hidden) {
         opacity: 1;
@@ -517,13 +513,13 @@ export const stylesShaka = css`
     .shaka-audio-languages fast-button svg path,
     .shaka-resolutions fast-button svg path,
     .shaka-playback-rates fast-button svg path {
-        fill: #a19f9d;
+        fill: var(--type-tertiary);
     }
     .shaka-overflow-menu .settings-header {
         padding: 8px;
         font-size: 14px;
-        border-bottom: 1px solid rgb(96 94 92);
-        color: rgb(161 159 157);
+        border-bottom: 1px solid var(--divider);
+        color: var(--type-tertiary);
     }
     .shaka-overflow-menu fast-button .material-icons-round {
         display: none;
@@ -559,7 +555,7 @@ export const stylesShaka = css`
         grid-template-columns: auto 50px;
     }
     .shaka-current-selection-span {
-        color: rgb(161, 159, 157);
+        color: var(--type-tertiary);
         justify-self: end;
         font-weight: 600;
     }
@@ -571,12 +567,6 @@ export const stylesShaka = css`
     }
     .shaka-auto-span {
         left: 17px;
-    }
-    .shaka-captions-on {
-        color: #000;
-    }
-    .shaka-captions-off {
-        color: grey;
     }
     .shaka-controls-container[ad-active='true'] {
         pointer-events: none;
@@ -602,49 +592,7 @@ export const stylesShaka = css`
         height: 92%;
         z-index: 1;
     }
-    .shaka-ad-controls {
-        display: flex;
-        flex-direction: row;
-        z-index: 1;
-        padding-bottom: 1%;
-    }
     .shaka-video-container:not([shaka-controls='true']) .shaka-ad-controls {
         display: none;
-    }
-    .shaka-ad-controls fast-button,
-    .shaka-ad-controls div {
-        color: #fff;
-        font-size: initial;
-    }
-    .shaka-ad-controls div:not(.shaka-skip-ad-counter) {
-        margin: 1px 6px;
-    }
-    .shaka-ad-counter,
-    .shaka-ad-position {
-        display: flex;
-        justify-content: flex-end;
-        flex-direction: column;
-        text-shadow: 1px 1px 4px #000;
-    }
-    .shaka-skip-ad-container {
-        position: relative;
-        right: -2%;
-        display: flex;
-        flex-direction: row;
-        margin: 0;
-    }
-    .shaka-skip-ad-button {
-        padding: 5px 15px;
-        background: rgba(0, 0, 0, 0.7);
-        border: none;
-        cursor: pointer;
-    }
-    .shaka-skip-ad-button:disabled {
-        background: rgba(0, 0, 0, 0.3);
-    }
-    .shaka-skip-ad-counter {
-        padding: 5px 5px;
-        background: rgba(0, 0, 0, 0.7);
-        margin: 0;
     }
 `;

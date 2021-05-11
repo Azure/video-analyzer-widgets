@@ -3,6 +3,17 @@ export enum VideoFormat {
     HLS = 'hls'
 }
 
+export interface IExpandedDate {
+    year: number;
+    month: number;
+    day: number;
+}
+
+export interface IExpandedTimeRange {
+    start: IExpandedDate;
+    end: IExpandedDate;
+}
+
 export interface ITimeRange {
     start: Date;
     end: Date;

@@ -29,3 +29,8 @@ export enum ControlPanelElements {
     PREVIOUS_DAY = 'previous_day',
     HOURS_LABEL = 'hours_label'
 }
+
+export enum LiveState {
+    ON = 'live-on',
+    OFF = 'live-off'
+}

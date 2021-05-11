@@ -1,11 +1,12 @@
 /* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ICanvasOptions } from '../../../common/canvas/canvas.definitions';
+import { IAvailableMediaRange, IAvailableMediaResponse } from '../../../common/services/media/media.definitions';
 import { WidgetGeneralError } from '../../../widgets/src';
 import { IUISegment, IUISegmentEventData } from '../segments-timeline/segments-timeline.definitions';
 import { TimelineComponent } from '../timeline';
 import { TimelineEvents } from '../timeline/timeline.definitions';
-import { ControlPanelElements } from './rvx-player.definitions';
+import { ControlPanelElements, LiveState } from './rvx-player.definitions';
 import { shaka as shaka_player } from './shaka';
 import { AVAPlayerUILayer } from './UI/ava-ui-layer.class';
 import { BoundingBoxDrawer } from './UI/bounding-box.class';
@@ -26,12 +27,12 @@ export class PlayerWrapper {
     private segmentReferences: shaka_player.media.SegmentReference[];
     private onSegmentChangeListenerRef: (event: CustomEvent) => void;
     private avaUILayer: AVAPlayerUILayer;
-
+    private _liveStream: string = '';
+    private _vodStream: string = '';
+    private _availableSegments: IAvailableMediaResponse = null;
     public constructor(
         private video: HTMLVideoElement,
         private videoContainer: HTMLElement,
-        private _liveStream: string,
-        private _vodStream: string,
         private timeUpdateCallback: (time: string) => void,
         private allowedControllers: ControlPanelElements[]
     ) {
@@ -46,6 +47,10 @@ export class PlayerWrapper {
             // This browser does not have the minimum set of APIs we need.
             throw new WidgetGeneralError('Browser not supported!');
         }
+    }
+
+    public set availableSegments(value: IAvailableMediaResponse) {
+        this._availableSegments = value;
     }
 
     public set liveStream(value: string) {
@@ -131,8 +136,8 @@ export class PlayerWrapper {
     }
 
     private updateControlsClassList() {
-        this.controls.controlsContainer_.classList.add(this.isLive ? 'live-on' : 'live-off');
-        this.controls.controlsContainer_.classList.remove(this.isLive ? 'live-off' : 'live-on');
+        this.controls.controlsContainer_.classList.add(this.isLive ? LiveState.ON : LiveState.OFF);
+        this.controls.controlsContainer_.classList.remove(this.isLive ? LiveState.OFF : LiveState.ON);
     }
 
     private removeTimelineComponent() {
@@ -148,47 +153,78 @@ export class PlayerWrapper {
 
     private extractRealTime(time: number) {
         const currentDate = new Date(this.timestampOffset + time * 1000);
-        return currentDate.getHours() * 3600 + currentDate.getMinutes() * 60 + currentDate.getSeconds();
+        return currentDate.getUTCHours() * 3600 + currentDate.getUTCMinutes() * 60 + currentDate.getUTCSeconds();
+    }
+
+    private extractRealTimeFromISO(time: string) {
+        const currentDate = new Date(time);
+        return currentDate.getUTCHours() * 3600 + currentDate.getUTCMinutes() * 60 + currentDate.getUTCSeconds();
     }
 
     private createTimelineComponent() {
         if (!this.segmentReferences) {
             return;
         }
+        let currentSegmentIndex = 0;
+        let currentSegment: IAvailableMediaRange = null;
+        let segmentEnd = 0;
+        let segmentStart = 0;
         // go over reference
         const segments = [];
         for (const iterator of this.segmentReferences) {
-            const segmentEnd = this.extractRealTime(iterator.getEndTime());
-            const segmentStart = this.extractRealTime(iterator.getStartTime());
+            const segmentRefEnd = this.extractRealTime(iterator.getEndTime());
+            const segmentRefStart = this.extractRealTime(iterator.getStartTime());
 
             // const segmentStartRange = 3600 * segments.length;
             // const segmentEndRange = 3600 * segments.length;
             if (segments.length) {
-                // If the difference between two segments is less then 5 minutes - merge
-                const prevSegmentEnd = segments[segments.length - 1].endSeconds;
-                if (segmentStart - prevSegmentEnd <= 10) {
-                    // merge
-                    segments[segments.length - 1].endSeconds = segmentEnd;
-                } else {
-                    // add new segment
-                    segments.push({
-                        startSeconds: segmentStart,
-                        endSeconds: segmentEnd
-                    });
+                // // If the difference between two segments is less then 5 minutes - merge
+                // const prevSegmentEnd = segments[segments.length - 1].endSeconds;
+                // if (segmentStart - prevSegmentEnd <= 1) {
+                //     // merge
+                //     segments[segments.length - 1].endSeconds = segmentEnd;
+                // } else {
+                //     // add new segment
+                //     segments.push({
+                //         startSeconds: segmentStart,
+                //         endSeconds: segmentEnd
+                //     });
+                // }
+
+                // Take segment from data
+                currentSegment = this._availableSegments.timeRanges[currentSegmentIndex];
+                if (currentSegment) {
+                    segmentEnd = this.extractRealTimeFromISO(currentSegment.end);
+                    segmentStart = this.extractRealTimeFromISO(currentSegment.start);
+
+                    // If this ref segment is inside the the segment, merge
+                    if (segmentRefStart >= segmentStart && segmentRefEnd <= segmentEnd) {
+                        // merge
+                        segments[segments.length - 1].endSeconds = segmentRefEnd;
+                    } else {
+                        // add new segment
+                        segments.push({
+                            startSeconds: segmentRefStart,
+                            endSeconds: segmentRefEnd
+                        });
+                        // Go to new segment
+                        currentSegmentIndex++;
+                    }
                 }
             } else {
                 // first segment
                 const segment: IUISegment = {
-                    startSeconds: segmentStart,
-                    endSeconds: segmentEnd
+                    startSeconds: segmentRefStart,
+                    endSeconds: segmentRefEnd
                 };
                 segments.push(segment);
             }
         }
 
-        const configWithZoom = {
+        const date = new Date(this.date.getUTCFullYear(), this.date.getUTCMonth(), this.date.getUTCDate(), 0, 0, 0);
+        const timelineConfig = {
             segments: segments,
-            date: this.date
+            date: date
         };
         this.timelineComponent = new TimelineComponent();
         this.controls.controlsContainer_.insertBefore(this.timelineComponent, this.controls.bottomControls_);
@@ -197,14 +233,14 @@ export class PlayerWrapper {
         this.timelineComponent.addEventListener(TimelineEvents.SEGMENT_CHANGE, this.onSegmentChangeListenerRef as EventListener);
         // eslint-disable-next-line no-undef
         this.timelineComponent.addEventListener(TimelineEvents.CURRENT_TIME_CHANGE, this.onTimeChange.bind(this) as EventListener);
-        this.timelineComponent.config = configWithZoom;
+        this.timelineComponent.config = timelineConfig;
     }
 
     private onSegmentChange(event: CustomEvent<IUISegmentEventData>) {
         const segmentEventData = event.detail;
         if (segmentEventData) {
             const currentDate = new Date(this.timestampOffset);
-            const dateInSeconds = currentDate.getHours() * 3600 + currentDate.getMinutes() * 60 + currentDate.getSeconds();
+            const dateInSeconds = currentDate.getUTCHours() * 3600 + currentDate.getUTCMinutes() * 60 + currentDate.getUTCSeconds();
             this.video.currentTime = dateInSeconds - segmentEventData.segment.startSeconds + 1;
             this.video.play();
         }
@@ -212,7 +248,7 @@ export class PlayerWrapper {
 
     private onTimeChange(event: CustomEvent<number>) {
         const currentDate = new Date(this.timestampOffset);
-        const dateInSeconds = currentDate.getHours() * 3600 + currentDate.getMinutes() * 60 + currentDate.getSeconds();
+        const dateInSeconds = currentDate.getUTCHours() * 3600 + currentDate.getUTCMinutes() * 60 + currentDate.getUTCSeconds();
         if (event.detail) {
             this.video.currentTime = event.detail - dateInSeconds;
         }
@@ -376,20 +412,16 @@ export class PlayerWrapper {
         }
         // const date = new Date(this.timestampOffset + time * 1000);
         this.date = new Date(this.timestampOffset + time * 1000);
-        return `${this.date.toLocaleDateString()} ${this.date.toLocaleTimeString()}`;
-        // return `${showDate ? date.getUTCDate() : ''} ${date.toLocaleTimeString()}`;
-        // return `${this.date.getUTCMonth()}/${this.date.getUTCDay()}/${this.date.getUTCFullYear()} ${this.date.getUTCHours()}:${this.date.getUTCMinutes()}:${this.date.getUTCSeconds()}`;
-        // return `${showDate ? date.toLocaleDateString() : ''} ${date.toLocaleTimeString()}`;
+        const utcDate = `${this.date.getUTCDate()}/${this.date.getUTCMonth() + 1}/${this.date.getUTCFullYear()}`;
+        const hour = this.date.getUTCHours();
+        const minutes = this.date.getUTCMinutes();
+        const seconds = this.date.getUTCSeconds();
+        const utcTime = `${(hour > 9 ? '' : '0') + hour}:${(minutes > 9 ? '' : '0') + minutes}:${(seconds > 9 ? '' : '0') + seconds}`;
+        return `${utcDate} ${utcTime}`;
     }
 
     private onErrorEvent(event: shaka_player.PlayerEvents.ErrorEvent) {
         // Extract the shaka.util.Error object from the event.
-        this.onError(event.detail);
-    }
-
-    private onError(error: shaka_player.util.Error) {
-        // throw new WidgetGeneralError(error.code);
-        // eslint-disable-next-line no-console
-        console.log(error);
+        console.log(event.detail);
     }
 }

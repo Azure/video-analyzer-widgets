@@ -10,6 +10,8 @@ export class TokenHandler {
 
     private static readonly MAX_SET_TIMEOUT_TIME = 2147483647;
 
+    private static readonly BUFFER_BEFORE_EXPIRED = 5;
+
     public static get avaAPIToken() {
         return TokenHandler._avaAPIToken;
     }
@@ -53,7 +55,7 @@ export class TokenHandler {
         }
 
         const date = new Date(0);
-        date.setUTCSeconds(decoded.exp - 5);
+        date.setUTCSeconds(decoded.exp - TokenHandler.BUFFER_BEFORE_EXPIRED);
         tokenExpirationTime = date.getTime() - new Date(Date.now()).getTime();
         if (tokenExpirationTime < TokenHandler.MAX_SET_TIMEOUT_TIME) {
             this.tokenTimeoutRef = window.setTimeout(this.tokenExpiredHandler.bind(this), tokenExpirationTime);

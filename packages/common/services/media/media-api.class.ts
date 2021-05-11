@@ -1,4 +1,4 @@
-import { ITimeRange, Precision, VideoFormat } from './media.definitions';
+import { IExpandedTimeRange, IExpandedDate, Precision, VideoFormat } from './media.definitions';
 
 export class MediaApi {
     private static _baseStream = '';
@@ -23,23 +23,15 @@ export class MediaApi {
         return `${this.baseStream}/manifest(format=${format})${extension}`;
     }
 
-    public static getVODStream(range: ITimeRange = null): string {
+    public static getVODStream(range: IExpandedTimeRange = null): string {
         const format = MediaApi._format === VideoFormat.HLS ? 'm3u8-cmaf' : 'mpd-time-cmaf';
         const extension = MediaApi._format === VideoFormat.HLS ? '.m3u8' : '.mpd';
 
         let range_query = '';
         if (range) {
-            const startDay = this.convertDateToIso(
-                range.start.getUTCFullYear(),
-                range.start.getUTCMonth() + 1,
-                range.start.getUTCDate() + 1
-            );
-            const endDay = this.convertDateToIso(range.end.getUTCFullYear(), range.end.getUTCMonth() + 1, range.end.getUTCDate() + 1);
+            const startDay = this.convertDateToIso(range.start.year, range.start.month, range.start.day);
+            const endDay = this.convertDateToIso(range.end.year, range.end.month, range.end.day);
             range_query = `,starttime=${startDay},endtime=${endDay}`;
-            range_query = `,starttime=${this.extractDate(range.start, Precision.DAY)},endtime=${this.extractDate(
-                range.end,
-                Precision.DAY
-            )}`;
         }
 
         return `${this.baseStream}/manifest(format=${format}${range_query})${extension}`;
@@ -47,7 +39,7 @@ export class MediaApi {
 
     public static getAvailableMedia(
         precision: Precision,
-        range: ITimeRange = null,
+        range: IExpandedTimeRange = null,
         allowCrossSiteCredentials = true,
         token?: string
     ): Promise<Response> {
@@ -76,22 +68,17 @@ export class MediaApi {
         return fetch(url, requestInit);
     }
 
-    private static extractDate(date: Date, precision: Precision) {
-        const currentUTCYear = date.getUTCFullYear();
-        const currentUTCMonth = date.getUTCMonth() + 1;
-        const currentUTCDate = date.getUTCDate();
-        // const value = date.toISOString();
+    private static convertDateToIso(year: number, month: number, day: number) {
+        return `${year}-${month > 9 ? month : '0' + month}-${day > 9 ? day : '0' + day}`;
+    }
 
+    private static extractDate(date: IExpandedDate, precision: Precision) {
         if (precision === Precision.MONTH) {
-            return `${currentUTCYear}-${currentUTCMonth > 9 ? currentUTCMonth : '0' + currentUTCMonth}`;
-        } else if (precision === Precision.DAY) {
-            return this.convertDateToIso(currentUTCYear, currentUTCMonth, currentUTCDate);
+            return `${date.year}-${date.month > 9 ? date.month : '0' + date.month}`;
+        } else if (precision === Precision.DAY || precision === Precision.FULL) {
+            return this.convertDateToIso(date.year, date.month, date.day);
         } else {
             return '';
         }
-    }
-
-    private static convertDateToIso(year: number, month: number, day: number) {
-        return `${year}-${month > 9 ? month : '0' + month}-${day > 9 ? day : '0' + day}`;
     }
 }

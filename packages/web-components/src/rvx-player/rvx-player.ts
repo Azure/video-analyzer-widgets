@@ -1,14 +1,11 @@
-/* eslint-disable no-undef */
-/* eslint-disable no-console */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { attr, customElement, DOM, FASTElement, observable } from '@microsoft/fast-element';
+import { attr, customElement, FASTElement, observable } from '@microsoft/fast-element';
 import { MediaApi } from '../../../common/services/media/media-api.class';
-import { IAvailableMediaResponse, Precision } from '../../../common/services/media/media.definitions';
+import { IAvailableMediaResponse, IExpandedDate, Precision } from '../../../common/services/media/media.definitions';
 import { WidgetGeneralError } from '../../../widgets/src';
 import { DatePickerComponent } from '../date-picker';
 import { DatePickerEvent, IDatePickerRenderEvent } from '../date-picker/date-picker.definitions';
 import { PlayerWrapper } from './player.class';
-import { ControlPanelElements } from './rvx-player.definitions';
+import { ControlPanelElements, LiveState } from './rvx-player.definitions';
 import { styles } from './rvx-player.style';
 import { template } from './rvx-player.template';
 
@@ -24,15 +21,17 @@ import { template } from './rvx-player.template';
 export class PlayerComponent extends FASTElement {
     @attr public liveStream: string;
     @attr public vodStream: string;
-
-    @attr public isLive = false;
-    @observable public time = '';
     @attr public cameraName = 'Camera';
-    @attr public currentDate = new Date();
 
-    @attr public currentAllowedDays: string[] = [];
-    @attr public currentAllowedMonths: string[] = [];
-    @attr public currentAllowedYears: string[] = [];
+    @observable public isLive = false;
+    @observable public currentDate: Date = null;
+    @observable public currentAllowedDays: string[] = [];
+    @observable public currentAllowedMonths: string[] = [];
+    @observable public currentAllowedYears: string[] = [];
+    @observable public time = '';
+    @observable private currentYear: number = 0;
+    @observable private currentMonth: number = 0;
+    @observable private currentDay: number = 0;
 
     public player: PlayerWrapper;
     public datePickerComponent: DatePickerComponent;
@@ -47,8 +46,8 @@ export class PlayerComponent extends FASTElement {
 
     public constructor() {
         super();
-        this.classList.add(this.isLive ? 'live-on' : 'live-off');
-        this.classList.remove(!this.isLive ? 'live-on' : 'live-off');
+        this.classList.add(this.isLive ? LiveState.ON : LiveState.OFF);
+        this.classList.remove(!this.isLive ? LiveState.ON : LiveState.OFF);
     }
 
     public async init(allowCrossSiteCredentials = true, accessToken?: string, allowedControllers?: ControlPanelElements[]) {
@@ -59,24 +58,14 @@ export class PlayerComponent extends FASTElement {
             return;
         }
 
-        this.liveStream = MediaApi.baseStream ? MediaApi.getLiveStream() : this.liveStream;
-        this.vodStream = MediaApi.baseStream ? MediaApi.getVODStream() : this.vodStream;
-
         // Reload player
         if (this.player) {
             this.player.destroy();
             this.player = null;
         }
 
-        // Init  player
-        this.player = new PlayerWrapper(
-            this.video,
-            this.videoContainer,
-            this.liveStream,
-            this.vodStream,
-            this.timeUpdateCallBack.bind(this),
-            allowedControllers
-        );
+        // Init player instance
+        this.player = new PlayerWrapper(this.video, this.videoContainer, this.timeUpdateCallBack.bind(this), allowedControllers);
 
         if (accessToken) {
             this.player.accessToken = accessToken;
@@ -88,7 +77,10 @@ export class PlayerComponent extends FASTElement {
         }
         await this.initializeAvailableMedia();
 
-        await this.player.toggleLiveMode(this.isLive);
+        // await this.player.toggleLiveMode(this.isLive);
+
+        // this.liveStream = MediaApi.baseStream ? MediaApi.getLiveStream() : this.liveStream;
+        // this.vodStream = MediaApi.baseStream ? MediaApi.getVODStream() : this.vodStream;
 
         // Add loading mode
         this.classList.remove('loading');
@@ -103,23 +95,39 @@ export class PlayerComponent extends FASTElement {
     public async initializeAvailableMedia() {
         await this.fetchAvailableYears();
 
-        // First initialization - init month and dates
-        const currentYear = this.currentDate.getUTCFullYear();
-        // Get month and add 1 because months starts from 0
-        const currentMonth = this.currentDate.getUTCMonth() + 1;
-        await this.updateMonthAndDates(currentYear, currentMonth);
+        if (!this.currentAllowedYears?.length) {
+            return;
+        }
+        // Get the last available year
+        this.currentYear = parseFloat(this.currentAllowedYears[this.currentAllowedYears.length - 1]);
+
+        // Get all the available months  this year
+        await this.fetchAvailableMonths(this.currentYear);
+
+        if (!this.allowedDates[this.currentYear]?.length) {
+            return;
+        }
+
+        // Get last available month
+        const months = Object.keys(this.allowedDates[this.currentYear]);
+
+        this.currentMonth = parseFloat(months[months.length - 1]);
+
+        // Update day data
+        await this.updateMonthAndDates(this.currentYear, this.currentMonth);
+
+        // Get current day
+        if (!this.currentAllowedDays?.length) {
+            return;
+        }
+        this.currentDay = parseFloat(this.currentAllowedDays[this.currentAllowedDays.length - 1]);
+
+        // Select the last recorded date
+        const date = new Date(Date.UTC(this.currentYear, this.currentMonth - 1, this.currentDay));
 
         this.afterInit = true;
 
-        // Select the last recorded date
-        if (this.currentAllowedYears.length && this.currentAllowedMonths.length && this.currentAllowedDays.length) {
-            const lastYear = this.currentAllowedYears[this.currentAllowedYears.length - 1];
-            const lastMonth = this.currentAllowedMonths[this.currentAllowedMonths.length - 1];
-            const lastDay = this.currentAllowedDays[this.currentAllowedDays.length - 1];
-            const date = new Date(Date.UTC(parseInt(lastYear, 10), parseInt(lastMonth, 10) - 1, parseInt(lastDay, 10)));
-            // Get previous day
-            this.datePickerComponent.inputDate = date.toUTCString();
-        }
+        this.datePickerComponent.inputDate = date.toUTCString();
     }
 
     public cameraNameChanged() {
@@ -169,8 +177,9 @@ export class PlayerComponent extends FASTElement {
 
         document.addEventListener('player_live', ((event: CustomEvent) => {
             this.isLive = event.detail;
-            this.classList.add(this.isLive ? 'live-on' : 'live-off');
-            this.classList.remove(!this.isLive ? 'live-on' : 'live-off');
+            this.classList.add(this.isLive ? LiveState.ON : LiveState.OFF);
+            this.classList.remove(!this.isLive ? LiveState.ON : LiveState.OFF);
+            // eslint-disable-next-line no-undef
         }) as EventListener);
 
         document.addEventListener('player_next_day', () => {
@@ -184,11 +193,14 @@ export class PlayerComponent extends FASTElement {
         this.datePickerComponent = this.shadowRoot?.querySelector('media-date-picker');
 
         this.datePickerComponent.addEventListener(DatePickerEvent.DATE_CHANGE, ((event: CustomEvent<Date>) => {
-            if (event.detail?.toUTCString() !== this.currentDate?.toUTCString()) {
+            if (this.afterInit && event.detail?.toUTCString() !== this.currentDate?.toUTCString()) {
                 this.currentDate = event.detail;
-
+                this.currentYear = this.currentDate.getUTCFullYear();
+                this.currentMonth = this.currentDate.getUTCMonth() + 1;
+                this.currentDay = this.currentDate.getUTCDate();
                 this.updateVODStream();
             }
+            // eslint-disable-next-line no-undef
         }) as EventListener);
 
         this.datePickerComponent.addEventListener(DatePickerEvent.RENDER, ((event: CustomEvent<IDatePickerRenderEvent>) => {
@@ -196,14 +208,56 @@ export class PlayerComponent extends FASTElement {
             if (this.afterInit) {
                 this.updateMonthAndDates(data.year, data.month + 1);
             }
+            // eslint-disable-next-line no-undef
         }) as EventListener);
     }
 
-    private async selectNextDay() {
-        const nextDay = new Date(this.currentDate);
-        nextDay.setDate(nextDay.getDate() + 1);
+    private async fetchAvailableSegments(startDate: IExpandedDate, end: IExpandedDate): Promise<IAvailableMediaResponse> {
+        try {
+            const availableHours = await MediaApi.getAvailableMedia(
+                Precision.FULL,
+                {
+                    start: {
+                        year: startDate.year,
+                        month: startDate.month,
+                        day: startDate.day
+                    },
+                    end: {
+                        year: end.year,
+                        month: end.month,
+                        day: end.day
+                    }
+                },
+                this.player.allowCrossCred,
+                this.player.accessToken
+            );
 
-        await this.adjustNewDate(nextDay);
+            return await availableHours.json();
+        } catch (error) {
+            // eslint-disable-next-line no-console
+            console.log('error fetching available segments');
+            return null;
+        }
+    }
+
+    private async selectNextDay() {
+        // Get next day
+        const startDate = new Date(this.currentYear, this.currentMonth - 1, this.currentDay + 1, 0, 0, 0);
+        const untilDate = new Date(this.currentYear, this.currentMonth - 1, this.currentDay + 2, 0, 0, 0);
+
+        const start: IExpandedDate = {
+            year: startDate.getFullYear(),
+            month: startDate.getMonth() + 1,
+            day: startDate.getDate()
+        };
+        const end: IExpandedDate = {
+            year: untilDate.getFullYear(),
+            month: untilDate.getMonth() + 1,
+            day: untilDate.getDate()
+        };
+        const segments = await this.fetchAvailableSegments(start, end);
+        // eslint-disable-next-line no-console
+        console.log(segments);
     }
 
     private async selectPrevDay() {
@@ -234,20 +288,32 @@ export class PlayerComponent extends FASTElement {
         }
     }
 
-    private updateVODStream() {
+    private async updateVODStream() {
         if (!this.afterInit) {
             return;
         }
         // Load vod stream
-        const nextDay = new Date(this.currentDate);
-        nextDay.setDate(this.currentDate.getDate() + 1);
+        const nextDay = new Date(Date.UTC(this.currentYear, this.currentMonth - 1, this.currentDay + 1));
+        const start: IExpandedDate = {
+            year: this.currentYear,
+            month: this.currentMonth,
+            day: this.currentDay
+        };
+        const end: IExpandedDate = {
+            year: nextDay.getUTCFullYear(),
+            month: nextDay.getUTCMonth() + 1,
+            day: nextDay.getUTCDate()
+        };
         this.vodStream = MediaApi.getVODStream({
-            start: this.currentDate,
-            end: nextDay
+            start: start,
+            end: end
         });
 
+        // Get segments
+        const segments = await this.fetchAvailableSegments(start, end);
         // Switch to VOD
         if (this.player) {
+            this.player.availableSegments = segments;
             this.player.vodStream = this.vodStream;
             this.player.toggleLiveMode(false);
         }
@@ -284,13 +350,19 @@ export class PlayerComponent extends FASTElement {
     private async fetchAvailableMonths(year: number) {
         // Take available months according to year
         try {
-            const firstMonth = new Date(Date.UTC(year, 0, 1));
-            const lastMonth = new Date(Date.UTC(year, 11, 1));
             const availableMonths = await MediaApi.getAvailableMedia(
                 Precision.MONTH,
                 {
-                    start: firstMonth,
-                    end: lastMonth
+                    start: {
+                        year: year,
+                        month: 1,
+                        day: 1
+                    },
+                    end: {
+                        year: year,
+                        month: 12,
+                        day: 1
+                    }
                 },
                 this.player.allowCrossCred,
                 this.player.accessToken
@@ -314,17 +386,23 @@ export class PlayerComponent extends FASTElement {
 
     private async fetchAvailableDays(year: number, month: number) {
         try {
-            const firstDayOfMonth = new Date(Date.UTC(year, month - 1, 1));
-
             // Take first day of the next month and then decrease one day
-            const lastDayOfMonth = new Date(Date.UTC(year, month, 1));
+            const lastDayOfMonth = new Date(year, month, 1, 0, 0, 0);
             lastDayOfMonth.setDate(lastDayOfMonth.getDate() - 1);
             // fetch available days
             const availableDays = await MediaApi.getAvailableMedia(
                 Precision.DAY,
                 {
-                    start: firstDayOfMonth,
-                    end: lastDayOfMonth
+                    start: {
+                        year: year,
+                        month: month,
+                        day: 1
+                    },
+                    end: {
+                        year: year,
+                        month: month,
+                        day: lastDayOfMonth.getDate()
+                    }
                 },
                 this.player.allowCrossCred,
                 this.player.accessToken
@@ -376,8 +454,6 @@ export class PlayerComponent extends FASTElement {
                         await this.fetchAvailableDays(year, month);
                         await this.updateMonthAndDates(year, month);
                     }
-                } else {
-                    // there is no available dates in the month
                 }
             } else {
                 // Get all months data
@@ -385,8 +461,6 @@ export class PlayerComponent extends FASTElement {
                 // Update data
                 await this.updateMonthAndDates(year, month);
             }
-        } else {
-            // there is no data - keep empty arrays
         }
     }
     private timeUpdateCallBack(time: string) {
@@ -394,10 +468,7 @@ export class PlayerComponent extends FASTElement {
             return;
         }
 
-        DOM.queueUpdate(() => {
-            this.time = time;
-            this.timeContainer.innerText = this.time;
-        });
-        DOM.nextUpdate();
+        this.time = time;
+        this.timeContainer.innerText = this.time;
     }
 }
