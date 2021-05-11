@@ -9,6 +9,8 @@ import { ControlPanelElements, LiveState } from './rvx-player.definitions';
 import { styles } from './rvx-player.style';
 import { template } from './rvx-player.template';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-expressions
+DatePickerComponent;
 /**
  * RVX Player web component
  * @public
@@ -40,6 +42,7 @@ export class PlayerComponent extends FASTElement {
     private video!: HTMLVideoElement;
     private timeContainer!: HTMLElement;
     private videoContainer!: HTMLElement;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private allowedDates: any = [];
     private afterInit = false;
     private connected = false;
@@ -65,7 +68,14 @@ export class PlayerComponent extends FASTElement {
         }
 
         // Init player instance
-        this.player = new PlayerWrapper(this.video, this.videoContainer, this.timeUpdateCallBack.bind(this), allowedControllers);
+        this.player = new PlayerWrapper(
+            this.video,
+            this.videoContainer,
+            this.timeUpdateCallBack.bind(this),
+            this.toggleLiveModeCallBack.bind(this),
+            this.changeDayCallBack.bind(this),
+            allowedControllers
+        );
 
         if (accessToken) {
             this.player.accessToken = accessToken;
@@ -76,11 +86,6 @@ export class PlayerComponent extends FASTElement {
             return;
         }
         await this.initializeAvailableMedia();
-
-        // await this.player.toggleLiveMode(this.isLive);
-
-        // this.liveStream = MediaApi.baseStream ? MediaApi.getLiveStream() : this.liveStream;
-        // this.vodStream = MediaApi.baseStream ? MediaApi.getVODStream() : this.vodStream;
 
         // Add loading mode
         this.classList.remove('loading');
@@ -175,21 +180,6 @@ export class PlayerComponent extends FASTElement {
             return;
         }
 
-        document.addEventListener('player_live', ((event: CustomEvent) => {
-            this.isLive = event.detail;
-            this.classList.add(this.isLive ? LiveState.ON : LiveState.OFF);
-            this.classList.remove(!this.isLive ? LiveState.ON : LiveState.OFF);
-            // eslint-disable-next-line no-undef
-        }) as EventListener);
-
-        document.addEventListener('player_next_day', () => {
-            this.selectNextDay();
-        });
-
-        document.addEventListener('player_prev_day', () => {
-            this.selectPrevDay();
-        });
-
         this.datePickerComponent = this.shadowRoot?.querySelector('media-date-picker');
 
         this.datePickerComponent.addEventListener(DatePickerEvent.DATE_CHANGE, ((event: CustomEvent<Date>) => {
@@ -210,6 +200,20 @@ export class PlayerComponent extends FASTElement {
             }
             // eslint-disable-next-line no-undef
         }) as EventListener);
+    }
+
+    private changeDayCallBack(isNext: boolean) {
+        if (isNext) {
+            this.selectNextDay();
+        } else {
+            this.selectPrevDay();
+        }
+    }
+
+    private toggleLiveModeCallBack(isLive: boolean) {
+        this.isLive = isLive;
+        this.classList.add(this.isLive ? LiveState.ON : LiveState.OFF);
+        this.classList.remove(!this.isLive ? LiveState.ON : LiveState.OFF);
     }
 
     private async fetchAvailableSegments(startDate: IExpandedDate, end: IExpandedDate): Promise<IAvailableMediaResponse> {
@@ -257,14 +261,33 @@ export class PlayerComponent extends FASTElement {
         };
         const segments = await this.fetchAvailableSegments(start, end);
         // eslint-disable-next-line no-console
-        console.log(segments);
+        if (segments) {
+            this.currentDay++;
+            this.updateVODStream();
+        }
     }
 
     private async selectPrevDay() {
-        const prevDay = new Date(this.currentDate);
-        prevDay.setDate(prevDay.getDate() - 1);
+        // Get next day
+        const startDate = new Date(this.currentYear, this.currentMonth - 1, this.currentDay - 1, 0, 0, 0);
+        const untilDate = new Date(this.currentYear, this.currentMonth - 1, this.currentDay, 0, 0, 0);
 
-        await this.adjustNewDate(prevDay);
+        const start: IExpandedDate = {
+            year: startDate.getFullYear(),
+            month: startDate.getMonth() + 1,
+            day: startDate.getDate()
+        };
+        const end: IExpandedDate = {
+            year: untilDate.getFullYear(),
+            month: untilDate.getMonth() + 1,
+            day: untilDate.getDate()
+        };
+        const segments = await this.fetchAvailableSegments(start, end);
+        // eslint-disable-next-line no-console
+        if (segments) {
+            this.currentDay--;
+            this.updateVODStream();
+        }
     }
 
     private async adjustNewDate(date: Date) {

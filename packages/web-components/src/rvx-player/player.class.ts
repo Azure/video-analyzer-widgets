@@ -12,6 +12,9 @@ import { AVAPlayerUILayer } from './UI/ava-ui-layer.class';
 import { BoundingBoxDrawer } from './UI/bounding-box.class';
 const shaka = require('shaka-player/dist/shaka-player.ui.debug.js');
 
+// eslint-disable-next-line @typescript-eslint/no-unused-expressions
+TimelineComponent;
+
 export class PlayerWrapper {
     private isLive = false; // TODO : when RTSP plugin will be ready, set to true
     private _accessToken = '';
@@ -34,6 +37,8 @@ export class PlayerWrapper {
         private video: HTMLVideoElement,
         private videoContainer: HTMLElement,
         private timeUpdateCallback: (time: string) => void,
+        private isLiveCallback: (isLive: boolean) => void,
+        private changeDayCallBack: (isNext: boolean) => void,
         private allowedControllers: ControlPanelElements[]
     ) {
         // Install built-in polyfills to patch browser incompatibilities.
@@ -126,7 +131,7 @@ export class PlayerWrapper {
             this.boundingBoxesDrawer.clearInstances();
         }
         this.isLive = isLive;
-        document.dispatchEvent(new CustomEvent('player_live', { detail: this.isLive }));
+        this.isLiveCallback(this.isLive);
 
         // TODO : add back after RTSP plugin integration
         // this.controls.elements_[5].isLive = this.isLive;
@@ -175,22 +180,7 @@ export class PlayerWrapper {
             const segmentRefEnd = this.extractRealTime(iterator.getEndTime());
             const segmentRefStart = this.extractRealTime(iterator.getStartTime());
 
-            // const segmentStartRange = 3600 * segments.length;
-            // const segmentEndRange = 3600 * segments.length;
             if (segments.length) {
-                // // If the difference between two segments is less then 5 minutes - merge
-                // const prevSegmentEnd = segments[segments.length - 1].endSeconds;
-                // if (segmentStart - prevSegmentEnd <= 1) {
-                //     // merge
-                //     segments[segments.length - 1].endSeconds = segmentEnd;
-                // } else {
-                //     // add new segment
-                //     segments.push({
-                //         startSeconds: segmentStart,
-                //         endSeconds: segmentEnd
-                //     });
-                // }
-
                 // Take segment from data
                 currentSegment = this._availableSegments.timeRanges[currentSegmentIndex];
                 if (currentSegment) {
@@ -263,11 +253,11 @@ export class PlayerWrapper {
     }
 
     private onClickNextDay() {
-        document.dispatchEvent(new CustomEvent('player_next_day'));
+        this.changeDayCallBack(true);
     }
 
     private onClickPrevDay() {
-        document.dispatchEvent(new CustomEvent('player_prev_day'));
+        this.changeDayCallBack(false);
     }
 
     private async init() {
@@ -422,6 +412,7 @@ export class PlayerWrapper {
 
     private onErrorEvent(event: shaka_player.PlayerEvents.ErrorEvent) {
         // Extract the shaka.util.Error object from the event.
+        // eslint-disable-next-line no-console
         console.log(event.detail);
     }
 }

@@ -1,8 +1,6 @@
-import EventEmitter from 'node:events';
 import jwt_decode, { JwtPayload } from 'jwt-decode';
 
 export class TokenHandler {
-    public static tokenExpiredEvent: EventEmitter;
     private static _avaAPIToken = '';
 
     private static tokenTimeoutRef = 0;
