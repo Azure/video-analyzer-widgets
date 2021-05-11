@@ -1,5 +1,4 @@
 /* eslint-disable max-len */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ICanvasOptions } from '../../../common/canvas/canvas.definitions';
 import { IAvailableMediaRange, IAvailableMediaResponse } from '../../../common/services/media/media.definitions';
 import { WidgetGeneralError } from '../../../widgets/src';
@@ -20,6 +19,7 @@ export class PlayerWrapper {
     private _accessToken = '';
     private _mimeType: MimeType;
     private player: shaka_player.Player = Object.create(null);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private controls: any;
     private _allowCrossCred = true;
     private timestampOffset: number;
@@ -33,6 +33,12 @@ export class PlayerWrapper {
     private _liveStream: string = '';
     private _vodStream: string = '';
     private _availableSegments: IAvailableMediaResponse = null;
+    private readonly OFFSET_MULTIPLAYER = 1000;
+
+    private readonly SECONDS_IN_HOUR = 3600;
+
+    private readonly SECONDS_IN_MINUTES = 60;
+
     public constructor(
         private video: HTMLVideoElement,
         private videoContainer: HTMLElement,
@@ -157,13 +163,21 @@ export class PlayerWrapper {
     }
 
     private extractRealTime(time: number) {
-        const currentDate = new Date(this.timestampOffset + time * 1000);
-        return currentDate.getUTCHours() * 3600 + currentDate.getUTCMinutes() * 60 + currentDate.getUTCSeconds();
+        const currentDate = new Date(this.timestampOffset + time * this.OFFSET_MULTIPLAYER);
+        return (
+            currentDate.getUTCHours() * this.SECONDS_IN_HOUR +
+            currentDate.getUTCMinutes() * this.SECONDS_IN_MINUTES +
+            currentDate.getUTCSeconds()
+        );
     }
 
     private extractRealTimeFromISO(time: string) {
         const currentDate = new Date(time);
-        return currentDate.getUTCHours() * 3600 + currentDate.getUTCMinutes() * 60 + currentDate.getUTCSeconds();
+        return (
+            currentDate.getUTCHours() * this.SECONDS_IN_HOUR +
+            currentDate.getUTCMinutes() * this.SECONDS_IN_MINUTES +
+            currentDate.getUTCSeconds()
+        );
     }
 
     private createTimelineComponent() {
@@ -230,7 +244,10 @@ export class PlayerWrapper {
         const segmentEventData = event.detail;
         if (segmentEventData) {
             const currentDate = new Date(this.timestampOffset);
-            const dateInSeconds = currentDate.getUTCHours() * 3600 + currentDate.getUTCMinutes() * 60 + currentDate.getUTCSeconds();
+            const dateInSeconds =
+                currentDate.getUTCHours() * this.SECONDS_IN_HOUR +
+                currentDate.getUTCMinutes() * this.SECONDS_IN_MINUTES +
+                currentDate.getUTCSeconds();
             this.video.currentTime = dateInSeconds - segmentEventData.segment.startSeconds + 1;
             this.video.play();
         }
@@ -238,7 +255,10 @@ export class PlayerWrapper {
 
     private onTimeChange(event: CustomEvent<number>) {
         const currentDate = new Date(this.timestampOffset);
-        const dateInSeconds = currentDate.getUTCHours() * 3600 + currentDate.getUTCMinutes() * 60 + currentDate.getUTCSeconds();
+        const dateInSeconds =
+            currentDate.getUTCHours() * this.SECONDS_IN_HOUR +
+            currentDate.getUTCMinutes() * this.SECONDS_IN_MINUTES +
+            currentDate.getUTCSeconds();
         if (event.detail) {
             this.video.currentTime = event.detail - dateInSeconds;
         }
@@ -336,6 +356,7 @@ export class PlayerWrapper {
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private parseEmsg(emsg: any) {
         if (!this.boundingBoxesDrawer) {
             return;
@@ -400,7 +421,6 @@ export class PlayerWrapper {
         if (!this.timestampOffset) {
             return '';
         }
-        // const date = new Date(this.timestampOffset + time * 1000);
         this.date = new Date(this.timestampOffset + time * 1000);
         const utcDate = `${this.date.getUTCDate()}/${this.date.getUTCMonth() + 1}/${this.date.getUTCFullYear()}`;
         const hour = this.date.getUTCHours();

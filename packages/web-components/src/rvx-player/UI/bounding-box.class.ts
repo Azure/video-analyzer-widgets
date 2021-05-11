@@ -7,6 +7,10 @@ export class BoundingBoxDrawer extends CanvasElement {
     private requestAnimFrameCounter: number;
     private timeToInstances: ITimeToInstance = [];
 
+    private readonly PADDING_RIGHT = 4;
+    private readonly PADDING_TOP = 18;
+    private readonly PADDING_TOP_TEXT = 6;
+
     public constructor(options: ICanvasOptions, private video: HTMLVideoElement) {
         super(options);
         this.setCanvasSize(options.width, options.height);
@@ -113,14 +117,24 @@ export class BoundingBoxDrawer extends CanvasElement {
                     label = `${label.substring(0, 10)}...`;
                     labelWidth = this.displayTextWidth(label, 'Segoe UI');
                 }
-                this.context.strokeRect(x + 4, y - 18 + cornerRadius / 2, labelWidth, 18 - cornerRadius);
-                this.context.fillRect(x + 4, y - 18 + cornerRadius / 2, labelWidth, 18 - cornerRadius);
+                this.context.strokeRect(
+                    x + this.PADDING_RIGHT,
+                    y - this.PADDING_TOP + cornerRadius / 2,
+                    labelWidth,
+                    this.PADDING_TOP - cornerRadius
+                );
+                this.context.fillRect(
+                    x + this.PADDING_RIGHT,
+                    y - this.PADDING_TOP + cornerRadius / 2,
+                    labelWidth,
+                    this.PADDING_TOP - cornerRadius
+                );
 
                 this.context.font = '700 10px Segoe UI';
 
                 this.context.fillStyle = 'white';
 
-                this.context.fillText(label, x + 4, y - 6);
+                this.context.fillText(label, x + this.PADDING_RIGHT, y - this.PADDING_TOP_TEXT);
             }
 
             this.context.restore();

@@ -38,9 +38,9 @@ export class AVAPlayerUILayer {
         addBigPlayButton: false,
         overflowMenuButtons: ['playback_rate', 'quality'],
         seekBarColors: {
-            base: 'rgba(255, 255, 255, 0.3)',
-            buffered: 'rgba(0, 255, 255, 0.54)',
-            played: '#F3F2F1'
+            base: 'var(--video-buffer)',
+            buffered: 'var(--video-buffer)',
+            played: 'var(--segment-live)'
         }
     };
 

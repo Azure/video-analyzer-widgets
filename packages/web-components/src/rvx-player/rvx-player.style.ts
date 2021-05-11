@@ -19,11 +19,13 @@ export const styles = css`
         display: none;
         position: absolute;
         z-index: 1;
+        /* 100% minus controllers and timeline*/
         height: calc(100% - 48px - 43px);
         width: 100%;
     }
 
     :host(.live-off) {
+        /* add controllers and timeline */
         padding-bottom: calc(48px + 43px);
     }
 
@@ -94,14 +96,14 @@ export const styles = css`
     }
 
     .live-button-component.live-on {
-        color: rgb(26 188 156);
-        border: rgb(26 188 156) 1px solid;
+        color: var(--segment-live);
+        border: var(--segment-live) 1px solid;
     }
 
     .live-button-component.live-off {
-        background: rgb(50 49 48);
-        border: 1px solid rgb(50 49 48);
-        color: rgb(121 119 117);
+        background: var(--segment-bg);
+        border: 1px solid var(--segment-bg);
+        color: var(--type-disabled);
         margin: 0px 9px;
     }
 
@@ -111,17 +113,17 @@ export const styles = css`
 
     .prev-day-button,
     .next-day-button {
-        border: 1px solid rgb(138 136 134);
+        border: 1px solid var(--secondary-stroke);
         border-radius: 2px;
     }
 
     .hours-label {
-        color: #f3f2f1;
+        color: var(--action);
         padding-left: 9px;
     }
 
     svg path {
-        fill: #f3f2f1;
+        fill: var(--action);
     }
 
     button {
@@ -143,7 +145,7 @@ export const styles = css`
     .upper-bounding {
         padding: 0 20px;
         height: 49px;
-        background: #1a1a1a;
+        background: var(--bg-controls);
         align-items: center;
         display: grid;
         grid-template-rows: auto;
@@ -169,6 +171,6 @@ export const styles = css`
     .date-picker span {
         display: inline-block;
         vertical-align: middle;
-        color: #f3f2f1;
+        color: var(--action);
     }
 `;
