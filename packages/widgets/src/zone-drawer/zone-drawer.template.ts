@@ -42,12 +42,12 @@ export const template = html<ZoneDrawerWidget>`
                             html`
                                 ${(x) => {
                                     if (x.isLineDrawMode) {
-                                        return html`<media-line-drawer
-                                            connectedCallback="${(x) => x.drawerConnectedCallback()}"
+                                        /* eslint-disable-next-line  @typescript-eslint/no-shadow */
+                                        return html`<media-line-drawer connectedCallback="${(x) => x.drawerConnectedCallback()}"
                                         ></media-line-drawer>`;
                                     } else {
-                                        return html`<media-polygon-drawer
-                                            connectedCallback="${(x) => x.drawerConnectedCallback()}"
+                                        /* eslint-disable-next-line  @typescript-eslint/no-shadow */
+                                        return html`<media-polygon-drawer connectedCallback="${(x) => x.drawerConnectedCallback()}"
                                         ></media-polygon-drawer>`;
                                     }
                                 }}
