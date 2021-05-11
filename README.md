@@ -94,7 +94,7 @@ Creating using HTML:
 
 ```html live
   <body>
-	<ava-player><ava-player>
+	<ava-player widget="”920px”" height="”300px”"><ava-player>
   </body>
 ```
 
@@ -271,7 +271,7 @@ document.firstElementChild.appendChild(avaPlayer).
     3. Now we can start using widget. Replace the HTML template in your app.component.html, file with the following markup:
         ```html live
         <template>
-            <ava-player></ava-player>
+            <ava-player widget="”920px”" height="”300px”"></ava-player>
         </template>
         ```
         Alternatively, you can create a new instance of the widget using typescript, and add it to the DOM.
@@ -306,7 +306,7 @@ Creating dynamically:
 
 ```html live
 <head>
-    <script async type="”module”" src="https://salmon-mushroom-072389f0f.azurestaticapps.net/scripts.js"></script>
+    <script async type="”module”" src="https://unpkg.com/@azure/video-analyzer-widgets"></script>
 </head>
 <body></body>
 <script>
@@ -353,15 +353,17 @@ document.firstElementChild.appendChild(zoneDrawer).
 
 ### Code snippets:
 
-1.  _Basic usage snippet:_ create a zone draw widget with native JS code, configure the widget and load the data. The zone draw includes the ava-player as a video HTML element
+1.  _Basic usage snippet:_ create a zone draw widget with native JS code, configure the widget and load the data.
+    The zone draw includes the ava-player as a video HTML element. The ava-player displays video according to configuration.
+    For more information regarding ava-player, please see its documentation.
 
     ```html live
     <head>
-        <script async type="”module”" src="https://salmon-mushroom-072389f0f.azurestaticapps.net/scripts.js"></script>
+        <script async type="”module”" src="https://unpkg.com/@azure/video-analyzer-widgets"></script>
     </head>
     <body>
         <ava-zone-drawer>
-            <ava-player></ava-player>
+            <ava-player widget="”920px”" height="”300px”"></ava-player>
         </ava-zone-drawer>
     </body>
     <script>
@@ -413,7 +415,7 @@ document.firstElementChild.appendChild(zoneDrawer).
 
     ```html live
     <head>
-        <script async type="”module”" src="https://salmon-mushroom-072389f0f.azurestaticapps.net/scripts.js"></script>
+        <script async type="”module”" src="https://unpkg.com/@azure/video-analyzer-widgets"></script>
     </head>
     <body>
         <div id="”widget-container”"></div>
@@ -463,8 +465,69 @@ document.firstElementChild.appendChild(zoneDrawer).
                 })()
     </script>
     ```
-  
-  3.  _Use ava-zone-drawer in your angular application:_
+  3. _Dynamically creating the widget:_ create a widget dynamically with native JS code. Add event listener to the widget.
+
+    ```html live
+    <head>
+        <script async type="”module”" src="https://unpkg.com/@azure/video-analyzer-widgets"></script>
+    </head>
+    <body>
+        <div id="”widget-container”"></div>
+    </body>
+    <script>
+        (function () {
+                        // Get widget container
+                        const widgetContainer = document.querySelector("#widget-container");
+
+                        // Create new zone drawer widget
+                        const zoneDrawer = new window.ava.widgets.zoneDrawer();
+
+                        widgetContainer.appendChild(zoneDrawer)
+
+                        // Load the widget
+                        zoneDrawer.load();
+
+                        // Add 'save' event listener when user click save button
+                        zoneDrawer.addEventListener('ZONE_DRAWER_SAVE', (event) => {
+                            /* The event includes zones array the user draw.
+                                Example: 
+                                [
+                                    {
+                                        id: '1',
+                                        points: [
+                                            {
+                                                x: 0,
+                                                y: 0
+                                            },
+                                            {
+                                                x: 0.5,
+                                                y: 0.5
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        id: '2',
+                                        points: [
+                                            {
+                                                x: 0.9,
+                                                y: 0.1
+                                            },
+                                            {
+                                                x: 0.7,
+                                                y: 0.8
+                                            }
+                                        ]
+                                    }
+                                ] 
+                                The points x,y are determined by their relative position to the video width or height. 
+                                */
+                            const zones = event.details;
+                        });
+                })()
+    </script>
+    ```
+
+  4.  _Use ava-zone-drawer in your angular application:_
 
     1. Go to your _src/main.ts_ file and add the following code:
 
