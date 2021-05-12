@@ -30,6 +30,11 @@ export class Player extends BaseWidget {
         super(config);
     }
 
+    public connectedCallback() {
+        super.connectedCallback();
+        this.validateOrAddDesignSystem();
+    }
+
     public setAccessToken(token: string) {
         if (token) {
             this.config.token = token;
@@ -57,6 +62,7 @@ export class Player extends BaseWidget {
         MediaApi.baseStream = this.source.src;
         if (this.loaded) {
             const rvxPlayer: PlayerComponent = this.shadowRoot.querySelector('rvx-player');
+            rvxPlayer.cameraName = AvaAPi.videoName;
             rvxPlayer.init(this.source.allowCrossSiteCredentials, this.source.authenticationToken, this.allowedControllers);
         }
     }
@@ -72,12 +78,12 @@ export class Player extends BaseWidget {
     }
 
     public async load() {
-        this.validateOrAddDesignSystem();
         this.loaded = true;
         const rvxPlayer: PlayerComponent = this.shadowRoot.querySelector('rvx-player');
 
         // If set source state
         if (this.source) {
+            rvxPlayer.cameraName = AvaAPi.videoName;
             rvxPlayer.init(this.source.allowCrossSiteCredentials, this.source.authenticationToken, this.allowedControllers);
             return;
         }
@@ -95,7 +101,7 @@ export class Player extends BaseWidget {
 
                         // Authorize video
                         await AvaAPi.authorize();
-
+                        rvxPlayer.cameraName = AvaAPi.videoName;
                         rvxPlayer.init(true, '', this.allowedControllers);
                     }
                 })
@@ -124,6 +130,7 @@ export class Player extends BaseWidget {
 
     private handelFallback() {
         const rvxPlayer: PlayerComponent = this.shadowRoot.querySelector('rvx-player');
+        rvxPlayer.cameraName = AvaAPi.videoName;
         rvxPlayer.init(true, '', this.allowedControllers);
         rvxPlayer.handleError();
     }
