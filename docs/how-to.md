@@ -1,4 +1,4 @@
-# Build inteligent video applications with AVA widgets
+# Build intelligent video applications with AVA widgets
 
 In this tutorial you will learn how to use Azure Video Analyzer Player widget within your application.
 you'll be editing an existing HTML static website. If you'd like to follow the step-by-step guide, you'll need some tools. Start with a code editor like Visual Studio Code. You'll also need a local development server. A simple way to set one up is to use the Live Server extension for VS Code.
@@ -44,7 +44,7 @@ This will make your browser to import the needed code at runtime.
 
         ...
         <!-- Add Video Analyzer player web component -->
-        <script async type="module” src="https://unpkg.com/@azure/video-analyzer/widgets"></script>
+        <script async type="module” src="https://unpkg.com/@azure/media-video-analyzer-widgets"></script>
 
     </body>
 </html>
@@ -59,16 +59,16 @@ Same as you add native html tag.
   </body>
 ```
 
-Optionaly you can import the pacakge yourself at build time, using `npm`. in order to do that please run
+Optionally you can import the package yourself at build time, using `npm`. in order to do that please run
 
 ```bash
-npm install @azure/video-analyzer/widgets`
+npm install @azure/media-video-analyzer-widgets`
 ```
 
-After you have installed the widgets pacakge you can easily import it within your application code, and start using it
+After you have installed the widgets package you can easily import it within your application code, and start using it
 
 ```typescript
-import { Player } from '@video-analyzer/widgets';
+import { Player } from '@azure/media-video-analyzer-widgets';
 
 const avaPlayer = new Player();
 document.firstElementChild.appendChild(avaPlayer).
@@ -94,7 +94,7 @@ After you understand how to add the widget code to your application / html page 
 # Configuring the player with your Video Analyzer account
 
 In order to configure the player to play the content that was feed into your Video Analyzer pipeline you will first need to setup Video Analyzer account.
-Before you can initialize the player with your Video Analyzer account please complete the folowing steps:
+Before you can initialize the player with your Video Analyzer account please complete the following steps:
 
 1. Set up Video Analyzer account
 2. Create access policy
@@ -104,12 +104,11 @@ Before you can initialize the player with your Video Analyzer account please com
 Once you have all this information, you can configure the player before you load it.
 You will have to provide the widget with all required fields:
 
-| Name           | Type   | Default | Description                                             |
-| -------------- | ------ | ------- | ------------------------------------------------------- |
-| token          | string |         | Your AVA trusted access token for the widget            |
-| videoName      | string |         | The video name as appears in the video analyzer account |
-| longRegionCode |        |         | The video analyzer account region                       |
-| accountId      |        |         | The video analyzer account id                           |
+| Name                 | Type   | Default | Description                                             |
+| -------------------- | ------ | ------- | ------------------------------------------------------- |
+| token                | string |         | Your AVA trusted access token for the widget            |
+| videoName            | string |         | The video name as appears in the video analyzer account |
+| clientApiEndpointUrl | string |         | AVA Client API endpoint                                 |
 
 ```typescript
 const avaPlayer = new Player();
@@ -135,7 +134,7 @@ for debugging we recommend to check devtools (F12) for console errors.
 
 # Player Authorization
 
-In order to make the player communicating with Video Analyzer API, and get the video playback athorization token you have to provide it with trusted access token (JWT token) that you need to generate as you can see above in config phase.
+In order to make the player communicating with Video Analyzer API, and get the video playback authorization token you have to provide it with trusted access token (JWT token) that you need to generate as you can see above in config phase.
 
 Once you have that access token, you need to add that to the player configuration before calling the `load` function.
 
