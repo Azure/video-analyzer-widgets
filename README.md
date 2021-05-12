@@ -498,38 +498,38 @@ document.firstElementChild.appendChild(zoneDrawer).
 
                         // Add 'save' event listener when user click save button
                         zoneDrawer.addEventListener('ZONE_DRAWER_SAVE', (event) => {
-                            /* The event includes zones array the user draw.
-                                Example: 
-                                [
-                                    {
-                                        id: '1',
-                                        points: [
-                                            {
-                                                x: 0,
-                                                y: 0
-                                            },
-                                            {
-                                                x: 0.5,
-                                                y: 0.5
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        id: '2',
-                                        points: [
-                                            {
-                                                x: 0.9,
-                                                y: 0.1
-                                            },
-                                            {
-                                                x: 0.7,
-                                                y: 0.8
-                                            }
-                                        ]
-                                    }
-                                ] 
-                                The points x,y are determined by their relative position to the video width or height. 
-                                */
+                            // The event includes zones array the user draw.
+                            // Example: 
+                            // [
+                            //      {
+                            //          id: '1',
+                            //          points: [
+                            //              {
+                            //                  x: 0,
+                            //                  y: 0
+                            //              },
+                            //              {
+                            //                  x: 0.5,
+                            //                  y: 0.5
+                            //              }
+                            //          ]
+                            //      },
+                            //      {
+                            //          id: '2',
+                            //          points: [
+                            //              {
+                            //                  x: 0.9,
+                            //                  y: 0.1
+                            //              },
+                            //              {
+                            //                  x: 0.7,
+                            //                  y: 0.8
+                            //              }
+                            //          ]
+                            //      }
+                            //  ] 
+                            //  The points x,y are determined by their relative position to the video width or height. 
+                            
                             const zones = event.details;
                         });
                 })()
