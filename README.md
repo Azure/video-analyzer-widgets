@@ -363,8 +363,9 @@ document.firstElementChild.appendChild(zoneDrawer).
 ### Code snippets:
 
 1.  _Basic usage snippet:_ create a zone draw widget with native JS code, configure the widget and load the data.
-        The zone draw includes the ava-player as a video HTML element. The ava-player displays video according to configuration.
-        For more information regarding ava-player, please see its documentation.
+        
+    The zone drawer includes the ava-player as a video HTML element. The ava-player displays video according to configuration.
+    For more information regarding ava-player, please see its documentation.
 
     ```html live
     <head>
