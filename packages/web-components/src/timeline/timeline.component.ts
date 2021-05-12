@@ -9,6 +9,9 @@ import { ITimeLineConfig, TimelineEvents } from './timeline.definitions';
 import { styles } from './timeline.style';
 import { template } from './timeline.template';
 
+SegmentsTimelineComponent;
+TimeRulerComponent;
+
 /**
  * Time Line component.
  * @public

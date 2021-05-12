@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 import { customElement, attr, observable } from '@microsoft/fast-element';
 import { DrawerEvents, IPoint } from '../../../common/drawer-canvas/drawer-canvas.definitions';
 import { guid } from '../../../common/utils/guid';
@@ -28,6 +29,12 @@ import {
     ZoneDrawerMode
 } from './zone-drawer.definitions';
 import { Logger } from '../common/logger';
+import { AvaDesignSystemProvider } from '../../../styles';
+
+AvaDesignSystemProvider;
+ZonesViewComponent;
+PolygonDrawerComponent;
+LineDrawerComponent;
 
 @customElement({
     name: 'ava-zone-drawer',

@@ -11,6 +11,7 @@ import { template } from './rvx-player.template';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-expressions
 DatePickerComponent;
+
 /**
  * RVX Player web component
  * @public

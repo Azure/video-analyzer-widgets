@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 import { BaseWidget } from '../base-widget';
 import { customElement, attr } from '@microsoft/fast-element';
 import { IAvaPlayerConfig, RVXEvents } from './definitions';
@@ -9,6 +10,10 @@ import { styles } from './rvx-widget.style';
 import { PlayerComponent } from '../../../web-components/src/rvx-player';
 import { ControlPanelElements, ISource } from '../../../web-components/src/rvx-player/rvx-player.definitions';
 import { Logger } from '../common/logger';
+import { AvaDesignSystemProvider } from '../../../styles';
+
+AvaDesignSystemProvider;
+PlayerComponent;
 
 @customElement({
     name: 'ava-player',
