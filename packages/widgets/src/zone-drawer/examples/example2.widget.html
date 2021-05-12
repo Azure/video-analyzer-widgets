@@ -23,7 +23,7 @@
 
     .dialog-top {
       background: var(--zone-draw-bg);
-      padding: 24px 0px 0px 24px;
+      padding: 10px 0px 0px 24px;
       display: inline-grid;
       width: 735px;
       grid-template-columns: auto 40px;
@@ -137,6 +137,7 @@
       accountId: 'b43e0a4333ff49599b5f6c213b8626f2',
       longRegionCode: 'mint1',
       videoName: 'live-yolov3-tracker',
+      debug: true,
       playerControllers: [
         'rewind',
         'play_pause',
@@ -154,17 +155,15 @@
     // const source = {
     //   authenticationToken: 'myToken',
     //   allowCrossSiteCredentials: false,
-    //   src: 'http://v1-6-5.shaka-player-demo.appspot.com/assets/car-20120827-manifest.mpd?_=1619710221766'
+    //   src: 'src Video Url'
     // }
     // playerWidget.setSource(source);
     playerWidget.load();
-    // zoneDrawerWidget.configure({
-    //   zones: zones
-    // });
+    zoneDrawerWidget.configure({
+      debug: true
+    });
 
-    // zoneDrawerWidget.load();
-
-    // zoneDrawerWidget.config = { zones: zones };
+    zoneDrawerWidget.load();
   })()
 </script>
 

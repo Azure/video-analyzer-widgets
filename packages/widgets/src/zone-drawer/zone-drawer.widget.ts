@@ -14,6 +14,7 @@ import { Player } from './../rvx/rvx-widget';
 import { ZoneDrawerActions } from './actions';
 import {
     ILayerLabelConfig,
+    ILayerLabelOutputEvent,
     LayerLabelEvents,
     LayerLabelMode
 } from '../../../web-components/src/layer-label/layer-label.definitions';
@@ -68,8 +69,9 @@ export class ZoneDrawerWidget extends BaseWidget {
     public connectedCallback() {
         super.connectedCallback();
         this.isReady = true;
-
-        window.addEventListener('resize', this.resize.bind(this));
+        const parent = this.$fastController?.element?.parentElement;
+        this.resizeObserver = new ResizeObserver(this.resize.bind(this));
+        this.resizeObserver.observe(parent || this.$fastController?.element);
         this.$fastController?.element?.addEventListener(LayerLabelEvents.labelActionClicked, this.labelActionClicked.bind(this));
         this.$fastController?.element?.addEventListener(
             LayerLabelEvents.labelTextChanged,
@@ -87,7 +89,7 @@ export class ZoneDrawerWidget extends BaseWidget {
     public load() {
         setTimeout(() => {
             if (this.isReady) {
-                this.init();
+                this.initZoneDrawComponents();
             }
         });
     }
@@ -109,10 +111,6 @@ export class ZoneDrawerWidget extends BaseWidget {
         this.isLineDrawMode = !this.isLineDrawMode;
     }
 
-    public configure(config: IZoneDrawerWidgetConfig) {
-        this.config = config;
-        this.init();
-    }
 
     // @override
     protected init() {
@@ -138,8 +136,6 @@ export class ZoneDrawerWidget extends BaseWidget {
         if (!this.labelsList) {
             this.labelsList = this.shadowRoot.querySelector('.labels-list');
         }
-
-        this.configure(this.config);
     }
 
     private initDrawer() {
@@ -198,8 +194,7 @@ export class ZoneDrawerWidget extends BaseWidget {
         }
     }
 
-    /* eslint-disable-next-line  @typescript-eslint/no-explicit-any */
-    private labelTextChanged(e: any) {
+    private labelTextChanged(e: CustomEvent<ILayerLabelOutputEvent>) {
         for (const zone of this.zones) {
             if (zone.id === e.detail.id) {
                 zone.name = e.detail.name;
@@ -286,6 +281,8 @@ export class ZoneDrawerWidget extends BaseWidget {
         li.appendChild(layerLabel);
         this.labelsList.appendChild(li);
         this.resize();
+        layerLabel.addEventListener(LayerLabelEvents.labelActionClicked, this.labelActionClicked.bind(this) as EventListener);
+        layerLabel.addEventListener(LayerLabelEvents.labelTextChanged, this.labelTextChanged.bind(this) as EventListener);
     }
 
     private renameZone(id: string) {
@@ -297,8 +294,8 @@ export class ZoneDrawerWidget extends BaseWidget {
     private removeLabel(id: string) {
         const li = this.shadowRoot.getElementById(id);
         const layerLabel = <LayerLabelComponent>li.querySelector('media-layer-label');
-        layerLabel.removeEventListener(LayerLabelEvents.labelActionClicked, this.labelActionClicked);
-        layerLabel.addEventListener(LayerLabelEvents.labelTextChanged, this.labelTextChanged);
+        layerLabel.removeEventListener(LayerLabelEvents.labelActionClicked, this.labelActionClicked as EventListener);
+        layerLabel.removeEventListener(LayerLabelEvents.labelTextChanged, this.labelTextChanged as EventListener);
         this.labelsList.removeChild(li);
     }
 
