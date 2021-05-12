@@ -13,10 +13,14 @@
       width: 100%;
       background: aliceblue;
     }
-  </style>
-  <script>
 
-  </script>
+    fast-dialog {
+      --dialog-height: auto;
+      --dialog-width: auto;
+    }
+  </style>
+  <script type="module"
+    src="https://unpkg.com/@microsoft/fast-components"></script>
   <script src="../../../../../dist/ava-widgets.js"></script>
 </head>
 
@@ -25,7 +29,7 @@
   <br />
   <fast-button aria-label="Open zone draw dialog"
     title="Open zone draw dialog"></fast-button>
-
+  <!-- 
   <fast-dialog id="example1"
     class="example-dialog"
     aria-label="Simple modal dialog"
@@ -36,7 +40,12 @@
         <ava-zone-drawer id="zone-draw-widget"></ava-zone-drawer>
       </ava-design-system-provider>
     </div>
-  </fast-dialog>
+  </fast-dialog> -->
+  <ava-design-system-provider theme="dark"
+    use-defaults>
+    <ava-zone-drawer id="zone-draw-widget"></ava-zone-drawer>
+  </ava-design-system-provider>
+
   <br />
 </body>
 <script>(function () {
@@ -94,8 +103,12 @@
       },
     ];
 
-    const zoneDrawerWidget = document.getElementById("ava-zone-drawer");
+    const config = {
+      debug: true
+    }
 
+    const zoneDrawerWidget = document.getElementById("zone-draw-widget");
+    zoneDrawerWidget.config = config;
   })()
 </script>
 

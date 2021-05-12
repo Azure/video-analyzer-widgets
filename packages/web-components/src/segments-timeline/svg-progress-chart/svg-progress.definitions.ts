@@ -14,6 +14,7 @@ export interface IChartOptions {
     barHeight?: number;
     tooltipHeight?: number;
     top?: number;
+    bufferTop?: number;
     renderTooltip?: boolean;
     renderProgress?: boolean;
     renderSeek?: boolean;

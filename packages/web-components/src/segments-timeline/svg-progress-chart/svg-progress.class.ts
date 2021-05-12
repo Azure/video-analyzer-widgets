@@ -44,11 +44,12 @@ export class SVGProgressChart {
             this.options.barHeight = options.barHeight || this.options.barHeight;
             this.options.tooltipHeight = options.renderTooltip ? options.tooltipHeight || 30 : 0;
             this.options.renderTooltip = options.renderTooltip;
-            this.options.top = options.renderTooltip ? 10 + this.options.tooltipHeight : 0;
+            this.options.bufferTop = options.renderTooltip ? 10 + this.options.tooltipHeight : 0;
             this.options.renderBuffer = options.renderBuffer;
             this.options.renderSeek = options.renderSeek;
             this.options.renderProgress = options.renderProgress;
             this.options.disableCursor = options.disableCursor;
+            this.options.top = options.top || 0;
         }
         this.rootElement.setAttribute('height', this.options.height.toString());
         this.rootElement.setAttribute('width', '100%');
@@ -189,7 +190,13 @@ export class SVGProgressChart {
                     this.components.events[i].update();
                 }
             } else {
-                const newEvent = new Rect(this.options.barHeight, event.width, event.x, 10 + this.options.tooltipHeight, event.color);
+                const newEvent = new Rect(
+                    this.options.barHeight,
+                    event.width,
+                    event.x,
+                    10 + this.options.tooltipHeight + this.options.top,
+                    event.color
+                );
                 newEvent.type = event.type;
                 newEvent.addClass(event.type || 'default');
                 this.components.events.push(newEvent);
@@ -406,14 +413,14 @@ export class SVGProgressChart {
         let bufferProgress;
         // Create progress bar
         // 1. Create the bar element
-        const bar = new Rect(this.options.barHeight, 100, 0, this.options.tooltipHeight + 10);
+        const bar = new Rect(this.options.barHeight, 100, 0, this.options.tooltipHeight + 10 + this.options.top);
         bar.addClass('bar');
         this.rootElement.appendChild(bar._el);
         this.components.progressBar.bar = bar;
 
         // 2. Create the progress element
         if (this.options.renderProgress) {
-            progress = new Rect(5, 1, 0, 10 + this.options.barHeight + this.options.tooltipHeight);
+            progress = new Rect(5, 1, 0, 10 + this.options.barHeight + this.options.tooltipHeight + this.options.top);
             progress.addClass('progress');
             progress.moveTo(0);
         }
@@ -426,7 +433,7 @@ export class SVGProgressChart {
 
         // 3. Create the dragging overlay progress
         if (this.options.renderBuffer) {
-            bufferProgress = new Rect(this.options.barHeight, 1, 0, this.options.top);
+            bufferProgress = new Rect(this.options.barHeight, 1, 0, this.options.bufferTop + this.options.top);
             this.rootElement.appendChild(bufferProgress._el);
             this.components.progressBar.buffer = bufferProgress;
             bufferProgress.addClass('buffer');
@@ -450,7 +457,7 @@ export class SVGProgressChart {
 
         // 5. Create the tooltip
         if (this.options.renderTooltip) {
-            const tooltip = new Tooltip(this.options.tooltipHeight, this.options.tooltipHeight * 2.4, 0, 2, '00:00:00');
+            const tooltip = new Tooltip(this.options.tooltipHeight, this.options.tooltipHeight * 2.4 + this.options.top, 0, 2, '00:00:00');
             this.components.progressBar.tooltip = tooltip;
             this.rootElement.appendChild(tooltip._el);
         }

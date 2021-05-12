@@ -2,7 +2,7 @@ import { FASTSlider } from '@microsoft/fast-components';
 import { attr, customElement, FASTElement } from '@microsoft/fast-element';
 import { SegmentsTimelineComponent } from '..';
 import { guid } from '../../../common/utils/guid';
-import { ISegmentsTimelineConfig, IUISegment, SegmentsTimelineEvents } from '../segments-timeline/segments-timeline.definitions';
+import { ISegmentsTimelineConfig, SegmentsTimelineEvents } from '../segments-timeline/segments-timeline.definitions';
 import { TimeRulerComponent } from '../time-ruler';
 import { ITimeLineConfig, TimelineEvents } from './timeline.definitions';
 import { styles } from './timeline.style';
@@ -142,9 +142,9 @@ export class TimelineComponent extends FASTElement {
                 duration: this.DAY_DURATION_IN_SECONDS
             },
             displayOptions: {
-                height: 25,
+                height: 30,
                 barHeight: 12,
-                top: 0,
+                top: 5,
                 renderTooltip: false,
                 renderProgress: false,
                 renderSeek: true,

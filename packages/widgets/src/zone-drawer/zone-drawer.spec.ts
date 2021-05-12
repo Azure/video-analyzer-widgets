@@ -74,8 +74,8 @@ describe('ZoneDrawerWidget', () => {
         const el = await fixture<ZoneDrawerWidget>(html`<ava-zone-drawer></ava-zone-drawer>`);
 
         el.config = configWithZones;
-        const labelsList = el.shadowRoot.querySelector('.labels-list');
         setTimeout(() => {
+            const labelsList = el.shadowRoot.querySelector('.labels-list');
             expect(labelsList.childElementCount).to.equal(zones.length);
         });
     });
