@@ -21,7 +21,7 @@ export class SVGProgressChart {
         top: 0,
         renderBuffer: false,
         renderProgress: false,
-        renderSeek: true
+        renderSeek: null
     };
 
     public activeRect: Rect;
@@ -433,8 +433,8 @@ export class SVGProgressChart {
                 2 + this.options.tooltipHeight + this.options.top,
                 6,
                 '',
-                '#FAF9F8',
-                '#D02E00'
+                this.options.renderSeek.seekBarTopColor,
+                this.options.renderSeek.seekBarBodyColor
             );
             seek.addClass('seek-bar');
             seek.moveTo(0, 0);

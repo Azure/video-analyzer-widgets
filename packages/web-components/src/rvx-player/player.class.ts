@@ -165,15 +165,6 @@ export class PlayerWrapper {
         }
     }
 
-    private extractRealTime(time: number) {
-        const currentDate = new Date(this.timestampOffset + time * this.OFFSET_MULTIPLAYER);
-        return (
-            currentDate.getUTCHours() * this.SECONDS_IN_HOUR +
-            currentDate.getUTCMinutes() * this.SECONDS_IN_MINUTES +
-            currentDate.getUTCSeconds()
-        );
-    }
-
     private createTimelineComponent() {
         if (!this.segmentReferences) {
             return;

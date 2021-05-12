@@ -6,6 +6,11 @@ export interface IShowable {
     hide(): void;
 }
 
+export interface ISeekBar {
+    seekBarTopColor: string;
+    seekBarBodyColor: string;
+}
+
 export interface IChartOptions {
     width: number;
     height: number;
@@ -17,7 +22,7 @@ export interface IChartOptions {
     bufferTop?: number;
     renderTooltip?: boolean;
     renderProgress?: boolean;
-    renderSeek?: boolean;
+    renderSeek?: ISeekBar;
     renderBuffer?: boolean;
     disableCursor?: boolean; // Disable cursor on un segment parts
 }

@@ -1,3 +1,5 @@
+import { ISeekBar } from './svg-progress-chart/svg-progress.definitions';
+
 export interface IUISegment {
     startSeconds: number;
     endSeconds: number;
@@ -12,7 +14,7 @@ export interface IDisplayOptions {
     top?: number;
     renderTooltip?: boolean;
     renderProgress?: boolean;
-    renderSeek?: boolean;
+    renderSeek?: ISeekBar;
     timeSmoothing?: number;
     zoom?: number;
     disableCursor?: boolean; // Disable cursor on un segment parts

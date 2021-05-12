@@ -226,7 +226,7 @@ export class SegmentsTimelineComponent extends FASTElement {
             renderTooltip: this.config?.displayOptions?.renderTooltip || false,
             tooltipHeight: this.config?.displayOptions?.tooltipHeight,
             renderProgress: this.config?.displayOptions?.renderProgress || false,
-            renderSeek: this.config?.displayOptions?.renderSeek || false,
+            renderSeek: this.config?.displayOptions?.renderSeek || null,
             top: this.config?.displayOptions?.top,
             disableCursor: this.config?.displayOptions?.disableCursor || false
         };
