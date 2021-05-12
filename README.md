@@ -496,10 +496,7 @@ document.firstElementChild.appendChild(zoneDrawer).
                         // Load the widget
                         zoneDrawer.load();
 
-                        // Add 'save' event listener when user click save button
-                        zoneDrawer.addEventListener('ZONE_DRAWER_SAVE', (event) => {
-                            const zones = event.details;
-                        });
+        
                 })()
     </script>
     ```
