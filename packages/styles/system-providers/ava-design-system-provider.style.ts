@@ -121,5 +121,8 @@ export const style = css`
         --zone-draw-color: var(--type-tertiary);
         --zone-draw-bg: var(--bg-dialog);
         --zone-draw-selected-btn: var(--action-fill-press);
+
+        /* Player widget */
+        --player-background: var(--bg-video);
     }
 `;

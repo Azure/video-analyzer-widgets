@@ -1,6 +1,6 @@
 import { html } from '@microsoft/fast-element';
-import { DatePickerComponent } from './date-picker.component';
 import { GO_TO_ARCHIVE_MAIN_SVG_PATH, GO_TO_ARCHIVE_SUB_SVG_PATH } from '../../../styles/svg/svg.shapes';
+import { DatePickerComponent } from './date-picker.component';
 
 /**
  * The template for the date picker component.
@@ -8,7 +8,7 @@ import { GO_TO_ARCHIVE_MAIN_SVG_PATH, GO_TO_ARCHIVE_SUB_SVG_PATH } from '../../.
  */
 export const template = html<DatePickerComponent>`
     <template>
-        <div class="ms-DatePicker ${(x) => (x.enableUI ? 'show' : 'hide')}">
+        <div class="ms-DatePicker ${(x) => (x.enableUI ? 'show' : 'hide')} ${(x) => (x.alignRight ? 'right' : '')}">
             <div class="ms-TextField">
                 <fast-button class="ms-TextField-field" appearance="stealth">
                     <svg>

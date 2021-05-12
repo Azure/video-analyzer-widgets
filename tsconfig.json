@@ -22,7 +22,10 @@
         "moduleResolution": "node",
         "importHelpers": true,
         "declarationMap": true,
-        "noEmitOnError": true
+        "noEmitOnError": true,
+        "paths": {
+            "*": ["./node_modules/*", "./packages/types/*"]
+        }
     },
     "exclude": ["**/*.stories.ts", "**/*.spec.ts", "node_modules"],
     "include": ["packages"]

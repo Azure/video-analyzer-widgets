@@ -14,16 +14,12 @@ export class BaseWidget extends FASTElement {
         if (config) {
             this._config = config;
         }
-        this.width = config?.width || '';
-        this.height = config?.height || '';
+        this.width = config?.width || '100%';
+        this.height = config?.height || '100%';
 
         if (this._config) {
             this.init();
         }
-
-        setTimeout(() => {
-            this.validateOrAddDesignSystem();
-        });
     }
 
     public configure(config: IWidgetBaseConfig) {
@@ -36,7 +32,7 @@ export class BaseWidget extends FASTElement {
 
     protected init(): void {}
 
-    private validateOrAddDesignSystem() {
+    protected validateOrAddDesignSystem() {
         let designSystem = closestElement('ava-design-system-provider', this.$fastController.element);
         if (designSystem) {
             Logger.log('Already have design system.');
@@ -47,6 +43,7 @@ export class BaseWidget extends FASTElement {
             if (designSystem.$fastController) {
                 // set part 'style-control' to overwrite design system css
                 designSystem.$fastController.element.setAttribute('part', 'style-control');
+                designSystem.$fastController.element.setAttribute('theme', 'dark');
                 // set child elements as child of the design system
                 const documentFragment = document.createDocumentFragment();
                 Array.from(this.shadowRoot.children).forEach((c) => documentFragment.appendChild(c));

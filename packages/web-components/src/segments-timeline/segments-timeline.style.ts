@@ -53,6 +53,7 @@ export const svgStyles = css`
 
     .bar {
         fill: var(--segments-line-bg);
+        cursor: not-allowed;
     }
 
     .buffer {

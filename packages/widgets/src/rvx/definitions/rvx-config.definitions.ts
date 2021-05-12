@@ -1,11 +1,28 @@
+import { ControlPanelElements } from '../../../../web-components/src/rvx-player/rvx-player.definitions';
 import { IWidgetBaseConfig } from '../../definitions/base-widget-config.definitions';
 
 /**
- * Insights config, contains basic configurations for insights widget.
+ * RVX config, contains basic configurations for rvx widget.
  */
-export interface IRvxWidgetConfig extends IWidgetBaseConfig {
+export interface IAvaPlayerConfig extends IWidgetBaseConfig {
     /**
-     * This is an example
+     * Embedded video name
      */
-    sources?: string[];
+    videoName: string;
+    /**
+     * AVA API endpoint
+     */
+    clientApiEndpointUrl: string;
+    /**
+     * AVA API token
+     */
+    token?: string;
+    /**
+     * AVA player controllers - adjust ava player controllers
+     */
+    playerControllers?: ControlPanelElements[];
+}
+
+export enum RVXEvents {
+    TOKEN_EXPIRED = 'TOKEN_EXPIRED'
 }

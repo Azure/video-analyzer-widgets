@@ -24,6 +24,10 @@ export const styles = css`
         font-weight: 400;
     }
 
+    .ms-DatePicker.right .ms-DatePicker-holder {
+        right: 0;
+    }
+
     .ms-DatePicker-monthOption,
     .ms-DatePicker-yearOption {
         background-color: var(--date-picker-holder-bg);
@@ -42,7 +46,7 @@ export const styles = css`
     }
 
     .ms-Icon {
-        font-family: 'avarvx-arrow';
+        font-family: 'avarvx-icons';
     }
 
     .ms-Icon.i-arrow-page-up:before {

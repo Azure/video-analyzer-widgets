@@ -1,4 +1,4 @@
-import { attr, customElement, FASTElement } from '@microsoft/fast-element';
+import { attr, customElement, FASTElement, observable } from '@microsoft/fast-element';
 import { DatePickerEvent, IAllowedDates, IDatePickerRenderEvent } from './date-picker.definitions';
 import { styles } from './date-picker.style';
 import { template } from './date-picker.template';
@@ -13,6 +13,14 @@ import { template } from './date-picker.template';
     styles
 })
 export class DatePickerComponent extends FASTElement {
+    /**
+     * When true, align date picker to the right side of the opener button
+     *
+     * @public
+     * @remarks
+     * HTML attribute: alignRight
+     */
+    @attr public alignRight = false;
     /**
      * Enable UI attribute, when true date picker is shown
      *
@@ -47,7 +55,7 @@ export class DatePickerComponent extends FASTElement {
      * @remarks
      * HTML attribute: allowedYears
      */
-    @attr public allowedDates: IAllowedDates = {
+    @observable public allowedDates: IAllowedDates = {
         days: '',
         months: '',
         years: ''
@@ -65,7 +73,6 @@ export class DatePickerComponent extends FASTElement {
 
     public constructor() {
         super();
-        this.createFabricDatePicker();
     }
 
     public allowedDatesChanged() {
@@ -86,6 +93,8 @@ export class DatePickerComponent extends FASTElement {
     public connectedCallback() {
         super.connectedCallback();
         this.uiConnected = true;
+
+        this.createFabricDatePicker();
 
         this.createDatePicker();
     }
@@ -143,7 +152,6 @@ export class DatePickerComponent extends FASTElement {
             document.head.appendChild(pickerDateSrcLink);
             document.head.appendChild(datePickerSrcLink);
             this.jquerySrcLoaded = true;
-            this.createDatePicker();
         };
 
         pickerDateSrcLink.onload = () => {
@@ -169,21 +177,26 @@ export class DatePickerComponent extends FASTElement {
             return;
         }
 
-        setTimeout(() => {
-            const DatePickerElements = this.shadowRoot.querySelectorAll('.ms-DatePicker');
-            this.datePicker = new window['fabric']['DatePicker'](DatePickerElements[0]);
-
-            this.datePicker.picker.on('open', this.onDateOpen.bind(this));
-            this.datePicker.picker.on('set', this.onDateChange.bind(this));
-            this.datePicker.picker.on('render', this.onRenderDates.bind(this));
-
-            // Show date picker only after initialization
-            this.enableUI = true;
-
+        try {
             setTimeout(() => {
-                this.datePicker.picker.set('select', this.date);
+                const DatePickerElements = this.shadowRoot.querySelectorAll('.ms-DatePicker');
+                this.datePicker = new window['fabric']['DatePicker'](DatePickerElements[0]);
+
+                this.datePicker.picker.on('open', this.onDateOpen.bind(this));
+                this.datePicker.picker.on('set', this.onDateChange.bind(this));
+                this.datePicker.picker.on('render', this.onRenderDates.bind(this));
+
+                // Show date picker only after initialization
+                this.enableUI = true;
+
+                setTimeout(() => {
+                    this.datePicker.picker.set('select', this.date);
+                });
             });
-        });
+        } catch (error) {
+            // eslint-disable-next-line no-console
+            console.error(error);
+        }
     }
 
     private onRenderDates() {

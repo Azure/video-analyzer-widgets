@@ -1,8 +1,9 @@
 import { FASTSlider } from '@microsoft/fast-components';
 import { attr, customElement, FASTElement } from '@microsoft/fast-element';
 import { SegmentsTimelineComponent } from '..';
+import { closestElement } from '../../../common/utils/elements';
 import { guid } from '../../../common/utils/guid';
-import { ISegmentsTimelineConfig, IUISegment, SegmentsTimelineEvents } from '../segments-timeline/segments-timeline.definitions';
+import { ISegmentsTimelineConfig, IUISegmentEventData, SegmentsTimelineEvents } from '../segments-timeline/segments-timeline.definitions';
 import { TimeRulerComponent } from '../time-ruler';
 import { ITimeLineConfig, TimelineEvents } from './timeline.definitions';
 import { styles } from './timeline.style';
@@ -48,6 +49,10 @@ export class TimelineComponent extends FASTElement {
 
     private readonly SLIDER_DENSITY = 32;
     private readonly SLIDER_MAX_ZOOM = 22;
+
+    private readonly SEEK_BAR_TOP = '#FAF9F8';
+
+    private readonly SEEK_BAR_BODY_COLOR = '#D02E00';
 
     public configChanged() {
         setTimeout(() => {
@@ -136,6 +141,11 @@ export class TimelineComponent extends FASTElement {
     }
 
     private initSegmentsTimeline() {
+        const designSystem = closestElement('ava-design-system-provider', this.$fastController.element);
+        const seekBarTopColor = designSystem ? getComputedStyle(designSystem)?.getPropertyValue('--type-highlight') : this.SEEK_BAR_TOP;
+        const seekBarBodyColor = designSystem
+            ? getComputedStyle(designSystem)?.getPropertyValue('--play-indicator')
+            : this.SEEK_BAR_BODY_COLOR;
         const config: ISegmentsTimelineConfig = {
             data: {
                 segments: this.config?.segments,
@@ -147,14 +157,17 @@ export class TimelineComponent extends FASTElement {
                 top: 5,
                 renderTooltip: false,
                 renderProgress: false,
+                renderSeek: {
+                    seekBarTopColor: seekBarTopColor,
+                    seekBarBodyColor: seekBarBodyColor
+                },
                 zoom: this.zoom
             }
         };
 
         this.segmentsTimeline.config = config;
 
-        // eslint-disable-next-line no-undef
-        this.segmentsTimeline.addEventListener(SegmentsTimelineEvents.SEGMENT_CLICKED, ((event: CustomEvent<IUISegment>) => {
+        this.segmentsTimeline.addEventListener(SegmentsTimelineEvents.SEGMENT_CLICKED, ((event: CustomEvent<IUISegmentEventData>) => {
             this.$emit(TimelineEvents.SEGMENT_CHANGE, event.detail);
             event.stopPropagation();
             // eslint-disable-next-line no-undef

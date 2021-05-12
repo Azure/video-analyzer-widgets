@@ -5,10 +5,28 @@
 </head>
 
 <body>
-  <script src="../../../../dist/ava-widgets-sdk.js"></script>
-  <h1>Sample RVX widget</h1>
+  <script src="../../../../../dist/ava-widgets.js"></script>
+  <h1>Example Player widget</h1>
   <div id="container"
-    class="widget-container"></div>
+    class="widget-container">
+    <ava-player>
+    </ava-player>
+  </div>
 </body>
+
+<script>(function () {
+    const avaPlayer = document.querySelector("ava-player");
+    avaPlayer.addEventListener('TOKEN_EXPIRED', () => {
+      console.log('token expired');
+    });
+    avaPlayer.configure({
+      token: 'token',
+      clientApiEndpointUrl: 'url',
+      videoName: 'video-name'
+    });
+
+    avaPlayer.load();
+  })()
+</script>
 
 </html>
