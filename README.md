@@ -363,8 +363,8 @@ document.firstElementChild.appendChild(zoneDrawer).
 ### Code snippets:
 
 1.  _Basic usage snippet:_ create a zone draw widget with native JS code, configure the widget and load the data.
-    The zone draw includes the ava-player as a video HTML element. The ava-player displays video according to configuration.
-    For more information regarding ava-player, please see its documentation.
+        The zone draw includes the ava-player as a video HTML element. The ava-player displays video according to configuration.
+        For more information regarding ava-player, please see its documentation.
 
     ```html live
     <head>
@@ -499,37 +499,37 @@ document.firstElementChild.appendChild(zoneDrawer).
                             // Add 'save' event listener when user click save button
                             zoneDrawer.addEventListener('ZONE_DRAWER_SAVE', (event) => {
                             /* The event includes zones array the user draw.
-                             Example: 
-                             [
-                                  {
-                                      id: '1',
-                                      points: [
-                                          {
-                                              x: 0,
-                                              y: 0
-                                          },
-                                          {
-                                              x: 0.5,
-                                              y: 0.5
-                                          }
-                                      ]
-                                  },
-                                  {
-                                      id: '2',
-                                      points: [
-                                          {
-                                              x: 0.9,
-                                              y: 0.1
-                                          },
-                                          {
-                                              x: 0.7,
-                                              y: 0.8
-                                          }
-                                      ]
-                                  }
-                              ] 
-                              The points x,y are determined by their relative position to the video width or height. */
-                            
+                                Example: 
+                                [
+                                    {
+                                        id: '1',
+                                        points: [
+                                            {
+                                                x: 0,
+                                                y: 0
+                                            },
+                                            {
+                                                x: 0.5,
+                                                y: 0.5
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        id: '2',
+                                        points: [
+                                            {
+                                                x: 0.9,
+                                                y: 0.1
+                                            },
+                                            {
+                                                x: 0.7,
+                                                y: 0.8
+                                            }
+                                        ]
+                                    }
+                                ] 
+                                The points x,y are determined by their relative position to the video width or height. */
+                                
                             const zones = event.details;
                         });
                     })()
