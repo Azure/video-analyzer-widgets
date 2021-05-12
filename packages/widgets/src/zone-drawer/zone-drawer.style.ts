@@ -1,7 +1,7 @@
 import { css } from '@microsoft/fast-element';
 
 export const styles = css`
-    :host {
+    .zone-drawer-wrapper {
         font-family: var(--font-family);
         display: grid;
         grid-template-rows: 30px auto 32px;
@@ -18,6 +18,10 @@ export const styles = css`
         background: transparent;
         width: 30px;
         height: 30px;
+    }
+
+    fast-button.selected {
+        background: var(--zone-draw-selected-btn);
     }
 
     .draw-options-container {

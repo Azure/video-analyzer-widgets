@@ -142,9 +142,9 @@ export class TimelineComponent extends FASTElement {
                 duration: this.DAY_DURATION_IN_SECONDS
             },
             displayOptions: {
-                height: 25,
+                height: 30,
                 barHeight: 12,
-                top: 0,
+                top: 5,
                 renderTooltip: false,
                 renderProgress: false,
                 zoom: this.zoom

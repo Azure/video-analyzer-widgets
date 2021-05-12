@@ -17,4 +17,8 @@ export interface IWidgetBaseConfig {
      * Widget height
      */
     height?: string;
+    /**
+     * Debug mode (enable logs in console)
+     */
+    debug?: boolean;
 }

@@ -4,13 +4,19 @@ import { guid } from '../../../common/utils/guid';
 import { DrawingColors } from '../../../styles/system-providers/ava-design-system-provider.definitions';
 import { UIActionType } from '../../../web-components/src/actions-menu/actions-menu.definitions';
 import { LayerLabelComponent } from '../../../web-components/src/layer-label/layer-label.component';
+import { LineDrawerComponent } from '../../../web-components/src/line-drawer/line-drawer.component';
+import { PolygonDrawerComponent } from '../../../web-components/src/polygon-drawer/polygon-drawer.component';
+import { styles } from './zone-drawer.style';
+import { template } from './zone-drawer.template';
+import { ZonesViewComponent } from '../../../web-components/src/zones-view/zones-view.component';
+import { BaseWidget } from '../base-widget/base-widget';
+import { Player } from './../rvx/rvx-widget';
+import { ZoneDrawerActions } from './actions';
 import {
     ILayerLabelConfig,
     LayerLabelEvents,
     LayerLabelMode
 } from '../../../web-components/src/layer-label/layer-label.definitions';
-import { LineDrawerComponent } from '../../../web-components/src/line-drawer/line-drawer.component';
-import { PolygonDrawerComponent } from '../../../web-components/src/polygon-drawer/polygon-drawer.component';
 import {
     IZone,
     IZoneDrawerWidgetConfig,
@@ -20,12 +26,7 @@ import {
     IPolygonZone,
     ZoneDrawerMode
 } from './zone-drawer.definitions';
-import { styles } from './zone-drawer.style';
-import { template } from './zone-drawer.template';
-import { ZonesViewComponent } from '../../../web-components/src/zones-view/zones-view.component';
-import { BaseWidget } from '../base-widget/base-widget';
-import { Player } from './../rvx/rvx-widget';
-import { ZoneDrawerActions } from './actions';
+import { Logger } from '../common/logger';
 
 @customElement({
     name: 'ava-zone-drawer',
@@ -68,11 +69,13 @@ export class ZoneDrawerWidget extends BaseWidget {
         super.connectedCallback();
         this.isReady = true;
 
-        const parent = this.$fastController?.element?.parentElement;
-        this.resizeObserver = new ResizeObserver(this.resize.bind(this));
-        this.resizeObserver.observe(parent);
-
-        this.initZoneDrawComponents();
+        window.addEventListener('resize', this.resize.bind(this));
+        this.$fastController?.element?.addEventListener(LayerLabelEvents.labelActionClicked, this.labelActionClicked.bind(this));
+        this.$fastController?.element?.addEventListener(
+            LayerLabelEvents.labelTextChanged,
+            // eslint-disable-next-line no-undef
+            this.labelTextChanged.bind(this) as EventListener
+        );
     }
 
     public disconnectedCallback() {
@@ -98,6 +101,7 @@ export class ZoneDrawerWidget extends BaseWidget {
     public save() {
         const outputs = this.getZonesOutputs();
         this.$emit(ZoneDrawerWidgetEvents.SAVE, outputs);
+        Logger.log(outputs);
     }
 
     public toggleDrawerMode() {
@@ -134,6 +138,8 @@ export class ZoneDrawerWidget extends BaseWidget {
         if (!this.labelsList) {
             this.labelsList = this.shadowRoot.querySelector('.labels-list');
         }
+
+        this.configure(this.config);
     }
 
     private initDrawer() {
@@ -279,9 +285,7 @@ export class ZoneDrawerWidget extends BaseWidget {
         layerLabel.config = this.getLabelConfig(zone);
         li.appendChild(layerLabel);
         this.labelsList.appendChild(li);
-
-        layerLabel.addEventListener(LayerLabelEvents.labelActionClicked, this.labelActionClicked.bind(this));
-        layerLabel.addEventListener(LayerLabelEvents.labelTextChanged, this.labelTextChanged.bind(this));
+        this.resize();
     }
 
     private renameZone(id: string) {

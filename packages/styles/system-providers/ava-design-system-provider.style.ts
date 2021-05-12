@@ -120,5 +120,6 @@ export const style = css`
         /* Zone Draw */
         --zone-draw-color: var(--type-tertiary);
         --zone-draw-bg: var(--bg-dialog);
+        --zone-draw-selected-btn: var(--action-fill-press);
     }
 `;
