@@ -36,11 +36,11 @@ export class AVAPlayerUILayer {
             ControlPanelElements.FULLSCREEN
         ],
         addBigPlayButton: false,
-        overflowMenuButtons: ['playback_rate', 'captions', 'quality', 'language', 'cast'],
+        overflowMenuButtons: ['playback_rate', 'quality'],
         seekBarColors: {
-            base: 'rgba(255, 255, 255, 0.3)',
-            buffered: 'rgba(0, 255, 255, 0.54)',
-            played: '#F3F2F1'
+            base: 'var(--video-buffer)',
+            buffered: 'var(--video-buffer)',
+            played: 'var(--segment-live)'
         }
     };
 
@@ -114,7 +114,6 @@ export class AVAPlayerUILayer {
         LiveButtonFactory.callBack = async (isLive: boolean) => {
             this.toggleLiveMode(isLive);
         };
-        // this.shaka.ui.Controls.registerElement('live', new LiveButtonFactory());
 
         BodyTrackingButtonFactory.callBack = (isOn: boolean) => {
             this.toggleBodyTracking(isOn);

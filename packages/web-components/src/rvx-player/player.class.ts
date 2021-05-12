@@ -1,21 +1,28 @@
 /* eslint-disable max-len */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ICanvasOptions } from '../../../common/canvas/canvas.definitions';
+import { IAvailableMediaResponse } from '../../../common/services/media/media.definitions';
 import { WidgetGeneralError } from '../../../widgets/src';
-import { IUISegment } from '../segments-timeline/segments-timeline.definitions';
+import { Logger } from '../../../widgets/src/common/logger';
+import { IUISegmentEventData } from '../segments-timeline/segments-timeline.definitions';
 import { TimelineComponent } from '../timeline';
 import { TimelineEvents } from '../timeline/timeline.definitions';
-import { ControlPanelElements } from './rvx-player.definitions';
+import { ControlPanelElements, LiveState } from './rvx-player.definitions';
 import { shaka as shaka_player } from './shaka';
 import { AVAPlayerUILayer } from './UI/ava-ui-layer.class';
 import { BoundingBoxDrawer } from './UI/bounding-box.class';
+import { extractRealTime } from './UI/time.utils';
+import { createTimelineSegments } from './UI/timeline.utils';
 const shaka = require('shaka-player/dist/shaka-player.ui.debug.js');
+
+// eslint-disable-next-line @typescript-eslint/no-unused-expressions
+TimelineComponent;
 
 export class PlayerWrapper {
     private isLive = false; // TODO : when RTSP plugin will be ready, set to true
     private _accessToken = '';
     private _mimeType: MimeType;
     private player: shaka_player.Player = Object.create(null);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private controls: any;
     private _allowCrossCred = true;
     private timestampOffset: number;
@@ -26,13 +33,21 @@ export class PlayerWrapper {
     private segmentReferences: shaka_player.media.SegmentReference[];
     private onSegmentChangeListenerRef: (event: CustomEvent) => void;
     private avaUILayer: AVAPlayerUILayer;
+    private _liveStream: string = '';
+    private _vodStream: string = '';
+    private _availableSegments: IAvailableMediaResponse = null;
+    private readonly OFFSET_MULTIPLAYER = 1000;
+
+    private readonly SECONDS_IN_HOUR = 3600;
+
+    private readonly SECONDS_IN_MINUTES = 60;
 
     public constructor(
         private video: HTMLVideoElement,
         private videoContainer: HTMLElement,
-        private _liveStream: string,
-        private _vodStream: string,
         private timeUpdateCallback: (time: string) => void,
+        private isLiveCallback: (isLive: boolean) => void,
+        private changeDayCallBack: (isNext: boolean) => void,
         private allowedControllers: ControlPanelElements[]
     ) {
         // Install built-in polyfills to patch browser incompatibilities.
@@ -46,6 +61,10 @@ export class PlayerWrapper {
             // This browser does not have the minimum set of APIs we need.
             throw new WidgetGeneralError('Browser not supported!');
         }
+    }
+
+    public set availableSegments(value: IAvailableMediaResponse) {
+        this._availableSegments = value;
     }
 
     public set liveStream(value: string) {
@@ -101,7 +120,7 @@ export class PlayerWrapper {
             }
         } catch (error) {
             // eslint-disable-next-line no-console
-            console.log(error.message);
+            Logger.log(error.message);
         }
     }
 
@@ -121,14 +140,18 @@ export class PlayerWrapper {
             this.boundingBoxesDrawer.clearInstances();
         }
         this.isLive = isLive;
-        document.dispatchEvent(new CustomEvent('player_live', { detail: this.isLive }));
+        this.isLiveCallback(this.isLive);
 
         // TODO : add back after RTSP plugin integration
         // this.controls.elements_[5].isLive = this.isLive;
         // this.controls.elements_[5].button_.classList.add(this.isLive ? 'live-on' : 'live-off');
         // this.controls.elements_[5].button_.classList.remove(this.isLive ? 'live-off' : 'live-on');
-        this.controls.controlsContainer_.classList.add(this.isLive ? 'live-on' : 'live-off');
-        this.controls.controlsContainer_.classList.remove(this.isLive ? 'live-off' : 'live-on');
+        this.updateControlsClassList();
+    }
+
+    private updateControlsClassList() {
+        this.controls.controlsContainer_.classList.add(this.isLive ? LiveState.ON : LiveState.OFF);
+        this.controls.controlsContainer_.classList.remove(this.isLive ? LiveState.OFF : LiveState.ON);
     }
 
     private removeTimelineComponent() {
@@ -146,46 +169,12 @@ export class PlayerWrapper {
         if (!this.segmentReferences) {
             return;
         }
-        // go over reference
-        const segments = [];
-        for (const iterator of this.segmentReferences) {
-            const segmentEnd = iterator.getEndTime();
-            const segmentStart = iterator.getStartTime();
-            // const segmentStartRange = 3600 * segments.length;
-            // const segmentEndRange = 3600 * segments.length;
-            if (segments.length) {
-                // If the difference between two segments is less then 5 minutes - merge
-                const prevSegmentEnd = segments[segments.length - 1].endSeconds;
-                if (segmentStart - prevSegmentEnd <= 10) {
-                    // merge
-                    segments[segments.length - 1].endSeconds = segmentEnd;
-                } else {
-                    // add new segment
-                    segments.push({
-                        startSeconds: segmentStart,
-                        endSeconds: segmentEnd
-                    });
-                }
-            } else {
-                // first segment
-                const segment: IUISegment = {
-                    startSeconds: segmentStart,
-                    endSeconds: segmentEnd
-                };
-                segments.push(segment);
-            }
-            // if (segmentStart >= segmentStartRange && segmentEnd <= segmentEndRange) {
-            //     const segment: IUISegment = {
-            //         startSeconds: segments.length ? segments[segments.length - 1].startSeconds : segmentStart,
-            //         endSeconds: segmentEnd
-            //     };
-            //     segments.push(segment);
-            // }
-        }
+        const segments = createTimelineSegments(this._availableSegments, this.segmentReferences, this.timestampOffset);
 
-        const configWithZoom = {
+        const date = new Date(this.date.getUTCFullYear(), this.date.getUTCMonth(), this.date.getUTCDate(), 0, 0, 0);
+        const timelineConfig = {
             segments: segments,
-            date: this.date
+            date: date
         };
         this.timelineComponent = new TimelineComponent();
         this.controls.controlsContainer_.insertBefore(this.timelineComponent, this.controls.bottomControls_);
@@ -194,20 +183,31 @@ export class PlayerWrapper {
         this.timelineComponent.addEventListener(TimelineEvents.SEGMENT_CHANGE, this.onSegmentChangeListenerRef as EventListener);
         // eslint-disable-next-line no-undef
         this.timelineComponent.addEventListener(TimelineEvents.CURRENT_TIME_CHANGE, this.onTimeChange.bind(this) as EventListener);
-        this.timelineComponent.config = configWithZoom;
+        this.timelineComponent.config = timelineConfig;
     }
 
-    private onSegmentChange(event: CustomEvent) {
-        const segment = event.detail as IUISegment;
-        if (segment) {
-            this.video.currentTime = segment.startSeconds + 1;
+    private onSegmentChange(event: CustomEvent<IUISegmentEventData>) {
+        event.stopPropagation();
+        const segmentEventData = event.detail;
+        if (segmentEventData) {
+            const currentDate = new Date(this.timestampOffset);
+            const dateInSeconds =
+                currentDate.getUTCHours() * this.SECONDS_IN_HOUR +
+                currentDate.getUTCMinutes() * this.SECONDS_IN_MINUTES +
+                currentDate.getUTCSeconds();
+            this.video.currentTime = dateInSeconds - segmentEventData.segment.startSeconds + 1;
             this.video.play();
         }
     }
 
     private onTimeChange(event: CustomEvent<number>) {
+        const currentDate = new Date(this.timestampOffset);
+        const dateInSeconds =
+            currentDate.getUTCHours() * this.SECONDS_IN_HOUR +
+            currentDate.getUTCMinutes() * this.SECONDS_IN_MINUTES +
+            currentDate.getUTCSeconds();
         if (event.detail) {
-            this.video.currentTime = event.detail;
+            this.video.currentTime = event.detail - dateInSeconds;
         }
     }
 
@@ -220,11 +220,11 @@ export class PlayerWrapper {
     }
 
     private onClickNextDay() {
-        document.dispatchEvent(new CustomEvent('player_next_day'));
+        this.changeDayCallBack(true);
     }
 
     private onClickPrevDay() {
-        document.dispatchEvent(new CustomEvent('player_prev_day'));
+        this.changeDayCallBack(false);
     }
 
     private async init() {
@@ -255,11 +255,16 @@ export class PlayerWrapper {
         // Listen for error events.
         this.player.addEventListener('error', this.onErrorEvent.bind(this));
         this.player.addEventListener('trackschanged', this.onTrackChange.bind(this));
-        // this.player.addEventListener('loaded', this.loaded.bind(this));
 
         this.player.addEventListener('emsg', this.onShakaMetadata.bind(this));
 
-        await this.toggleLiveMode(this.isLive);
+        // Add bounding box drawer
+        const options: ICanvasOptions = {
+            height: this.video.clientHeight,
+            width: this.video.clientWidth
+        };
+        this.boundingBoxesDrawer = new BoundingBoxDrawer(options, this.video);
+        this.updateControlsClassList();
     }
 
     private onWindowResize() {
@@ -268,28 +273,16 @@ export class PlayerWrapper {
     }
 
     private addBoundingBoxLayer() {
-        const options: ICanvasOptions = {
-            height: this.video.clientHeight,
-            width: this.video.clientWidth
-        };
-        this.boundingBoxesDrawer = new BoundingBoxDrawer(options, this.video);
-        this.boundingBoxesDrawer.canvas.style.position = 'absolute';
-        this.boundingBoxesDrawer.canvas.style.zIndex = '1';
-        this.boundingBoxesDrawer.canvas.style.pointerEvents = 'none';
+        // Add canvas to screen
         this.videoContainer.prepend(this.boundingBoxesDrawer.canvas);
         window.addEventListener('resize', this.onWindowResize.bind(this));
-        this.boundingBoxesDrawer.playAnimation();
+        this.boundingBoxesDrawer.on();
     }
 
     private removeBoundingBoxLayer() {
-        if (!this.boundingBoxesDrawer) {
-            return;
-        }
-
         window.removeEventListener('resize', this.onWindowResize.bind(this));
         this.videoContainer.removeChild(this.boundingBoxesDrawer.canvas);
-        this.boundingBoxesDrawer.clear();
-        this.boundingBoxesDrawer = null;
+        this.boundingBoxesDrawer.off();
     }
 
     private authenticationHandler(type: shaka_player.net.NetworkingEngine.RequestType, request: shaka_player.extern.Request) {
@@ -310,16 +303,26 @@ export class PlayerWrapper {
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private parseEmsg(emsg: any) {
         if (!this.boundingBoxesDrawer) {
             return;
         }
         const decoder = new TextDecoder();
-        const message = decoder.decode(emsg.messageData);
-        const inferences = JSON.parse(message).inferences;
+        const message = decoder.decode(emsg?.messageData);
+        const inferences = message ? JSON.parse(message)?.inferences : null;
+        if (!inferences) {
+            return;
+        }
         for (const iterator of inferences) {
             if (iterator.type === 'MOTION' || iterator.type === 'ENTITY') {
                 const data = iterator?.motion?.box || iterator?.entity?.box;
+                if (iterator.type === 'ENTITY') {
+                    data.entity = {
+                        id: iterator.entity.id || iterator.sequenceId,
+                        tag: iterator.entity.tag.value
+                    };
+                }
                 this.boundingBoxesDrawer.addItem(emsg.startTime, data);
             }
         }
@@ -360,7 +363,7 @@ export class PlayerWrapper {
 
         // if theres a timeline - update time
         if (this.timelineComponent) {
-            this.timelineComponent.currentTime = displayTime;
+            this.timelineComponent.currentTime = extractRealTime(displayTime, this.timestampOffset);
         }
     }
 
@@ -368,22 +371,18 @@ export class PlayerWrapper {
         if (!this.timestampOffset) {
             return '';
         }
-        // const date = new Date(this.timestampOffset + time * 1000);
         this.date = new Date(this.timestampOffset + time * 1000);
-        return `${this.date.toLocaleDateString()} ${this.date.toLocaleTimeString()}`;
-        // return `${showDate ? date.getUTCDate() : ''} ${date.toLocaleTimeString()}`;
-        // return `${this.date.getUTCMonth()}/${this.date.getUTCDay()}/${this.date.getUTCFullYear()} ${this.date.getUTCHours()}:${this.date.getUTCMinutes()}:${this.date.getUTCSeconds()}`;
-        // return `${showDate ? date.toLocaleDateString() : ''} ${date.toLocaleTimeString()}`;
+        const utcDate = `${this.date.getUTCDate()}/${this.date.getUTCMonth() + 1}/${this.date.getUTCFullYear()}`;
+        const hour = this.date.getUTCHours();
+        const minutes = this.date.getUTCMinutes();
+        const seconds = this.date.getUTCSeconds();
+        const utcTime = `${(hour > 9 ? '' : '0') + hour}:${(minutes > 9 ? '' : '0') + minutes}:${(seconds > 9 ? '' : '0') + seconds}`;
+        return `${utcDate} ${utcTime}`;
     }
 
     private onErrorEvent(event: shaka_player.PlayerEvents.ErrorEvent) {
         // Extract the shaka.util.Error object from the event.
-        this.onError(event.detail);
-    }
-
-    private onError(error: shaka_player.util.Error) {
-        // throw new WidgetGeneralError(error.code);
         // eslint-disable-next-line no-console
-        console.log(error);
+        Logger.log(event.detail);
     }
 }

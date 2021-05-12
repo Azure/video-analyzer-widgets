@@ -2,22 +2,17 @@ import { WidgetGeneralError } from '../../../widgets/src';
 import { TokenHandler } from './token-handler.class';
 
 export class AvaAPi {
-    private static _accountID = '';
-    private static _longRegionCode = '';
     private static _videoName = '';
-    private static isTestEnv = true;
     private static readonly apiVersion = '2021-05-01-preview';
 
     private static cookieTimeoutRef = 0;
     private static cookieExpiration: Date;
     private static _fallbackAPIBase = '';
+    private static _clientApiEndpointUrl = '';
     private static readonly MAX_SET_TIMEOUT_TIME = 2147483647;
 
     public static get apiBase() {
-        return (
-            this._fallbackAPIBase ||
-            `https://${this.accountID}.api.${this.longRegionCode}.videoanalyzer.azure${this.isTestEnv ? '-test' : ''}.net`
-        );
+        return this._fallbackAPIBase || this._clientApiEndpointUrl;
     }
 
     public static async authorize() {
@@ -81,20 +76,12 @@ export class AvaAPi {
         AvaAPi._videoName = value;
     }
 
-    public static get longRegionCode() {
-        return AvaAPi._longRegionCode;
+    public static get clientApiEndpointUrl() {
+        return AvaAPi._clientApiEndpointUrl;
     }
 
-    public static set longRegionCode(value) {
-        AvaAPi._longRegionCode = value;
-    }
-
-    public static get accountID() {
-        return AvaAPi._accountID;
-    }
-
-    public static set accountID(value) {
-        AvaAPi._accountID = value;
+    public static set clientApiEndpointUrl(value) {
+        AvaAPi._clientApiEndpointUrl = value;
     }
 
     private static cookieExpiredHandler() {

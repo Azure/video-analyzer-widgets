@@ -1,4 +1,4 @@
-import { ITimeRange, Precision, VideoFormat } from './media.definitions';
+import { IExpandedTimeRange, IExpandedDate, Precision, VideoFormat } from './media.definitions';
 
 export class MediaApi {
     private static _baseStream = '';
@@ -23,13 +23,15 @@ export class MediaApi {
         return `${this.baseStream}/manifest(format=${format})${extension}`;
     }
 
-    public static getVODStream(range: ITimeRange = null): string {
+    public static getVODStream(range: IExpandedTimeRange = null): string {
         const format = MediaApi._format === VideoFormat.HLS ? 'm3u8-cmaf' : 'mpd-time-cmaf';
         const extension = MediaApi._format === VideoFormat.HLS ? '.m3u8' : '.mpd';
 
         let range_query = '';
         if (range) {
-            range_query = `,starttime=${range.start.toISOString()},endtime=${range.end.toISOString()}`;
+            const startDay = this.convertDateToIso(range.start.year, range.start.month, range.start.day);
+            const endDay = this.convertDateToIso(range.end.year, range.end.month, range.end.day);
+            range_query = `,starttime=${startDay},endtime=${endDay}`;
         }
 
         return `${this.baseStream}/manifest(format=${format}${range_query})${extension}`;
@@ -37,7 +39,7 @@ export class MediaApi {
 
     public static getAvailableMedia(
         precision: Precision,
-        range: ITimeRange = null,
+        range: IExpandedTimeRange = null,
         allowCrossSiteCredentials = true,
         token?: string
     ): Promise<Response> {
@@ -66,17 +68,17 @@ export class MediaApi {
         return fetch(url, requestInit);
     }
 
-    private static extractDate(date: Date, precision: Precision) {
-        const value = date.toISOString();
+    private static convertDateToIso(year: number, month: number, day: number) {
+        return `${year}-${month > 9 ? month : '0' + month}-${day > 9 ? day : '0' + day}`;
+    }
 
-        if (precision === Precision.YEAR) {
-            return value.substring(0, 4);
-        } else if (precision === Precision.MONTH) {
-            return value.substring(0, 7);
-        } else if (precision === Precision.DAY) {
-            return value.substring(0, 10);
+    private static extractDate(date: IExpandedDate, precision: Precision) {
+        if (precision === Precision.MONTH) {
+            return `${date.year}-${date.month > 9 ? date.month : '0' + date.month}`;
+        } else if (precision === Precision.DAY || precision === Precision.FULL) {
+            return this.convertDateToIso(date.year, date.month, date.day);
         } else {
-            return value;
+            return '';
         }
     }
 }

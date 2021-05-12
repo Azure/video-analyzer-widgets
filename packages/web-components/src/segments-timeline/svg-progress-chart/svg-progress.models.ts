@@ -10,7 +10,7 @@ export abstract class Shape {
     public y: number = 0;
     public color: string = '';
     public classList: string[] = [];
-    /* eslint-disable  @typescript-eslint/no-explicit-any */
+    /* eslint-disable-next-line  @typescript-eslint/no-explicit-any */
     public _el: SVGElement | any;
     public className: string = '';
 
@@ -65,7 +65,7 @@ export abstract class Shape {
         return new RegExp('(^|\\s+)' + className + '(\\s+|$)');
     }
 
-    /* eslint-disable  @typescript-eslint/no-explicit-any */
+    /* eslint-disable-next-line  @typescript-eslint/no-explicit-any */
     public abstract createElement(): SVGElement | any;
     public abstract update(): void;
 }
@@ -266,5 +266,107 @@ export class Tooltip extends Shape implements IShowable {
         } else {
             element.setAttribute('fill', 'var(--segments-tooltip)');
         }
+    }
+}
+
+export class SeekBar extends Shape implements IShowable {
+    public value: number = 0;
+    public type?: string;
+    public addTabIndex = false;
+    public radius;
+    public components: {
+        circle: SVGCircleElement;
+        rect: SVGRectElement;
+    } = {
+        circle: null,
+        rect: null
+    };
+    public constructor(
+        h: number,
+        w: number,
+        x: number,
+        y: number,
+        radius: number,
+        color?: string,
+        private colorCircle?: string,
+        private colorRect?: string,
+        className?: string
+    ) {
+        super(h, w, x, y, color, className);
+        this.radius = radius;
+        this._el = this.createElement();
+        this.update();
+    }
+
+    public createElement(): SVGGElement {
+        const rect: SVGRectElement = <SVGRectElement>document.createElementNS(SVGSchemaURI, 'rect');
+        const circle: SVGCircleElement = <SVGCircleElement>document.createElementNS(SVGSchemaURI, 'circle');
+        this.components.circle = circle;
+        this.components.rect = rect;
+
+        const tooltip: SVGGElement = <SVGGElement>document.createElementNS(SVGSchemaURI, 'g');
+
+        tooltip.appendChild(rect);
+        tooltip.appendChild(circle);
+
+        return tooltip;
+    }
+
+    public update() {
+        const element = <SVGElement>this._el;
+        if (!element || !isFinite(this.width) || !isFinite(this.height)) {
+            return;
+        }
+
+        this.components.circle.setAttribute('cx', this.x.toString() + '%');
+        this.components.circle.setAttribute('cy', this.y.toString());
+        this.components.circle.setAttribute('r', this.radius.toString());
+
+        if (this.colorCircle) {
+            this.components.circle.setAttribute('style', `fill:${this.colorCircle}`);
+        }
+
+        this.components.rect.setAttribute('width', '2');
+        this.components.rect.setAttribute('height', this.height.toString());
+        this.components.rect.setAttribute('x', (this.x - 1).toString());
+        this.components.rect.setAttribute('y', this.y.toString());
+
+        if (this.colorRect) {
+            this.components.rect.setAttribute('style', `fill:${this.colorRect}`);
+        }
+        element.setAttribute('class', 'transition');
+        if (this.addTabIndex) {
+            element.setAttribute('tabindex', '0');
+        }
+
+        if (this.color) {
+            element.setAttribute('style', `fill:${this.color}`);
+        }
+
+        this.classList.forEach((cls) => {
+            if (!element.classList.contains(cls)) {
+                element.classList.add(cls);
+            }
+        });
+    }
+
+    public remove() {
+        this._el.remove();
+    }
+
+    public moveTo(percent: number, time: number) {
+        if (percent && time) {
+            this._el.setAttribute('transform', `translate(${percent} 0)`);
+            this._el.style.transform = `translate3d(${percent}px,0,0)`;
+            this._el.style.webkitTransform = `translate3d(${percent}px,0,0)`;
+        }
+    }
+
+    public show() {
+        this.addClass('show');
+    }
+
+    public hide() {
+        this.removeClass('hide');
     }
 }

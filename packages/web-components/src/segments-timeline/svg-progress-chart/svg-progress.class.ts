@@ -1,6 +1,6 @@
 import { IUISegment } from '../segments-timeline.definitions';
 import { IChartData, IChartOptions, IComponentTree, Colors } from './svg-progress.definitions';
-import { Rect, Tooltip } from './svg-progress.models';
+import { SeekBar, Rect, Tooltip } from './svg-progress.models';
 
 // Define the main class for the progress chart.
 export class SVGProgressChart {
@@ -20,7 +20,8 @@ export class SVGProgressChart {
         barHeight: 12,
         top: 0,
         renderBuffer: false,
-        renderProgress: false
+        renderProgress: false,
+        renderSeek: null
     };
 
     public activeRect: Rect;
@@ -45,6 +46,7 @@ export class SVGProgressChart {
             this.options.renderTooltip = options.renderTooltip;
             this.options.bufferTop = options.renderTooltip ? 10 + this.options.tooltipHeight : 0;
             this.options.renderBuffer = options.renderBuffer;
+            this.options.renderSeek = options.renderSeek;
             this.options.renderProgress = options.renderProgress;
             this.options.disableCursor = options.disableCursor;
             this.options.top = options.top || 0;
@@ -56,7 +58,8 @@ export class SVGProgressChart {
                 bar: null,
                 buffer: null,
                 progress: null,
-                tooltip: null
+                tooltip: null,
+                seekBar: null
             },
             events: []
         };
@@ -104,13 +107,8 @@ export class SVGProgressChart {
 
         this.activeSegment = this.updateActiveRect(time);
 
-        if (timeType === 'undefined' || !this.options.renderProgress) {
-            return;
-        }
-
-        // Make sure value is max 100%.
-        const value = Math.min((time / this.options.time) * 100, 100);
-        this.components.progressBar.progress.moveTo(value);
+        this.setProgressBarProgress(timeType, time);
+        this.setSeekBarProgress(timeType, time);
     }
 
     public setPreBuffer(time: number) {
@@ -260,6 +258,29 @@ export class SVGProgressChart {
         });
     }
 
+    private setProgressBarProgress(timeType: string, time: number) {
+        if (timeType === 'undefined' || !this.options.renderProgress) {
+            return;
+        }
+
+        // Make sure value is max 100%.
+        const value = Math.min((time / this.options.time) * 100, 100);
+        this.components.progressBar.progress.moveTo(value);
+    }
+
+    private setSeekBarProgress(timeType: string, time: number) {
+        if (timeType === 'undefined' || !this.options.renderSeek) {
+            return;
+        }
+
+        // Make sure value is max 100%.
+        const per = time / this.options.time;
+        let pixels = per * this.options.width;
+        pixels = Math.max(Math.min(pixels, this.options.width), 0);
+
+        this.components.progressBar.seekBar.moveTo(pixels, time);
+    }
+
     private handleFocus(e: FocusEvent) {
         const position: SVGAnimatedLength = e.currentTarget['x'];
         const widthObj: SVGAnimatedLength = e.currentTarget['width'];
@@ -335,13 +356,22 @@ export class SVGProgressChart {
             this._activeSegmentCallback({ segment: this.activeSegment, time: time });
         }
 
-        if (!this.options.renderProgress) {
-            return;
+        if (this.options.renderProgress) {
+            window.requestAnimationFrame(() => {
+                this.components.progressBar.progress.moveTo(percent);
+            });
         }
 
-        window.requestAnimationFrame(() => {
-            this.components.progressBar.progress.moveTo(percent);
-        });
+        // Make sure value is max 100%.
+        const per = time / this.options.time;
+        let pixels = per * this.options.width;
+        pixels = Math.max(Math.min(pixels, this.options.width), 0);
+
+        if (this.options.renderSeek) {
+            window.requestAnimationFrame(() => {
+                this.components.progressBar.seekBar.moveTo(pixels, time);
+            });
+        }
     }
 
     private updateActiveRect(time: number): IUISegment {
@@ -379,6 +409,7 @@ export class SVGProgressChart {
 
     private init() {
         let progress;
+        let seek;
         let bufferProgress;
         // Create progress bar
         // 1. Create the bar element
@@ -392,6 +423,21 @@ export class SVGProgressChart {
             progress = new Rect(5, 1, 0, 10 + this.options.barHeight + this.options.tooltipHeight + this.options.top);
             progress.addClass('progress');
             progress.moveTo(0);
+        }
+
+        if (this.options.renderSeek) {
+            seek = new SeekBar(
+                this.options.barHeight + 10,
+                2,
+                0,
+                2 + this.options.tooltipHeight + this.options.top,
+                6,
+                '',
+                this.options.renderSeek.seekBarTopColor,
+                this.options.renderSeek.seekBarBodyColor
+            );
+            seek.addClass('seek-bar');
+            seek.moveTo(0, 0);
         }
 
         // 3. Create the dragging overlay progress
@@ -411,6 +457,11 @@ export class SVGProgressChart {
         // 4. Create timeline rects from data if exists
         if (this.options.data) {
             this.setData(this.options.data);
+        }
+
+        if (this.options.renderSeek) {
+            this.rootElement.appendChild(seek._el);
+            this.components.progressBar.seekBar = seek;
         }
 
         // 5. Create the tooltip

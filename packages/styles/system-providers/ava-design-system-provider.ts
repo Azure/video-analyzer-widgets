@@ -1,7 +1,7 @@
 import { FASTDesignSystemProvider } from '@microsoft/fast-components';
 import { defineDesignSystemProvider, designSystemProperty, DesignSystemProviderTemplate as template } from '@microsoft/fast-foundation';
 import { darkColorsStyle, defaultColorsStyle } from '../themes';
-import { AvaTheme } from './ava-design-system-provider.definitions';
+import { AvaDesignSystemProviderEvents, AvaTheme } from './ava-design-system-provider.definitions';
 import { style } from './ava-design-system-provider.style';
 const commonStyle = require('../common.scss');
 /* eslint-disable-next-line @typescript-eslint/no-unused-expressions */
@@ -36,6 +36,6 @@ export class AvaDesignSystemProvider extends FASTDesignSystemProvider {
             this.$fastController.addStyles(darkColorsStyle);
         }
 
-        this.$emit('theme-changed');
+        this.$emit(AvaDesignSystemProviderEvents.themeChanged);
     }
 }

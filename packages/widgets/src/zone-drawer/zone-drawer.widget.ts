@@ -68,6 +68,8 @@ export class ZoneDrawerWidget extends BaseWidget {
 
     public connectedCallback() {
         super.connectedCallback();
+
+        this.validateOrAddDesignSystem();
         this.isReady = true;
         const parent = this.$fastController?.element?.parentElement;
         this.resizeObserver = new ResizeObserver(this.resize.bind(this));
@@ -110,7 +112,6 @@ export class ZoneDrawerWidget extends BaseWidget {
         this.destroyDrawer();
         this.isLineDrawMode = !this.isLineDrawMode;
     }
-
 
     // @override
     protected init() {

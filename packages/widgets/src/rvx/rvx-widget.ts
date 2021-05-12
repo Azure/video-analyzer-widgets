@@ -8,6 +8,7 @@ import { template } from './rvx-widget.template';
 import { styles } from './rvx-widget.style';
 import { PlayerComponent } from '../../../web-components/src/rvx-player';
 import { ControlPanelElements, ISource } from '../../../web-components/src/rvx-player/rvx-player.definitions';
+import { Logger } from '../common/logger';
 
 @customElement({
     name: 'ava-player',
@@ -22,10 +23,6 @@ export class Player extends BaseWidget {
 
     public constructor(config: IAvaPlayerConfig) {
         super(config);
-    }
-
-    public widgetConfigChanged() {
-        this.init();
     }
 
     public setAccessToken(token: string) {
@@ -70,6 +67,7 @@ export class Player extends BaseWidget {
     }
 
     public async load() {
+        this.validateOrAddDesignSystem();
         this.loaded = true;
         const rvxPlayer: PlayerComponent = this.shadowRoot.querySelector('rvx-player');
 
@@ -113,22 +111,16 @@ export class Player extends BaseWidget {
             TokenHandler.avaAPIToken = this.config.token;
         }
 
-        AvaAPi.accountID = this.config?.accountId;
-        AvaAPi.longRegionCode = this.config?.longRegionCode;
+        AvaAPi.clientApiEndpointUrl = this.config?.clientApiEndpointUrl;
         AvaAPi.videoName = this.config?.videoName;
+        Logger.debugMode = !!this._config?.debug;
         this.allowedControllers = this.config.playerControllers;
     }
 
     private handelFallback() {
-        // Init media API as fallback
-        MediaApi.baseStream =
-            'https://amsts71mediaarmacfgqhd-ts711.streaming.media.azure-test.net/527754db-43ab-4357-9fda-8959121d3a5e/test.ism';
-        this.initPlayer();
-    }
-
-    private initPlayer() {
         const rvxPlayer: PlayerComponent = this.shadowRoot.querySelector('rvx-player');
         rvxPlayer.init(true, '', this.allowedControllers);
+        rvxPlayer.handleError();
     }
 
     private tokenExpiredCallback() {

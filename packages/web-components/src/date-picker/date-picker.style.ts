@@ -48,7 +48,7 @@ export const styles = css`
     }
 
     .ms-Icon {
-        font-family: 'avarvx-arrow';
+        font-family: 'avarvx-icons';
     }
 
     .ms-Icon.i-arrow-page-up:before {
