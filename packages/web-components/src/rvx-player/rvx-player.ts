@@ -133,7 +133,9 @@ export class PlayerComponent extends FASTElement {
 
         this.afterInit = true;
 
+        this.currentDate = date;
         this.datePickerComponent.inputDate = date.toUTCString();
+        this.updateVODStream();
     }
 
     public cameraNameChanged() {
