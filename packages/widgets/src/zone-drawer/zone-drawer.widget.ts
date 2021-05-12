@@ -281,7 +281,9 @@ export class ZoneDrawerWidget extends BaseWidget {
         li.appendChild(layerLabel);
         this.labelsList.appendChild(li);
         this.resize();
+        // eslint-disable-next-line no-undef
         layerLabel.addEventListener(LayerLabelEvents.labelActionClicked, this.labelActionClicked.bind(this) as EventListener);
+        // eslint-disable-next-line no-undef
         layerLabel.addEventListener(LayerLabelEvents.labelTextChanged, this.labelTextChanged.bind(this) as EventListener);
     }
 
@@ -294,7 +296,9 @@ export class ZoneDrawerWidget extends BaseWidget {
     private removeLabel(id: string) {
         const li = this.shadowRoot.getElementById(id);
         const layerLabel = <LayerLabelComponent>li.querySelector('media-layer-label');
+        // eslint-disable-next-line no-undef
         layerLabel.removeEventListener(LayerLabelEvents.labelActionClicked, this.labelActionClicked as EventListener);
+        // eslint-disable-next-line no-undef
         layerLabel.removeEventListener(LayerLabelEvents.labelTextChanged, this.labelTextChanged as EventListener);
         this.labelsList.removeChild(li);
     }
