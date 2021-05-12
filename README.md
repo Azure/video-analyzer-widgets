@@ -355,9 +355,7 @@ document.firstElementChild.appendChild(zoneDrawer).
 
 | Name                    | Description                                              | Examples                                                         |
 | ------------------------| -------------------------------------------------------- |------------------------------------------------------------------|
-| Zone                    | The zone object contains x and y params. The coordinates | The zone area size is 400*400 and the user set a coordinate on   |
-|                         | are terminated by their relative position to the height  | the top left corner 10 px from the top and 20 px from left.      |
-|                         | and width the shape was drawn.                           | The zone coordinates, in that case, will be {x: 0.025, y: 0.05}. |
+| Zone                    | The zone object contains x and y params. The coordinates are terminated by their relative position to the height and width the shape was drawn.  | The zone area size is 400*400 and the user set a coordinate on the top left corner 10 px from the top and 20 px from left. The zone coordinates, in that case, will be {x: 0.025, y: 0.05}.  |
 
 
 ### Code snippets:
