@@ -16,6 +16,11 @@
     src="https://unpkg.com/@microsoft/fast-components"></script>
   <script src="../../../../../dist/ava-widgets.js"></script>
   <style>
+
+    ava-design-system-provider {
+      height: calc(100% - 20px);
+    }
+
     fast-dialog {
       --dialog-height: auto;
       --dialog-width: auto;
@@ -43,7 +48,7 @@
   <ava-design-system-provider theme="dark"
   use-defaults>
   <h1>Zone Draw Widget with config and dialog</h1>
-  <fast-button appearance="primary"
+  <fast-button appearance="accent"
     onclick="openDialog()">Open Dialog</fast-button>
 
   <fast-dialog id="example1"
