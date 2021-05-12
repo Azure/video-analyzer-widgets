@@ -73,7 +73,6 @@ export class DatePickerComponent extends FASTElement {
 
     public constructor() {
         super();
-        this.createFabricDatePicker();
     }
 
     public allowedDatesChanged() {
@@ -94,6 +93,8 @@ export class DatePickerComponent extends FASTElement {
     public connectedCallback() {
         super.connectedCallback();
         this.uiConnected = true;
+
+        this.createFabricDatePicker();
 
         this.createDatePicker();
     }

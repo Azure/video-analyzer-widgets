@@ -66,6 +66,7 @@ export class Player extends BaseWidget {
     }
 
     public async load() {
+        this.validateOrAddDesignSystem();
         this.loaded = true;
         const rvxPlayer: PlayerComponent = this.shadowRoot.querySelector('rvx-player');
 

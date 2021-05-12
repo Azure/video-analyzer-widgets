@@ -65,6 +65,7 @@ export class ZoneDrawerWidget extends BaseWidget {
     public connectedCallback() {
         super.connectedCallback();
 
+        this.validateOrAddDesignSystem();
         this.isReady = true;
         this.initZoneDrawComponents();
 

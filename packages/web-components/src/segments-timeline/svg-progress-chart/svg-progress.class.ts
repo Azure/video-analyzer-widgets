@@ -426,7 +426,16 @@ export class SVGProgressChart {
         }
 
         if (this.options.renderSeek) {
-            seek = new SeekBar(this.options.barHeight + 10, 2, 0, 2 + this.options.tooltipHeight, 6, '', '#FAF9F8', '#D02E00');
+            seek = new SeekBar(
+                this.options.barHeight + 10,
+                2,
+                0,
+                2 + this.options.tooltipHeight + this.options.top,
+                6,
+                '',
+                '#FAF9F8',
+                '#D02E00'
+            );
             seek.addClass('seek-bar');
             seek.moveTo(0, 0);
         }

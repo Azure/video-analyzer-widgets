@@ -156,7 +156,6 @@ export class TimelineComponent extends FASTElement {
 
         this.segmentsTimeline.addEventListener(SegmentsTimelineEvents.SEGMENT_CLICKED, ((event: CustomEvent) => {
             this.$emit(TimelineEvents.SEGMENT_CHANGE, event.detail);
-            this.$emit(TimelineEvents.CURRENT_TIME_CHANGE, event.detail.time);
             event.stopPropagation();
             // eslint-disable-next-line no-undef
         }) as EventListener);

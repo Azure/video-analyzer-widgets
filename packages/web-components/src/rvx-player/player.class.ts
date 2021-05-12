@@ -1,14 +1,17 @@
 /* eslint-disable max-len */
 import { ICanvasOptions } from '../../../common/canvas/canvas.definitions';
-import { IAvailableMediaRange, IAvailableMediaResponse } from '../../../common/services/media/media.definitions';
+import { IAvailableMediaResponse } from '../../../common/services/media/media.definitions';
 import { WidgetGeneralError } from '../../../widgets/src';
-import { IUISegment, IUISegmentEventData } from '../segments-timeline/segments-timeline.definitions';
+import { Logger } from '../../../widgets/src/common/logger';
+import { IUISegmentEventData } from '../segments-timeline/segments-timeline.definitions';
 import { TimelineComponent } from '../timeline';
 import { TimelineEvents } from '../timeline/timeline.definitions';
 import { ControlPanelElements, LiveState } from './rvx-player.definitions';
 import { shaka as shaka_player } from './shaka';
 import { AVAPlayerUILayer } from './UI/ava-ui-layer.class';
 import { BoundingBoxDrawer } from './UI/bounding-box.class';
+import { extractRealTime } from './UI/time.utils';
+import { createTimelineSegments } from './UI/timeline.utils';
 const shaka = require('shaka-player/dist/shaka-player.ui.debug.js');
 
 // eslint-disable-next-line @typescript-eslint/no-unused-expressions
@@ -117,7 +120,7 @@ export class PlayerWrapper {
             }
         } catch (error) {
             // eslint-disable-next-line no-console
-            console.log(error.message);
+            Logger.log(error.message);
         }
     }
 
@@ -171,59 +174,11 @@ export class PlayerWrapper {
         );
     }
 
-    private extractRealTimeFromISO(time: string) {
-        const currentDate = new Date(time);
-        return (
-            currentDate.getUTCHours() * this.SECONDS_IN_HOUR +
-            currentDate.getUTCMinutes() * this.SECONDS_IN_MINUTES +
-            currentDate.getUTCSeconds()
-        );
-    }
-
     private createTimelineComponent() {
         if (!this.segmentReferences) {
             return;
         }
-        let currentSegmentIndex = 0;
-        let currentSegment: IAvailableMediaRange = null;
-        let segmentEnd = 0;
-        let segmentStart = 0;
-        // go over reference
-        const segments = [];
-        for (const iterator of this.segmentReferences) {
-            const segmentRefEnd = this.extractRealTime(iterator.getEndTime());
-            const segmentRefStart = this.extractRealTime(iterator.getStartTime());
-
-            if (segments.length) {
-                // Take segment from data
-                currentSegment = this._availableSegments.timeRanges[currentSegmentIndex];
-                if (currentSegment) {
-                    segmentEnd = this.extractRealTimeFromISO(currentSegment.end);
-                    segmentStart = this.extractRealTimeFromISO(currentSegment.start);
-
-                    // If this ref segment is inside the the segment, merge
-                    if (segmentRefStart >= segmentStart && segmentRefEnd <= segmentEnd) {
-                        // merge
-                        segments[segments.length - 1].endSeconds = segmentRefEnd;
-                    } else {
-                        // add new segment
-                        segments.push({
-                            startSeconds: segmentRefStart,
-                            endSeconds: segmentRefEnd
-                        });
-                        // Go to new segment
-                        currentSegmentIndex++;
-                    }
-                }
-            } else {
-                // first segment
-                const segment: IUISegment = {
-                    startSeconds: segmentRefStart,
-                    endSeconds: segmentRefEnd
-                };
-                segments.push(segment);
-            }
-        }
+        const segments = createTimelineSegments(this._availableSegments, this.segmentReferences, this.timestampOffset);
 
         const date = new Date(this.date.getUTCFullYear(), this.date.getUTCMonth(), this.date.getUTCDate(), 0, 0, 0);
         const timelineConfig = {
@@ -241,6 +196,7 @@ export class PlayerWrapper {
     }
 
     private onSegmentChange(event: CustomEvent<IUISegmentEventData>) {
+        event.stopPropagation();
         const segmentEventData = event.detail;
         if (segmentEventData) {
             const currentDate = new Date(this.timestampOffset);
@@ -362,8 +318,11 @@ export class PlayerWrapper {
             return;
         }
         const decoder = new TextDecoder();
-        const message = decoder.decode(emsg.messageData);
-        const inferences = JSON.parse(message).inferences;
+        const message = decoder.decode(emsg?.messageData);
+        const inferences = message ? JSON.parse(message)?.inferences : null;
+        if (!inferences) {
+            return;
+        }
         for (const iterator of inferences) {
             if (iterator.type === 'MOTION' || iterator.type === 'ENTITY') {
                 const data = iterator?.motion?.box || iterator?.entity?.box;
@@ -413,7 +372,7 @@ export class PlayerWrapper {
 
         // if theres a timeline - update time
         if (this.timelineComponent) {
-            this.timelineComponent.currentTime = this.extractRealTime(displayTime);
+            this.timelineComponent.currentTime = extractRealTime(displayTime, this.timestampOffset);
         }
     }
 
@@ -433,6 +392,6 @@ export class PlayerWrapper {
     private onErrorEvent(event: shaka_player.PlayerEvents.ErrorEvent) {
         // Extract the shaka.util.Error object from the event.
         // eslint-disable-next-line no-console
-        console.log(event.detail);
+        Logger.log(event.detail);
     }
 }
