@@ -66,7 +66,7 @@ A collection of widgets (web components) using Azure Video Analyzer platform cap
 
 ##### Native JS usage:
 
-Import ava-widgets.js / https://salmon-mushroom-072389f0f.azurestaticapps.net/scripts.js to your HTML file:
+Import ava-widgets.js https://salmon-mushroom-072389f0f.azurestaticapps.net/scripts.js to your HTML file:
 
 ```html live
 <head>
@@ -349,6 +349,15 @@ document.firstElementChild.appendChild(zoneDrawer).
 | constructor    | config: IZoneDrawerWidgetConfig = null                                   | Widget constructor. If called with config, you don’t need to call _configure_ function                   |
 | configure      | config: IZoneDrawerWidgetConfig                                          | Update widget configuration.                                                                             |
 | load           | -                                                                        | Loads and initialize the widget according to provided configuration. If not called, widget will be empty |
+
+
+### Objects
+
+| Name                    | Description                                              | Examples                                                         |
+| ------------------------| -------------------------------------------------------- |------------------------------------------------------------------|
+| Zone                    | The zone object contains x and y params. The coordinates | The zone area size is 400*400 and the user set a coordinate on   |
+|                         | are terminated by their relative position to the height  | the top left corner 10 px from the top and 20 px from left.      |
+|                         | and width the shape was drawn.                           | The zone coordinates, in that case, will be {x: 0.025, y: 0.05}. |
 
 
 ### Code snippets:
