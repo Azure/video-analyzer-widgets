@@ -476,30 +476,65 @@ document.firstElementChild.appendChild(zoneDrawer).
     ```
   3. _Dynamically creating the widget:_ create a widget dynamically with native JS code. Add event listener to the widget.
 
-    ```html live
-    <head>
-        <script async type="”module”" src="https://unpkg.com/@azure/video-analyzer-widgets"></script>
-    </head>
-    <body>
-        <div id="”widget-container”"></div>
-    </body>
-    <script>
-        (function () {
-                        // Get widget container
-                        const widgetContainer = document.querySelector("#widget-container");
+        ```html live
+        <head>
+            <script async type="”module”" src="https://unpkg.com/@azure/video-analyzer-widgets"></script>
+        </head>
+        <body>
+            <div id="”widget-container”"></div>
+        </body>
+        <script>
+            (function () {
+                            // Get widget container
+                            const widgetContainer = document.querySelector("#widget-container");
 
-                        // Create new zone drawer widget
-                        const zoneDrawer = new window.ava.widgets.zoneDrawer();
+                            // Create new zone drawer widget
+                            const zoneDrawer = new window.ava.widgets.zoneDrawer();
 
-                        widgetContainer.appendChild(zoneDrawer)
+                            widgetContainer.appendChild(zoneDrawer)
 
-                        // Load the widget
-                        zoneDrawer.load();
+                            // Load the widget
+                            zoneDrawer.load();
 
-        
-                })()
-    </script>
-    ```
+                            // Add 'save' event listener when user click save button
+                            zoneDrawer.addEventListener('ZONE_DRAWER_SAVE', (event) => {
+                            /* The event includes zones array the user draw.
+                             Example: 
+                             [
+                                  {
+                                      id: '1',
+                                      points: [
+                                          {
+                                              x: 0,
+                                              y: 0
+                                          },
+                                          {
+                                              x: 0.5,
+                                              y: 0.5
+                                          }
+                                      ]
+                                  },
+                                  {
+                                      id: '2',
+                                      points: [
+                                          {
+                                              x: 0.9,
+                                              y: 0.1
+                                          },
+                                          {
+                                              x: 0.7,
+                                              y: 0.8
+                                          }
+                                      ]
+                                  }
+                              ] 
+                              The points x,y are determined by their relative position to the video width or height. */
+                            
+                            const zones = event.details;
+                        });
+                    })()
+        </script>
+        ```
    
   4.  _Use ava-zone-drawer in your angular application:_
 
