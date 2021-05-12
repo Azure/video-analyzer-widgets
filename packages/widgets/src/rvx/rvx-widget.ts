@@ -8,6 +8,7 @@ import { template } from './rvx-widget.template';
 import { styles } from './rvx-widget.style';
 import { PlayerComponent } from '../../../web-components/src/rvx-player';
 import { ControlPanelElements, ISource } from '../../../web-components/src/rvx-player/rvx-player.definitions';
+import { Logger } from '../common/logger';
 
 @customElement({
     name: 'ava-player',
@@ -112,6 +113,7 @@ export class Player extends BaseWidget {
 
         AvaAPi.clientApiEndpointUrl = this.config?.clientApiEndpointUrl;
         AvaAPi.videoName = this.config?.videoName;
+        Logger.debugMode = !!this._config?.debug;
         this.allowedControllers = this.config.playerControllers;
     }
 
