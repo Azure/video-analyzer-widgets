@@ -3,7 +3,7 @@ import { ICanvasOptions } from '../../../common/canvas/canvas.definitions';
 import { IAvailableMediaResponse } from '../../../common/services/media/media.definitions';
 import { WidgetGeneralError } from '../../../widgets/src';
 import { Logger } from '../../../widgets/src/common/logger';
-import { IUISegmentEventData } from '../segments-timeline/segments-timeline.definitions';
+import { IUISegment, IUISegmentEventData } from '../segments-timeline/segments-timeline.definitions';
 import { TimelineComponent } from '../timeline';
 import { TimelineEvents } from '../timeline/timeline.definitions';
 import { ControlPanelElements, LiveState } from './rvx-player.definitions';
@@ -36,6 +36,7 @@ export class PlayerWrapper {
     private _liveStream: string = '';
     private _vodStream: string = '';
     private _availableSegments: IAvailableMediaResponse = null;
+    private _segments: IUISegment[] = [];
     private readonly OFFSET_MULTIPLAYER = 1000;
 
     private readonly SECONDS_IN_HOUR = 3600;
@@ -159,8 +160,6 @@ export class PlayerWrapper {
             this.controls.controlsContainer_.removeChild(this.timelineComponent);
             // eslint-disable-next-line no-undef
             this.timelineComponent.removeEventListener(TimelineEvents.SEGMENT_CHANGE, this.onSegmentChangeListenerRef as EventListener);
-            // eslint-disable-next-line no-undef
-            this.timelineComponent.removeEventListener(TimelineEvents.CURRENT_TIME_CHANGE, this.onTimeChange.bind(this) as EventListener);
             this.timelineComponent = null;
         }
     }
@@ -169,20 +168,18 @@ export class PlayerWrapper {
         if (!this.segmentReferences) {
             return;
         }
-        const segments = createTimelineSegments(this._availableSegments, this.segmentReferences, this.timestampOffset);
+        this._segments = createTimelineSegments(this._availableSegments, this.segmentReferences, this.timestampOffset);
 
         const date = new Date(this.date.getUTCFullYear(), this.date.getUTCMonth(), this.date.getUTCDate(), 0, 0, 0);
         const timelineConfig = {
-            segments: segments,
+            segments: this._segments,
             date: date
         };
         this.timelineComponent = new TimelineComponent();
-        this.controls.controlsContainer_.insertBefore(this.timelineComponent, this.controls.bottomControls_);
+        this.controls.bottomControls_.insertBefore(this.timelineComponent, this.controls.bottomControls_.childNodes[2]);
         this.onSegmentChangeListenerRef = this.onSegmentChange.bind(this);
         // eslint-disable-next-line no-undef
         this.timelineComponent.addEventListener(TimelineEvents.SEGMENT_CHANGE, this.onSegmentChangeListenerRef as EventListener);
-        // eslint-disable-next-line no-undef
-        this.timelineComponent.addEventListener(TimelineEvents.CURRENT_TIME_CHANGE, this.onTimeChange.bind(this) as EventListener);
         this.timelineComponent.config = timelineConfig;
     }
 
@@ -190,14 +187,23 @@ export class PlayerWrapper {
         event.stopPropagation();
         const segmentEventData = event.detail;
         if (segmentEventData) {
-            const currentDate = new Date(this.timestampOffset);
-            const dateInSeconds =
-                currentDate.getUTCHours() * this.SECONDS_IN_HOUR +
-                currentDate.getUTCMinutes() * this.SECONDS_IN_MINUTES +
-                currentDate.getUTCSeconds();
-            this.video.currentTime = dateInSeconds - segmentEventData.segment.startSeconds + 1;
+            this.video.currentTime = this.getVideoTimeFromSegment(segmentEventData);
             this.video.play();
         }
+    }
+
+    private getVideoTimeFromSegment(segmentEventData: IUISegmentEventData): number {
+        let time = 0;
+        for (const segment of this._segments) {
+            if (segment.startSeconds?.toFixed() === segmentEventData.segment.startSeconds?.toFixed()) {
+                time += segmentEventData.time - segment.startSeconds;
+                break;
+            }
+
+            time += segment.endSeconds - segment.startSeconds;
+        }
+
+        return time;
     }
 
     private onTimeChange(event: CustomEvent<number>) {

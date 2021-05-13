@@ -28,6 +28,7 @@ import {
     ZoneDrawerMode
 } from './zone-drawer.definitions';
 import { Logger } from '../common/logger';
+import { ControlPanelElements } from '../../../web-components/src/rvx-player/rvx-player.definitions';
 
 @customElement({
     name: 'ava-zone-drawer',
@@ -35,13 +36,11 @@ import { Logger } from '../common/logger';
     styles
 })
 export class ZoneDrawerWidget extends BaseWidget {
-    @attr
+    @attr({ mode: 'fromView' })
     public config: IZoneDrawerWidgetConfig = {};
 
     @observable
     public zones: IZone[] = [];
-    @observable
-    public playerWidgetElement: Player;
     @observable
     public isReady = false;
     @observable
@@ -59,6 +58,7 @@ export class ZoneDrawerWidget extends BaseWidget {
     private lineDrawer: LineDrawerComponent;
     private polygonDrawer: PolygonDrawerComponent;
     private labelsList: HTMLElement;
+    private player: Player;
     private labelListIndex = 1;
     private resizeObserver: ResizeObserver;
 
@@ -89,11 +89,10 @@ export class ZoneDrawerWidget extends BaseWidget {
     }
 
     public load() {
-        setTimeout(() => {
-            if (this.isReady) {
-                this.initZoneDrawComponents();
-            }
-        });
+        if (this.isReady) {
+            this.initZoneDrawComponents();
+            this.init();
+        }
     }
 
     public drawerConnectedCallback() {
@@ -113,6 +112,11 @@ export class ZoneDrawerWidget extends BaseWidget {
         this.isLineDrawMode = !this.isLineDrawMode;
     }
 
+    public configure(config: IZoneDrawerWidgetConfig) {
+        this.config = config;
+        Logger.debugMode = !!this._config?.debug;
+    }
+
     // @override
     protected init() {
         this.isDirty = false;
@@ -127,6 +131,24 @@ export class ZoneDrawerWidget extends BaseWidget {
                 this.addZone(zone);
             }
         }
+
+        this.initPlayer();
+    }
+
+    private initPlayer() {
+        if (this.player) {
+            // this.player.updateAvailableControllers([
+            //     ControlPanelElements.REWIND,
+            //     ControlPanelElements.PLAY_PAUSE,
+            //     ControlPanelElements.FAST_FORWARD,
+            //     ControlPanelElements.MUTE,
+            //     ControlPanelElements.VOLUME,
+            //     ControlPanelElements.PREVIOUS_DAY,
+            //     ControlPanelElements.NEXT_DAY,
+            //     ControlPanelElements.HOURS_LABEL,
+            //     ControlPanelElements.SPACER
+            // ]);
+        }
     }
 
     private initZoneDrawComponents() {
@@ -136,6 +158,10 @@ export class ZoneDrawerWidget extends BaseWidget {
 
         if (!this.labelsList) {
             this.labelsList = this.shadowRoot.querySelector('.labels-list');
+        }
+
+        if (!this.player) {
+            this.player = this.$fastController.element.querySelector('ava-player');
         }
     }
 

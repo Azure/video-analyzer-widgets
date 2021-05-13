@@ -8,11 +8,15 @@ export const styles = css`
         color: var(--actions-menu-color);
     }
 
+    .fast-menu-container {
+        position: relative;
+    }
+
     fast-menu {
         position: absolute;
-        display: block;
-        width: fit-content;
+        width: max-content;
         visibility: hidden;
+        z-index: 1;
     }
 
     fast-button {

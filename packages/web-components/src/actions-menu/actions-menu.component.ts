@@ -36,17 +36,6 @@ export class ActionsMenuComponent extends FASTElement {
 
     private fastMenu: FASTMenu;
 
-    public openedChanged() {
-        if (this.opened) {
-            setTimeout(() => {
-                if (!this.fastMenu) {
-                    this.fastMenu = this.shadowRoot?.querySelector('fast-menu');
-                }
-                this.initMenu();
-            });
-        }
-    }
-
     public connectedCallback() {
         super.connectedCallback();
 
@@ -57,6 +46,13 @@ export class ActionsMenuComponent extends FASTElement {
         super.disconnectedCallback();
 
         window.removeEventListener('resize', this.initMenu);
+    }
+
+    public menuConnectedCallback() {
+        setTimeout(() => {
+            this.fastMenu = this.shadowRoot?.querySelector('fast-menu');
+            this.initMenu();
+        });
     }
 
     public toggleMenu() {
@@ -106,21 +102,20 @@ export class ActionsMenuComponent extends FASTElement {
         const fastMenuClientRect = this.fastMenu.$fastController?.element?.getBoundingClientRect();
 
         const boundingClientRect = this.$fastController.element.getBoundingClientRect();
-        const windowClientRect = window.document.querySelector('html')?.getBoundingClientRect();
 
         // Checking opening directions
         // Checking top / bottom opening
-        if (windowClientRect.height + windowClientRect.top > boundingClientRect.bottom + fastMenuClientRect?.height) {
-            this.fastMenu.style.top = `${boundingClientRect.bottom}px`;
+        if (window.innerHeight < boundingClientRect.bottom + fastMenuClientRect?.height) {
+            this.fastMenu.style.bottom = `30px`;
         } else {
-            this.fastMenu.style.top = `${boundingClientRect.top - fastMenuClientRect?.height - windowClientRect.top}px`;
+            this.fastMenu.style.bottom = 'auto';
         }
 
         // Checking left / right opening
-        if (windowClientRect.width > boundingClientRect.left + fastMenuClientRect?.width) {
-            this.fastMenu.style.left = `${boundingClientRect.left}px`;
+        if (boundingClientRect.left + boundingClientRect.width < boundingClientRect.left + fastMenuClientRect?.width) {
+            this.fastMenu.style.right = `0px`;
         } else {
-            this.fastMenu.style.left = `${boundingClientRect.right - fastMenuClientRect?.width}px`;
+            this.fastMenu.style.right = `auto`;
         }
 
         this.fastMenu.style.visibility = 'visible';

@@ -91,6 +91,10 @@ export class SVGProgressChart {
         }
 
         this.components.progressBar.bar._el.addEventListener('click', (e: MouseEvent) => {
+            if (this.options.disableCursor) {
+                return;
+            }
+
             const percent = e.offsetX / instance.options.width;
             const time = Math.round(percent * instance.options.time);
             callback(time);
@@ -472,12 +476,12 @@ export class SVGProgressChart {
         }
 
         // 6. Add event listeners
-        bar._el.addEventListener('mouseleave', this.handleMouseLeave.bind(this));
-        bar._el.addEventListener('mousemove', this.handleMouseMove.bind(this));
+        this.components.progressBar.bar._el.addEventListener('mouseleave', this.handleMouseLeave.bind(this));
+        this.components.progressBar.bar._el.addEventListener('mousemove', this.handleMouseMove.bind(this));
         if (this.options.disableCursor) {
-            bar._el.style.cursor = 'not-allowed';
+            this.components.progressBar.bar._el.style.cursor = 'not-allowed';
         } else {
-            bar._el.addEventListener('click', this.handleMouseClick.bind(this));
+            this.components.progressBar.bar._el.addEventListener('click', this.handleMouseClick.bind(this));
         }
 
         this.rootElement.setAttribute('class', 'show');
