@@ -21,7 +21,9 @@ PlayerComponent;
     styles
 })
 export class Player extends BaseWidget {
-    @attr public config: IAvaPlayerConfig;
+    @attr({ mode: 'fromView' })
+    public config: IAvaPlayerConfig;
+
     private loaded = false;
     private source: ISource = null;
     private allowedControllers: ControlPanelElements[] = null;
@@ -33,6 +35,11 @@ export class Player extends BaseWidget {
     public connectedCallback() {
         super.connectedCallback();
         this.validateOrAddDesignSystem();
+        const designSystem = this.shadowRoot.querySelector('ava-design-system-provider') as AvaDesignSystemProvider;
+        if (designSystem) {
+            designSystem.style.width = this.width;
+            designSystem.style.height = this.height;
+        }
     }
 
     public setAccessToken(token: string) {
@@ -64,6 +71,20 @@ export class Player extends BaseWidget {
             const rvxPlayer: PlayerComponent = this.shadowRoot.querySelector('rvx-player');
             rvxPlayer.cameraName = AvaAPi.videoName;
             rvxPlayer.init(this.source.allowCrossSiteCredentials, this.source.authenticationToken, this.allowedControllers);
+        }
+    }
+
+    public widthChanged() {
+        const designSystem = this.shadowRoot.querySelector('ava-design-system-provider') as AvaDesignSystemProvider;
+        if (designSystem) {
+            designSystem.style.width = this.width;
+        }
+    }
+
+    public heightChanged() {
+        const designSystem = this.shadowRoot.querySelector('ava-design-system-provider') as AvaDesignSystemProvider;
+        if (designSystem) {
+            designSystem.style.height = this.height;
         }
     }
 

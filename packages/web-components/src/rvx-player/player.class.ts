@@ -3,7 +3,7 @@ import { ICanvasOptions } from '../../../common/canvas/canvas.definitions';
 import { IAvailableMediaResponse } from '../../../common/services/media/media.definitions';
 import { WidgetGeneralError } from '../../../widgets/src';
 import { Logger } from '../../../widgets/src/common/logger';
-import { IUISegmentEventData } from '../segments-timeline/segments-timeline.definitions';
+import { IUISegment, IUISegmentEventData } from '../segments-timeline/segments-timeline.definitions';
 import { TimelineComponent } from '../timeline';
 import { TimelineEvents } from '../timeline/timeline.definitions';
 import { ControlPanelElements, LiveState } from './rvx-player.definitions';
@@ -36,6 +36,7 @@ export class PlayerWrapper {
     private _liveStream: string = '';
     private _vodStream: string = '';
     private _availableSegments: IAvailableMediaResponse = null;
+    private currentSegment: IUISegment = null;
     private readonly OFFSET_MULTIPLAYER = 1000;
 
     private readonly SECONDS_IN_HOUR = 3600;
@@ -160,7 +161,7 @@ export class PlayerWrapper {
             // eslint-disable-next-line no-undef
             this.timelineComponent.removeEventListener(TimelineEvents.SEGMENT_CHANGE, this.onSegmentChangeListenerRef as EventListener);
             // eslint-disable-next-line no-undef
-            this.timelineComponent.removeEventListener(TimelineEvents.CURRENT_TIME_CHANGE, this.onTimeChange.bind(this) as EventListener);
+            this.timelineComponent.removeEventListener(TimelineEvents.SEGMENT_START, this.onSegmentStart.bind(this) as EventListener);
             this.timelineComponent = null;
         }
     }
@@ -182,8 +183,25 @@ export class PlayerWrapper {
         // eslint-disable-next-line no-undef
         this.timelineComponent.addEventListener(TimelineEvents.SEGMENT_CHANGE, this.onSegmentChangeListenerRef as EventListener);
         // eslint-disable-next-line no-undef
-        this.timelineComponent.addEventListener(TimelineEvents.CURRENT_TIME_CHANGE, this.onTimeChange.bind(this) as EventListener);
+        this.timelineComponent.addEventListener(TimelineEvents.SEGMENT_START, this.onSegmentStart.bind(this) as EventListener);
         this.timelineComponent.config = timelineConfig;
+    }
+
+    private onSegmentStart(event: CustomEvent<IUISegmentEventData>) {
+        event.stopPropagation();
+        const segmentEventData = event.detail;
+        if (segmentEventData) {
+            const currentDate = new Date(this.timestampOffset);
+            const dateInSeconds =
+                currentDate.getUTCHours() * this.SECONDS_IN_HOUR +
+                currentDate.getUTCMinutes() * this.SECONDS_IN_MINUTES +
+                currentDate.getUTCSeconds();
+            this.currentSegment = segmentEventData.segment;
+            const playbackMode: number = this.player.getPlaybackRate();
+            const seconds = playbackMode > 0 ? segmentEventData.segment.startSeconds + 2 : segmentEventData.segment.endSeconds - 2;
+            this.video.currentTime = seconds - dateInSeconds;
+            this.video.play();
+        }
     }
 
     private onSegmentChange(event: CustomEvent<IUISegmentEventData>) {
@@ -195,19 +213,9 @@ export class PlayerWrapper {
                 currentDate.getUTCHours() * this.SECONDS_IN_HOUR +
                 currentDate.getUTCMinutes() * this.SECONDS_IN_MINUTES +
                 currentDate.getUTCSeconds();
-            this.video.currentTime = dateInSeconds - segmentEventData.segment.startSeconds + 1;
+            this.currentSegment = event.detail.segment;
+            this.video.currentTime = event.detail.time - dateInSeconds;
             this.video.play();
-        }
-    }
-
-    private onTimeChange(event: CustomEvent<number>) {
-        const currentDate = new Date(this.timestampOffset);
-        const dateInSeconds =
-            currentDate.getUTCHours() * this.SECONDS_IN_HOUR +
-            currentDate.getUTCMinutes() * this.SECONDS_IN_MINUTES +
-            currentDate.getUTCSeconds();
-        if (event.detail) {
-            this.video.currentTime = event.detail - dateInSeconds;
         }
     }
 
@@ -345,6 +353,7 @@ export class PlayerWrapper {
         if (reference) {
             this.timestampOffset = reference.timestampOffset * -1000;
             this.video.addEventListener('timeupdate', this.onTimeSeekUpdate.bind(this));
+            this.video.addEventListener('seeked', this.onSeeked.bind(this));
         }
 
         // If not live mode, init timeline
@@ -356,6 +365,10 @@ export class PlayerWrapper {
         }
     }
 
+    private onSeeked() {
+        this.video.play();
+    }
+
     private onTimeSeekUpdate() {
         const displayTime = this.video.currentTime;
         const time = this.computeClock(displayTime);
@@ -363,7 +376,25 @@ export class PlayerWrapper {
 
         // if theres a timeline - update time
         if (this.timelineComponent) {
-            this.timelineComponent.currentTime = extractRealTime(displayTime, this.timestampOffset);
+            let currentTime = extractRealTime(displayTime, this.timestampOffset);
+
+            // Check if we need to go to previous / next segment
+            // Get mode - rewind or forward
+            const playbackMode: number = this.player.getPlaybackRate();
+            if (
+                playbackMode > 0 &&
+                (currentTime === this.currentSegment?.endSeconds || currentTime >= this.currentSegment?.endSeconds - 3)
+            ) {
+                // Get next segment time
+                currentTime = this.timelineComponent.getNextSegmentTime() || currentTime;
+            } else if (
+                playbackMode < 0 &&
+                (currentTime === this.currentSegment?.startSeconds || currentTime <= this.currentSegment?.startSeconds - 3)
+            ) {
+                // Get prev segment time
+                currentTime = this.timelineComponent.getPreviousSegmentTime() || currentTime;
+            }
+            this.timelineComponent.currentTime = currentTime;
         }
     }
 

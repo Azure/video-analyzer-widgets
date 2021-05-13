@@ -168,11 +168,11 @@ export class SegmentsTimelineComponent extends FASTElement {
         );
     }
 
-    public jumpToNextSegment(): boolean {
-        const time = this.timelineProgress?.activeSegment?.endSeconds || 0;
+    public getNextSegment(): number {
+        const time = this.currentTime || 0;
 
         if (!this.processedSegments?.length) {
-            return false;
+            return 0;
         }
 
         const duration = this.config?.data?.duration || 1;
@@ -180,21 +180,19 @@ export class SegmentsTimelineComponent extends FASTElement {
             const startTime = (segment.x / 100) * duration;
 
             if (startTime > time) {
-                this.currentTime = startTime;
-                return true;
+                return startTime;
             }
         }
 
         this.timelineProgress.activeSegment = null;
-        this.currentTime = this.DAY_DURATION_IN_SECONDS;
-        return false;
+        return 0;
     }
 
-    public jumpToPreviousSegment(): boolean {
-        const time = this.timelineProgress?.activeSegment?.startSeconds || this.DAY_DURATION_IN_SECONDS;
+    public getPreviousSegment(): number {
+        const time = this.currentTime || this.DAY_DURATION_IN_SECONDS;
 
         if (!this.processedSegments?.length) {
-            return false;
+            return 0;
         }
 
         const duration = this.config?.data?.duration || 1;
@@ -202,14 +200,12 @@ export class SegmentsTimelineComponent extends FASTElement {
             const startTime = (segment.x / 100) * duration;
             const endTime = (segment.width / 100) * duration + startTime;
             if (endTime < time) {
-                this.currentTime = startTime;
-                return true;
+                return endTime;
             }
         }
 
         this.timelineProgress.activeSegment = null;
-        this.currentTime = 0;
-        return false;
+        return 0;
     }
 
     private initSVGProgress() {
@@ -244,6 +240,10 @@ export class SegmentsTimelineComponent extends FASTElement {
 
         this.timelineProgress.activeSegmentCallback = (segmentEvent: IUISegmentEventData) => {
             this.$emit(SegmentsTimelineEvents.SEGMENT_CLICKED, segmentEvent);
+        };
+
+        this.timelineProgress.segmentStartCallback = (segmentEvent: IUISegmentEventData) => {
+            this.$emit(SegmentsTimelineEvents.SEGMENT_START, segmentEvent);
         };
 
         // Subscribe to on time change -

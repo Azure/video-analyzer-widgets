@@ -3,20 +3,19 @@
 <head>
   <title>Zone Drawer Widget samples</title>
   <script>
-        // Open the dialog
-        window.openDialog = () => {
-          document.getElementById("example1").hidden = false;
-        };
+    // Open the dialog
+    window.openDialog = () => {
+      document.getElementById("example1").hidden = false;
+    };
 
-        window.closeDialog = () => {
-          document.getElementById("example1").hidden = true;
-        };
+    window.closeDialog = () => {
+      document.getElementById("example1").hidden = true;
+    };
   </script>
   <script type="module"
     src="https://unpkg.com/@microsoft/fast-components"></script>
   <script src="../../../../../dist/ava-widgets.js"></script>
   <style>
-
     ava-design-system-provider {
       height: calc(100% - 20px);
     }
@@ -40,43 +39,41 @@
       font-weight: 600;
       margin: auto 0;
     }
-
   </style>
 </head>
 
 <body>
   <ava-design-system-provider theme="dark"
-  use-defaults>
-  <h1>Zone Draw Widget with config and dialog</h1>
-  <fast-button appearance="accent"
-    onclick="openDialog()">Open Dialog</fast-button>
+    use-defaults>
+    <h1>Zone Draw Widget with config and dialog</h1>
+    <fast-button appearance="accent"
+      onclick="openDialog()">Open Dialog</fast-button>
 
-  <fast-dialog id="example1"
-    class="example-dialog"
-    aria-label="Simple modal dialog"
-    modal="true"
-    hidden>
-    <div class="dialog-top">
-      <div class="dialog-title">
-        Area of interest
-      </div>
-      <fast-button class="close-btn"
-        aria-label="Close"
-        title="Close"
-        onclick="closeDialog()">
-        <svg>
+    <fast-dialog id="example1"
+      class="example-dialog"
+      aria-label="Simple modal dialog"
+      modal="true"
+      hidden>
+      <div class="dialog-top">
+        <div class="dialog-title">
+          Area of interest
+        </div>
+        <fast-button class="close-btn"
+          aria-label="Close"
+          title="Close"
+          onclick="closeDialog()">
+          <svg>
             <path
               d="M8.711 8l5.391 5.398-0.703 0.703-5.398-5.391-5.398 5.391-0.703-0.703 5.391-5.398-5.391-5.398 0.703-0.703 5.398 5.391 5.398-5.391 0.703 0.703-5.391 5.398z">
             </path>
-        </svg>
-    </fast-button>
-    </div>
-    <ava-zone-drawer id="zone-draw-widget">
-      <ava-player slot="player"
-        id="ava-player-widget"></ava-player>
-    </ava-zone-drawer>
-</fast-dialog>
-</ava-design-system-provider>
+          </svg>
+        </fast-button>
+      </div>
+      <ava-zone-drawer id="zone-draw-widget">
+        <ava-player id="ava-player-widget"></ava-player>
+      </ava-zone-drawer>
+    </fast-dialog>
+  </ava-design-system-provider>
   <br />
 </body>
 <script>(function () {
@@ -138,10 +135,9 @@
     const playerWidget = document.querySelector("ava-player");
 
     playerWidget.configure({
-      token: 'eyJhbGciOiJSUzI1NiIsImtpZCI6IjFzemVmSnlHSWlTSGNWcWQ4Q041WVNGaGptOCIsIng1dCI6IjFzemVmSnlHSWlTSGNWcWQ4Q041WVNGaGptOCIsInR5cCI6IkpXVCJ9.eyJuYmYiOjE2MTk2MzgyNzIsImV4cCI6MTY1MTE3NDI2OSwiaWF0IjoxNjE5NjM4MjcyLCJpc3MiOiJTYW1wbGVUb2tlblByb3ZpZGVyIiwiYXVkIjoidGVzdCJ9.gznXMKIqxoxH_I9Nf-JWwiwJ926joeJfysbVcUvEveJWDhSNCuods0ELUvjReQgKr150Pe1dTZYXYU6NKDM6A1UK3KWQW1vf7iUTmf8FfKgMyUvQq_BzlCfV79WRy4XK2vY49wIIw3XdxiXbJhoMiHaezt678-Fn7mzoG6aR1d_P8rIqGDinAY1-9ryvB4Aoq8mC7MP9ZHnDZ4Q_8dLEYmnuOK4R21kOHFkLa6D8wxAdrKPrRt7CtktlKiE-8WVhJKjIFW92PHIaYEx4I14L5D0AiCLfH4DFEsVVlST7vOLuNxcgRx_t0aw10EGmntHqW-UHOlCa8xuB4t25c_imvg',
-      accountId: 'b43e0a4333ff49599b5f6c213b8626f2',
-      longRegionCode: 'mint1',
-      videoName: 'live-yolov3-tracker',
+      token: 'token',
+      clientApiEndpointUrl: 'endpoint',
+      videoName: 'name',
       debug: true,
       playerControllers: [
         'rewind',

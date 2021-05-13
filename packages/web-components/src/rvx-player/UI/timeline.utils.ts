@@ -15,34 +15,37 @@ export function createTimelineSegments(
     // go over reference
     const segments = [];
     for (const iterator of segmentReferences) {
+        currentSegment = availableSegments.timeRanges[currentSegmentIndex];
+        segmentEnd = extractRealTimeFromISO(currentSegment.end);
+        segmentStart = extractRealTimeFromISO(currentSegment.start);
+
         const segmentRefEnd = extractRealTime(iterator.getEndTime(), timestampOffset);
         const segmentRefStart = extractRealTime(iterator.getStartTime(), timestampOffset);
-
         if (segments.length) {
             // Take segment from data
-            currentSegment = availableSegments.timeRanges[currentSegmentIndex];
             if (currentSegment) {
-                segmentEnd = extractRealTimeFromISO(currentSegment.end);
-                segmentStart = extractRealTimeFromISO(currentSegment.start);
-
                 // If this ref segment is inside the the segment, merge
                 if (segmentRefStart >= segmentStart && segmentRefEnd <= segmentEnd) {
                     // merge
                     segments[segments.length - 1].endSeconds = segmentRefEnd;
                 } else {
-                    // add new segment
-                    segments.push({
-                        startSeconds: segmentRefStart,
-                        endSeconds: segmentRefEnd
-                    });
+                    // Update the end of the segment before
+                    segments[segments.length - 1].endSeconds = segmentEnd;
                     // Go to new segment
                     currentSegmentIndex++;
+
+                    currentSegment = availableSegments.timeRanges[currentSegmentIndex];
+                    // add new segment
+                    segments.push({
+                        startSeconds: extractRealTimeFromISO(currentSegment.start),
+                        endSeconds: segmentRefEnd
+                    });
                 }
             }
         } else {
             // first segment
             const segment: IUISegment = {
-                startSeconds: segmentRefStart,
+                startSeconds: segmentStart,
                 endSeconds: segmentRefEnd
             };
             segments.push(segment);
