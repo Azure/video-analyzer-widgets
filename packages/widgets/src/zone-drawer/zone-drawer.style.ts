@@ -1,6 +1,10 @@
 import { css } from '@microsoft/fast-element';
 
 export const styles = css`
+    :host {
+        display: flex;
+    }
+
     .zone-drawer-wrapper {
         font-family: var(--font-family);
         display: grid;
@@ -44,9 +48,9 @@ export const styles = css`
 
     .draw-zone-container {
         width: 100%;
-        height: calc(100% - 91px);
+        height: calc(100% - 147px);
         position: absolute;
-        padding-bottom: 42px;
+        padding-bottom: 98px;
         padding-top: 49px;
         display: block;
     }
@@ -115,7 +119,7 @@ export const styles = css`
     }
 
     li > media-layer-label {
-        width: calc(100% - 40px);
+        width: calc(100% - 25px);
         height: 48px;
         grid-template-rows: auto;
         padding: 0 12px;

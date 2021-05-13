@@ -37,6 +37,8 @@ export class PlayerWrapper {
     private _vodStream: string = '';
     private _availableSegments: IAvailableMediaResponse = null;
     private currentSegment: IUISegment = null;
+    private isPlaying: boolean = false;
+
     private readonly OFFSET_MULTIPLAYER = 1000;
 
     private readonly SECONDS_IN_HOUR = 3600;
@@ -178,7 +180,7 @@ export class PlayerWrapper {
             date: date
         };
         this.timelineComponent = new TimelineComponent();
-        this.controls.controlsContainer_.insertBefore(this.timelineComponent, this.controls.bottomControls_);
+        this.controls.bottomControls_.insertBefore(this.timelineComponent, this.controls.bottomControls_.childNodes[2]);
         this.onSegmentChangeListenerRef = this.onSegmentChange.bind(this);
         // eslint-disable-next-line no-undef
         this.timelineComponent.addEventListener(TimelineEvents.SEGMENT_CHANGE, this.onSegmentChangeListenerRef as EventListener);
@@ -354,6 +356,8 @@ export class PlayerWrapper {
             this.timestampOffset = reference.timestampOffset * -1000;
             this.video.addEventListener('timeupdate', this.onTimeSeekUpdate.bind(this));
             this.video.addEventListener('seeked', this.onSeeked.bind(this));
+            this.video.addEventListener('play', this.onPlaying.bind(this));
+            this.video.addEventListener('pause', this.onPause.bind(this));
         }
 
         // If not live mode, init timeline
@@ -365,8 +369,20 @@ export class PlayerWrapper {
         }
     }
 
+    private onPause() {
+        this.isPlaying = false;
+    }
+
+    private onPlaying() {
+        this.isPlaying = true;
+    }
+
     private onSeeked() {
-        this.video.play();
+        if (this.isPlaying) {
+            this.video.play();
+        } else {
+            this.video.pause();
+        }
     }
 
     private onTimeSeekUpdate() {

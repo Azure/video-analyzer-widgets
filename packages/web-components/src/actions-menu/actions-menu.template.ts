@@ -21,34 +21,36 @@ export const template = html<ActionsMenuComponent>`
                 <path d="${MORE_SVG_PATH}"></path>
             </svg>
         </fast-button>
-        ${when(
-            (x) => x.opened === true,
-            html` <fast-menu>
-                ${repeat(
-                    (x) => x.actions,
-                    html<IAction>`
-                        <fast-menu-item
-                            aria-label="${(x) => x.label}"
-                            title="${(x) => x.label}"
-                            aria-disabled="${(x) => x.disabled}"
-                            @focusout="${(x, c) => c.parent.handleFocusOut(c.event as FocusEvent)}"
-                            @keyup="${(x, c) => c.parent.handleMenuItemKeyUp(c.event as KeyboardEvent, x)}"
-                            @mouseup="${(x, c) => c.parent.handleMenuItemMouseUp(c.event as MouseEvent, x)}"
-                        >
-                            ${when(
-                                (x) => x.svgPath,
-                                html<IAction>`
-                                    <svg slot="start">
-                                        <path d="${(x) => x.svgPath}"></path>
-                                    </svg>
-                                `
-                            )}
-                            ${(x) => x.label}</fast-menu-item
-                        >
-                    `,
-                    { positioning: true }
-                )}
-            </fast-menu>`
-        )}
+        <div class="fast-menu-container">
+            ${when(
+                (x) => x.opened === true,
+                html` <fast-menu connectedCallback="${(x) => x.menuConnectedCallback()}">
+                    ${repeat(
+                        (x) => x.actions,
+                        html<IAction>`
+                            <fast-menu-item
+                                aria-label="${(x) => x.label}"
+                                title="${(x) => x.label}"
+                                aria-disabled="${(x) => x.disabled}"
+                                @focusout="${(x, c) => c.parent.handleFocusOut(c.event as FocusEvent)}"
+                                @keyup="${(x, c) => c.parent.handleMenuItemKeyUp(c.event as KeyboardEvent, x)}"
+                                @mouseup="${(x, c) => c.parent.handleMenuItemMouseUp(c.event as MouseEvent, x)}"
+                            >
+                                ${when(
+                                    (x) => x.svgPath,
+                                    html<IAction>`
+                                        <svg slot="start">
+                                            <path d="${(x) => x.svgPath}"></path>
+                                        </svg>
+                                    `
+                                )}
+                                ${(x) => x.label}</fast-menu-item
+                            >
+                        `,
+                        { positioning: true }
+                    )}
+                </fast-menu>`
+            )}
+        </div>
     </template>
 `;

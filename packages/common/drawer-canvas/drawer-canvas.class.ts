@@ -73,8 +73,10 @@ export class DrawerCanvas extends CanvasElement {
 
         for (const point of this._points) {
             // Start to draw
-            this.context.lineTo(this.getCalculatedPoint(point.x, this.drawerOptions.width * this.ratio),
-                this.getCalculatedPoint(point.y, this.drawerOptions.height * this.ratio));
+            this.context.lineTo(
+                this.getCalculatedPoint(point.x, this.drawerOptions.width * this.ratio),
+                this.getCalculatedPoint(point.y, this.drawerOptions.height * this.ratio)
+            );
         }
 
         if (this._isDrawCompleted) {
@@ -121,8 +123,8 @@ export class DrawerCanvas extends CanvasElement {
 
     public initBoundingCanvas() {
         // Init x,y after append to document.
-        this._canvasY = this.canvas.getBoundingClientRect().top;
         this._canvasX = this.canvas.getBoundingClientRect().left;
+        this._canvasY = this.canvas.getBoundingClientRect().top;
     }
 
     public onDraw(e: MouseEvent) {
@@ -175,8 +177,8 @@ export class DrawerCanvas extends CanvasElement {
     }
 
     private addPointToList(e: MouseEvent) {
-        const lastMouseX = e.clientX - this._canvasX;
-        const lastMouseY = e.clientY - this._canvasY;
+        const lastMouseX = e.offsetX;
+        const lastMouseY = e.offsetY;
 
         // Compare between the dots.
         // If the last click equal to the first one, close the polygon
@@ -185,8 +187,10 @@ export class DrawerCanvas extends CanvasElement {
             const clickY = this.getCalculatedPoint(this._points[0].y, this.drawerOptions.height);
             const diffX = Math.abs(lastMouseX - clickX);
             const diffY = Math.abs(lastMouseY - clickY);
-            if ((diffX < this.PIXELS_DISTANCE_RANGE && diffY < this.PIXELS_DISTANCE_RANGE) ||
-                this._points.length === this._pointsLimit - 1) {
+            if (
+                (diffX < this.PIXELS_DISTANCE_RANGE && diffY < this.PIXELS_DISTANCE_RANGE) ||
+                this._points.length === this._pointsLimit - 1
+            ) {
                 this.calculateAngles();
                 this.onDrawComplete();
                 return;
@@ -252,8 +256,8 @@ export class DrawerCanvas extends CanvasElement {
     }
 
     private setCanvasCursor(e: MouseEvent) {
-        this._lastMouseX = e.clientX - this._canvasX;
-        this._lastMouseY = e.clientY - this._canvasY;
+        this._lastMouseX = e.offsetX;
+        this._lastMouseY = e.offsetY;
 
         // Determine cursor by its position. Calculated only when polygon option is selected
         let newCursor;
