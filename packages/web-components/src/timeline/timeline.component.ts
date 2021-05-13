@@ -43,6 +43,8 @@ export class TimelineComponent extends FASTElement {
 
     public zoom: number = 1;
 
+    private timeRulerReady = false;
+    private segmentsTimelineReady = false;
     private segmentsTimeline: SegmentsTimelineComponent;
     private timeRuler: TimeRulerComponent;
     private fastSlider: FASTSlider;
@@ -57,6 +59,7 @@ export class TimelineComponent extends FASTElement {
     public configChanged() {
         setTimeout(() => {
             this.initData();
+            this.initTimeLine();
         });
     }
 
@@ -69,26 +72,22 @@ export class TimelineComponent extends FASTElement {
     public connectedCallback() {
         super.connectedCallback();
         this.initData();
+
+        window.addEventListener('resize', this.resize.bind(this));
     }
 
     public disconnectedCallback() {
         super.disconnectedCallback();
 
         window.removeEventListener('resize', this.resize);
-        window.removeEventListener(TimelineEvents.JUMP_TO_NEXT_SEGMENT, this.jumpToNextSegment);
-        window.addEventListener(TimelineEvents.JUMP_TO_PREVIOUS_SEGMENT, this.jumpToPreviousSegment);
         this.fastSlider?.removeEventListener('change', this.fastSliderChange);
+        this.segmentsTimeline?.removeEventListener(SegmentsTimelineEvents.SEGMENT_CLICKED, null);
     }
 
     public initData() {
         if (!this.config) {
             return;
         }
-
-        this.segmentsTimeline = <SegmentsTimelineComponent>(
-            this.$fastController.element?.shadowRoot?.querySelector('media-segments-timeline')
-        );
-        this.timeRuler = <TimeRulerComponent>this.$fastController.element?.shadowRoot?.querySelector('media-time-ruler');
 
         // Disabling zoom on FireFox since we can't modify the scrollbar on FireFox
         if (navigator.userAgent.includes('Firefox')) {
@@ -99,16 +98,10 @@ export class TimelineComponent extends FASTElement {
             /* eslint-disable-next-line  @typescript-eslint/no-explicit-any */
             this.fastSlider = document.createElement('fast-slider') as any;
             this.$fastController.element.shadowRoot.appendChild(this.fastSlider);
+            this.fastSlider?.addEventListener('change', this.fastSliderChange.bind(this));
         } else if (!this.fastSlider) {
             this.$fastController.element.style.overflowX = 'hidden';
         }
-
-        window.addEventListener('resize', this.resize.bind(this));
-        window.addEventListener(TimelineEvents.JUMP_TO_NEXT_SEGMENT, this.jumpToNextSegment.bind(this));
-        window.addEventListener(TimelineEvents.JUMP_TO_PREVIOUS_SEGMENT, this.jumpToPreviousSegment.bind(this));
-        this.fastSlider?.addEventListener('change', this.fastSliderChange.bind(this));
-
-        this.initTimeLine();
     }
 
     public jumpToNextSegment(): boolean {
@@ -119,7 +112,33 @@ export class TimelineComponent extends FASTElement {
         return this.segmentsTimeline?.jumpToPreviousSegment();
     }
 
+    public segmentsTimelineConnectedCallback() {
+        setTimeout(() => {
+            this.segmentsTimeline = <SegmentsTimelineComponent>this.shadowRoot?.querySelector('media-segments-timeline');
+
+            this.segmentsTimeline?.addEventListener(SegmentsTimelineEvents.SEGMENT_CLICKED, ((event: CustomEvent<IUISegmentEventData>) => {
+                this.$emit(TimelineEvents.SEGMENT_CHANGE, event.detail);
+                // eslint-disable-next-line no-undef
+            }) as EventListener);
+
+            this.segmentsTimelineReady = true;
+            this.initTimeLine();
+        });
+    }
+
+    public timeRulerConnectedCallback() {
+        setTimeout(() => {
+            this.timeRuler = <TimeRulerComponent>this.shadowRoot?.querySelector('media-time-ruler');
+            this.timeRulerReady = true;
+            this.initTimeLine();
+        });
+    }
+
     private initTimeLine() {
+        if (!this.timeRulerReady || !this.segmentsTimelineReady) {
+            return;
+        }
+
         this.initSegmentsTimeline();
         this.initTimeRuler();
         setTimeout(() => {
@@ -128,7 +147,7 @@ export class TimelineComponent extends FASTElement {
     }
 
     private initSlider() {
-        if (!this.config.enableZoom || !this.fastSlider) {
+        if (!this.config?.enableZoom || !this.fastSlider) {
             return;
         }
 
@@ -166,16 +185,10 @@ export class TimelineComponent extends FASTElement {
         };
 
         this.segmentsTimeline.config = config;
-
-        this.segmentsTimeline.addEventListener(SegmentsTimelineEvents.SEGMENT_CLICKED, ((event: CustomEvent<IUISegmentEventData>) => {
-            this.$emit(TimelineEvents.SEGMENT_CHANGE, event.detail);
-            event.stopPropagation();
-            // eslint-disable-next-line no-undef
-        }) as EventListener);
     }
 
     private initTimeRuler() {
-        this.timeRuler.startDate = this.config.date || new Date();
+        this.timeRuler.startDate = this.config?.date || new Date();
         this.timeRuler.zoom = this.zoom;
     }
 
