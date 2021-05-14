@@ -24,7 +24,7 @@ DatePickerComponent;
 export class PlayerComponent extends FASTElement {
     @attr public liveStream: string;
     @attr public vodStream: string;
-    @attr public cameraName = 'Camera';
+    @attr public cameraName = '';
 
     @observable public isLive = false;
     @observable public currentDate: Date = null;
@@ -139,7 +139,7 @@ export class PlayerComponent extends FASTElement {
     }
 
     public cameraNameChanged() {
-        this.cameraName = this.cameraName || 'Camera';
+        this.cameraName = this.cameraName || '';
     }
 
     public liveStreamChanged() {
