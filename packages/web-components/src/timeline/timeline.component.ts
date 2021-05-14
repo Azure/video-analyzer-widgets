@@ -110,12 +110,12 @@ export class TimelineComponent extends FASTElement {
         }
     }
 
-    public getNextSegmentTime(): number {
-        return this.segmentsTimeline?.getNextSegment();
+    public getNextSegmentTime(returnStartTime = true): number {
+        return this.segmentsTimeline?.getNextSegment(returnStartTime);
     }
 
-    public getPreviousSegmentTime(): number {
-        return this.segmentsTimeline?.getPreviousSegment();
+    public getPreviousSegmentTime(returnStartTime = true): number {
+        return this.segmentsTimeline?.getPreviousSegment(returnStartTime);
     }
 
     public segmentsTimelineConnectedCallback() {

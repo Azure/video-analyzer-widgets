@@ -159,7 +159,7 @@ export class PlayerWrapper {
 
     private removeTimelineComponent() {
         if (this.timelineComponent) {
-            this.controls.controlsContainer_.removeChild(this.timelineComponent);
+            this.controls.bottomControls_.removeChild(this.timelineComponent);
             // eslint-disable-next-line no-undef
             this.timelineComponent.removeEventListener(TimelineEvents.SEGMENT_CHANGE, this.onSegmentChangeListenerRef as EventListener);
             // eslint-disable-next-line no-undef
@@ -229,6 +229,17 @@ export class PlayerWrapper {
         }
     }
 
+    private jumpSegment(isNext: boolean) {
+        let currentTime = this.video.currentTime;
+
+        if (isNext) {
+            currentTime = this.timelineComponent.getNextSegmentTime() || currentTime;
+        } else {
+            currentTime = this.timelineComponent.getPreviousSegmentTime() || currentTime;
+        }
+        this.timelineComponent.currentTime = currentTime;
+    }
+
     private onClickNextDay() {
         this.changeDayCallBack(true);
     }
@@ -244,6 +255,7 @@ export class PlayerWrapper {
             this.toggleBodyTracking.bind(this),
             this.onClickNextDay.bind(this),
             this.onClickPrevDay.bind(this),
+            this.jumpSegment.bind(this),
             this.allowedControllers
         );
 
@@ -408,7 +420,7 @@ export class PlayerWrapper {
                 (currentTime === this.currentSegment?.startSeconds || currentTime <= this.currentSegment?.startSeconds - 3)
             ) {
                 // Get prev segment time
-                currentTime = this.timelineComponent.getPreviousSegmentTime() || currentTime;
+                currentTime = this.timelineComponent.getPreviousSegmentTime(false) || currentTime;
             }
             this.timelineComponent.currentTime = currentTime;
         }
