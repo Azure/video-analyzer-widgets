@@ -27,6 +27,7 @@ export class PlayerComponent extends FASTElement {
     @attr public cameraName = '';
 
     @observable public isLive = false;
+    @observable public isFullscreen = false;
     @observable public currentDate: Date = null;
     @observable public currentAllowedDays: string[] = [];
     @observable public currentAllowedMonths: string[] = [];
@@ -171,6 +172,11 @@ export class PlayerComponent extends FASTElement {
         this.classList.add('error');
     }
 
+    public disconnectedCallback() {
+        super.disconnectedCallback();
+        document.removeEventListener('fullscreenchange', this.updateFullScreen.bind(this));
+    }
+
     public async connectedCallback() {
         super.connectedCallback();
 
@@ -203,6 +209,12 @@ export class PlayerComponent extends FASTElement {
             }
             // eslint-disable-next-line no-undef
         }) as EventListener);
+
+        document.addEventListener('fullscreenchange', this.updateFullScreen.bind(this));
+    }
+
+    private updateFullScreen() {
+        this.isFullscreen = document.fullscreenElement !== null;
     }
 
     private changeDayCallBack(isNext: boolean) {

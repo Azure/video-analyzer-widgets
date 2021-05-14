@@ -18,7 +18,7 @@ export const template = html<PlayerComponent>`
         <div
             shaka-controls="true"
             class="video-container 
-            ${(x) => (x.isLive ? 'live' : 'vod')}"
+            ${(x) => (x.isLive ? 'live' : 'vod')} ${(x) => (x.isFullscreen ? 'fullscreen' : '')}"
         >
             <video id="player-video"></video>
         </div>

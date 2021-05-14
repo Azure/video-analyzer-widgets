@@ -66,6 +66,9 @@ export const styles = css`
         font-size: 16px;
     }
 
+    .shaka-video-container.fullscreen .shaka-controls-container.live-off .shaka-bottom-controls {
+        padding-bottom: calc(48px + 43px + 2px) !important;
+    }
     .shaka-volume-bar-container {
         height: 2px;
         border-radius: 0;
@@ -149,7 +152,7 @@ export const styles = css`
         align-items: center;
         display: grid;
         grid-template-rows: auto;
-        grid-template-columns: [camera-name] 90px [date-picker] auto;
+        grid-template-columns: [camera-name] 150px [date-picker] auto;
     }
 
     .col.camera-name {
@@ -157,6 +160,10 @@ export const styles = css`
         grid-column-end: camera-name;
         grid-row-start: 1;
         grid-row-end: 1;
+        box-sizing: border-box;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     .col.date-picker {
