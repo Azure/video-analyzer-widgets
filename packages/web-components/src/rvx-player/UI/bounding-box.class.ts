@@ -44,13 +44,16 @@ export class BoundingBoxDrawer extends CanvasElement {
         this.timeToInstances = [];
     }
 
-    public addItem(time: number, instance: any) {
+    public addItem(time: number, endTime: number, instance: IInstanceData) {
         // Add new item to pack
         if (!this.timeToInstances[time?.toFixed(6)]) {
-            this.timeToInstances[time?.toFixed(6)] = [];
+            this.timeToInstances[time?.toFixed(6)] = {
+                end: endTime,
+                instanceData: []
+            };
         }
 
-        this.timeToInstances[time?.toFixed(6)].push(instance);
+        this.timeToInstances[time?.toFixed(6)].instanceData.push(instance);
     }
 
     public draw() {
@@ -71,11 +74,12 @@ export class BoundingBoxDrawer extends CanvasElement {
         let currentInstances: IInstanceData[] = [];
         let previousInstances: IInstanceData[] = [];
         for (let index = 0; index < times.length - 1; index++) {
-            const timespan1 = times[index];
-            const timespan2 = times[index + 1];
-            if (currentTime >= Number(timespan1) && currentTime <= Number(timespan2)) {
+            const instanceStart = times[index];
+            const currentInstance: IInstance = this.timeToInstances[instanceStart];
+            const instanceEnd = currentInstance?.end;
+            if (currentTime >= Number(instanceStart) && currentTime <= Number(instanceEnd)) {
                 previousInstances = [...currentInstances];
-                currentInstances = this.timeToInstances[timespan1];
+                currentInstances = currentInstance.instanceData;
             }
         }
 
@@ -173,25 +177,12 @@ export class BoundingBoxDrawer extends CanvasElement {
 }
 
 export interface ITimeToInstance {
-    [time: number]: Instance[];
+    [time: number]: IInstance;
 }
 
-export class Instance {
-    public points: Point[];
-
-    public start: number;
-    public end: number;
-    public topLeft: number[];
-    public bottomRight: number[];
-
-    public constructor() {}
-}
-
-export class Point {
-    public x: number;
-    public y: number;
-
-    public constructor() {}
+export interface IInstance {
+    end: number;
+    instanceData: IInstanceData[];
 }
 
 export interface IInstanceData {

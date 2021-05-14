@@ -345,7 +345,7 @@ export class PlayerWrapper {
                         tag: iterator.entity.tag.value
                     };
                 }
-                this.boundingBoxesDrawer.addItem(emsg.startTime, data);
+                this.boundingBoxesDrawer.addItem(emsg.startTime, emsg.endTime, data);
             }
         }
     }
