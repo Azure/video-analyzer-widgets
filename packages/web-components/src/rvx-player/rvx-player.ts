@@ -65,6 +65,8 @@ export class PlayerComponent extends FASTElement {
 
         // Reload player
         if (this.player) {
+            // If there was an existing error -clear state
+            this.clearError();
             this.player.destroy();
             this.player = null;
         }
@@ -165,6 +167,11 @@ export class PlayerComponent extends FASTElement {
 
     public pause() {
         this.player?.pause();
+    }
+
+    public clearError() {
+        this.hasError = false;
+        this.classList.remove('error');
     }
 
     public handleError() {

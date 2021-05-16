@@ -19,6 +19,7 @@ TimelineComponent;
 
 export class PlayerWrapper {
     private isLive = false; // TODO : when RTSP plugin will be ready, set to true
+    private isLoaded = false; // TODO : when RTSP plugin will be ready, set to true
     private _accessToken = '';
     private _mimeType: MimeType;
     private player: shaka_player.Player = Object.create(null);
@@ -118,6 +119,7 @@ export class PlayerWrapper {
                 await this.player.load(url);
             }
 
+            this.isLoaded = true;
             if (play) {
                 this.video.play();
             }
@@ -128,8 +130,32 @@ export class PlayerWrapper {
     }
 
     public destroy() {
-        this.player.unload();
-        this.player.destroy();
+        // Player listeners
+        this.player?.removeEventListener('error', this.onErrorEvent.bind(this));
+        this.player?.removeEventListener('trackschanged', this.onTrackChange.bind(this));
+
+        this.player?.removeEventListener('emsg', this.onShakaMetadata.bind(this));
+
+        // Video listeners
+        this.video?.removeEventListener('timeupdate', this.onTimeSeekUpdate.bind(this));
+        this.video?.removeEventListener('seeked', this.onSeeked.bind(this));
+        this.video?.removeEventListener('play', this.onPlaying.bind(this));
+        this.video?.removeEventListener('pause', this.onPause.bind(this));
+
+        // Remove BB
+        if (this.boundingBoxesDrawer) {
+            this.removeBoundingBoxLayer();
+            this.boundingBoxesDrawer.destroy();
+        }
+
+        // Remove timeline
+        this.removeTimelineComponent();
+
+        if (this.isLoaded) {
+            this.player?.unload();
+            // this.player?.destroy();
+        }
+        this.isLoaded = false;
     }
 
     public async toggleLiveMode(isLive: boolean) {
@@ -310,8 +336,10 @@ export class PlayerWrapper {
 
     private removeBoundingBoxLayer() {
         window.removeEventListener('resize', this.onWindowResize.bind(this));
-        this.videoContainer.removeChild(this.boundingBoxesDrawer.canvas);
-        this.boundingBoxesDrawer.off();
+        if (this.boundingBoxesDrawer?.isOn) {
+            this.videoContainer?.removeChild(this.boundingBoxesDrawer?.canvas);
+            this.boundingBoxesDrawer?.off();
+        }
     }
 
     private authenticationHandler(type: shaka_player.net.NetworkingEngine.RequestType, request: shaka_player.extern.Request) {

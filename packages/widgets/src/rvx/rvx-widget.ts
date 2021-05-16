@@ -23,7 +23,6 @@ PlayerComponent;
 export class Player extends BaseWidget {
     @attr({ mode: 'fromView' })
     public config: IAvaPlayerConfig;
-
     private loaded = false;
     private source: ISource = null;
     private allowedControllers: ControlPanelElements[] = null;

@@ -6,6 +6,7 @@ export class BoundingBoxDrawer extends CanvasElement {
     public data: any = [];
     private requestAnimFrameCounter: number;
     private timeToInstances: ITimeToInstance = [];
+    private _isOn = false;
 
     private readonly PADDING_RIGHT = 4;
     private readonly PADDING_TOP = 18;
@@ -17,14 +18,26 @@ export class BoundingBoxDrawer extends CanvasElement {
         this.setCanvasStyle();
     }
 
+    public get isOn() {
+        return this._isOn;
+    }
+
     // Start the animation
     public on() {
+        this._isOn = true;
         this.setCanvasSize(this.video.clientWidth, this.video.clientHeight);
         this.playAnimation();
 
         // Add listeners to play and pause
         this.video.addEventListener('play', this.playAnimation.bind(this));
         this.video.addEventListener('pause', this.pauseAnimation.bind(this));
+        this.video.addEventListener('seeking', this.clear.bind(this));
+    }
+
+    public destroy() {
+        this.clearInstances();
+        this.clear();
+        this.off();
     }
 
     public setCanvasStyle() {
@@ -33,11 +46,17 @@ export class BoundingBoxDrawer extends CanvasElement {
         this.canvas.style.pointerEvents = 'none';
     }
 
+    public clear() {
+        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    }
+
     // Stop the animation
     public off() {
+        this._isOn = false;
         this.pauseAnimation();
         this.video.removeEventListener('play', this.playAnimation.bind(this));
         this.video.removeEventListener('pause', this.pauseAnimation.bind(this));
+        this.video.removeEventListener('seeking', this.clear.bind(this));
     }
 
     public clearInstances() {
