@@ -263,6 +263,13 @@ export class PlayerWrapper {
         // Initialize shaka player
         this.player = new shaka.Player(this.video);
 
+        this.player.configure({
+            streaming: {
+                jumpLargeGaps: true,
+                gapDetectionThreshold: 0.5
+            }
+        });
+
         // Set up authentication handler
         this.player.getNetworkingEngine().registerRequestFilter(this.authenticationHandler.bind(this));
         // Setting up shaka player UI

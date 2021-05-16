@@ -1,6 +1,6 @@
 import { css } from '@microsoft/fast-element';
 
-export const stylesFabric = css`
+export const datePickerStyleFabric = css`
     .ms-DatePicker {
         -webkit-font-smoothing: antialiased;
         box-sizing: border-box;

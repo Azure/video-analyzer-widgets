@@ -1,5 +1,5 @@
 import { css } from '@microsoft/fast-element';
-import { stylesFabric } from './date-picker-fabric.style';
+import { datePickerStyleFabric } from './date-picker-fabric.style';
 
 export const styles = css`
     :host {
@@ -8,7 +8,7 @@ export const styles = css`
         position: relative;
     }
 
-    ${stylesFabric}
+    ${datePickerStyleFabric}
 
     .ms-DatePicker {
         display: none;

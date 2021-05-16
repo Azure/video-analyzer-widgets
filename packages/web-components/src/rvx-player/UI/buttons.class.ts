@@ -118,6 +118,9 @@ export class MuteButton extends shaka.ui.MuteButton {
     }
 
     public updateIcon_() {
+        if (!this.svg) {
+            return;
+        }
         const path = this.ad ? (this.ad.isMuted() ? MUTE_PATH : ON_PATH) : this.video.muted ? MUTE_PATH : ON_PATH;
         this.button_.innerText = '';
         this.button_.appendChild(this.svg);
