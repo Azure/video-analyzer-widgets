@@ -49,8 +49,8 @@ export abstract class CanvasElement {
         this.context?.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
 
-    private getFontSize() {
-        return this.options.fontSize ? +this.options.fontSize.split('px')[0] * this.ratio : 12;
+    public getFontSize() {
+        return this.options.fontSize ? +this.options.fontSize.split('px')[0] * this.ratio : 12 * this.ratio;
     }
 
     public abstract draw(): void;
