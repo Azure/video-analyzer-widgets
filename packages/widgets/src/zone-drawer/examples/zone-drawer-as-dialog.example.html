@@ -70,8 +70,7 @@
         </fast-button>
       </div>
       <ava-zone-drawer id="zone-draw-widget">
-        <ava-player slot="player"
-          id="ava-player-widget"></ava-player>
+        <ava-player id="ava-player-widget"></ava-player>
       </ava-zone-drawer>
     </fast-dialog>
   </ava-design-system-provider>
@@ -136,6 +135,9 @@
     const playerWidget = document.querySelector("ava-player");
 
     playerWidget.configure({
+      token: 'token',
+      clientApiEndpointUrl: 'endpoint',
+      videoName: 'name',
       debug: true,
       playerControllers: [
         'rewind',

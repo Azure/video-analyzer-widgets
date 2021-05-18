@@ -20,6 +20,7 @@ TimelineComponent;
 
 export class PlayerWrapper {
     private isLive = false; // TODO : when RTSP plugin will be ready, set to true
+    private isLoaded = false; // TODO : when RTSP plugin will be ready, set to true
     private _accessToken = '';
     private _mimeType: MimeType;
     private player: shaka_player.Player = Object.create(null);
@@ -37,7 +38,9 @@ export class PlayerWrapper {
     private _liveStream: string = '';
     private _vodStream: string = '';
     private _availableSegments: IAvailableMediaResponse = null;
-    private _segments: IUISegment[] = [];
+    private currentSegment: IUISegment = null;
+    private isPlaying: boolean = false;
+
     private readonly OFFSET_MULTIPLAYER = 1000;
     private readonly SECONDS_IN_HOUR = 3600;
     private readonly SECONDS_IN_MINUTES = 60;
@@ -116,6 +119,7 @@ export class PlayerWrapper {
                 await this.player.load(url);
             }
 
+            this.isLoaded = true;
             if (play) {
                 this.video.play();
             }
@@ -126,8 +130,32 @@ export class PlayerWrapper {
     }
 
     public destroy() {
-        this.player.unload();
-        this.player.destroy();
+        // Player listeners
+        this.player?.removeEventListener('error', this.onErrorEvent.bind(this));
+        this.player?.removeEventListener('trackschanged', this.onTrackChange.bind(this));
+
+        this.player?.removeEventListener('emsg', this.onShakaMetadata.bind(this));
+
+        // Video listeners
+        this.video?.removeEventListener('timeupdate', this.onTimeSeekUpdate.bind(this));
+        this.video?.removeEventListener('seeked', this.onSeeked.bind(this));
+        this.video?.removeEventListener('play', this.onPlaying.bind(this));
+        this.video?.removeEventListener('pause', this.onPause.bind(this));
+
+        // Remove BB
+        if (this.boundingBoxesDrawer) {
+            this.removeBoundingBoxLayer();
+            this.boundingBoxesDrawer.destroy();
+        }
+
+        // Remove timeline
+        this.removeTimelineComponent();
+
+        if (this.isLoaded) {
+            this.player?.unload();
+            // this.player?.destroy();
+        }
+        this.isLoaded = false;
     }
 
     public async toggleLiveMode(isLive: boolean) {
@@ -157,9 +185,11 @@ export class PlayerWrapper {
 
     private removeTimelineComponent() {
         if (this.timelineComponent) {
-            this.controls.controlsContainer_.removeChild(this.timelineComponent);
+            this.controls.bottomControls_.removeChild(this.timelineComponent);
             // eslint-disable-next-line no-undef
             this.timelineComponent.removeEventListener(TimelineEvents.SEGMENT_CHANGE, this.onSegmentChangeListenerRef as EventListener);
+            // eslint-disable-next-line no-undef
+            this.timelineComponent.removeEventListener(TimelineEvents.SEGMENT_START, this.onSegmentStart.bind(this) as EventListener);
             this.timelineComponent = null;
         }
     }
@@ -168,11 +198,11 @@ export class PlayerWrapper {
         if (!this.segmentReferences) {
             return;
         }
-        this._segments = createTimelineSegments(this._availableSegments, this.segmentReferences, this.timestampOffset);
+        const segments = createTimelineSegments(this._availableSegments, this.segmentReferences, this.timestampOffset);
 
         const date = new Date(this.date.getUTCFullYear(), this.date.getUTCMonth(), this.date.getUTCDate(), 0, 0, 0);
         const timelineConfig = {
-            segments: this._segments,
+            segments: segments,
             date: date
         };
         this.timelineComponent = new TimelineComponent();
@@ -180,40 +210,40 @@ export class PlayerWrapper {
         this.onSegmentChangeListenerRef = this.onSegmentChange.bind(this);
         // eslint-disable-next-line no-undef
         this.timelineComponent.addEventListener(TimelineEvents.SEGMENT_CHANGE, this.onSegmentChangeListenerRef as EventListener);
+        // eslint-disable-next-line no-undef
+        this.timelineComponent.addEventListener(TimelineEvents.SEGMENT_START, this.onSegmentStart.bind(this) as EventListener);
         this.timelineComponent.config = timelineConfig;
+    }
+
+    private onSegmentStart(event: CustomEvent<IUISegmentEventData>) {
+        event.stopPropagation();
+        const segmentEventData = event.detail;
+        if (segmentEventData) {
+            const currentDate = new Date(this.timestampOffset);
+            const dateInSeconds =
+                currentDate.getUTCHours() * this.SECONDS_IN_HOUR +
+                currentDate.getUTCMinutes() * this.SECONDS_IN_MINUTES +
+                currentDate.getUTCSeconds();
+            this.currentSegment = segmentEventData.segment;
+            const playbackMode: number = this.player.getPlaybackRate();
+            const seconds = playbackMode > 0 ? segmentEventData.segment.startSeconds + 2 : segmentEventData.segment.endSeconds - 2;
+            this.video.currentTime = seconds - dateInSeconds;
+            this.video.play();
+        }
     }
 
     private onSegmentChange(event: CustomEvent<IUISegmentEventData>) {
         event.stopPropagation();
         const segmentEventData = event.detail;
         if (segmentEventData) {
-            this.video.currentTime = this.getVideoTimeFromSegment(segmentEventData);
+            const currentDate = new Date(this.timestampOffset);
+            const dateInSeconds =
+                currentDate.getUTCHours() * this.SECONDS_IN_HOUR +
+                currentDate.getUTCMinutes() * this.SECONDS_IN_MINUTES +
+                currentDate.getUTCSeconds();
+            this.currentSegment = event.detail.segment;
+            this.video.currentTime = event.detail.time - dateInSeconds;
             this.video.play();
-        }
-    }
-
-    private getVideoTimeFromSegment(segmentEventData: IUISegmentEventData): number {
-        let time = 0;
-        for (const segment of this._segments) {
-            if (segment.startSeconds?.toFixed() === segmentEventData.segment.startSeconds?.toFixed()) {
-                time += segmentEventData.time - segment.startSeconds;
-                break;
-            }
-
-            time += segment.endSeconds - segment.startSeconds;
-        }
-
-        return time;
-    }
-
-    private onTimeChange(event: CustomEvent<number>) {
-        const currentDate = new Date(this.timestampOffset);
-        const dateInSeconds =
-            currentDate.getUTCHours() * this.SECONDS_IN_HOUR +
-            currentDate.getUTCMinutes() * this.SECONDS_IN_MINUTES +
-            currentDate.getUTCSeconds();
-        if (event.detail) {
-            this.video.currentTime = event.detail - dateInSeconds;
         }
     }
 
@@ -223,6 +253,17 @@ export class PlayerWrapper {
         } else {
             this.removeBoundingBoxLayer();
         }
+    }
+
+    private jumpSegment(isNext: boolean) {
+        let currentTime = this.video.currentTime;
+
+        if (isNext) {
+            currentTime = this.timelineComponent.getNextSegmentTime() || currentTime;
+        } else {
+            currentTime = this.timelineComponent.getPreviousSegmentTime() || currentTime;
+        }
+        this.timelineComponent.currentTime = currentTime;
     }
 
     private onClickNextDay() {
@@ -240,12 +281,24 @@ export class PlayerWrapper {
             this.toggleBodyTracking.bind(this),
             this.onClickNextDay.bind(this),
             this.onClickPrevDay.bind(this),
+            this.jumpSegment.bind(this),
             this.allowedControllers
         );
 
         // Getting reference to video and video container on DOM
         // Initialize shaka player
         this.player = new shaka.Player(this.video);
+
+        this.player.configure({
+            manifest: {
+                defaultPresentationDelay: 6
+            },
+            streaming: {
+                bufferingGoal: 30,
+                jumpLargeGaps: true,
+                gapDetectionThreshold: 0.5
+            }
+        });
 
         // Set up authentication handler
         this.player.getNetworkingEngine().registerRequestFilter(this.authenticationHandler.bind(this));
@@ -290,8 +343,10 @@ export class PlayerWrapper {
 
     private removeBoundingBoxLayer() {
         window.removeEventListener('resize', this.onWindowResize.bind(this));
-        this.videoContainer.removeChild(this.boundingBoxesDrawer.canvas);
-        this.boundingBoxesDrawer.off();
+        if (this.boundingBoxesDrawer?.isOn) {
+            this.videoContainer?.removeChild(this.boundingBoxesDrawer?.canvas);
+            this.boundingBoxesDrawer?.off();
+        }
     }
 
     private authenticationHandler(type: shaka_player.net.NetworkingEngine.RequestType, request: shaka_player.extern.Request) {
@@ -332,7 +387,7 @@ export class PlayerWrapper {
                         tag: iterator.entity.tag.value
                     };
                 }
-                this.boundingBoxesDrawer.addItem(emsg.startTime, data);
+                this.boundingBoxesDrawer.addItem(emsg.startTime, emsg.endTime, data);
             }
         }
     }
@@ -354,6 +409,9 @@ export class PlayerWrapper {
         if (reference) {
             this.timestampOffset = reference.timestampOffset * -1000;
             this.video.addEventListener('timeupdate', this.onTimeSeekUpdate.bind(this));
+            this.video.addEventListener('seeked', this.onSeeked.bind(this));
+            this.video.addEventListener('play', this.onPlaying.bind(this));
+            this.video.addEventListener('pause', this.onPause.bind(this));
         }
 
         // If not live mode, init timeline
@@ -365,6 +423,22 @@ export class PlayerWrapper {
         }
     }
 
+    private onPause() {
+        this.isPlaying = false;
+    }
+
+    private onPlaying() {
+        this.isPlaying = true;
+    }
+
+    private onSeeked() {
+        if (this.isPlaying) {
+            this.video.play();
+        } else {
+            this.video.pause();
+        }
+    }
+
     private onTimeSeekUpdate() {
         const displayTime = this.video.currentTime;
         const time = this.computeClock(displayTime);
@@ -372,7 +446,26 @@ export class PlayerWrapper {
 
         // if theres a timeline - update time
         if (this.timelineComponent) {
-            this.timelineComponent.currentTime = extractRealTime(displayTime, this.timestampOffset);
+            let currentTime = extractRealTime(displayTime, this.timestampOffset);
+
+            const gapBeforeJump = 0; // 3;
+            // Check if we need to go to previous / next segment
+            // Get mode - rewind or forward
+            const playbackMode: number = this.player.getPlaybackRate();
+            if (
+                playbackMode > 0 &&
+                (currentTime === this.currentSegment?.endSeconds || currentTime >= this.currentSegment?.endSeconds - gapBeforeJump)
+            ) {
+                // Get next segment time
+                currentTime = this.timelineComponent.getNextSegmentTime() || currentTime;
+            } else if (
+                playbackMode < 0 &&
+                (currentTime === this.currentSegment?.startSeconds || currentTime <= this.currentSegment?.startSeconds - gapBeforeJump)
+            ) {
+                // Get prev segment time
+                currentTime = this.timelineComponent.getPreviousSegmentTime(false) || currentTime;
+            }
+            this.timelineComponent.currentTime = currentTime;
         }
     }
 
@@ -381,7 +474,7 @@ export class PlayerWrapper {
             return '';
         }
         this.date = new Date(this.timestampOffset + time * 1000);
-        const utcDate = `${this.date.getUTCDate()}/${this.date.getUTCMonth() + 1}/${this.date.getUTCFullYear()}`;
+        const utcDate = `${this.date.getUTCMonth() + 1}/${this.date.getUTCDate()}/${this.date.getUTCFullYear()}`;
         const hour = this.date.getUTCHours();
         const minutes = this.date.getUTCMinutes();
         const seconds = this.date.getUTCSeconds();

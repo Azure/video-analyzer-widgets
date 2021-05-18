@@ -8,6 +8,7 @@
         "noFallthroughCasesInSwitch": true,
         "allowSyntheticDefaultImports": true,
         "noImplicitAny": true,
+        "allowJs": true,
         "noImplicitReturns": true,
         "removeComments": true,
         "sourceMap": true,
@@ -22,7 +23,6 @@
         "moduleResolution": "node",
         "importHelpers": true,
         "declarationMap": true,
-        "noEmitOnError": true,
         "paths": {
             "*": ["./node_modules/*", "./packages/types/*"]
         }

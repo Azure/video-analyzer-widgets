@@ -1,6 +1,6 @@
 ![ava_widgets_banner_github.png](./ava_widgets_banner_github.png)
 
-# Azure video analyzer widgets - under construction
+# Azure video analyzer widgets
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/%3C%2F%3E-TypeScript-%230074c1.svg)](https://www.typescriptlang.org/)
@@ -17,7 +17,7 @@ A collection of widgets (web components) using Azure Video Analyzer platform cap
 1. #### For consuming as NPM package from npm:
     1. Install the library:
         ```
-            npm install video-analyzer-widgets
+            npm install @azure/video-analyzer-widgets
         ```
 
 ### `AVA player widget`
@@ -28,22 +28,20 @@ A collection of widgets (web components) using Azure Video Analyzer platform cap
 
 Import ava-widgets.js https://salmon-mushroom-072389f0f.azurestaticapps.net/scripts.js to your HTML file:
 
-```html live
-<head>
-    <script async type="”module”" src="./ava-widgets.js"></script>
-</head>
-```
+```html
 
-```html live
-<head>
-    <script async type="”module”" src="https://salmon-mushroom-072389f0f.azurestaticapps.net/scripts.js"></script>
-</head>
+        ...
+        <!-- Add Video Analyzer player web component -->
+        <script async type="module" src="https://unpkg.com/@azure/video-analyzer-widgets"></script>
+
+    </body>
+</html>
 ```
 
 ##### Typescript usage:
 
 ```typescript
-import { Player } from 'video-analyzer-widgets';
+import { Player } from '@azure/video-analyzer-widgets';
 ```
 
 ### Getting Started
@@ -54,7 +52,7 @@ Creating using HTML:
 
 ```html live
   <body>
-	<ava-player widget="”920px”" height="”300px”"><ava-player>
+	<ava-player widget="”920px”"><ava-player>
   </body>
 ```
 
@@ -63,7 +61,7 @@ Creating dynamically:
 ##### Typescript usage:
 
 ```typescript
-import { Player } from 'video-analyzer-widgets';
+import { Player } from '@azure/video-analyzer-widgets';
 
 const avaPlayer = new Player();
 document.firstElementChild.appendChild(avaPlayer).
@@ -71,27 +69,28 @@ document.firstElementChild.appendChild(avaPlayer).
 
 ### Properties
 
-| Name   | Type             | Default | Description                         |
-| ------ | ---------------- | ------- | ----------------------------------- |
-| width  | string           | 100%    | Reflects the value of widget width  |
-| height | string           | 100%    | Reflects the value of widget height |
-| config | IAvaPlayerConfig | null    | Widget configuration                |
+| Name   | Type             | Default | Description                        |
+| ------ | ---------------- | ------- | ---------------------------------- |
+| width  | string           | 100%    | Reflects the value of widget width |
+| config | IAvaPlayerConfig | null    | Widget configuration               |
 
 ### Events
 
 | Name          | Parameters | Description                                       |
 | ------------- | ---------- | ------------------------------------------------- |
 | TOKEN_EXPIRED | -          | Callback to invoke when AVA JWT token is expired. |
+| PLAYER_ERROR  | -          | Callback to invoke there is an error.             |
 
 ### Methods
 
-| Name           | Parameters                                                               | Description                                                                                              |
-| -------------- | ------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------- |
-| constructor    | width: string = '', height: string = '', config: IAvaPlayerConfig = null | Widget constructor. If called with config, you don’t need to call _configure_ function                   |
-| setAccessToken | jwtToken:string                                                          | Update the widget token.                                                                                 |
-| set apiBase    | apiBase:string                                                           | Control AVA-API base. Good for using mock API / testing API.                                             |
-| configure      | config: IAvaPlayerConfig                                                 | Update widget configuration.                                                                             |
-| load           | -                                                                        | Loads and initialize the widget according to provided configuration. If not called, widget will be empty |
+| Name           | Parameters                      | Description                                                                                              |
+| -------------- | ------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| constructor    | config: IAvaPlayerConfig = null | Widget constructor. If called with config, you don’t need to call _configure_ function                   |
+| setAccessToken | jwtToken:string                 | Update the widget token.                                                                                 |
+| configure      | config: IAvaPlayerConfig        | Update widget configuration.                                                                             |
+| load           | -                               | Loads and initialize the widget according to provided configuration. If not called, widget will be empty |
+| play           | -                               | Play the player                                                                                          |
+| pause          | -                               | Pause the player                                                                                         |
 
 ### Code snippets:
 
@@ -109,8 +108,7 @@ document.firstElementChild.appendChild(avaPlayer).
                 // Configure widget with AVA API configuration
                 avaPlayer.configure({
                     token: '<AVA-API-JWT-TOKEN>',
-                    accountId: '<GUID-ACCOUNT-ID>',
-                    longRegionCode: '<REGION-CODE>',
+                    clientApiEndpointUrl: '<CLIENT-ENDPOINT-URL>',
                     videoName: '<VIDEO-NAME-FROM-AVA-ACCOUNT>’
                 });
 
@@ -123,7 +121,7 @@ document.firstElementChild.appendChild(avaPlayer).
 
     ```html live
     <body>
-        <ava-player widget="”920px”" height="”300px”"></ava-player>
+        <ava-player widget="”920px”"></ava-player>
     </body>
     <script>
         (function () {
@@ -139,8 +137,7 @@ document.firstElementChild.appendChild(avaPlayer).
                     // Configure widget with AVA API configuration
                     avaPlayer.configure({
                         token: '<AVA-API-JWT-TOKEN>',
-                        accountId: '<GUID-ACCOUNT-ID>',
-                        longRegionCode: '<REGION-CODE>',
+                        clientApiEndpointUrl: '<CLIENT-ENDPOINT-URL>',
                         videoName: '<VIDEO-NAME-FROM-AVA-ACCOUNT>’
                     });
 
@@ -153,6 +150,8 @@ document.firstElementChild.appendChild(avaPlayer).
 3.  _Dynamically creating the widget:_ create a widget dynamically with native JS code, without using configure function.
 
     ```html live
+    <!-- Add Video Analyzer player web component -->
+    <script async type="module" src="https://unpkg.com/@azure/video-analyzer-widgets@latest/dist/global.min.js"></script>
     <body>
         <div id="”widget-container”"></div>
     </body>
@@ -163,13 +162,10 @@ document.firstElementChild.appendChild(avaPlayer).
 
                         // Create new player widget
                         const playerWidget = new window.ava.widgets.player(
-                        '100%',
-                        '100%',
                         {
-                                    token: '<AVA-API-JWT-TOKEN>',
-                                    accountId: '<GUID-ACCOUNT-ID>',
-                                    longRegionCode: '<REGION-CODE>',
-                                    videoName: '<VIDEO-NAME-FROM-AVA-ACCOUNT>’
+                            token: '<AVA-API-JWT-TOKEN>',
+                            clientApiEndpointUrl: '<CLIENT-ENDPOINT-URL>',
+                            videoName: '<VIDEO-NAME-FROM-AVA-ACCOUNT>’
                         });
 
                         widgetContainer.appendChild(playerWidget)
@@ -185,7 +181,7 @@ document.firstElementChild.appendChild(avaPlayer).
     1. Go to your _src/main.ts_ file and add the following code:
 
         ```typescript
-        import { Player } from 'video-analyzer-widgets';
+        import { Player } from '@azure/video-analyzer-widgets';
 
         /*
          * Ensure that tree-shaking doesn't remove this component from * the bundle.
@@ -207,21 +203,17 @@ document.firstElementChild.appendChild(avaPlayer).
     3. Now we can start using widget. Replace the HTML template in your app.component.html, file with the following markup:
         ```html live
         <template>
-            <ava-player widget="”920px”" height="”300px”"></ava-player>
+            <ava-player widget="”920px”"></ava-player>
         </template>
         ```
         Alternatively, you can create a new instance of the widget using typescript, and add it to the DOM.
-
-### Demo application:
-
-https://aka.ms/ava-widgets-demo
 
 ### `AVA Zone Drawer widget`
 
 ##### Typescript usage:
 
 ```typescript
-import { ZoneDrawerWidget } from '@video-analyzer/widgets';
+import { ZoneDrawerWidget } from '@azure/video-analyzer-widgets';
 ```
 
 ### Getting Started
@@ -256,7 +248,7 @@ Creating dynamically:
 ##### Typescript usage:
 
 ```typescript
-import { ZoneDrawer } from '@video-analyzer/widgets';
+import { ZoneDrawer } from '@azure/video-analyzer-widgets';
 
 const zoneDrawer = new ZoneDrawer();
 document.firstElementChild.appendChild(zoneDrawer).
@@ -305,7 +297,7 @@ document.firstElementChild.appendChild(zoneDrawer).
     </head>
     <body>
         <ava-zone-drawer>
-            <ava-player widget="”920px”" height="”300px”"></ava-player>
+            <ava-player widget="”920px”"></ava-player>
         </ava-zone-drawer>
     </body>
     <script>
@@ -475,7 +467,7 @@ document.firstElementChild.appendChild(zoneDrawer).
 5.  Go to your _src/main.ts_ file and add the following code:
 
     ```typescript
-    import { ZoneDrawerWidget } from '@video-analyzer/widgets';
+    import { ZoneDrawerWidget } from '@azure/video-analyzer-widgets';
 
     /*
      * Ensure that tree-shaking doesn't remove this component from * the bundle.

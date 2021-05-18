@@ -9,7 +9,9 @@ import {
     MUTE_PATH,
     ON_PATH,
     OVERFLOW_MENU_PATH,
-    REWIND_SVG_PATH
+    REWIND_SVG_PATH,
+    SKIP_NEXT_PATH,
+    SKIP_PREV_PATH
 } from '../../../../styles/svg/svg.shapes';
 import { ControlPanelElementsTooltip } from '../rvx-player.definitions';
 
@@ -126,6 +128,9 @@ export class MuteButton extends shaka.ui.MuteButton {
     }
 
     public updateIcon_() {
+        if (!this.svg) {
+            return;
+        }
         const path = this.ad ? (this.ad.isMuted() ? MUTE_PATH : ON_PATH) : this.video.muted ? MUTE_PATH : ON_PATH;
         this.button_.innerText = '';
         this.button_.appendChild(this.svg);
@@ -313,6 +318,50 @@ export class BodyTracking extends shaka.ui.Element {
             this.isOn = !this.isOn;
             this.updateIcon_();
             this.callBack(this.isOn);
+        });
+    }
+}
+
+export class NextSegment extends shaka.ui.Element {
+    public constructor(parent: any, controls: any, private callBack: (isNext: boolean) => void) {
+        super(parent, controls);
+        this.init();
+    }
+
+    private init() {
+        this.button_ = document.createElement('fast-button');
+        // Create SVG
+        this.svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        this.path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+
+        this.path.setAttribute('d', SKIP_NEXT_PATH);
+        this.svg.appendChild(this.path);
+        this.button_.appendChild(this.svg);
+        this.parent.appendChild(this.button_);
+        this.eventManager.listen(this.button_, 'click', () => {
+            this.callBack(true);
+        });
+    }
+}
+
+export class PrevSegment extends shaka.ui.Element {
+    public constructor(parent: any, controls: any, private callBack: (isNext: boolean) => void) {
+        super(parent, controls);
+        this.init();
+    }
+
+    private init() {
+        this.button_ = document.createElement('fast-button');
+        // Create SVG
+        this.svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        this.path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+
+        this.path.setAttribute('d', SKIP_PREV_PATH);
+        this.svg.appendChild(this.path);
+        this.button_.appendChild(this.svg);
+        this.parent.appendChild(this.button_);
+        this.eventManager.listen(this.button_, 'click', () => {
+            this.callBack(false);
         });
     }
 }

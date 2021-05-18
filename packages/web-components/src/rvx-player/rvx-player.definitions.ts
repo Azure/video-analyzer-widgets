@@ -27,7 +27,9 @@ export enum ControlPanelElements {
     FULLSCREEN = 'fullscreen',
     NEXT_DAY = 'next_day',
     PREVIOUS_DAY = 'previous_day',
-    HOURS_LABEL = 'hours_label'
+    HOURS_LABEL = 'hours_label',
+    NEXT_SEGMENT = 'next_segment',
+    PREV_SEGMENT = 'prev_segment'
 }
 
 export enum LiveState {

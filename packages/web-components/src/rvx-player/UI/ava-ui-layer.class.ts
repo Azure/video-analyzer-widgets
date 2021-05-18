@@ -8,9 +8,11 @@ import {
     LiveButtonFactory,
     MuteButtonFactory,
     NextDayButtonFactory,
+    NextSegmentButtonFactory,
     OverflowMenuFactory,
     PlayButtonFactory,
     PrevDayButtonFactory,
+    PrevSegmentButtonFactory,
     RewindButtonFactory
 } from './buttons.factory';
 
@@ -21,9 +23,11 @@ import {
 export class AVAPlayerUILayer {
     private _uiConfiguration = {
         controlPanelElements: [
+            ControlPanelElements.PREV_SEGMENT,
             ControlPanelElements.REWIND,
             ControlPanelElements.PLAY_PAUSE,
             ControlPanelElements.FAST_FORWARD,
+            ControlPanelElements.NEXT_SEGMENT,
             // 'live', // TODO : add after RTSP plugin
             ControlPanelElements.MUTE,
             ControlPanelElements.VOLUME,
@@ -51,6 +55,7 @@ export class AVAPlayerUILayer {
         private toggleBodyTracking: (isOn: boolean) => void,
         private nextDayCallBack: () => void,
         private prevDayCallBack: () => void,
+        private jumpSegmentCallBack: (isNext: boolean) => void,
         private allowedControllers: ControlPanelElements[]
     ) {
         this.createControllers();
@@ -111,6 +116,10 @@ export class AVAPlayerUILayer {
         this.shaka.ui.OverflowMenu.Factory = OverflowMenuFactory;
         this.shaka.ui.Controls.registerElement(ControlPanelElements.OVERFLOW_MENU, new this.shaka.ui.OverflowMenu.Factory());
 
+        this.shaka.ui.OverflowMenu = OverflowMenu;
+        this.shaka.ui.OverflowMenu.Factory = OverflowMenuFactory;
+        this.shaka.ui.Controls.registerElement(ControlPanelElements.OVERFLOW_MENU, new this.shaka.ui.OverflowMenu.Factory());
+
         LiveButtonFactory.callBack = async (isLive: boolean) => {
             this.toggleLiveMode(isLive);
         };
@@ -119,6 +128,16 @@ export class AVAPlayerUILayer {
             this.toggleBodyTracking(isOn);
         };
         this.shaka.ui.Controls.registerElement(ControlPanelElements.BODY_TRACKING, new BodyTrackingButtonFactory());
+
+        NextSegmentButtonFactory.callBack = (isNext: boolean) => {
+            this.jumpSegmentCallBack(isNext);
+        };
+        this.shaka.ui.Controls.registerElement(ControlPanelElements.NEXT_SEGMENT, new NextSegmentButtonFactory());
+
+        PrevSegmentButtonFactory.callBack = (isNext: boolean) => {
+            this.jumpSegmentCallBack(isNext);
+        };
+        this.shaka.ui.Controls.registerElement(ControlPanelElements.PREV_SEGMENT, new PrevSegmentButtonFactory());
 
         NextDayButtonFactory.callBack = () => {
             this.nextDayCallBack();

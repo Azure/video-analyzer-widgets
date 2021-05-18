@@ -2,6 +2,10 @@ import { attr, customElement, FASTElement, observable } from '@microsoft/fast-el
 import { DatePickerEvent, IAllowedDates, IDatePickerRenderEvent } from './date-picker.definitions';
 import { styles } from './date-picker.style';
 import { template } from './date-picker.template';
+import { DatePicker } from './pickadate/Jquery.DatePicker';
+const PickaDate = require('../../../scripts/PickaDate.script');
+// eslint-disable-next-line @typescript-eslint/no-unused-expressions
+PickaDate;
 
 /**
  * Date picker component
@@ -66,9 +70,6 @@ export class DatePickerComponent extends FASTElement {
 
     // Loading sources
     private datePickerCSSLoaded = false;
-    private datePickerScriptLoaded = false;
-    private jquerySrcLoaded = false;
-    private datePickerSrcLoaded = false;
     private uiConnected = false;
 
     public constructor() {
@@ -102,16 +103,6 @@ export class DatePickerComponent extends FASTElement {
     public disconnectedCallback() {
         // Remove all elements
         this.shadowRoot.removeChild(this.shadowRoot.querySelector('#date-picker-css-link'));
-        document.head.removeChild(document.querySelector('#jquery-script'));
-        const datePickerSRC = document.querySelector('#date-picker-src-link');
-        if (datePickerSRC) {
-            document.head.removeChild(datePickerSRC);
-        }
-
-        const pickerDateSRC = document.querySelector('#picker-date-src-link');
-        if (pickerDateSRC) {
-            document.head.removeChild(pickerDateSRC);
-        }
     }
 
     private createFabricDatePicker() {
@@ -123,64 +114,24 @@ export class DatePickerComponent extends FASTElement {
             'https://static2.sharepointonline.com/files/fabric/office-ui-fabric-js/1.4.0/css/fabric.min.css'
         );
 
-        const jquerySrcLink = document.createElement('script');
-        jquerySrcLink.setAttribute('id', 'jquery-script');
-        jquerySrcLink.setAttribute('src', 'https://code.jquery.com/jquery-3.6.0.min.js');
-
-        const datePickerSrcLink = document.createElement('script');
-        datePickerSrcLink.setAttribute('id', 'date-picker-src-link');
-        datePickerSrcLink.setAttribute(
-            'src',
-            'https://static2.sharepointonline.com/files/fabric/office-ui-fabric-js/1.4.0/js/fabric.min.js'
-        );
-
-        const pickerDateSrcLink = document.createElement('script');
-        datePickerSrcLink.setAttribute('id', 'picker-date-src-link');
-        pickerDateSrcLink.setAttribute('src', 'https://cdn.graph.office.net/prod/Scripts/fabric-js/PickaDate.js');
-
         datePickerCSS.onload = () => {
             this.datePickerCSSLoaded = true;
             this.createDatePicker();
         };
 
-        datePickerSrcLink.onload = () => {
-            this.datePickerScriptLoaded = true;
-            this.createDatePicker();
-        };
-
-        jquerySrcLink.onload = () => {
-            document.head.appendChild(pickerDateSrcLink);
-            document.head.appendChild(datePickerSrcLink);
-            this.jquerySrcLoaded = true;
-        };
-
-        pickerDateSrcLink.onload = () => {
-            this.datePickerSrcLoaded = true;
-            this.createDatePicker();
-        };
-
-        document.head.appendChild(jquerySrcLink);
         this.shadowRoot.appendChild(datePickerCSS);
     }
 
     private createDatePicker() {
         // If all sources loaded - create fabric date picker
-        if (
-            !(
-                this.uiConnected &&
-                this.datePickerCSSLoaded &&
-                this.datePickerScriptLoaded &&
-                this.jquerySrcLoaded &&
-                this.datePickerSrcLoaded
-            )
-        ) {
+        if (!(this.uiConnected && this.datePickerCSSLoaded)) {
             return;
         }
 
         try {
             setTimeout(() => {
                 const DatePickerElements = this.shadowRoot.querySelectorAll('.ms-DatePicker');
-                this.datePicker = new window['fabric']['DatePicker'](DatePickerElements[0]);
+                this.datePicker = new DatePicker(DatePickerElements[0], {});
 
                 this.datePicker.picker.on('open', this.onDateOpen.bind(this));
                 this.datePicker.picker.on('set', this.onDateChange.bind(this));

@@ -164,48 +164,50 @@ export class SegmentsTimelineComponent extends FASTElement {
         return source.pipe(distinctUntilChanged());
     }
 
-    public jumpToNextSegment(): boolean {
-        const time = this.timelineProgress?.activeSegment?.endSeconds || 0;
+    public getNextSegment(returnStartTime = true): number {
+        const time = this.currentTime || 0;
 
         if (!this.processedSegments?.length) {
-            return false;
+            return 0;
         }
 
-        const duration = this.config?.data?.duration || 1;
-        for (const segment of this.processedSegments) {
-            const startTime = (segment.x / 100) * duration;
-
-            if (startTime > time) {
-                this.currentTime = startTime;
-                return true;
+        // Go over segments
+        for (let index = 0; index < this.config?.data?.segments.length; index++) {
+            const segment = this.config?.data?.segments[index];
+            // Find current segment
+            if (segment?.startSeconds <= time && segment?.endSeconds >= time) {
+                // If last segment, return 0, else return next one
+                const segmentIndex = index === this.config?.data?.segments.length - 1 ? 0 : index + 1;
+                const nextSegment = this.config?.data?.segments[segmentIndex];
+                return returnStartTime ? nextSegment.startSeconds : nextSegment.endSeconds;
             }
         }
 
         this.timelineProgress.activeSegment = null;
-        this.currentTime = this.DAY_DURATION_IN_SECONDS;
-        return false;
+        return 0;
     }
 
-    public jumpToPreviousSegment(): boolean {
-        const time = this.timelineProgress?.activeSegment?.startSeconds || this.DAY_DURATION_IN_SECONDS;
+    public getPreviousSegment(returnStartTime = true): number {
+        const time = this.currentTime || this.DAY_DURATION_IN_SECONDS;
 
         if (!this.processedSegments?.length) {
-            return false;
+            return 0;
         }
 
-        const duration = this.config?.data?.duration || 1;
-        for (const segment of this.processedSegments?.slice().reverse()) {
-            const startTime = (segment.x / 100) * duration;
-            const endTime = (segment.width / 100) * duration + startTime;
-            if (endTime < time) {
-                this.currentTime = startTime;
-                return true;
+        // Go over segments
+        for (let index = this.config?.data?.segments.length - 1; index >= 0; index--) {
+            const segment = this.config?.data?.segments[index];
+            // Find current segment
+            if (segment?.startSeconds <= time && segment?.endSeconds >= time) {
+                // If first segment, return last, else return prev one
+                const segmentIndex = index === 0 ? this.config?.data?.segments.length - 1 : index - 1;
+                const nextSegment = this.config?.data?.segments[segmentIndex];
+                return returnStartTime ? nextSegment.startSeconds : nextSegment.endSeconds;
             }
         }
 
         this.timelineProgress.activeSegment = null;
-        this.currentTime = 0;
-        return false;
+        return 0;
     }
 
     private initSVGProgress() {
@@ -240,6 +242,10 @@ export class SegmentsTimelineComponent extends FASTElement {
 
         this.timelineProgress.activeSegmentCallback = (segmentEvent: IUISegmentEventData) => {
             this.$emit(SegmentsTimelineEvents.SEGMENT_CLICKED, segmentEvent);
+        };
+
+        this.timelineProgress.segmentStartCallback = (segmentEvent: IUISegmentEventData) => {
+            this.$emit(SegmentsTimelineEvents.SEGMENT_START, segmentEvent);
         };
 
         // Subscribe to on time change -

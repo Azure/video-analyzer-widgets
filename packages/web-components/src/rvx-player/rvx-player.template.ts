@@ -14,11 +14,11 @@ export const template = html<PlayerComponent>`
                 <media-date-picker class="date-picker-component" alignRight="${true}"></media-date-picker>
             </div>
         </div>
-        <span class="error">Theres seems to be a problem. Please try again later</span>
+        <span class="error">${(x) => x.errorString}</span>
         <div
             shaka-controls="true"
             class="video-container 
-            ${(x) => (x.isLive ? 'live' : 'vod')}"
+            ${(x) => (x.isLive ? 'live' : 'vod')} ${(x) => (x.isFullscreen ? 'fullscreen' : '')}"
         >
             <video id="player-video"></video>
         </div>

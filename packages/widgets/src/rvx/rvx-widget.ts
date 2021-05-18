@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 import { BaseWidget } from '../base-widget';
 import { customElement, attr } from '@microsoft/fast-element';
-import { IAvaPlayerConfig, RVXEvents } from './definitions';
+import { IAvaPlayerConfig, PlayerEvents } from './definitions';
 import { TokenHandler } from '../../../common/services/auth/token-handler.class';
 import { AvaAPi } from '../../../common/services/auth/ava-api.class';
 import { MediaApi } from '../../../common/services/media/media-api.class';
@@ -9,6 +10,11 @@ import { styles } from './rvx-widget.style';
 import { PlayerComponent } from '../../../web-components/src/rvx-player';
 import { ControlPanelElements, ISource } from '../../../web-components/src/rvx-player/rvx-player.definitions';
 import { Logger } from '../common/logger';
+import { AvaDesignSystemProvider } from '../../../styles';
+import { HttpError } from '../../../common/utils/http.error';
+
+AvaDesignSystemProvider;
+PlayerComponent;
 
 @customElement({
     name: 'ava-player',
@@ -16,13 +22,27 @@ import { Logger } from '../common/logger';
     styles
 })
 export class Player extends BaseWidget {
-    @attr public config: IAvaPlayerConfig;
+    @attr({ mode: 'fromView' })
+    public config: IAvaPlayerConfig;
     private loaded = false;
     private source: ISource = null;
     private allowedControllers: ControlPanelElements[] = null;
 
     public constructor(config: IAvaPlayerConfig) {
         super(config);
+        if (this.config) {
+            this.init();
+        }
+    }
+
+    public connectedCallback() {
+        super.connectedCallback();
+        this.validateOrAddDesignSystem();
+        const designSystem = this.shadowRoot.querySelector('ava-design-system-provider') as AvaDesignSystemProvider;
+        if (designSystem) {
+            designSystem.style.width = this.width;
+            designSystem.style.height = this.height;
+        }
     }
 
     public setAccessToken(token: string) {
@@ -52,7 +72,22 @@ export class Player extends BaseWidget {
         MediaApi.baseStream = this.source.src;
         if (this.loaded) {
             const rvxPlayer: PlayerComponent = this.shadowRoot.querySelector('rvx-player');
+            rvxPlayer.cameraName = AvaAPi.videoName;
             rvxPlayer.init(this.source.allowCrossSiteCredentials, this.source.authenticationToken, this.allowedControllers);
+        }
+    }
+
+    public widthChanged() {
+        const designSystem = this.shadowRoot.querySelector('ava-design-system-provider') as AvaDesignSystemProvider;
+        if (designSystem) {
+            designSystem.style.width = this.width;
+        }
+    }
+
+    public heightChanged() {
+        const designSystem = this.shadowRoot.querySelector('ava-design-system-provider') as AvaDesignSystemProvider;
+        if (designSystem) {
+            designSystem.style.height = this.height;
         }
     }
 
@@ -67,12 +102,12 @@ export class Player extends BaseWidget {
     }
 
     public async load() {
-        this.validateOrAddDesignSystem();
         this.loaded = true;
         const rvxPlayer: PlayerComponent = this.shadowRoot.querySelector('rvx-player');
 
         // If set source state
         if (this.source) {
+            rvxPlayer.cameraName = AvaAPi.videoName;
             rvxPlayer.init(this.source.allowCrossSiteCredentials, this.source.authenticationToken, this.allowedControllers);
             return;
         }
@@ -82,7 +117,7 @@ export class Player extends BaseWidget {
             await AvaAPi.getVideo()
                 .then(async (videoInformation) => {
                     if (videoInformation.status >= 400 && videoInformation.status < 600) {
-                        this.handelFallback();
+                        this.handelFallback(new HttpError('API Error', videoInformation.status, videoInformation));
                     } else {
                         const response = await videoInformation.json();
                         // Init media API
@@ -90,18 +125,18 @@ export class Player extends BaseWidget {
 
                         // Authorize video
                         await AvaAPi.authorize();
-
+                        rvxPlayer.cameraName = AvaAPi.videoName;
                         rvxPlayer.init(true, '', this.allowedControllers);
                     }
                 })
-                .catch((error: Error) => {
+                .catch((error) => {
                     // eslint-disable-next-line no-console
                     console.log(error);
-                    this.handelFallback();
+                    this.handelFallback(error);
                 });
         } catch (error) {
             // console.log(error);
-            this.handelFallback();
+            this.handelFallback(error);
         }
     }
 
@@ -117,13 +152,14 @@ export class Player extends BaseWidget {
         this.allowedControllers = this.config.playerControllers;
     }
 
-    private handelFallback() {
+    private handelFallback(error: HttpError) {
         const rvxPlayer: PlayerComponent = this.shadowRoot.querySelector('rvx-player');
+        rvxPlayer.cameraName = AvaAPi.videoName;
         rvxPlayer.init(true, '', this.allowedControllers);
-        rvxPlayer.handleError();
+        rvxPlayer.handleError(error);
     }
 
     private tokenExpiredCallback() {
-        this.$emit(RVXEvents.TOKEN_EXPIRED);
+        this.$emit(PlayerEvents.TOKEN_EXPIRED);
     }
 }

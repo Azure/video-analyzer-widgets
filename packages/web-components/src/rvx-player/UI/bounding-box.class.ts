@@ -6,6 +6,7 @@ export class BoundingBoxDrawer extends CanvasElement {
     public data: any = [];
     private requestAnimFrameCounter: number;
     private timeToInstances: ITimeToInstance = [];
+    private _isOn = false;
 
     private readonly PADDING_RIGHT = 4;
     private readonly PADDING_TOP = 2;
@@ -18,8 +19,13 @@ export class BoundingBoxDrawer extends CanvasElement {
         this.setContextStyle();
     }
 
+    public get isOn() {
+        return this._isOn;
+    }
+
     // Start the animation
     public on() {
+        this._isOn = true;
         this.setCanvasSize(this.video.clientWidth, this.video.clientHeight);
         this.setContextStyle();
         this.playAnimation();
@@ -27,6 +33,13 @@ export class BoundingBoxDrawer extends CanvasElement {
         // Add listeners to play and pause
         this.video.addEventListener('play', this.playAnimation.bind(this));
         this.video.addEventListener('pause', this.pauseAnimation.bind(this));
+        this.video.addEventListener('seeking', this.clear.bind(this));
+    }
+
+    public destroy() {
+        this.clearInstances();
+        this.clear();
+        this.off();
     }
 
     public setCanvasStyle() {
@@ -35,24 +48,33 @@ export class BoundingBoxDrawer extends CanvasElement {
         this.canvas.style.pointerEvents = 'none';
     }
 
+    public clear() {
+        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    }
+
     // Stop the animation
     public off() {
+        this._isOn = false;
         this.pauseAnimation();
         this.video.removeEventListener('play', this.playAnimation.bind(this));
         this.video.removeEventListener('pause', this.pauseAnimation.bind(this));
+        this.video.removeEventListener('seeking', this.clear.bind(this));
     }
 
     public clearInstances() {
         this.timeToInstances = [];
     }
 
-    public addItem(time: number, instance: any) {
+    public addItem(time: number, endTime: number, instance: IInstanceData) {
         // Add new item to pack
         if (!this.timeToInstances[time?.toFixed(6)]) {
-            this.timeToInstances[time?.toFixed(6)] = [];
+            this.timeToInstances[time?.toFixed(6)] = {
+                end: endTime,
+                instanceData: []
+            };
         }
 
-        this.timeToInstances[time?.toFixed(6)].push(instance);
+        this.timeToInstances[time?.toFixed(6)].instanceData.push(instance);
     }
 
     public draw() {
@@ -80,11 +102,12 @@ export class BoundingBoxDrawer extends CanvasElement {
         let currentInstances: IInstanceData[] = [];
         let previousInstances: IInstanceData[] = [];
         for (let index = 0; index < times.length - 1; index++) {
-            const timespan1 = times[index];
-            const timespan2 = times[index + 1];
-            if (currentTime >= Number(timespan1) && currentTime <= Number(timespan2)) {
+            const instanceStart = times[index];
+            const currentInstance: IInstance = this.timeToInstances[instanceStart];
+            const instanceEnd = currentInstance?.end;
+            if (currentTime >= Number(instanceStart) && currentTime <= Number(instanceEnd)) {
                 previousInstances = [...currentInstances];
-                currentInstances = this.timeToInstances[timespan1];
+                currentInstances = currentInstance.instanceData;
             }
         }
 
@@ -172,25 +195,12 @@ export class BoundingBoxDrawer extends CanvasElement {
 }
 
 export interface ITimeToInstance {
-    [time: number]: Instance[];
+    [time: number]: IInstance;
 }
 
-export class Instance {
-    public points: Point[];
-
-    public start: number;
-    public end: number;
-    public topLeft: number[];
-    public bottomRight: number[];
-
-    public constructor() {}
-}
-
-export class Point {
-    public x: number;
-    public y: number;
-
-    public constructor() {}
+export interface IInstance {
+    end: number;
+    instanceData: IInstanceData[];
 }
 
 export interface IInstanceData {

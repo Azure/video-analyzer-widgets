@@ -1,4 +1,4 @@
-import { IUISegment } from '../segments-timeline.definitions';
+import { IUISegment, IUISegmentEventData } from '../segments-timeline.definitions';
 import { IChartData, IChartOptions, IComponentTree, Colors } from './svg-progress.definitions';
 import { SeekBar, Rect, Tooltip } from './svg-progress.models';
 
@@ -26,8 +26,8 @@ export class SVGProgressChart {
 
     public activeRect: Rect;
     public activeSegment: IUISegment;
-    /* eslint-disable-next-line  @typescript-eslint/no-explicit-any */
-    public _activeSegmentCallback: any;
+    public _activeSegmentCallback: (segment: IUISegmentEventData) => void;
+    public _segmentStartCallback: (segment: IUISegmentEventData) => void;
 
     public constructor(element?: SVGElement, options?: IChartOptions) {
         if (!element) {
@@ -67,8 +67,12 @@ export class SVGProgressChart {
         this.init();
     }
 
-    public set activeSegmentCallback(callback: Function) {
+    public set activeSegmentCallback(callback: (segment: IUISegmentEventData) => void) {
         this._activeSegmentCallback = callback;
+    }
+
+    public set segmentStartCallback(callback: (segment: IUISegmentEventData) => void) {
+        this._segmentStartCallback = callback;
     }
 
     public addClass(cls: string) {
@@ -398,8 +402,19 @@ export class SVGProgressChart {
             const startTime = (rect.x / 100) * this.options.time;
             const endTime = (rect.width / 100) * this.options.time + startTime;
             if (startTime <= time && endTime >= time) {
+                // New active segment
                 this.activeRect = rect;
                 this.activeRect.addClass('active');
+                if (this._segmentStartCallback) {
+                    this._segmentStartCallback({
+                        segment: {
+                            startSeconds: startTime,
+                            endSeconds: endTime,
+                            color: rect.color
+                        },
+                        time: startTime
+                    });
+                }
                 return {
                     startSeconds: startTime,
                     endSeconds: endTime,

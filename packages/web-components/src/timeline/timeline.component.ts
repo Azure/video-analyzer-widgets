@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 import { FASTSlider } from '@microsoft/fast-components';
 import { attr, customElement, FASTElement } from '@microsoft/fast-element';
 import { SegmentsTimelineComponent } from '..';
@@ -8,6 +9,9 @@ import { TimeRulerComponent } from '../time-ruler';
 import { ITimeLineConfig, TimelineEvents } from './timeline.definitions';
 import { styles } from './timeline.style';
 import { template } from './timeline.template';
+
+SegmentsTimelineComponent;
+TimeRulerComponent;
 
 /**
  * Time Line component.
@@ -106,12 +110,12 @@ export class TimelineComponent extends FASTElement {
         }
     }
 
-    public jumpToNextSegment(): boolean {
-        return this.segmentsTimeline?.jumpToNextSegment();
+    public getNextSegmentTime(returnStartTime = true): number {
+        return this.segmentsTimeline?.getNextSegment(returnStartTime);
     }
 
-    public jumpToPreviousSegment(): boolean {
-        return this.segmentsTimeline?.jumpToPreviousSegment();
+    public getPreviousSegmentTime(returnStartTime = true): number {
+        return this.segmentsTimeline?.getPreviousSegment(returnStartTime);
     }
 
     public segmentsTimelineConnectedCallback() {
@@ -120,6 +124,11 @@ export class TimelineComponent extends FASTElement {
 
             this.segmentsTimeline?.addEventListener(SegmentsTimelineEvents.SEGMENT_CLICKED, ((event: CustomEvent<IUISegmentEventData>) => {
                 this.$emit(TimelineEvents.SEGMENT_CHANGE, event.detail);
+                // eslint-disable-next-line no-undef
+            }) as EventListener);
+
+            this.segmentsTimeline?.addEventListener(SegmentsTimelineEvents.SEGMENT_START, ((event: CustomEvent<IUISegmentEventData>) => {
+                this.$emit(TimelineEvents.SEGMENT_START, event.detail);
                 // eslint-disable-next-line no-undef
             }) as EventListener);
 

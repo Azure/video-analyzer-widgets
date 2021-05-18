@@ -1,16 +1,19 @@
 import { attr, customElement, FASTElement, observable } from '@microsoft/fast-element';
 import { MediaApi } from '../../../common/services/media/media-api.class';
 import { IAvailableMediaResponse, IExpandedDate, Precision } from '../../../common/services/media/media.definitions';
-import { WidgetGeneralError } from '../../../widgets/src';
+import { HttpError } from '../../../common/utils/http.error';
+import { PlayerEvents, WidgetGeneralError } from '../../../widgets/src';
 import { DatePickerComponent } from '../date-picker';
 import { DatePickerEvent, IDatePickerRenderEvent } from '../date-picker/date-picker.definitions';
 import { PlayerWrapper } from './player.class';
 import { ControlPanelElements, LiveState } from './rvx-player.definitions';
 import { styles } from './rvx-player.style';
 import { template } from './rvx-player.template';
+import { getPlayerErrorString } from './rvx-player.utils';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-expressions
 DatePickerComponent;
+
 /**
  * RVX Player web component
  * @public
@@ -23,14 +26,16 @@ DatePickerComponent;
 export class PlayerComponent extends FASTElement {
     @attr public liveStream: string;
     @attr public vodStream: string;
-    @attr public cameraName = 'Camera';
+    @attr public cameraName = '';
 
     @observable public isLive = false;
+    @observable public isFullscreen = false;
     @observable public currentDate: Date = null;
     @observable public currentAllowedDays: string[] = [];
     @observable public currentAllowedMonths: string[] = [];
     @observable public currentAllowedYears: string[] = [];
     @observable public time = '';
+    @observable public errorString = '';
     @observable private currentYear: number = 0;
     @observable private currentMonth: number = 0;
     @observable private currentDay: number = 0;
@@ -63,6 +68,8 @@ export class PlayerComponent extends FASTElement {
 
         // Reload player
         if (this.player) {
+            // If there was an existing error -clear state
+            this.clearError();
             this.player.destroy();
             this.player = null;
         }
@@ -132,11 +139,13 @@ export class PlayerComponent extends FASTElement {
 
         this.afterInit = true;
 
+        this.currentDate = date;
         this.datePickerComponent.inputDate = date.toUTCString();
+        this.updateVODStream();
     }
 
     public cameraNameChanged() {
-        this.cameraName = this.cameraName || 'Camera';
+        this.cameraName = this.cameraName || '';
     }
 
     public liveStreamChanged() {
@@ -163,9 +172,21 @@ export class PlayerComponent extends FASTElement {
         this.player?.pause();
     }
 
-    public handleError() {
+    public clearError() {
+        this.hasError = false;
+        this.classList.remove('error');
+    }
+
+    public handleError(error: HttpError) {
         this.hasError = true;
+        this.errorString = getPlayerErrorString(error);
         this.classList.add('error');
+        this.$emit(PlayerEvents.PLAYER_ERROR, error);
+    }
+
+    public disconnectedCallback() {
+        super.disconnectedCallback();
+        document.removeEventListener('fullscreenchange', this.updateFullScreen.bind(this));
     }
 
     public async connectedCallback() {
@@ -200,6 +221,12 @@ export class PlayerComponent extends FASTElement {
             }
             // eslint-disable-next-line no-undef
         }) as EventListener);
+
+        document.addEventListener('fullscreenchange', this.updateFullScreen.bind(this));
+    }
+
+    private updateFullScreen() {
+        this.isFullscreen = document.fullscreenElement !== null;
     }
 
     private changeDayCallBack(isNext: boolean) {
@@ -365,7 +392,7 @@ export class PlayerComponent extends FASTElement {
                 years: this.currentAllowedYears.toString()
             };
         } catch (error) {
-            this.handleError();
+            this.handleError(error);
             throw new WidgetGeneralError('Cannot parse available media');
         }
     }
@@ -402,7 +429,7 @@ export class PlayerComponent extends FASTElement {
                 }
             }
         } catch (error) {
-            this.handleError();
+            this.handleError(error);
             throw new WidgetGeneralError('Cannot parse available media');
         }
     }
@@ -443,7 +470,7 @@ export class PlayerComponent extends FASTElement {
                 }
             }
         } catch (error) {
-            this.handleError();
+            this.handleError(error);
             throw new WidgetGeneralError('Cannot parse available media');
         }
     }
