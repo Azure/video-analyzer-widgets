@@ -1,5 +1,5 @@
 {
-    "name": "video-analyzer-widgets",
+    "name": "@azure/video-analyzer-widgets",
     "version": "0.4.1-beta",
     "description": "",
     "main": "./dist/ava-widgets.min.js",
