@@ -26,7 +26,7 @@ A collection of widgets (web components) using Azure Video Analyzer platform cap
 
 ##### Native JS usage:
 
-Import ava-widgets.js https://salmon-mushroom-072389f0f.azurestaticapps.net/scripts.js to your HTML file:
+Import https://unpkg.com/@azure/video-analyzer-widgetss to your HTML file:
 
 ```html
 
