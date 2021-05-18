@@ -1,6 +1,9 @@
 # Everything outside the src and test directory
 /dist/*
 /node_modules/*
-package-lock.json
 out
 coverage
+
+# debug
+local/
+*.tgz

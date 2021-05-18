@@ -1,8 +1,12 @@
-import { RVXWidget } from './packages/widgets/src';
+/* eslint-disable @typescript-eslint/no-unused-expressions */
+import { Player, ZoneDrawerWidget } from '../widgets/src';
+
+export {};
 
 declare global {
     interface IWidgets {
-        rvx: typeof RVXWidget;
+        player: typeof Player;
+        zoneDrawer: typeof ZoneDrawerWidget;
     }
 
     interface IAva {
