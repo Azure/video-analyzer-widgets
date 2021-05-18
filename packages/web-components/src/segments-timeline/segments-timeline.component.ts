@@ -78,7 +78,11 @@ export class SegmentsTimelineComponent extends FASTElement {
     public connectedCallback() {
         super.connectedCallback();
         const parent = this.$fastController?.element?.parentElement;
-        this.resizeObserver = new ResizeObserver(this.resize.bind(this));
+        this.resizeObserver = new ResizeObserver(() =>
+            window.requestAnimationFrame(() => {
+                this.resize.bind(this);
+            })
+        );
         this.resizeObserver.observe(parent || this.$fastController?.element);
     }
 

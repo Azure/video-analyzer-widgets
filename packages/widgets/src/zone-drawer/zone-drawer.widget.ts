@@ -72,7 +72,11 @@ export class ZoneDrawerWidget extends BaseWidget {
         this.validateOrAddDesignSystem();
         this.isReady = true;
         const parent = this.$fastController?.element?.parentElement;
-        this.resizeObserver = new ResizeObserver(this.resize.bind(this));
+        this.resizeObserver = new ResizeObserver(() =>
+            window.requestAnimationFrame(() => {
+                this.resize.bind(this);
+            })
+        );
         this.resizeObserver.observe(parent || this.$fastController?.element);
         this.$fastController?.element?.addEventListener(LayerLabelEvents.labelActionClicked, this.labelActionClicked.bind(this));
         this.$fastController?.element?.addEventListener(

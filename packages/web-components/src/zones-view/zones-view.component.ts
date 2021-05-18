@@ -49,7 +49,11 @@ export class ZonesViewComponent extends FASTElement {
         super.connectedCallback();
 
         const parent = this.$fastController?.element?.parentElement;
-        this.resizeObserver = new ResizeObserver(this.resize.bind(this));
+        this.resizeObserver = new ResizeObserver(() =>
+            window.requestAnimationFrame(() => {
+                this.resize.bind(this);
+            })
+        );
         this.resizeObserver.observe(parent);
         setTimeout(() => {
             this.init();
