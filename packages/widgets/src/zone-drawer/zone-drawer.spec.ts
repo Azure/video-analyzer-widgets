@@ -64,7 +64,7 @@ describe('ZoneDrawerWidget', () => {
     it('widget zones should equal the config zones length', async () => {
         const el = await fixture<ZoneDrawerWidget>(html`<ava-zone-drawer></ava-zone-drawer>`);
 
-        el.config = configWithZones;
+        el.configure(configWithZones);
         el.load();
         setTimeout(() => {
             expect(el.zones.length).to.equal(zones.length);
