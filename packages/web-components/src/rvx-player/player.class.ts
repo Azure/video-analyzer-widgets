@@ -290,6 +290,15 @@ export class PlayerWrapper {
         this.player = new shaka.Player(this.video);
 
         this.player.configure({
+            manifest: {
+                defaultPresentationDelay: 6
+            },
+            //   streaming: {
+            //     bufferingGoal: 30,
+            //     jumpLargeGaps: true,
+            //     gapDetectionThreshold: 0.5
+            //   },
+
             streaming: {
                 jumpLargeGaps: true,
                 gapDetectionThreshold: 0.5
@@ -466,7 +475,7 @@ export class PlayerWrapper {
             return '';
         }
         this.date = new Date(this.timestampOffset + time * 1000);
-        const utcDate = `${this.date.getUTCDate()}/${this.date.getUTCMonth() + 1}/${this.date.getUTCFullYear()}`;
+        const utcDate = `${this.date.getUTCMonth() + 1}/${this.date.getUTCDate()}/${this.date.getUTCFullYear()}`;
         const hour = this.date.getUTCHours();
         const minutes = this.date.getUTCMinutes();
         const seconds = this.date.getUTCSeconds();
