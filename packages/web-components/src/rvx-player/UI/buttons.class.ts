@@ -1,3 +1,4 @@
+import { setElementTooltip } from '../../../../common/utils/elements';
 import {
     ARROW_LEFT_PATH,
     ARROW_RIGHT_PATH,
@@ -10,6 +11,7 @@ import {
     OVERFLOW_MENU_PATH,
     REWIND_SVG_PATH
 } from '../../../../styles/svg/svg.shapes';
+import { ControlPanelElementsTooltip } from '../rvx-player.definitions';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const shaka = require('shaka-player/dist/shaka-player.ui.debug.js');
@@ -27,8 +29,10 @@ export class PlayButton extends shaka.ui.PlayButton {
     public updateIcon() {
         if (this.isPaused()) {
             this.path.setAttribute('d', this.PATH_PLAY);
+            setElementTooltip(this.button, ControlPanelElementsTooltip.PLAY);
         } else {
             this.path.setAttribute('d', this.PATH_PAUSE);
+            setElementTooltip(this.button, ControlPanelElementsTooltip.PAUSE);
         }
     }
 
@@ -40,6 +44,7 @@ export class PlayButton extends shaka.ui.PlayButton {
         this.svg.appendChild(this.path);
         this.button.appendChild(this.svg);
         this.updateIcon();
+        setElementTooltip(this.button, ControlPanelElementsTooltip.PLAY);
     }
 }
 
@@ -57,6 +62,7 @@ export class ForwardButton extends shaka.ui.FastForwardButton {
         this.svg.appendChild(this.path);
         this.button_.innerText = '';
         this.button_.appendChild(this.svg);
+        setElementTooltip(this.button_, ControlPanelElementsTooltip.FAST_FORWARD);
     }
 }
 
@@ -74,6 +80,7 @@ export class RewindButton extends shaka.ui.RewindButton {
         this.svg.appendChild(this.path);
         this.button_.innerText = '';
         this.button_.appendChild(this.svg);
+        setElementTooltip(this.button_, ControlPanelElementsTooltip.REWIND);
     }
 }
 
@@ -91,8 +98,10 @@ export class FullscreenButton extends shaka.ui.FullscreenButton {
         this.button_.appendChild(this.svg);
         if (document.fullscreenElement) {
             this.path.setAttribute('d', FULL_PATH);
+            setElementTooltip(this.button_, ControlPanelElementsTooltip.FULLSCREEN);
         } else {
             this.path.setAttribute('d', FULL_OFF_PATH);
+            setElementTooltip(this.button_, ControlPanelElementsTooltip.EXIT_FULLSCREEN);
         }
     }
 
@@ -103,6 +112,7 @@ export class FullscreenButton extends shaka.ui.FullscreenButton {
         this.path.setAttribute('fill', 'black');
         this.svg.appendChild(this.path);
         this.updateIcon_();
+        setElementTooltip(this.button_, ControlPanelElementsTooltip.FULLSCREEN);
     }
 }
 
@@ -120,6 +130,11 @@ export class MuteButton extends shaka.ui.MuteButton {
         this.button_.innerText = '';
         this.button_.appendChild(this.svg);
         this.path.setAttribute('d', path);
+        if (this.ad?.isMuted() || this.video?.muted) {
+            setElementTooltip(this.button_, ControlPanelElementsTooltip.UNMUTE);
+        } else {
+            setElementTooltip(this.button_, ControlPanelElementsTooltip.MUTE);
+        }
     }
 
     private init() {
@@ -129,6 +144,7 @@ export class MuteButton extends shaka.ui.MuteButton {
         this.path.setAttribute('fill', 'black');
         this.svg.appendChild(this.path);
         this.updateIcon_();
+        setElementTooltip(this.button_, ControlPanelElementsTooltip.MUTE);
     }
 }
 
@@ -160,6 +176,7 @@ export class OverflowMenu extends shaka.ui.OverflowMenu {
         this.svg.appendChild(this.path);
         this.overflowMenuButton_.innerText = '';
         this.overflowMenuButton_.appendChild(this.svg);
+        setElementTooltip(this.overflowMenuButton_, ControlPanelElementsTooltip.OVERFLOW_MENU);
 
         const backToButtons = this.controls.getVideoContainer().getElementsByClassName('shaka-back-to-overflow-button');
         for (const button of backToButtons) {
@@ -190,6 +207,7 @@ export class LiveButton extends shaka.ui.Element {
         this.button_.classList.add('live-button-component');
         this.button_.classList.add('live-on');
         this.parent.appendChild(this.button_);
+        setElementTooltip(this.button_, ControlPanelElementsTooltip.LIVE);
 
         this.eventManager.listen(this.button_, 'click', () => {
             this.isLive = !this.isLive;
@@ -215,6 +233,7 @@ export class NextDayButton extends shaka.ui.Element {
         this.svg.appendChild(this.path);
         this.button_.appendChild(this.svg);
         this.parent.appendChild(this.button_);
+        setElementTooltip(this.button_, ControlPanelElementsTooltip.NEXT_DAY);
         this.eventManager.listen(this.button_, 'click', () => {
             this.callBack();
         });
@@ -238,6 +257,7 @@ export class PrevDayButton extends shaka.ui.Element {
         this.svg.appendChild(this.path);
         this.button_.appendChild(this.svg);
         this.parent.appendChild(this.button_);
+        setElementTooltip(this.button_, ControlPanelElementsTooltip.PREVIOUS_DAY);
         this.eventManager.listen(this.button_, 'click', () => {
             this.callBack();
         });
@@ -255,6 +275,7 @@ export class HoursLabel extends shaka.ui.Element {
         this.button_.innerHTML = '24 hours';
         this.button_.classList.add('hours-label');
         this.parent.appendChild(this.button_);
+        setElementTooltip(this.button_, ControlPanelElementsTooltip.HOURS_LABEL);
     }
 }
 
@@ -269,8 +290,10 @@ export class BodyTracking extends shaka.ui.Element {
     public updateIcon_() {
         if (this.isOn) {
             this.button_.classList.add('body-tracking-on');
+            setElementTooltip(this.button_, ControlPanelElementsTooltip.BODY_TRACKING_OFF);
         } else {
             this.button_.classList.remove('body-tracking-on');
+            setElementTooltip(this.button_, ControlPanelElementsTooltip.BODY_TRACKING_ON);
         }
     }
 
@@ -285,6 +308,7 @@ export class BodyTracking extends shaka.ui.Element {
         this.button_.appendChild(this.svg);
         this.parent.appendChild(this.button_);
         this.updateIcon_();
+        setElementTooltip(this.button_, ControlPanelElementsTooltip.BODY_TRACKING_ON);
         this.eventManager.listen(this.button_, 'click', () => {
             this.isOn = !this.isOn;
             this.updateIcon_();

@@ -487,11 +487,11 @@ export const stylesShaka = css`
     }
     .shaka-overflow-menu fast-button:hover,
     .shaka-settings-menu fast-button:hover {
-        background: #e0e0e0;
+        background: var(--video-menu-hover);
     }
     .shaka-keyboard-navigation .shaka-overflow-menu fast-button:focus,
     .shaka-keyboard-navigation .shaka-settings-menu fast-button:focus {
-        background: #e0e0e0;
+        background: var(--video-menu-press);
     }
     .shaka-overflow-menu i,
     .shaka-settings-menu i {

@@ -15,3 +15,8 @@ export function closestElement(selector: string, base: Element) {
     }
     return closestFrom(base);
 }
+
+export function setElementTooltip(element: HTMLElement, text: string) {
+    element?.setAttribute('title', text);
+    element?.setAttribute('aria-label', text);
+}

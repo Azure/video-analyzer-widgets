@@ -8,18 +8,20 @@ export class BoundingBoxDrawer extends CanvasElement {
     private timeToInstances: ITimeToInstance = [];
 
     private readonly PADDING_RIGHT = 4;
-    private readonly PADDING_TOP = 18;
+    private readonly PADDING_TOP = 2;
     private readonly PADDING_TOP_TEXT = 6;
 
     public constructor(options: ICanvasOptions, private video: HTMLVideoElement) {
         super(options);
         this.setCanvasSize(options.width, options.height);
         this.setCanvasStyle();
+        this.setContextStyle();
     }
 
     // Start the animation
     public on() {
         this.setCanvasSize(this.video.clientWidth, this.video.clientHeight);
+        this.setContextStyle();
         this.playAnimation();
 
         // Add listeners to play and pause
@@ -60,9 +62,11 @@ export class BoundingBoxDrawer extends CanvasElement {
 
         this.context.globalCompositeOperation = 'destination-over';
         this.context.save();
-        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.canvas.width = this.video.clientWidth;
-        this.canvas.height = this.video.clientHeight;
+        this.clear();
+        this.canvas.width = this.video.clientWidth * this.ratio;
+        this.canvas.height = this.video.clientHeight * this.ratio;
+        this.setContextStyle();
+
         // take current time
         const currentTime = this.video.currentTime;
 
@@ -112,32 +116,23 @@ export class BoundingBoxDrawer extends CanvasElement {
 
             if (instanceData.entity) {
                 let label = `${instanceData.entity.tag} ${instanceData.entity.id || ''}`;
-                let labelWidth = this.displayTextWidth(label, 'Segoe UI');
+                let labelWidth = this.displayTextWidth(label);
                 if (labelWidth > w) {
                     label = `${label.substring(0, 10)}...`;
-                    labelWidth = this.displayTextWidth(label, 'Segoe UI');
+                    labelWidth = this.displayTextWidth(label);
                 }
-                this.context.strokeRect(
-                    x + this.PADDING_RIGHT,
-                    y - this.PADDING_TOP + cornerRadius / 2,
-                    labelWidth,
-                    this.PADDING_TOP - cornerRadius
-                );
-                this.context.fillRect(
-                    x + this.PADDING_RIGHT,
-                    y - this.PADDING_TOP + cornerRadius / 2,
-                    labelWidth,
-                    this.PADDING_TOP - cornerRadius
-                );
-
-                this.context.font = '700 10px Segoe UI';
+                this.getFontSize();
+                const width = labelWidth + this.PADDING_RIGHT * 2 * this.ratio;
+                const height = this.getFontSize() + this.PADDING_TOP * 2 * this.ratio;
+                this.context.strokeRect(x + this.PADDING_RIGHT, y - height - this.ratio, width, height);
+                this.context.fillRect(x + this.PADDING_RIGHT, y - height - this.ratio, width, height);
 
                 this.context.fillStyle = 'white';
 
-                this.context.fillText(label, x + this.PADDING_RIGHT, y - this.PADDING_TOP_TEXT);
+                this.context.fillText(label, x + this.PADDING_RIGHT * this.ratio, y - this.PADDING_TOP * 2 * this.ratio);
             }
 
-            this.context.restore();
+            this.context.stroke();
         }
 
         this.requestAnimFrameCounter = window.requestAnimationFrame(this.draw.bind(this));
@@ -145,9 +140,11 @@ export class BoundingBoxDrawer extends CanvasElement {
 
     public resize(): void {
         // Clear canvas
-        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.clear();
         setTimeout(() => {
             this.setCanvasSize(this.video.clientWidth, this.video.clientHeight);
+            this.setContextStyle();
+            this.draw();
         });
     }
 
@@ -163,11 +160,8 @@ export class BoundingBoxDrawer extends CanvasElement {
         this.requestAnimFrameCounter = 0;
     }
 
-    private displayTextWidth(text: string, font: string) {
-        const canvas = document.createElement('canvas');
-        const context = canvas.getContext('2d');
-        context.font = font;
-        const metrics = context.measureText(text);
+    private displayTextWidth(text: string) {
+        const metrics = this.context.measureText(text);
         return metrics.width;
     }
 }

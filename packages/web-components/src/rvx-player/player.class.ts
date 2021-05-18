@@ -1,6 +1,7 @@
 /* eslint-disable max-len */
 import { ICanvasOptions } from '../../../common/canvas/canvas.definitions';
 import { IAvailableMediaResponse } from '../../../common/services/media/media.definitions';
+import { SegoeUIFontFamily } from '../../../styles/system-providers/ava-design-system-provider.definitions';
 import { WidgetGeneralError } from '../../../widgets/src';
 import { Logger } from '../../../widgets/src/common/logger';
 import { IUISegment, IUISegmentEventData } from '../segments-timeline/segments-timeline.definitions';
@@ -38,10 +39,9 @@ export class PlayerWrapper {
     private _availableSegments: IAvailableMediaResponse = null;
     private _segments: IUISegment[] = [];
     private readonly OFFSET_MULTIPLAYER = 1000;
-
     private readonly SECONDS_IN_HOUR = 3600;
-
     private readonly SECONDS_IN_MINUTES = 60;
+    private readonly DEFAULT_FONT_SIZE = '10px';
 
     public constructor(
         private video: HTMLVideoElement,
@@ -267,7 +267,10 @@ export class PlayerWrapper {
         // Add bounding box drawer
         const options: ICanvasOptions = {
             height: this.video.clientHeight,
-            width: this.video.clientWidth
+            width: this.video.clientWidth,
+            fontFamily: SegoeUIFontFamily,
+            fontSize: this.DEFAULT_FONT_SIZE,
+            lineWidth: 1
         };
         this.boundingBoxesDrawer = new BoundingBoxDrawer(options, this.video);
         this.updateControlsClassList();
