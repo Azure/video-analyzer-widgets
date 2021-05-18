@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
-import { customElement, attr, observable } from '@microsoft/fast-element';
+import { customElement, observable } from '@microsoft/fast-element';
 import { DrawerEvents, IPoint } from '../../../common/drawer-canvas/drawer-canvas.definitions';
 import { guid } from '../../../common/utils/guid';
 import { DrawingColors } from '../../../styles/system-providers/ava-design-system-provider.definitions';
@@ -42,9 +42,6 @@ LineDrawerComponent;
     styles
 })
 export class ZoneDrawerWidget extends BaseWidget {
-    @attr({ mode: 'fromView' })
-    public config: IZoneDrawerWidgetConfig = {};
-
     @observable
     public zones: IZone[] = [];
     @observable
@@ -57,6 +54,8 @@ export class ZoneDrawerWidget extends BaseWidget {
     public isLineDrawMode = true;
     @observable
     public isLabelsListEmpty = true;
+
+    public config: IZoneDrawerWidgetConfig = {};
 
     private readonly MAX_ZONES = 10;
 
@@ -78,7 +77,11 @@ export class ZoneDrawerWidget extends BaseWidget {
         this.validateOrAddDesignSystem();
         this.isReady = true;
         const parent = this.$fastController?.element?.parentElement;
-        this.resizeObserver = new ResizeObserver(this.resize.bind(this));
+        this.resizeObserver = new ResizeObserver(() =>
+            window.requestAnimationFrame(() => {
+                this.resize();
+            })
+        );
         this.resizeObserver.observe(parent || this.$fastController?.element);
         this.$fastController?.element?.addEventListener(LayerLabelEvents.labelActionClicked, this.labelActionClicked.bind(this));
         this.$fastController?.element?.addEventListener(
@@ -136,24 +139,6 @@ export class ZoneDrawerWidget extends BaseWidget {
             for (const zone of this.config.zones) {
                 this.addZone(zone);
             }
-        }
-
-        this.initPlayer();
-    }
-
-    private initPlayer() {
-        if (this.player) {
-            // this.player.updateAvailableControllers([
-            //     ControlPanelElements.REWIND,
-            //     ControlPanelElements.PLAY_PAUSE,
-            //     ControlPanelElements.FAST_FORWARD,
-            //     ControlPanelElements.MUTE,
-            //     ControlPanelElements.VOLUME,
-            //     ControlPanelElements.PREVIOUS_DAY,
-            //     ControlPanelElements.NEXT_DAY,
-            //     ControlPanelElements.HOURS_LABEL,
-            //     ControlPanelElements.SPACER
-            // ]);
         }
     }
 

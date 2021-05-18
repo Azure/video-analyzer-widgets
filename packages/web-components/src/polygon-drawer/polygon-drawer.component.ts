@@ -113,7 +113,11 @@ export class PolygonDrawerComponent extends FASTElement {
         this.dCanvas.canvas.addEventListener('mouseup', this.dCanvas.onDraw.bind(this.dCanvas));
         this.dCanvas.canvas.addEventListener(DrawerEvents.COMPLETE, this.onDrawComplete.bind(this));
         const parent = this.$fastController?.element?.parentElement;
-        this.resizeObserver = new ResizeObserver(this.resize.bind(this));
+        this.resizeObserver = new ResizeObserver(() =>
+            window.requestAnimationFrame(() => {
+                this.resize();
+            })
+        );
         this.resizeObserver.observe(parent);
     }
 
