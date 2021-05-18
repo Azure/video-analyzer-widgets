@@ -28,7 +28,6 @@ import {
     ZoneDrawerMode
 } from './zone-drawer.definitions';
 import { Logger } from '../common/logger';
-import { ControlPanelElements } from '../../../web-components/src/rvx-player/rvx-player.definitions';
 
 @customElement({
     name: 'ava-zone-drawer',
