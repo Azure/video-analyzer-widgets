@@ -4,4 +4,7 @@ export const styles = css`
     ava-design-system-provider {
         background: var(--player-background);
     }
+    :host {
+        display: flex;
+    }
 `;

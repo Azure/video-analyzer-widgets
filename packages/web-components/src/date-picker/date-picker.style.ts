@@ -4,6 +4,8 @@ import { stylesFabric } from './date-picker-fabric.style';
 export const styles = css`
     :host {
         display: inline-block;
+        z-index: 999;
+        position: relative;
     }
 
     ${stylesFabric}

@@ -1,0 +1,162 @@
+<html lang="en">
+
+<head>
+  <title>Zone Drawer Widget samples</title>
+  <script>
+    // Open the dialog
+    window.openDialog = () => {
+      document.getElementById("example1").hidden = false;
+    };
+
+    window.closeDialog = () => {
+      document.getElementById("example1").hidden = true;
+    };
+  </script>
+  <script type="module"
+    src="https://unpkg.com/@microsoft/fast-components"></script>
+  <script src="../../../../../dist/ava-widgets.js"></script>
+  <style>
+    ava-design-system-provider {
+      height: calc(100% - 20px);
+    }
+
+    fast-dialog {
+      --dialog-height: auto;
+      --dialog-width: auto;
+    }
+
+    .dialog-top {
+      background: var(--zone-draw-bg);
+      padding: 10px 0px 0px 24px;
+      display: inline-grid;
+      width: 735px;
+      grid-template-columns: auto 40px;
+    }
+
+    .dialog-title {
+      color: var(--type-primary);
+      font-size: 18px;
+      font-weight: 600;
+      margin: auto 0;
+    }
+  </style>
+</head>
+
+<body>
+  <ava-design-system-provider theme="dark"
+    use-defaults>
+    <h1>Zone Draw Widget with dialog</h1>
+    <fast-button appearance="accent"
+      onclick="openDialog()">Open Dialog</fast-button>
+
+    <fast-dialog id="example1"
+      class="example-dialog"
+      aria-label="Simple modal dialog"
+      modal="true"
+      hidden>
+      <div class="dialog-top">
+        <div class="dialog-title">
+          Area of interest
+        </div>
+        <fast-button class="close-btn"
+          aria-label="Close"
+          title="Close"
+          onclick="closeDialog()">
+          <svg>
+            <path
+              d="M8.711 8l5.391 5.398-0.703 0.703-5.398-5.391-5.398 5.391-0.703-0.703 5.391-5.398-5.391-5.398 0.703-0.703 5.398 5.391 5.398-5.391 0.703 0.703-5.391 5.398z">
+            </path>
+          </svg>
+        </fast-button>
+      </div>
+      <ava-zone-drawer id="zone-draw-widget">
+        <ava-player slot="player"
+          id="ava-player-widget"></ava-player>
+      </ava-zone-drawer>
+    </fast-dialog>
+  </ava-design-system-provider>
+  <br />
+</body>
+<script>(function () {
+    const zones = [
+      {
+        id: '1',
+        points: [
+          {
+            x: 0,
+            y: 0
+          },
+          {
+            x: 0.5,
+            y: 0.5
+          }
+        ]
+      },
+      {
+        id: '2',
+        points: [
+          {
+            x: 0.9,
+            y: 0.1
+          },
+          {
+            x: 0.7,
+            y: 0.8
+          }
+        ]
+      },
+      {
+        id: '3',
+        points: [
+          {
+            x: 0.8,
+            y: 0.1
+          },
+          {
+            x: 0.9,
+            y: 0.8
+          }
+        ]
+      },
+      {
+        points: [
+          {
+            x: 0.3,
+            y: 0.1
+          },
+          {
+            x: 0.3,
+            y: 0.8
+          }
+        ]
+      },
+    ];
+
+    const zoneDrawerWidget = document.querySelector("ava-zone-drawer");
+    const playerWidget = document.querySelector("ava-player");
+
+    playerWidget.configure({
+      debug: true,
+      playerControllers: [
+        'rewind',
+        'play_pause',
+        'fast_forward',
+        'mute',
+        'volume',
+        'spacer',
+        'next_day',
+        'previous_day',
+        'hours_label'
+      ]
+    });
+
+    playerWidget.load();
+    zoneDrawerWidget.configure({
+      debug: true
+    });
+
+    zoneDrawerWidget.load();
+  })()
+</script>
+
+</html>

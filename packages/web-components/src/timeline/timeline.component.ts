@@ -49,11 +49,11 @@ export class TimelineComponent extends FASTElement {
     private timeRuler: TimeRulerComponent;
     private fastSlider: FASTSlider;
 
+    private resizeObserver: ResizeObserver;
+
     private readonly SLIDER_DENSITY = 32;
     private readonly SLIDER_MAX_ZOOM = 22;
-
     private readonly SEEK_BAR_TOP = '#FAF9F8';
-
     private readonly SEEK_BAR_BODY_COLOR = '#D02E00';
 
     public configChanged() {
@@ -73,13 +73,15 @@ export class TimelineComponent extends FASTElement {
         super.connectedCallback();
         this.initData();
 
-        window.addEventListener('resize', this.resize.bind(this));
+        const parent = this.$fastController?.element?.parentElement;
+        this.resizeObserver = new ResizeObserver(this.resize.bind(this));
+        this.resizeObserver.observe(parent || this.$fastController?.element);
     }
 
     public disconnectedCallback() {
         super.disconnectedCallback();
 
-        window.removeEventListener('resize', this.resize);
+        this.resizeObserver?.disconnect();
         this.fastSlider?.removeEventListener('change', this.fastSliderChange);
         this.segmentsTimeline?.removeEventListener(SegmentsTimelineEvents.SEGMENT_CLICKED, null);
     }
@@ -180,7 +182,8 @@ export class TimelineComponent extends FASTElement {
                     seekBarTopColor: seekBarTopColor,
                     seekBarBodyColor: seekBarBodyColor
                 },
-                zoom: this.zoom
+                zoom: this.zoom,
+                disableCursor: true
             }
         };
 

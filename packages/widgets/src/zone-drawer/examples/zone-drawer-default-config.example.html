@@ -1,26 +1,43 @@
 <html lang="en">
 
 <head>
-    <title>Zones View samples</title>
+    <title>Line Drawer samples</title>
+    <style>
+        media-line-drawer {
+            border: 1px solid black;
+            position: absolute;
+        }
+
+        .default-wrapper,
+        .predefined-values-wrapper {
+            width: 100%;
+            background: aliceblue;
+        }
+    </style>
+    <script>
+
     </script>
     <script src="../../../../../dist/ava-widgets.js"></script>
 </head>
 
 <body>
-    <h1>Zones View samples</h1>
+    <h2>Zone Draw Widget with default config</h2>
     <br />
-    <h2>Zones View Component</h2>
-    <ava-design-system-provider theme="dark"
-        use-defaults>
-        <div class="default-wrapper">
-            <media-zones-view id="media-zones-view"></media-zones-view>
-        </div>
-    </ava-design-system-provider>
+
+    <div class="default-wrapper">
+        <ava-design-system-provider theme="dark"
+            use-defaults>
+            <ava-zone-drawer id="zone-draw-widget">
+            </ava-zone-drawer>
+        </ava-design-system-provider>
+    </div>
+
     <br />
 </body>
 <script>(function () {
         const zones = [
             {
+                id: '1',
                 points: [
                     {
                         x: 0,
@@ -30,10 +47,10 @@
                         x: 0.5,
                         y: 0.5
                     }
-                ],
-                color: '#1ABC9C'
+                ]
             },
             {
+                id: '2',
                 points: [
                     {
                         x: 0.9,
@@ -43,10 +60,10 @@
                         x: 0.7,
                         y: 0.8
                     }
-                ],
-                color: '#DB4646'
+                ]
             },
             {
+                id: '3',
                 points: [
                     {
                         x: 0.8,
@@ -55,13 +72,8 @@
                     {
                         x: 0.9,
                         y: 0.8
-                    },
-                    {
-                        x: 0.5,
-                        y: 0.7
                     }
-                ],
-                color: '#A6C102'
+                ]
             },
             {
                 points: [
@@ -73,14 +85,16 @@
                         x: 0.3,
                         y: 0.8
                     }
-                ],
-                color: '#F2880C'
+                ]
             },
         ];
 
-        const mediaZonesView = document.getElementById("media-zones-view");
+        const zoneDrawerWidget = document.querySelector("ava-zone-drawer");
 
-        mediaZonesView.zones = zones;
+        zoneDrawerWidget.configure();
+
+        zoneDrawerWidget.load();
+        // zoneDrawerWidget.config = { zones: zones };
     })()
 </script>
 

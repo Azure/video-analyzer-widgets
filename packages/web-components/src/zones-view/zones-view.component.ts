@@ -29,6 +29,7 @@ export class ZonesViewComponent extends FASTElement {
     private readonly LINE_WIDTH = 2;
 
     private zonesOptions: IZonesOptions;
+    private resizeObserver: ResizeObserver;
 
     public constructor() {
         super();
@@ -47,6 +48,13 @@ export class ZonesViewComponent extends FASTElement {
     public connectedCallback() {
         super.connectedCallback();
 
+        const parent = this.$fastController?.element?.parentElement;
+        this.resizeObserver = new ResizeObserver(() =>
+            window.requestAnimationFrame(() => {
+                this.resize();
+            })
+        );
+        this.resizeObserver.observe(parent);
         setTimeout(() => {
             this.init();
         });
@@ -54,8 +62,12 @@ export class ZonesViewComponent extends FASTElement {
 
     public disconnectedCallback() {
         super.disconnectedCallback();
+        if (this.zonesCanvas) {
+            this.shadowRoot.removeChild(this.zonesCanvas.canvas);
+            this.zonesCanvas = null;
+        }
 
-        window.removeEventListener('resize', this.resizeZonesView);
+        this.resizeObserver.disconnect();
     }
 
     private init() {
@@ -63,15 +75,15 @@ export class ZonesViewComponent extends FASTElement {
 
         this.zonesCanvas = new ZonesCanvas(this.zonesOptions);
         this.shadowRoot?.appendChild(this.zonesCanvas.canvas);
-
-        window.addEventListener('resize', this.resizeZonesView.bind(this));
     }
 
-    private resizeZonesView() {
+    private resize() {
         this.initZonesOptions();
 
-        this.zonesCanvas.zonesOptions = this.zonesOptions;
-        this.zonesCanvas.resize();
+        if (this.zonesCanvas) {
+            this.zonesCanvas.zonesOptions = this.zonesOptions;
+            this.zonesCanvas.resize();
+        }
     }
 
     private initZonesOptions() {

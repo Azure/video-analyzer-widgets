@@ -36,6 +36,7 @@ export class TimeRulerComponent extends FASTElement {
     private readonly DEFAULT_SCALE_COLOR = 'gray';
     private readonly DEFAULT_FONT_SIZE = '12px';
     private ruler: TimeRuler;
+    private resizeObserver: ResizeObserver;
 
     public startDateChanged() {
         setTimeout(() => {
@@ -51,17 +52,21 @@ export class TimeRulerComponent extends FASTElement {
 
     public connectedCallback() {
         super.connectedCallback();
+        const parent = this.$fastController?.element?.parentElement;
+        this.resizeObserver = new ResizeObserver(this.resizeRuler.bind(this));
+        this.resizeObserver.observe(parent || this.$fastController?.element);
         this.initRuler();
+    }
+
+    public disconnectedCallback() {
+        super.disconnectedCallback();
+        this.resizeObserver.disconnect();
     }
 
     public initRuler() {
         const rulerOptions = this.getRulerOptions();
         this.ruler = new TimeRuler(rulerOptions);
         this.$fastController.element.shadowRoot?.appendChild(this.ruler.canvas);
-
-        window.addEventListener('resize', () => {
-            this.resizeRuler();
-        });
 
         closestElement('ava-design-system-provider', this.$fastController.element)?.addEventListener(
             AvaDesignSystemProviderEvents.themeChanged,

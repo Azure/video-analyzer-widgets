@@ -24,6 +24,22 @@ A collection of widgets (web components) using Azure Video Analyzer platform cap
 
 ### Import
 
+##### Native JS usage:
+
+Import ava-widgets.js https://salmon-mushroom-072389f0f.azurestaticapps.net/scripts.js to your HTML file:
+
+```html live
+<head>
+    <script async type="”module”" src="./ava-widgets.js"></script>
+</head>
+```
+
+```html live
+<head>
+    <script async type="”module”" src="https://salmon-mushroom-072389f0f.azurestaticapps.net/scripts.js"></script>
+</head>
+```
+
 ##### Typescript usage:
 
 ```typescript
@@ -38,7 +54,7 @@ Creating using HTML:
 
 ```html live
   <body>
-	<ava-player><ava-player>
+	<ava-player widget="”920px”" height="”300px”"><ava-player>
   </body>
 ```
 
@@ -191,7 +207,7 @@ document.firstElementChild.appendChild(avaPlayer).
     3. Now we can start using widget. Replace the HTML template in your app.component.html, file with the following markup:
         ```html live
         <template>
-            <ava-player></ava-player>
+            <ava-player widget="”920px”" height="”300px”"></ava-player>
         </template>
         ```
         Alternatively, you can create a new instance of the widget using typescript, and add it to the DOM.
@@ -205,7 +221,7 @@ https://aka.ms/ava-widgets-demo
 ##### Typescript usage:
 
 ```typescript
-import { Player } from '@video-analyzer/widgets';
+import { ZoneDrawerWidget } from '@video-analyzer/widgets';
 ```
 
 ### Getting Started
@@ -226,7 +242,7 @@ Creating dynamically:
 
 ```html live
 <head>
-    <script async type="”module”" src="https://salmon-mushroom-072389f0f.azurestaticapps.net/scripts.js"></script>
+    <script async type="”module”" src="https://unpkg.com/@azure/video-analyzer-widgets"></script>
 </head>
 <body></body>
 <script>
@@ -245,3 +261,243 @@ import { ZoneDrawer } from '@video-analyzer/widgets';
 const zoneDrawer = new ZoneDrawer();
 document.firstElementChild.appendChild(zoneDrawer).
 ```
+
+### Properties
+
+| Name   | Type                    | Default | Description                         |
+| ------ | ----------------------- | ------- | ----------------------------------- |
+| width  | string                  | 100%    | Reflects the value of widget width  |
+| height | string                  | 100%    | Reflects the value of widget height |
+| config | IZoneDrawerWidgetConfig | null    | Widget configuration                |
+
+### Events
+
+| Name                    | Parameters | Description                                              |
+| ----------------------- | ---------- | -------------------------------------------------------- |
+| ZONE_DRAWER_ADDED_ZONE  | -          | Callback when user add line/polygon from zones list.     |
+| ONE_DRAWER_REMOVED_ZONE | -          | Callback when user removed line/polygon from zones list. |
+| ZONE_DRAWER_SAVE        | -          | Callback when user click save button.                    |
+
+### Methods
+
+| Name        | Parameters                             | Description                                                                                              |
+| ----------- | -------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| constructor | config: IZoneDrawerWidgetConfig = null | Widget constructor. If called with config, you don’t need to call _configure_ function                   |
+| configure   | config: IZoneDrawerWidgetConfig        | Update widget configuration.                                                                             |
+| load        | -                                      | Loads and initialize the widget according to provided configuration. If not called, widget will be empty |
+
+### Objects
+
+| Name | Description                                                                                                                                     | Examples                                                                                                                                                                                     |
+| ---- | ----------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Zone | The zone object contains x and y params. The coordinates are terminated by their relative position to the height and width the shape was drawn. | The zone area size is 400\*400 and the user set a coordinate on the top left corner 10 px from the top and 20 px from left. The zone coordinates, in that case, will be {x: 0.025, y: 0.05}. |
+
+### Code snippets:
+
+1.  _Basic usage snippet:_ create a zone draw widget with native JS code, configure the widget and load the data.
+
+    The zone drawer includes the ava-player as a video HTML element. The `<ava-player></ava-player>` is a **prerequisite** for the widget and it displays the video according to configuration.
+    For more information regarding ava-player, please see its documentation.
+
+    ```html live
+    <head>
+        <script async type="”module”" src="https://unpkg.com/@azure/video-analyzer-widgets"></script>
+    </head>
+    <body>
+        <ava-zone-drawer>
+            <ava-player widget="”920px”" height="”300px”"></ava-player>
+        </ava-zone-drawer>
+    </body>
+    <script>
+        (function () {
+            // Get zone drawer widget instance
+            const avaZoneDrawer = document.querySelector('ava-zone-drawer');
+
+            // Init draw-zone with zones object is optional
+            const zones = [
+                {
+                    id: '1',
+                    points: [
+                        {
+                            x: 0,
+                            y: 0
+                        },
+                        {
+                            x: 0.5,
+                            y: 0.5
+                        }
+                    ]
+                },
+                {
+                    id: '2',
+                    points: [
+                        {
+                            x: 0.9,
+                            y: 0.1
+                        },
+                        {
+                            x: 0.7,
+                            y: 0.8
+                        }
+                    ]
+                }
+            ];
+
+            // Configure widget with AVA API configuration
+            avaZoneDrawer.configure({
+                zones: zones
+            });
+
+            avaZoneDrawer.load();
+        })();
+    </script>
+    ```
+
+2.  _Dynamically creating the widget:_ create a widget dynamically with native JS code, without using configure function.
+
+    ```html live
+    <head>
+        <script async type="”module”" src="https://unpkg.com/@azure/video-analyzer-widgets"></script>
+    </head>
+    <body>
+        <div id="”widget-container”"></div>
+    </body>
+    <script>
+        (function () {
+            // Get widget container
+            const widgetContainer = document.querySelector('#widget-container');
+
+            // Init draw-zone with zones object is optional
+            const zones = [
+                {
+                    id: '1',
+                    points: [
+                        {
+                            x: 0,
+                            y: 0
+                        },
+                        {
+                            x: 0.5,
+                            y: 0.5
+                        }
+                    ]
+                },
+                {
+                    id: '2',
+                    points: [
+                        {
+                            x: 0.9,
+                            y: 0.1
+                        },
+                        {
+                            x: 0.7,
+                            y: 0.8
+                        }
+                    ]
+                }
+            ];
+
+            // Create new zone drawer widget
+            const zoneDrawer = new window.ava.widgets.zoneDrawer({ zones: zones });
+
+            widgetContainer.appendChild(zoneDrawer);
+
+            // Load the widget
+            zoneDrawer.load();
+        })();
+    </script>
+    ```
+
+3.  _Dynamically creating the widget:_ create a widget dynamically with native JS code. Add event listener to the widget.
+
+    ```html live
+    <head>
+        <script async type="”module”" src="https://unpkg.com/@azure/video-analyzer-widgets"></script>
+    </head>
+    <body>
+        <div id="”widget-container”"></div>
+    </body>
+    <script>
+        (function () {
+            // Get widget container
+            const widgetContainer = document.querySelector('#widget-container');
+
+            // Create new zone drawer widget
+            const zoneDrawer = new window.ava.widgets.zoneDrawer();
+
+            widgetContainer.appendChild(zoneDrawer);
+
+            // Load the widget
+            zoneDrawer.load();
+
+            // Add 'save' event listener when user click save button
+            zoneDrawer.addEventListener('ZONE_DRAWER_SAVE', (event) => {
+                /* The event includes zones array the user draw.
+                            Example: 
+                            [
+                                {
+                                    id: '1',
+                                    points: [
+                                        {
+                                            x: 0,
+                                            y: 0
+                                        },
+                                        {
+                                            x: 0.5,
+                                            y: 0.5
+                                        }
+                                    ]
+                                },
+                                {
+                                    id: '2',
+                                    points: [
+                                        {
+                                            x: 0.9,
+                                            y: 0.1
+                                        },
+                                        {
+                                            x: 0.7,
+                                            y: 0.8
+                                        }
+                                    ]
+                                }
+                            ] 
+                            The points x,y are determined by their relative position to the video width or height. */
+
+                const zones = event.details;
+            });
+        })();
+    </script>
+    ```
+
+4.  _Use ava-zone-drawer in your angular application:_
+
+5.  Go to your _src/main.ts_ file and add the following code:
+
+    ```typescript
+    import { ZoneDrawerWidget } from '@video-analyzer/widgets';
+
+    /*
+     * Ensure that tree-shaking doesn't remove this component from * the bundle.
+     * There are multiple ways to prevent tree shaking, of which this * is one.
+     */
+    ZoneDrawerWidget;
+    ```
+
+6.  To allow an NgModule to contain Non-Angular element names, add the following code in your application module typescript file _app.module.ts_:
+
+    ```typescript
+        import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+
+        @NgModule({
+            schemas: [CUSTOM_ELEMENTS_SCHEMA]
+        });
+    ```
+
+7.  Now we can start using widget. Replace the HTML template in your app.component.html, file with the following markup:
+    ```html live
+    <template>
+        <ava-zone-drawer></ava-zone-drawer>
+    </template>
+    ```
+    Alternatively, you can create a new instance of the widget using typescript, and add it to the DOM.

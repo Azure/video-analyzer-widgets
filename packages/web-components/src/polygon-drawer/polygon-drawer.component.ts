@@ -3,13 +3,15 @@ import { ICanvasOptions } from '../../../common/canvas/canvas.definitions';
 import { CursorTypes, DrawerEvents } from '../../../common/drawer-canvas/drawer-canvas.definitions';
 import { DrawerCanvas } from './../../../common/drawer-canvas/drawer-canvas.class';
 import { closestElement } from './../../../common/utils/elements';
+import { styles } from './polygon-drawer.style';
 
 /**
  * A polygon-drawer component.
  * @public
  */
 @customElement({
-    name: 'media-polygon-drawer'
+    name: 'media-polygon-drawer',
+    styles
 })
 export class PolygonDrawerComponent extends FASTElement {
     /**
@@ -22,12 +24,12 @@ export class PolygonDrawerComponent extends FASTElement {
     @attr public borderColor: string = '';
 
     /**
-      * Drawing fill polygon color.
-      *
-      * @public
-      * @remarks
-      * HTML attribute: fillColor
-      */
+     * Drawing fill polygon color.
+     *
+     * @public
+     * @remarks
+     * HTML attribute: fillColor
+     */
     @attr public fillColor: string = '';
 
     public dCanvas: DrawerCanvas;
@@ -38,6 +40,7 @@ export class PolygonDrawerComponent extends FASTElement {
     private readonly CURSOR_TYPE = CursorTypes.CROSSHAIR;
     private readonly LINE_WIDTH = 2;
     private readonly POINTS_LIMIT = 10;
+    private resizeObserver: ResizeObserver;
 
     public constructor() {
         super();
@@ -74,7 +77,7 @@ export class PolygonDrawerComponent extends FASTElement {
         this.dCanvas.canvas.removeEventListener('mousemove', this.dCanvas.onMouseMove.bind(this.dCanvas));
         this.dCanvas.canvas.removeEventListener('mouseup', this.dCanvas.onDraw.bind(this.dCanvas));
         this.dCanvas.canvas.removeEventListener(DrawerEvents.COMPLETE, this.onDrawComplete.bind(this));
-        window.removeEventListener('resize', this.resize);
+        this.resizeObserver.disconnect();
     }
 
     private init() {
@@ -109,8 +112,13 @@ export class PolygonDrawerComponent extends FASTElement {
         this.dCanvas.canvas.addEventListener('mousemove', this.dCanvas.onMouseMove.bind(this.dCanvas));
         this.dCanvas.canvas.addEventListener('mouseup', this.dCanvas.onDraw.bind(this.dCanvas));
         this.dCanvas.canvas.addEventListener(DrawerEvents.COMPLETE, this.onDrawComplete.bind(this));
-
-        window.addEventListener('resize', this.resize.bind(this));
+        const parent = this.$fastController?.element?.parentElement;
+        this.resizeObserver = new ResizeObserver(() =>
+            window.requestAnimationFrame(() => {
+                this.resize();
+            })
+        );
+        this.resizeObserver.observe(parent);
     }
 
     private resize() {
@@ -125,7 +133,6 @@ export class PolygonDrawerComponent extends FASTElement {
 
         this.dCanvas.initBoundingCanvas();
         this.dCanvas.resize();
-
     }
 
     private onDrawComplete() {

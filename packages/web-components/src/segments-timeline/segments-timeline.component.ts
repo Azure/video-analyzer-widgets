@@ -1,7 +1,7 @@
 import { attr, customElement, FASTElement } from '@microsoft/fast-element';
 import { cloneDeep } from 'lodash-es';
 import { EMPTY, fromEvent, Observable } from 'rxjs';
-import { debounceTime, distinctUntilChanged, filter, map } from 'rxjs/operators';
+import { distinctUntilChanged } from 'rxjs/operators';
 import { IChartData, IChartOptions } from './svg-progress-chart/svg-progress.definitions';
 import { SVGProgressChart } from './svg-progress-chart/svg-progress.class';
 import { ISegmentsTimelineConfig, IUISegment, IUISegmentEventData, SegmentsTimelineEvents } from './segments-timeline.definitions';
@@ -52,6 +52,8 @@ export class SegmentsTimelineComponent extends FASTElement {
     };
     private readonly DAY_DURATION_IN_SECONDS = 86400; // 60 (sec) * 60 (min) * 24 (hours)
 
+    private resizeObserver: ResizeObserver;
+
     public constructor(config: ISegmentsTimelineConfig) {
         super();
         this.config = config || this.emptyConfig;
@@ -75,10 +77,19 @@ export class SegmentsTimelineComponent extends FASTElement {
 
     public connectedCallback() {
         super.connectedCallback();
-        this.onResizeEventStream()?.subscribe(() => {
-            this.timelineProgress?.destroy();
-            this.initSVGProgress();
-        });
+        const parent = this.$fastController?.element?.parentElement;
+        this.resizeObserver = new ResizeObserver(() =>
+            window.requestAnimationFrame(() => {
+                this.resize();
+            })
+        );
+        this.resizeObserver.observe(parent || this.$fastController?.element);
+    }
+
+    public disconnectedCallback() {
+        super.disconnectedCallback();
+
+        this.resizeObserver?.disconnect();
     }
 
     public initSegmentsLine() {
@@ -151,21 +162,6 @@ export class SegmentsTimelineComponent extends FASTElement {
         }
         const source = fromEvent(window, 'message');
         return source.pipe(distinctUntilChanged());
-    }
-
-    public onResizeEventStream(minimum = 375, debounce = 100) {
-        if (!window) {
-            return null;
-        }
-        const source = fromEvent(window, 'resize');
-        return (
-            source
-                /* eslint-disable  @typescript-eslint/no-explicit-any */
-                .pipe(map((val: any) => val.target['innerWidth']))
-                .pipe(filter((val: any) => val > minimum))
-                .pipe(debounceTime(debounce))
-                .pipe(distinctUntilChanged())
-        );
     }
 
     public jumpToNextSegment(): boolean {
@@ -263,5 +259,10 @@ export class SegmentsTimelineComponent extends FASTElement {
                 });
             }
         });
+    }
+
+    private resize() {
+        this.timelineProgress?.destroy();
+        this.initSVGProgress();
     }
 }

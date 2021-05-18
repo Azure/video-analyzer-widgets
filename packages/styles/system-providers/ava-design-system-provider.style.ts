@@ -50,7 +50,7 @@ export const style = css`
         --accent-fill-active: var(--primary-hover);
         --accent-fill-hover: var(--primary-press);
         --accent-fill-rest: var(--primary);
-        --accent-foreground-cut-rest: #ffffff;
+        --accent-foreground-cut-rest: var(--primary-type);
         --neutral-fill-input-active: #3b3b3b;
         --neutral-fill-input-hover: #3b3b3b;
         --neutral-fill-input-rest: #3b3b3b;

@@ -31,6 +31,7 @@ export class LineDrawerComponent extends FASTElement {
     private readonly LINE_WIDTH = 2;
 
     private canvasOptions: ICanvasOptions;
+    private resizeObserver: ResizeObserver;
 
     public borderColorChanged() {
         if (this.canvasOptions) {
@@ -52,20 +53,20 @@ export class LineDrawerComponent extends FASTElement {
     }
 
     public resetLineDrawer() {
-        this.dCanvas.resize();
+        this.dCanvas?.resize();
     }
 
     public disconnectedCallback() {
-        this.dCanvas.canvas.removeEventListener('mousemove', this.dCanvas.onMouseMove.bind(this.dCanvas));
-        this.dCanvas.canvas.removeEventListener('mouseup', this.dCanvas.onDraw.bind(this.dCanvas));
-        this.dCanvas.canvas.removeEventListener(DrawerEvents.COMPLETE, this.onDrawComplete.bind(this));
-        window.removeEventListener('resize', this.resize);
+        this.dCanvas?.canvas.removeEventListener('mousemove', this.dCanvas.onMouseMove.bind(this.dCanvas));
+        this.dCanvas?.canvas.removeEventListener('mouseup', this.dCanvas.onDraw.bind(this.dCanvas));
+        this.dCanvas?.canvas.removeEventListener(DrawerEvents.COMPLETE, this.onDrawComplete.bind(this));
+        this.resizeObserver?.disconnect();
     }
 
     private init() {
-        const parent = this.$fastController.element.parentElement;
-        const width = parent.clientWidth || this.CANVAS_DEFAULT_WIDTH;
-        const height = parent.clientHeight || this.CANVAS_DEFAULT_HEIGHT;
+        const parent = this.$fastController.element?.parentElement;
+        const width = parent?.clientWidth || this.CANVAS_DEFAULT_WIDTH;
+        const height = parent?.clientHeight || this.CANVAS_DEFAULT_HEIGHT;
         const designSystem = closestElement('ava-design-system-provider', this.$fastController.element);
         const borderColor = designSystem ? getComputedStyle(designSystem)?.getPropertyValue('--drawer-default-line-color') : '';
         this.canvasOptions = {
@@ -92,7 +93,14 @@ export class LineDrawerComponent extends FASTElement {
         this.dCanvas.canvas.addEventListener('mousemove', this.dCanvas.onMouseMove.bind(this.dCanvas));
         this.dCanvas.canvas.addEventListener('mouseup', this.dCanvas.onDraw.bind(this.dCanvas));
         this.dCanvas.canvas.addEventListener(DrawerEvents.COMPLETE, this.onDrawComplete.bind(this));
-        window.addEventListener('resize', this.resize.bind(this));
+        const parent = this.$fastController?.element?.parentElement;
+
+        this.resizeObserver = new ResizeObserver(() =>
+            window.requestAnimationFrame(() => {
+                this.resize();
+            })
+        );
+        this.resizeObserver.observe(parent || this.$fastController?.element);
     }
 
     private resize() {

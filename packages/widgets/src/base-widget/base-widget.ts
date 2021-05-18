@@ -16,19 +16,14 @@ export class BaseWidget extends FASTElement {
         }
         this.width = config?.width || '100%';
         this.height = config?.height || '100%';
-
-        if (this._config) {
-            this.init();
-        }
     }
 
     public configure(config: IWidgetBaseConfig) {
         this._config = config;
         Logger.debugMode = !!this._config?.debug;
-        this.init();
     }
 
-    public render(): void {}
+    public load(): void {}
 
     protected init(): void {}
 
