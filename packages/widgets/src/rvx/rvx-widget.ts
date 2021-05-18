@@ -30,6 +30,9 @@ export class Player extends BaseWidget {
 
     public constructor(config: IAvaPlayerConfig) {
         super(config);
+        if (this.config) {
+            this.init();
+        }
     }
 
     public connectedCallback() {

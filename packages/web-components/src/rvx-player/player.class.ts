@@ -448,7 +448,7 @@ export class PlayerWrapper {
         if (this.timelineComponent) {
             let currentTime = extractRealTime(displayTime, this.timestampOffset);
 
-            const gapBeforeJump = 0; //3;
+            const gapBeforeJump = 0; // 3;
             // Check if we need to go to previous / next segment
             // Get mode - rewind or forward
             const playbackMode: number = this.player.getPlaybackRate();
