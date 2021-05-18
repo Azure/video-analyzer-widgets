@@ -19,12 +19,14 @@
     avaPlayer.addEventListener('TOKEN_EXPIRED', () => {
       console.log('token expired');
     });
+    avaPlayer.addEventListener('PLAYER_ERROR', (error) => {
+      console.log('player error', error);
+    });
     avaPlayer.configure({
       token: 'token',
       clientApiEndpointUrl: 'url',
       videoName: 'video-name'
     });
-
     avaPlayer.load();
   })()
 </script>

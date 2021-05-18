@@ -1,13 +1,15 @@
 import { attr, customElement, FASTElement, observable } from '@microsoft/fast-element';
 import { MediaApi } from '../../../common/services/media/media-api.class';
 import { IAvailableMediaResponse, IExpandedDate, Precision } from '../../../common/services/media/media.definitions';
-import { WidgetGeneralError } from '../../../widgets/src';
+import { HttpError } from '../../../common/utils/http.error';
+import { RVXEvents, WidgetGeneralError } from '../../../widgets/src';
 import { DatePickerComponent } from '../date-picker';
 import { DatePickerEvent, IDatePickerRenderEvent } from '../date-picker/date-picker.definitions';
 import { PlayerWrapper } from './player.class';
 import { ControlPanelElements, LiveState } from './rvx-player.definitions';
 import { styles } from './rvx-player.style';
 import { template } from './rvx-player.template';
+import { getPlayerErrorString } from './rvx-player.utils';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-expressions
 DatePickerComponent;
@@ -33,6 +35,7 @@ export class PlayerComponent extends FASTElement {
     @observable public currentAllowedMonths: string[] = [];
     @observable public currentAllowedYears: string[] = [];
     @observable public time = '';
+    @observable public errorString = '';
     @observable private currentYear: number = 0;
     @observable private currentMonth: number = 0;
     @observable private currentDay: number = 0;
@@ -174,9 +177,11 @@ export class PlayerComponent extends FASTElement {
         this.classList.remove('error');
     }
 
-    public handleError() {
+    public handleError(error: HttpError) {
         this.hasError = true;
+        this.errorString = getPlayerErrorString(error);
         this.classList.add('error');
+        this.$emit(RVXEvents.PLAYER_ERROR, error);
     }
 
     public disconnectedCallback() {
@@ -387,7 +392,7 @@ export class PlayerComponent extends FASTElement {
                 years: this.currentAllowedYears.toString()
             };
         } catch (error) {
-            this.handleError();
+            this.handleError(error);
             throw new WidgetGeneralError('Cannot parse available media');
         }
     }
@@ -424,7 +429,7 @@ export class PlayerComponent extends FASTElement {
                 }
             }
         } catch (error) {
-            this.handleError();
+            this.handleError(error);
             throw new WidgetGeneralError('Cannot parse available media');
         }
     }
@@ -465,7 +470,7 @@ export class PlayerComponent extends FASTElement {
                 }
             }
         } catch (error) {
-            this.handleError();
+            this.handleError(error);
             throw new WidgetGeneralError('Cannot parse available media');
         }
     }

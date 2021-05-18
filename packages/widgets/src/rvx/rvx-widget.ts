@@ -11,6 +11,7 @@ import { PlayerComponent } from '../../../web-components/src/rvx-player';
 import { ControlPanelElements, ISource } from '../../../web-components/src/rvx-player/rvx-player.definitions';
 import { Logger } from '../common/logger';
 import { AvaDesignSystemProvider } from '../../../styles';
+import { HttpError } from '../../../common/utils/http.error';
 
 AvaDesignSystemProvider;
 PlayerComponent;
@@ -113,7 +114,7 @@ export class Player extends BaseWidget {
             await AvaAPi.getVideo()
                 .then(async (videoInformation) => {
                     if (videoInformation.status >= 400 && videoInformation.status < 600) {
-                        this.handelFallback();
+                        this.handelFallback(new HttpError('API Error', videoInformation.status, videoInformation));
                     } else {
                         const response = await videoInformation.json();
                         // Init media API
@@ -125,14 +126,14 @@ export class Player extends BaseWidget {
                         rvxPlayer.init(true, '', this.allowedControllers);
                     }
                 })
-                .catch((error: Error) => {
+                .catch((error) => {
                     // eslint-disable-next-line no-console
                     console.log(error);
-                    this.handelFallback();
+                    this.handelFallback(error);
                 });
         } catch (error) {
             // console.log(error);
-            this.handelFallback();
+            this.handelFallback(error);
         }
     }
 
@@ -148,11 +149,11 @@ export class Player extends BaseWidget {
         this.allowedControllers = this.config.playerControllers;
     }
 
-    private handelFallback() {
+    private handelFallback(error: HttpError) {
         const rvxPlayer: PlayerComponent = this.shadowRoot.querySelector('rvx-player');
         rvxPlayer.cameraName = AvaAPi.videoName;
         rvxPlayer.init(true, '', this.allowedControllers);
-        rvxPlayer.handleError();
+        rvxPlayer.handleError(error);
     }
 
     private tokenExpiredCallback() {
