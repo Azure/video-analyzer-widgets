@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 import { BaseWidget } from '../base-widget';
 import { customElement, attr } from '@microsoft/fast-element';
-import { IAvaPlayerConfig, RVXEvents } from './definitions';
+import { IAvaPlayerConfig, PlayerEvents } from './definitions';
 import { TokenHandler } from '../../../common/services/auth/token-handler.class';
 import { AvaAPi } from '../../../common/services/auth/ava-api.class';
 import { MediaApi } from '../../../common/services/media/media-api.class';
@@ -157,6 +157,6 @@ export class Player extends BaseWidget {
     }
 
     private tokenExpiredCallback() {
-        this.$emit(RVXEvents.TOKEN_EXPIRED);
+        this.$emit(PlayerEvents.TOKEN_EXPIRED);
     }
 }

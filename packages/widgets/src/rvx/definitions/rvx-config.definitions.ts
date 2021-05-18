@@ -23,7 +23,7 @@ export interface IAvaPlayerConfig extends IWidgetBaseConfig {
     playerControllers?: ControlPanelElements[];
 }
 
-export enum RVXEvents {
+export enum PlayerEvents {
     TOKEN_EXPIRED = 'TOKEN_EXPIRED',
     PLAYER_ERROR = 'PLAYER_ERROR'
 }

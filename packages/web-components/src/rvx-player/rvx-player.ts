@@ -2,7 +2,7 @@ import { attr, customElement, FASTElement, observable } from '@microsoft/fast-el
 import { MediaApi } from '../../../common/services/media/media-api.class';
 import { IAvailableMediaResponse, IExpandedDate, Precision } from '../../../common/services/media/media.definitions';
 import { HttpError } from '../../../common/utils/http.error';
-import { RVXEvents, WidgetGeneralError } from '../../../widgets/src';
+import { PlayerEvents, WidgetGeneralError } from '../../../widgets/src';
 import { DatePickerComponent } from '../date-picker';
 import { DatePickerEvent, IDatePickerRenderEvent } from '../date-picker/date-picker.definitions';
 import { PlayerWrapper } from './player.class';
@@ -181,7 +181,7 @@ export class PlayerComponent extends FASTElement {
         this.hasError = true;
         this.errorString = getPlayerErrorString(error);
         this.classList.add('error');
-        this.$emit(RVXEvents.PLAYER_ERROR, error);
+        this.$emit(PlayerEvents.PLAYER_ERROR, error);
     }
 
     public disconnectedCallback() {

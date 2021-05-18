@@ -44,7 +44,7 @@ This will make your browser to import the needed code at runtime.
 
         ...
         <!-- Add Video Analyzer player web component -->
-        <script async type="module” src="https://unpkg.com/@azure/media-video-analyzer-widgets"></script>
+        <script async type="module" src="https://unpkg.com/@azure/video-analyzer-widgets"></script>
 
     </body>
 </html>
@@ -62,13 +62,13 @@ Same as you add native html tag.
 Optionally you can import the package yourself at build time, using `npm`. in order to do that please run
 
 ```bash
-npm install @azure/media-video-analyzer-widgets`
+npm install @azure/video-analyzer-widgets`
 ```
 
 After you have installed the widgets package you can easily import it within your application code, and start using it
 
 ```typescript
-import { Player } from '@azure/media-video-analyzer-widgets';
+import { Player } from '@azure/video-analyzer-widgets';
 
 const avaPlayer = new Player();
 document.firstElementChild.appendChild(avaPlayer).
