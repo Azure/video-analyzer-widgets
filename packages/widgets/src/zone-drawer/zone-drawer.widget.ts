@@ -35,7 +35,6 @@ import { Logger } from '../common/logger';
     styles
 })
 export class ZoneDrawerWidget extends BaseWidget {
-    @attr({ mode: 'fromView' })
     public config: IZoneDrawerWidgetConfig = {};
 
     @observable
