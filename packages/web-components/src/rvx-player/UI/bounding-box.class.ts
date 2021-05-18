@@ -85,9 +85,14 @@ export class BoundingBoxDrawer extends CanvasElement {
         this.context.globalCompositeOperation = 'destination-over';
         this.context.save();
         this.clear();
-        this.canvas.width = this.video.clientWidth * this.ratio;
-        this.canvas.height = this.video.clientHeight * this.ratio;
+        const videoRatio = this.video.videoWidth / this.video.videoHeight;
+        this.setCanvasSize(this.video.clientWidth, this.video.clientWidth / videoRatio);
         this.setContextStyle();
+        this.canvas.style.marginTop = '0';
+        if (window.document?.fullscreenElement) {
+            const paddingTop = (this.video.clientHeight - this.video.clientWidth / videoRatio) / 2;
+            this.canvas.style.marginTop = `${paddingTop}px`;
+        }
 
         // take current time
         const currentTime = this.video.currentTime;
