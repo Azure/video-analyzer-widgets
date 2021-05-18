@@ -151,8 +151,8 @@ export class PlayerWrapper {
     }
 
     private updateControlsClassList() {
-        this.controls.controlsContainer_.classList.add(this.isLive ? LiveState.ON : LiveState.OFF);
-        this.controls.controlsContainer_.classList.remove(this.isLive ? LiveState.OFF : LiveState.ON);
+        this.controls?.controlsContainer_?.classList.add(this.isLive ? LiveState.ON : LiveState.OFF);
+        this.controls?.controlsContainer_?.classList.remove(this.isLive ? LiveState.OFF : LiveState.ON);
     }
 
     private removeTimelineComponent() {

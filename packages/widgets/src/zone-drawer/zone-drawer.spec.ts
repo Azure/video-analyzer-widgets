@@ -65,6 +65,7 @@ describe('ZoneDrawerWidget', () => {
         const el = await fixture<ZoneDrawerWidget>(html`<ava-zone-drawer></ava-zone-drawer>`);
 
         el.config = configWithZones;
+        el.load();
         setTimeout(() => {
             expect(el.zones.length).to.equal(zones.length);
         });
@@ -74,6 +75,7 @@ describe('ZoneDrawerWidget', () => {
         const el = await fixture<ZoneDrawerWidget>(html`<ava-zone-drawer></ava-zone-drawer>`);
 
         el.config = configWithZones;
+        el.load();
         setTimeout(() => {
             const labelsList = el.shadowRoot.querySelector('.labels-list');
             expect(labelsList.childElementCount).to.equal(zones.length);
@@ -84,6 +86,7 @@ describe('ZoneDrawerWidget', () => {
         const el = await fixture<ZoneDrawerWidget>(html`<ava-zone-drawer></ava-zone-drawer>`);
 
         const isLineDrawMode = el.isLineDrawMode;
+        el.load();
         el.toggleDrawerMode();
         expect(el.isLineDrawMode).to.equal(!isLineDrawMode);
     });
