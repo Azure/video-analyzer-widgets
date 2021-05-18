@@ -1,4 +1,4 @@
-import { customElement, attr, observable } from '@microsoft/fast-element';
+import { customElement, observable } from '@microsoft/fast-element';
 import { DrawerEvents, IPoint } from '../../../common/drawer-canvas/drawer-canvas.definitions';
 import { guid } from '../../../common/utils/guid';
 import { DrawingColors } from '../../../styles/system-providers/ava-design-system-provider.definitions';
@@ -35,7 +35,6 @@ import { Logger } from '../common/logger';
     styles
 })
 export class ZoneDrawerWidget extends BaseWidget {
-    public config: IZoneDrawerWidgetConfig = {};
 
     @observable
     public zones: IZone[] = [];
@@ -49,6 +48,8 @@ export class ZoneDrawerWidget extends BaseWidget {
     public isLineDrawMode = true;
     @observable
     public isLabelsListEmpty = true;
+
+    public config: IZoneDrawerWidgetConfig = {};
 
     private readonly MAX_ZONES = 10;
 
