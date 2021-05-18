@@ -106,16 +106,16 @@ export class ActionsMenuComponent extends FASTElement {
         // Checking opening directions
         // Checking top / bottom opening
         if (window.innerHeight < boundingClientRect.bottom + fastMenuClientRect?.height) {
-            this.fastMenu.style.bottom = `30px`;
+            this.fastMenu.style.bottom = '30px';
         } else {
             this.fastMenu.style.bottom = 'auto';
         }
 
         // Checking left / right opening
         if (boundingClientRect.left + boundingClientRect.width < boundingClientRect.left + fastMenuClientRect?.width) {
-            this.fastMenu.style.right = `0px`;
+            this.fastMenu.style.right = '0px';
         } else {
-            this.fastMenu.style.right = `auto`;
+            this.fastMenu.style.right = 'auto';
         }
 
         this.fastMenu.style.visibility = 'visible';

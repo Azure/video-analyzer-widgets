@@ -135,24 +135,6 @@ export class ZoneDrawerWidget extends BaseWidget {
                 this.addZone(zone);
             }
         }
-
-        this.initPlayer();
-    }
-
-    private initPlayer() {
-        if (this.player) {
-            // this.player.updateAvailableControllers([
-            //     ControlPanelElements.REWIND,
-            //     ControlPanelElements.PLAY_PAUSE,
-            //     ControlPanelElements.FAST_FORWARD,
-            //     ControlPanelElements.MUTE,
-            //     ControlPanelElements.VOLUME,
-            //     ControlPanelElements.PREVIOUS_DAY,
-            //     ControlPanelElements.NEXT_DAY,
-            //     ControlPanelElements.HOURS_LABEL,
-            //     ControlPanelElements.SPACER
-            // ]);
-        }
     }
 
     private initZoneDrawComponents() {
