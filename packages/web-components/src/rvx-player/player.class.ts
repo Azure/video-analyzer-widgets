@@ -293,13 +293,8 @@ export class PlayerWrapper {
             manifest: {
                 defaultPresentationDelay: 6
             },
-            //   streaming: {
-            //     bufferingGoal: 30,
-            //     jumpLargeGaps: true,
-            //     gapDetectionThreshold: 0.5
-            //   },
-
             streaming: {
+                bufferingGoal: 30,
                 jumpLargeGaps: true,
                 gapDetectionThreshold: 0.5
             }
@@ -450,18 +445,19 @@ export class PlayerWrapper {
         if (this.timelineComponent) {
             let currentTime = extractRealTime(displayTime, this.timestampOffset);
 
+            const gapBeforeJump = 3;
             // Check if we need to go to previous / next segment
             // Get mode - rewind or forward
             const playbackMode: number = this.player.getPlaybackRate();
             if (
                 playbackMode > 0 &&
-                (currentTime === this.currentSegment?.endSeconds || currentTime >= this.currentSegment?.endSeconds - 3)
+                (currentTime === this.currentSegment?.endSeconds || currentTime >= this.currentSegment?.endSeconds - gapBeforeJump)
             ) {
                 // Get next segment time
                 currentTime = this.timelineComponent.getNextSegmentTime() || currentTime;
             } else if (
                 playbackMode < 0 &&
-                (currentTime === this.currentSegment?.startSeconds || currentTime <= this.currentSegment?.startSeconds - 3)
+                (currentTime === this.currentSegment?.startSeconds || currentTime <= this.currentSegment?.startSeconds - gapBeforeJump)
             ) {
                 // Get prev segment time
                 currentTime = this.timelineComponent.getPreviousSegmentTime(false) || currentTime;
