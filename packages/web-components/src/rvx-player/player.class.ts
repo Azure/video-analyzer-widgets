@@ -19,12 +19,12 @@ const shaka = require('shaka-player/dist/shaka-player.ui.debug.js');
 TimelineComponent;
 
 export class PlayerWrapper {
+    public player: shaka_player.Player = Object.create(null);
     private isLive = false;
     private isLoaded = false;
     private duringSegmentJump = false;
     private _accessToken = '';
     private _mimeType: MimeType;
-    private player: shaka_player.Player = Object.create(null);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private controls: any;
     private _allowCrossCred = true;

@@ -35,6 +35,22 @@ export class Player extends BaseWidget {
         }
     }
 
+    public setDebugMode(state: boolean) {
+        if (this._config) {
+            this._config.debug = state;
+        }
+        Logger.debugMode = state;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    public get shakaPlayer(): any {
+        const rvxPlayer: PlayerComponent = this.shadowRoot.querySelector('rvx-player');
+        if (rvxPlayer) {
+            return rvxPlayer.player?.player;
+        }
+        return null;
+    }
+
     public connectedCallback() {
         super.connectedCallback();
         this.validateOrAddDesignSystem();
