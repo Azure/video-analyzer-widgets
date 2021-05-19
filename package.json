@@ -1,7 +1,7 @@
 {
     "name": "@azure/video-analyzer-widgets",
-    "version": "0.4.1-beta",
-    "description": "",
+    "version": "0.4.2",
+    "description": "A collection of widgets (web components) using Azure Video Analyzer platform capabilities and APIs",
     "main": "./dist/ava-widgets.min.js",
     "typings": "./dist/index.d.ts",
     "scripts": {
@@ -22,7 +22,7 @@
         "build:stats": "webpack --mode=production --profile --json > dist/stats.json"
     },
     "keywords": [],
-    "author": "mediafront",
+    "author": "Microsoft Azure",
     "license": "MIT",
     "devDependencies": {
         "@babel/core": "^7.12.10",
