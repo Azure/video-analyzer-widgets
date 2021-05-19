@@ -33,7 +33,7 @@ steps:
       inputs:
           command: 'custom'
           workingDir: './'
-          customCommand: 'run build'
+          customCommand: 'run build:prod'
     - task: CopyFiles@2
       displayName: 'Copy artifacts to dist'
       inputs:
