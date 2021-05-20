@@ -54,6 +54,8 @@ export class ZoneDrawerWidget extends BaseWidget {
     public isLineDrawMode = true;
     @observable
     public isLabelsListEmpty = true;
+    @observable
+    public disableDrawing = false;
 
     public config: IZoneDrawerWidgetConfig = {};
 
@@ -83,12 +85,6 @@ export class ZoneDrawerWidget extends BaseWidget {
             })
         );
         this.resizeObserver.observe(parent || this.$fastController?.element);
-        this.$fastController?.element?.addEventListener(LayerLabelEvents.labelActionClicked, this.labelActionClicked.bind(this));
-        this.$fastController?.element?.addEventListener(
-            LayerLabelEvents.labelTextChanged,
-            // eslint-disable-next-line no-undef
-            this.labelTextChanged.bind(this) as EventListener
-        );
     }
 
     public disconnectedCallback() {
@@ -99,8 +95,17 @@ export class ZoneDrawerWidget extends BaseWidget {
 
     public load() {
         if (this.isReady) {
+            this.zones = [];
             this.initZoneDrawComponents();
+            this.removeAllLabels();
+            this.labelListIndex = 1;
             this.init();
+        }
+    }
+
+    public removeAllLabels() {
+        while (this.labelsList?.firstElementChild) {
+            this.removeLabel(this.labelsList.firstElementChild.id);
         }
     }
 
@@ -130,6 +135,10 @@ export class ZoneDrawerWidget extends BaseWidget {
     protected init() {
         this.isDirty = false;
 
+        if (this.zonesView?.zones?.length) {
+            this.zonesView.zones = [];
+        }
+
         if (this.zones.length) {
             this.zonesView.zones = [...this.zones];
             this.isLabelsListEmpty = false;
@@ -140,6 +149,8 @@ export class ZoneDrawerWidget extends BaseWidget {
                 this.addZone(zone);
             }
         }
+
+        this.disableDrawing = !!this.config?.disableDrawing;
     }
 
     private initZoneDrawComponents() {
@@ -243,7 +254,9 @@ export class ZoneDrawerWidget extends BaseWidget {
         };
 
         this.zones.push(zone);
-        this.zonesView.zones = [...this.zones];
+        if (this.zonesView) {
+            this.zonesView.zones = [...this.zones];
+        }
 
         if (this.lineDrawer) {
             this.lineDrawer.borderColor = this.getNextColor();
@@ -313,12 +326,15 @@ export class ZoneDrawerWidget extends BaseWidget {
 
     private removeLabel(id: string) {
         const li = this.shadowRoot.getElementById(id);
-        const layerLabel = <LayerLabelComponent>li.querySelector('media-layer-label');
-        // eslint-disable-next-line no-undef
-        layerLabel.removeEventListener(LayerLabelEvents.labelActionClicked, this.labelActionClicked as EventListener);
-        // eslint-disable-next-line no-undef
-        layerLabel.removeEventListener(LayerLabelEvents.labelTextChanged, this.labelTextChanged as EventListener);
-        this.labelsList.removeChild(li);
+        if (li) {
+            const layerLabel = <LayerLabelComponent>li.querySelector('media-layer-label');
+            // eslint-disable-next-line no-undef
+            layerLabel?.removeEventListener(LayerLabelEvents.labelActionClicked, this.labelActionClicked as EventListener);
+            // eslint-disable-next-line no-undef
+            layerLabel?.removeEventListener(LayerLabelEvents.labelTextChanged, this.labelTextChanged as EventListener);
+
+            this.labelsList.removeChild(li);
+        }
     }
 
     private getLabelConfig(zone: IZone): ILayerLabelConfig {

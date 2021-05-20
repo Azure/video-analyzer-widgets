@@ -52,6 +52,7 @@ export class PlayerWrapper {
         private timeUpdateCallback: (time: string) => void,
         private isLiveCallback: (isLive: boolean) => void,
         private changeDayCallBack: (isNext: boolean) => void,
+        private errorCallback: (error: shaka_player.PlayerEvents.ErrorEvent) => void,
         private allowedControllers: ControlPanelElements[]
     ) {
         // Install built-in polyfills to patch browser incompatibilities.
@@ -176,6 +177,11 @@ export class PlayerWrapper {
         // this.controls.elements_[5].button_.classList.add(this.isLive ? 'live-on' : 'live-off');
         // this.controls.elements_[5].button_.classList.remove(this.isLive ? 'live-off' : 'live-on');
         this.updateControlsClassList();
+    }
+
+    public retryStreaming() {
+        this.player.retryStreaming();
+        this.play();
     }
 
     private updateControlsClassList() {
@@ -486,5 +492,8 @@ export class PlayerWrapper {
         // Extract the shaka.util.Error object from the event.
         // eslint-disable-next-line no-console
         Logger.log(event.detail);
+        if (this.errorCallback) {
+            this.errorCallback(event);
+        }
     }
 }

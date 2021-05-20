@@ -55,9 +55,7 @@ export class ZonesViewComponent extends FASTElement {
             })
         );
         this.resizeObserver.observe(parent);
-        setTimeout(() => {
-            this.init();
-        });
+        this.init();
     }
 
     public disconnectedCallback() {
