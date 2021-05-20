@@ -200,17 +200,23 @@ export class OverflowMenu extends shaka.ui.OverflowMenu {
 }
 
 export class LiveButton extends shaka.ui.Element {
+    public isLiveButton = true;
     private isLive = true;
     public constructor(parent: any, controls: any, private callBack: (isLive: boolean) => void) {
         super(parent, controls);
         this.init();
     }
 
+    public updateLiveState(isLive: boolean) {
+        this.isLive = isLive;
+        this.button_.classList.add(this.isLive ? 'live-on' : 'live-off');
+        this.button_.classList.remove(this.isLive ? 'live-off' : 'live-on');
+    }
+
     private init() {
         this.button_ = document.createElement('fast-button');
         this.button_.innerHTML = '<b>LIVE</b>';
         this.button_.classList.add('live-button-component');
-        this.button_.classList.add('live-on');
         this.parent.appendChild(this.button_);
         setElementTooltip(this.button_, ControlPanelElementsTooltip.LIVE);
 
@@ -334,6 +340,7 @@ export class NextSegment extends shaka.ui.Element {
         this.svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         this.path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
 
+        this.button_.classList.add('next-segment-button');
         this.path.setAttribute('d', SKIP_NEXT_PATH);
         this.svg.appendChild(this.path);
         this.button_.appendChild(this.svg);
@@ -356,6 +363,7 @@ export class PrevSegment extends shaka.ui.Element {
         this.svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         this.path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
 
+        this.button_.classList.add('prev-segment-button');
         this.path.setAttribute('d', SKIP_PREV_PATH);
         this.svg.appendChild(this.path);
         this.button_.appendChild(this.svg);

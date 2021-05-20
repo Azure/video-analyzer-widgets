@@ -49,6 +49,7 @@ export class PlayerComponent extends FASTElement {
     private videoContainer!: HTMLElement;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private allowedDates: any = [];
+    private hasLiveData = false;
     private afterInit = false;
     private connected = false;
 
@@ -137,11 +138,25 @@ export class PlayerComponent extends FASTElement {
         // Select the last recorded date
         const date = new Date(Date.UTC(this.currentYear, this.currentMonth - 1, this.currentDay));
 
+        // If the last recorded day is today - try switch to live
+        const today = new Date();
+        this.isLive =
+            date.getUTCFullYear() === today.getUTCFullYear() &&
+            date.getUTCMonth() === today.getUTCMonth() &&
+            date.getUTCDate() === today.getUTCDate();
+
+        this.hasLiveData = this.isLive;
+
+        // If there is no live data - remove live button
+        if (!this.hasLiveData) {
+            this.classList.add('no-live-data');
+        }
+
         this.afterInit = true;
 
         this.currentDate = date;
         this.datePickerComponent.inputDate = date.toUTCString();
-        this.updateVODStream();
+        this.updateVODStream(false, true);
     }
 
     public cameraNameChanged() {
@@ -209,7 +224,7 @@ export class PlayerComponent extends FASTElement {
                 this.currentYear = this.currentDate.getUTCFullYear();
                 this.currentMonth = this.currentDate.getUTCMonth() + 1;
                 this.currentDay = this.currentDate.getUTCDate();
-                this.updateVODStream();
+                this.updateVODStream(true);
             }
             // eslint-disable-next-line no-undef
         }) as EventListener);
@@ -290,7 +305,7 @@ export class PlayerComponent extends FASTElement {
         // eslint-disable-next-line no-console
         if (segments) {
             this.currentDay++;
-            this.updateVODStream();
+            this.updateVODStream(true);
         }
     }
 
@@ -313,7 +328,7 @@ export class PlayerComponent extends FASTElement {
         // eslint-disable-next-line no-console
         if (segments) {
             this.currentDay--;
-            this.updateVODStream();
+            this.updateVODStream(true);
         }
     }
 
@@ -338,7 +353,7 @@ export class PlayerComponent extends FASTElement {
         }
     }
 
-    private async updateVODStream() {
+    private async updateVODStream(forceVOD: boolean = false, init = false) {
         if (!this.afterInit) {
             return;
         }
@@ -359,17 +374,42 @@ export class PlayerComponent extends FASTElement {
             end: end
         });
 
+        this.liveStream = MediaApi.getLiveStream();
+
+        this.isLive = this.hasLiveData ? !forceVOD : false;
         // Get segments
         const segments = await this.fetchAvailableSegments(start, end);
         // Switch to VOD
         if (this.player) {
             this.player.availableSegments = segments;
             this.player.vodStream = this.vodStream;
-            this.player.toggleLiveMode(false);
+            this.player.liveStream = this.liveStream;
+            const isStreamLive = await this.player.toggleLiveMode(this.isLive);
+            // If we loaded the live stream at first time, update has live data
+            if (init && this.isLive) {
+                await this.updateLiveStateAfterStreamLoad(isStreamLive);
+            }
         }
-        this.isLive = false;
         this.classList.add(this.isLive ? 'live-on' : 'live-off');
         this.classList.remove(!this.isLive ? 'live-on' : 'live-off');
+    }
+
+    private async updateLiveStateAfterStreamLoad(isStreamLive: boolean) {
+        // If the live stream is real on - keep the existing state
+        if (isStreamLive) {
+            this.hasLiveData = true;
+            return;
+        }
+
+        // There is no live mode available - remove all live state
+        this.hasLiveData = false;
+        this.isLive = false;
+
+        // Remove live button
+        this.classList.add('no-live-data');
+
+        // Load vod stream
+        await this.player.toggleLiveMode(this.isLive);
     }
 
     private async fetchAvailableYears() {

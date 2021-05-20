@@ -28,7 +28,7 @@ export class AVAPlayerUILayer {
             ControlPanelElements.PLAY_PAUSE,
             ControlPanelElements.FAST_FORWARD,
             ControlPanelElements.NEXT_SEGMENT,
-            // 'live', // TODO : add after RTSP plugin
+            ControlPanelElements.LIVE,
             ControlPanelElements.MUTE,
             ControlPanelElements.VOLUME,
             ControlPanelElements.PREVIOUS_DAY,
@@ -123,6 +123,8 @@ export class AVAPlayerUILayer {
         LiveButtonFactory.callBack = async (isLive: boolean) => {
             this.toggleLiveMode(isLive);
         };
+
+        this.shaka.ui.Controls.registerElement(ControlPanelElements.LIVE, new LiveButtonFactory());
 
         BodyTrackingButtonFactory.callBack = (isOn: boolean) => {
             this.toggleBodyTracking(isOn);
