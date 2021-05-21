@@ -164,7 +164,9 @@ export class Player extends BaseWidget {
 
         AvaAPi.clientApiEndpointUrl = this.config?.clientApiEndpointUrl;
         AvaAPi.videoName = this.config?.videoName;
-        Logger.debugMode = !!this._config?.debug;
+        if (this._config?.debug !== undefined) {
+            Logger.debugMode = !!this._config?.debug;
+        }
         this.allowedControllers = this.config.playerControllers;
     }
 
