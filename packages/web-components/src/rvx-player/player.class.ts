@@ -40,6 +40,7 @@ export class PlayerWrapper {
     private _availableSegments: IAvailableMediaResponse = null;
     private currentSegment: IUISegment = null;
     private isPlaying: boolean = false;
+    private _stallDetectionTimer: number | null = null;
 
     private readonly OFFSET_MULTIPLAYER = 1000;
     private readonly SECONDS_IN_HOUR = 3600;
@@ -153,6 +154,11 @@ export class PlayerWrapper {
         this.video?.removeEventListener('stalled', this.onStalled.bind(this));
         this.video?.removeEventListener('suspend', this.onSuspend.bind(this));
         this.video?.removeEventListener('waiting', this.onWaiting.bind(this));
+
+        if (this._stallDetectionTimer !== null) {
+            window.clearInterval(this._stallDetectionTimer);
+            this._stallDetectionTimer = null;
+        }
 
         // Remove BB
         if (this.boundingBoxesDrawer) {
@@ -361,6 +367,43 @@ export class PlayerWrapper {
         this.video.addEventListener('stalled', this.onStalled.bind(this));
         this.video.addEventListener('suspend', this.onSuspend.bind(this));
         this.video.addEventListener('waiting', this.onWaiting.bind(this));
+
+        // Install stall detection
+        let prevPosition = -1;
+        let consecutiveStalls = 0;
+        const stallIntervalMs = 3000;
+        this._stallDetectionTimer = window.setInterval(() => {
+            const video = this.player.getMediaElement() as HTMLMediaElement;
+            const currPosition = video.currentTime;
+            let newPrevPosition = currPosition;
+            if (Math.abs(currPosition - prevPosition) <= 0.001 && !video.paused) {
+                if (consecutiveStalls >= 10) {
+                    Logger.log(`STALL DETECTED: Too many consecutive stalls (${consecutiveStalls}), seeking in place.`);
+                    video.currentTime += 0;
+                } else if (!this.player.isBuffering() || video.readyState == 4) {
+                    Logger.log(`STALL DETECTED: video.currentTime=${currPosition} did not change for ` +
+                        `${stallIntervalMs} milliseconds, shaka.isBuffering=${this.player.isBuffering()}, ` +
+                        `video.readyState=${video.readyState}, consecutiveStalls=${consecutiveStalls}.`);
+                    video.currentTime += 1;
+                } else if (this.player.isLive()) {
+                    const liveToleranceBand = 30;
+                    const seekEnd = this.player.seekRange().end;
+                    const consecutiveStallTime = (consecutiveStalls + 2) * (stallIntervalMs / 1000.0);
+                    const wasAtLive = currPosition + consecutiveStallTime + liveToleranceBand >= seekEnd;
+                    const shouldSeekToLive = consecutiveStalls >= 2;
+                    Logger.log(`LIVE STALL DETECTED: video.currentTime=${currPosition}, seekRange().end=${seekEnd}, ` +
+                        `consecutiveStalls=${consecutiveStalls}, wasAtLive=${wasAtLive}, shouldSeekToLive=${shouldSeekToLive}.`);
+                    if (wasAtLive && shouldSeekToLive) {
+                        video.currentTime = seekEnd;
+                        newPrevPosition = seekEnd;
+                    }
+                }
+                consecutiveStalls += 1;
+            } else {
+                consecutiveStalls = 0;
+            }
+            prevPosition = newPrevPosition;
+        }, stallIntervalMs);
 
         // Add bounding box drawer
         const options: ICanvasOptions = {
