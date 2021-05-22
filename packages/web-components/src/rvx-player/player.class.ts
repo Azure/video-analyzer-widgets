@@ -142,6 +142,18 @@ export class PlayerWrapper {
         this.video?.removeEventListener('play', this.onPlaying.bind(this));
         this.video?.removeEventListener('pause', this.onPause.bind(this));
 
+        // Log media events to improve the usefulness of the logs (both Shaka and video)
+        this.player?.removeEventListener('onstatechange', this.onStateChange.bind(this));
+        this.player?.removeEventListener('onstateidle', this.onStateIdle.bind(this));
+        this.player?.removeEventListener('buffering', this.onBuffering.bind(this));
+        this.player?.removeEventListener('loading', this.onLoading.bind(this));
+        this.player?.removeEventListener('loaded', this.onLoaded.bind(this));
+        this.player?.removeEventListener('unloading', this.onUnloading.bind(this));
+        this.player?.removeEventListener('largegap', this.onLargeGap.bind(this));
+        this.video?.removeEventListener('stalled', this.onStalled.bind(this));
+        this.video?.removeEventListener('suspend', this.onSuspend.bind(this));
+        this.video?.removeEventListener('waiting', this.onWaiting.bind(this));
+
         // Remove BB
         if (this.boundingBoxesDrawer) {
             this.removeBoundingBoxLayer();
@@ -338,6 +350,18 @@ export class PlayerWrapper {
         this.video.addEventListener('timeupdate', this.onTimeSeekUpdate.bind(this));
         this.video.addEventListener('loadeddata', this.onLoadedData.bind(this));
 
+        // Log media events to improve the usefulness of the logs (both Shaka and video)
+        this.player.addEventListener('onstatechange', this.onStateChange.bind(this));
+        this.player.addEventListener('onstateidle', this.onStateIdle.bind(this));
+        this.player.addEventListener('buffering', this.onBuffering.bind(this));
+        this.player.addEventListener('loading', this.onLoading.bind(this));
+        this.player.addEventListener('loaded', this.onLoaded.bind(this));
+        this.player.addEventListener('unloading', this.onUnloading.bind(this));
+        this.player.addEventListener('largegap', this.onLargeGap.bind(this));
+        this.video.addEventListener('stalled', this.onStalled.bind(this));
+        this.video.addEventListener('suspend', this.onSuspend.bind(this));
+        this.video.addEventListener('waiting', this.onWaiting.bind(this));
+
         // Add bounding box drawer
         const options: ICanvasOptions = {
             height: this.video.clientHeight,
@@ -512,7 +536,47 @@ export class PlayerWrapper {
         // eslint-disable-next-line no-console
         Logger.log(event.detail);
         if (this.errorCallback) {
-            this.errorCallback(event);
+            Logger.log(`onErrorEvent: ${event.detail}`);
         }
+    }
+
+    private onStateChange(event: shaka_player.PlayerEvents.StateChangeEvent) {
+        Logger.log(`onStateChange: ${event.state}`);
+    }
+
+    private onStateIdle(event: shaka_player.PlayerEvents.StateIdleEvent) {
+        Logger.log(`onStateIdle: ${event.state}`);
+    }
+
+    private onBuffering(event: shaka_player.PlayerEvents.BufferingEvent) {
+        Logger.log(`onBuffering: ${event.buffering}`);
+    }
+
+    private onLoading(event: shaka_player.PlayerEvents.LoadingEvent) {
+        Logger.log(`onLoading: ${event.type}`);
+    }
+
+    private onLoaded(event: shaka_player.PlayerEvents.LoadedEvent) {
+        Logger.log(`onLoaded: ${event.type}`);
+    }
+
+    private onUnloading(event: shaka_player.PlayerEvents.UnloadingEvent) {
+        Logger.log(`onUnloading: ${event.type}`);
+    }
+
+    private onLargeGap(event: shaka_player.PlayerEvents.LargeGapEvent) {
+        Logger.log(`onLargeGap: type=${event.type}, currentTime=${event.currentTime}, gapSize=${event.gapSize}`);
+    }
+
+    private onStalled(event: Event) {
+        Logger.log(`onStalled: ${JSON.stringify(event)}`);
+    }
+
+    private onSuspend(event: Event) {
+        Logger.log(`onSuspend: ${JSON.stringify(event)}`);
+    }
+
+    private onWaiting(event: Event) {
+        Logger.log(`onWaiting: type=${event.type}, timeStamp=${event.timeStamp}`);
     }
 }
