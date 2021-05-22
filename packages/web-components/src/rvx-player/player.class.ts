@@ -13,7 +13,7 @@ import { AVAPlayerUILayer } from './UI/ava-ui-layer.class';
 import { BoundingBoxDrawer } from './UI/bounding-box.class';
 import { extractRealTime } from './UI/time.utils';
 import { createTimelineSegments } from './UI/timeline.utils';
-const shaka = require('shaka-player/dist/shaka-player.ui.debug.js');
+import { shaka } from './index';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-expressions
 TimelineComponent;

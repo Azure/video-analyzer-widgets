@@ -14,9 +14,9 @@ import {
     SKIP_PREV_PATH
 } from '../../../../styles/svg/svg.shapes';
 import { ControlPanelElementsTooltip } from '../rvx-player.definitions';
+import { shaka } from '../index';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-const shaka = require('shaka-player/dist/shaka-player.ui.debug.js');
 
 export class PlayButton extends shaka.ui.PlayButton {
     private svg: SVGSVGElement;
