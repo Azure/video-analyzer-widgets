@@ -212,8 +212,7 @@ export class LiveButton extends shaka.ui.Element {
         this.button_.classList.add(this.isLive ? 'live-on' : 'live-off');
         this.button_.classList.remove(this.isLive ? 'live-off' : 'live-on');
         const label = this.isLive ? 'Switch to VOD' : 'Switch to live';
-        this.button_.setAttribute('title', label);
-        this.button_.setAttribute('aria-label', label);
+        setElementTooltip(this.button_, label);
     }
 
     private init() {
@@ -238,8 +237,7 @@ export class NextDayButton extends shaka.ui.Element {
 
     private init() {
         this.button_ = document.createElement('fast-button');
-        this.button_.setAttribute('title', 'Next recorded day');
-        this.button_.setAttribute('aria-label', 'Next recorded day');
+        setElementTooltip(this.button_, 'Next recorded day');
 
         // Create SVG
         this.svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
@@ -250,7 +248,6 @@ export class NextDayButton extends shaka.ui.Element {
         this.svg.appendChild(this.path);
         this.button_.appendChild(this.svg);
         this.parent.appendChild(this.button_);
-        setElementTooltip(this.button_, ControlPanelElementsTooltip.NEXT_DAY);
         this.eventManager.listen(this.button_, 'click', () => {
             this.callBack();
         });
@@ -265,8 +262,8 @@ export class PrevDayButton extends shaka.ui.Element {
 
     private init() {
         this.button_ = document.createElement('fast-button');
-        this.button_.setAttribute('title', 'Previous recorded day');
-        this.button_.setAttribute('aria-label', 'Previous recorded day');
+        setElementTooltip(this.button_, 'Previous recorded day');
+
         // Create SVG
         this.svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         this.path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
@@ -276,7 +273,6 @@ export class PrevDayButton extends shaka.ui.Element {
         this.svg.appendChild(this.path);
         this.button_.appendChild(this.svg);
         this.parent.appendChild(this.button_);
-        setElementTooltip(this.button_, ControlPanelElementsTooltip.PREVIOUS_DAY);
         this.eventManager.listen(this.button_, 'click', () => {
             this.callBack();
         });

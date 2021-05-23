@@ -378,7 +378,7 @@ export class PlayerComponent extends FASTElement {
         }
     }
 
-    private async updateVODStream(forceVOD: boolean = false, init = false) {
+    private async updateVODStream(VODMode: boolean = false, init = false) {
         if (!this.afterInit) {
             return;
         }
@@ -401,7 +401,7 @@ export class PlayerComponent extends FASTElement {
 
         this.liveStream = MediaApi.getLiveStream();
 
-        this.isLive = this.hasLiveData ? !forceVOD : false;
+        this.isLive = this.hasLiveData ? !VODMode : false;
         // Get segments
         const segments = await this.fetchAvailableSegments(start, end);
         // Switch to VOD

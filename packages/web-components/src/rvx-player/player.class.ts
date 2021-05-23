@@ -326,12 +326,12 @@ export class PlayerWrapper {
             this.controls.bottomControls_.childNodes[1]
         );
 
-        // Listen for error events.
+        // Player listeners
         this.player.addEventListener('error', this.onErrorEvent.bind(this));
         this.player.addEventListener('trackschanged', this.onTrackChange.bind(this));
-
         this.player.addEventListener('emsg', this.onShakaMetadata.bind(this));
 
+        // Video listeners
         this.video.addEventListener('seeked', this.onSeeked.bind(this));
         this.video.addEventListener('play', this.onPlaying.bind(this));
         this.video.addEventListener('pause', this.onPause.bind(this));
