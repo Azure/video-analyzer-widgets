@@ -177,17 +177,17 @@ export class PlayerWrapper {
         return this.player.isLive();
     }
 
+    public retryStreaming() {
+        this.player.retryStreaming();
+        this.play();
+    }
+
     private updateLiveButtonState() {
         for (const element of this.controls.elements_) {
             if (element?.isLiveButton) {
                 element.updateLiveState(this.isLive);
             }
         }
-    }
-
-    public retryStreaming() {
-        this.player.retryStreaming();
-        this.play();
     }
 
     private updateControlsClassList() {
