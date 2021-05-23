@@ -384,9 +384,11 @@ export class PlayerWrapper {
                     Logger.log(`STALL DETECTED: Too many consecutive stalls (${consecutiveStalls}), seeking in place.`);
                     video.currentTime += 0;
                 } else if (!this.player.isBuffering() || video.readyState == 4) {
-                    Logger.log(`STALL DETECTED: video.currentTime=${currPosition} did not change for ` +
-                        `${stallIntervalMs} milliseconds, shaka.isBuffering=${this.player.isBuffering()}, ` +
-                        `video.readyState=${video.readyState}, consecutiveStalls=${consecutiveStalls}.`);
+                    Logger.log(
+                        `STALL DETECTED: video.currentTime=${currPosition} did not change for ` +
+                            `${stallIntervalMs} milliseconds, shaka.isBuffering=${this.player.isBuffering()}, ` +
+                            `video.readyState=${video.readyState}, consecutiveStalls=${consecutiveStalls}.`
+                    );
                     video.currentTime += 1;
                 } else if (this.player.isLive()) {
                     const liveToleranceBand = 30;
@@ -394,8 +396,10 @@ export class PlayerWrapper {
                     const consecutiveStallTime = (consecutiveStalls + 2) * (stallIntervalMs / 1000.0);
                     const wasAtLive = currPosition + consecutiveStallTime + liveToleranceBand >= seekEnd;
                     const shouldSeekToLive = consecutiveStalls >= 2;
-                    Logger.log(`LIVE STALL DETECTED: video.currentTime=${currPosition}, seekRange().end=${seekEnd}, ` +
-                        `consecutiveStalls=${consecutiveStalls}, wasAtLive=${wasAtLive}, shouldSeekToLive=${shouldSeekToLive}.`);
+                    Logger.log(
+                        `LIVE STALL DETECTED: video.currentTime=${currPosition}, seekRange().end=${seekEnd}, ` +
+                            `consecutiveStalls=${consecutiveStalls}, wasAtLive=${wasAtLive}, shouldSeekToLive=${shouldSeekToLive}.`
+                    );
                     if (wasAtLive && shouldSeekToLive) {
                         video.currentTime = seekEnd;
                         newPrevPosition = seekEnd;
@@ -585,6 +589,7 @@ export class PlayerWrapper {
         // eslint-disable-next-line no-console
         Logger.log(event.detail);
         if (this.errorCallback) {
+            this.errorCallback(event);
             Logger.log(`onErrorEvent: ${event.detail}`);
         }
     }
