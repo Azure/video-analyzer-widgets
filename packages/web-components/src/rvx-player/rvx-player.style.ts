@@ -26,8 +26,12 @@ export const styles = css`
         flex-direction: column;
     }
 
-    .error {
-        margin-bottom: 16px;
+    .error-container > fast-button {
+        margin-top: 16px;
+    }
+
+    video.error {
+        visibility: hidden;
     }
 
     :host(.live-off) {

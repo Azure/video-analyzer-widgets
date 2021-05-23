@@ -194,6 +194,7 @@ export class PlayerComponent extends FASTElement {
         this.hasError = false;
         this.showRetryButton = false;
         this.classList.remove('error');
+        this.video?.classList.remove('error');
     }
 
     public handleError(error: HttpError) {
@@ -210,6 +211,7 @@ export class PlayerComponent extends FASTElement {
         this.showRetryButton = true;
         this.errorString = getShakaPlayerErrorString(error);
         this.classList.add('error');
+        this.video?.classList.add('error');
         this.$emit(PlayerEvents.SHAKE_PLAYER_ERROR, error);
     }
 
@@ -221,7 +223,7 @@ export class PlayerComponent extends FASTElement {
     public async connectedCallback() {
         super.connectedCallback();
 
-        this.video = this.shadowRoot?.querySelector('#player-video') as HTMLVideoElement;
+        this.video = this.shadowRoot?.querySelector('.video-element') as HTMLVideoElement;
         this.videoContainer = this.shadowRoot?.querySelector('.video-container') as HTMLElement;
         this.timeContainer = this.shadowRoot?.querySelector('.time-container') as HTMLElement;
 
