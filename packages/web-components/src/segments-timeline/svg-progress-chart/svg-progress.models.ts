@@ -3,6 +3,8 @@ import { toTimeText } from '../../../../common/utils/time';
 export const SVGSchemaURI = 'http://www.w3.org/2000/svg';
 
 export abstract class Shape {
+    public start?: number = 0;
+    public end?: number = 0;
     public width: number = 0;
     public defaultWidth: number = 0;
     public height: number = 0;

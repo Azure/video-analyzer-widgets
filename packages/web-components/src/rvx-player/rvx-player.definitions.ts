@@ -18,7 +18,7 @@ export enum ControlPanelElements {
     REWIND = 'rewind',
     PLAY_PAUSE = 'play_pause',
     FAST_FORWARD = 'fast_forward',
-    // LIVE = 'live',
+    LIVE = 'live',
     MUTE = 'mute',
     VOLUME = 'volume',
     SPACER = 'spacer',

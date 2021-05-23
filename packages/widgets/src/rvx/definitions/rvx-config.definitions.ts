@@ -25,5 +25,6 @@ export interface IAvaPlayerConfig extends IWidgetBaseConfig {
 
 export enum PlayerEvents {
     TOKEN_EXPIRED = 'TOKEN_EXPIRED',
-    PLAYER_ERROR = 'PLAYER_ERROR'
+    PLAYER_ERROR = 'PLAYER_ERROR',
+    SHAKE_PLAYER_ERROR = 'SHAKE_PLAYER_ERROR'
 }

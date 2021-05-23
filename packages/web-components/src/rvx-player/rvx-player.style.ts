@@ -1,4 +1,5 @@
 import { css } from '@microsoft/fast-element';
+import { secondaryAccentButtonStyle } from '../../../styles/system-providers/ava-design-system-provider.style';
 import { stylesShaka } from './shaka-controls.style';
 
 export const styles = css`
@@ -15,13 +16,18 @@ export const styles = css`
         position: relative;
     }
 
-    .error {
+    .error-container {
         display: none;
         position: absolute;
-        z-index: 1;
+        z-index: 10;
         /* 100% minus controllers and timeline*/
         height: calc(100% - 48px - 43px);
         width: 100%;
+        flex-direction: column;
+    }
+
+    .error {
+        margin-bottom: 16px;
     }
 
     :host(.live-off) {
@@ -34,10 +40,14 @@ export const styles = css`
         background: black;
     }
 
-    :host(.error) .error {
+    :host(.error) .error-container {
         align-items: center;
         display: flex;
         justify-content: center;
+    }
+
+    :host(.no-live-data) .live-button-component {
+        display: none;
     }
 
     ${stylesShaka}
@@ -53,6 +63,11 @@ export const styles = css`
         padding: 8px 0;
     }
 
+    .shaka-video-container.live .hours-label,
+    .shaka-video-container.live .next-day-button,
+    .shaka-video-container.live .prev-day-button,
+    .shaka-video-container.live .prev-segment-button,
+    .shaka-video-container.live .next-segment-button,
     .shaka-video-container.live .shaka-fast-forward-button,
     .shaka-video-container.live .shaka-rewind-button {
         display: none;
@@ -60,6 +75,10 @@ export const styles = css`
 
     .shaka-video-container.vod .shaka-seek-bar-container {
         display: none;
+    }
+
+    .shaka-video-container.live .shaka-seek-bar-container {
+        top: -2px;
     }
 
     .shaka-video-container .material-icons-round {
@@ -180,4 +199,6 @@ export const styles = css`
         vertical-align: middle;
         color: var(--action);
     }
+
+    ${secondaryAccentButtonStyle}
 `;

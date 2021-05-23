@@ -1,10 +1,12 @@
 import { css } from '@microsoft/fast-element';
 
 export const secondaryAccentButtonStyle = css`
-    :host > fast-button.secondary {
+    fast-button.secondary {
         --accent-fill-active: var(--secondary-fill-press);
         --accent-fill-hover: var(--secondary-fill-hover);
         --accent-fill-rest: var(--secondary-fill);
+        --accent-foreground-cut-rest: var(--type-primary);
+        border: 1px solid var(--type-primary);
     }
 `;
 
