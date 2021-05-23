@@ -17,6 +17,7 @@ export const template = html<ZoneDrawerWidget>`
                         class=${(x) => (!x.isLineDrawMode ? 'selected' : '')}
                         aria-label="Polygon"
                         title="Polygon"
+                        ?disabled="${(x) => x.disableDrawing}"
                         @click="${(x) => x.toggleDrawerMode()}"
                     >
                         <svg>
@@ -27,6 +28,7 @@ export const template = html<ZoneDrawerWidget>`
                         class=${(x) => (x.isLineDrawMode ? 'selected' : '')}
                         aria-label="Line"
                         title="Line"
+                        ?disabled="${(x) => x.disableDrawing}"
                         @click="${(x) => x.toggleDrawerMode()}"
                     >
                         <svg>
@@ -42,7 +44,7 @@ export const template = html<ZoneDrawerWidget>`
                         <div class="draw-zone">
                             <media-zones-view></media-zones-view>
                             ${when(
-                                (x) => x.showDrawer && x.isReady,
+                                (x) => x.showDrawer && x.isReady && !x.disableDrawing,
                                 html`
                                     ${(x) => {
                                         if (x.isLineDrawMode) {
@@ -70,6 +72,7 @@ export const template = html<ZoneDrawerWidget>`
                         (x) => x.isLabelsListEmpty,
                         html`<span>Draw polygons or lines around the zone of interest in the frame.</span> `
                     )}
+                    ${when((x) => x.disableDrawing, html`<span>Zone drawer is disabled.</span> `)}
                 </div>
             </div>
             <div class="action-buttons">

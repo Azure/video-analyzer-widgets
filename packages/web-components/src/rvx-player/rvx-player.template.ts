@@ -1,10 +1,11 @@
-import { html } from '@microsoft/fast-element';
+import { html, when } from '@microsoft/fast-element';
 import { PlayerComponent } from '.';
 
 /**
  * Player component
  * @public
  */
+/* eslint-disable  @typescript-eslint/indent */
 export const template = html<PlayerComponent>`
     <template>
         <div class="upper-bounding">
@@ -14,7 +15,28 @@ export const template = html<PlayerComponent>`
                 <media-date-picker class="date-picker-component" alignRight="${true}"></media-date-picker>
             </div>
         </div>
-        <span class="error">${(x) => x.errorString}</span>
+        ${when(
+            (x) => x.hasError,
+            html`
+                <div class="error-container">
+                    <span class="error">${(x) => x.errorString}</span>
+                    ${when(
+                        (x) => x.showRetryButton,
+                        html`
+                            <fast-button
+                                appearance="accent"
+                                class="secondary"
+                                aria-label="Retry"
+                                title="Retry"
+                                @keyup="${(x, c) => x.handleRetryKeyUp(c.event as KeyboardEvent)}"
+                                @mouseup="${(x, c) => x.handleRetryMouseUp(c.event as MouseEvent)}"
+                                >Retry</fast-button
+                            >
+                        `
+                    )}
+                </div>
+            `
+        )}
         <div
             shaka-controls="true"
             class="video-container 

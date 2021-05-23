@@ -1,4 +1,5 @@
 import { css } from '@microsoft/fast-element';
+import { secondaryAccentButtonStyle } from '../../../styles/system-providers/ava-design-system-provider.style';
 import { stylesShaka } from './shaka-controls.style';
 
 export const styles = css`
@@ -15,13 +16,18 @@ export const styles = css`
         position: relative;
     }
 
-    .error {
+    .error-container {
         display: none;
         position: absolute;
-        z-index: 1;
+        z-index: 10;
         /* 100% minus controllers and timeline*/
         height: calc(100% - 48px - 43px);
         width: 100%;
+        flex-direction: column;
+    }
+
+    .error {
+        margin-bottom: 16px;
     }
 
     :host(.live-off) {
@@ -34,7 +40,7 @@ export const styles = css`
         background: black;
     }
 
-    :host(.error) .error {
+    :host(.error) .error-container {
         align-items: center;
         display: flex;
         justify-content: center;
@@ -193,4 +199,6 @@ export const styles = css`
         vertical-align: middle;
         color: var(--action);
     }
+
+    ${secondaryAccentButtonStyle}
 `;

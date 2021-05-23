@@ -1,4 +1,5 @@
 import { attr, customElement, FASTElement, observable } from '@microsoft/fast-element';
+import { keyCodeEnter, keyCodeSpace } from '@microsoft/fast-web-utilities';
 import { MediaApi } from '../../../common/services/media/media-api.class';
 import { IAvailableMediaResponse, IExpandedDate, Precision } from '../../../common/services/media/media.definitions';
 import { HttpError } from '../../../common/utils/http.error';
@@ -9,7 +10,7 @@ import { PlayerWrapper } from './player.class';
 import { ControlPanelElements, LiveState } from './rvx-player.definitions';
 import { styles } from './rvx-player.style';
 import { template } from './rvx-player.template';
-import { getPlayerErrorString } from './rvx-player.utils';
+import { getPlayerErrorString, getShakaPlayerErrorString } from './rvx-player.utils';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-expressions
 DatePickerComponent;
@@ -36,13 +37,14 @@ export class PlayerComponent extends FASTElement {
     @observable public currentAllowedYears: string[] = [];
     @observable public time = '';
     @observable public errorString = '';
+    @observable public hasError = false;
+    @observable public showRetryButton = false;
     @observable private currentYear: number = 0;
     @observable private currentMonth: number = 0;
     @observable private currentDay: number = 0;
 
     public player: PlayerWrapper;
     public datePickerComponent: DatePickerComponent;
-    public hasError = false;
 
     private video!: HTMLVideoElement;
     private timeContainer!: HTMLElement;
@@ -82,6 +84,7 @@ export class PlayerComponent extends FASTElement {
             this.timeUpdateCallBack.bind(this),
             this.toggleLiveModeCallBack.bind(this),
             this.changeDayCallBack.bind(this),
+            this.handleShakaError.bind(this),
             allowedControllers
         );
 
@@ -189,6 +192,7 @@ export class PlayerComponent extends FASTElement {
 
     public clearError() {
         this.hasError = false;
+        this.showRetryButton = false;
         this.classList.remove('error');
     }
 
@@ -197,6 +201,16 @@ export class PlayerComponent extends FASTElement {
         this.errorString = getPlayerErrorString(error);
         this.classList.add('error');
         this.$emit(PlayerEvents.PLAYER_ERROR, error);
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    public handleShakaError(error: any) {
+        this.player.pause();
+        this.hasError = true;
+        this.showRetryButton = true;
+        this.errorString = getShakaPlayerErrorString(error);
+        this.classList.add('error');
+        this.$emit(PlayerEvents.SHAKE_PLAYER_ERROR, error);
     }
 
     public disconnectedCallback() {
@@ -238,6 +252,32 @@ export class PlayerComponent extends FASTElement {
         }) as EventListener);
 
         document.addEventListener('fullscreenchange', this.updateFullScreen.bind(this));
+    }
+
+    public handleRetryMouseUp(e: MouseEvent): boolean {
+        switch (e.which) {
+            case 1: // left mouse button.
+                this.retryStreaming();
+                return false;
+        }
+
+        return true;
+    }
+
+    public handleRetryKeyUp(e: KeyboardEvent): boolean {
+        switch (e.keyCode) {
+            case keyCodeEnter:
+            case keyCodeSpace:
+                this.retryStreaming();
+                return false;
+        }
+
+        return true;
+    }
+
+    public retryStreaming() {
+        this.clearError();
+        this.player.retryStreaming();
     }
 
     private updateFullScreen() {

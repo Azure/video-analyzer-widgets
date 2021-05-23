@@ -9,6 +9,11 @@ export interface IZoneDrawerWidgetConfig extends IWidgetBaseConfig {
      * This the zones
      */
     zones?: IZone[];
+
+    /**
+     * Disable the drawing
+     */
+    disableDrawing?: boolean;
 }
 
 export interface IZone {
