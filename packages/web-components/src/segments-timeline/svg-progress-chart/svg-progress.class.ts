@@ -361,7 +361,7 @@ export class SVGProgressChart {
     private handleMouseClick(e: MouseEvent) {
         const percent = (e.offsetX / this.options.width) * 100;
         const time = this.options.time * (percent / 100);
-        this.activeSegment = this.updateActiveRect(time);
+        this.activeSegment = this.updateActiveRect(time, false);
         if (this._activeSegmentCallback && this.activeSegment) {
             this._activeSegmentCallback({ segment: this.activeSegment, time: time });
         }
@@ -384,7 +384,7 @@ export class SVGProgressChart {
         }
     }
 
-    private updateActiveRect(time: number): IUISegment {
+    private updateActiveRect(time: number, emitEvent = true): IUISegment {
         if (this.activeRect) {
             const startTime = this.activeRect.start || (this.activeRect.x / 100) * this.options.time;
             const endTime = this.activeRect.end || (this.activeRect.width / 100) * this.options.time + startTime;
@@ -407,7 +407,7 @@ export class SVGProgressChart {
                 // New active segment
                 this.activeRect = rect;
                 this.activeRect.addClass('active');
-                if (this._segmentStartCallback) {
+                if (this._segmentStartCallback && emitEvent) {
                     this._segmentStartCallback({
                         segment: {
                             startSeconds: startTime,

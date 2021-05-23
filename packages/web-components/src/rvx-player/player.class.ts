@@ -246,15 +246,10 @@ export class PlayerWrapper {
         event.stopPropagation();
         const segmentEventData = event.detail;
         if (segmentEventData) {
-            const currentDate = new Date(this.timestampOffset);
-            const dateInSeconds =
-                currentDate.getUTCHours() * this.SECONDS_IN_HOUR +
-                currentDate.getUTCMinutes() * this.SECONDS_IN_MINUTES +
-                currentDate.getUTCSeconds();
             this.currentSegment = segmentEventData.segment;
             const playbackMode: number = this.player.getPlaybackRate();
             const seconds = playbackMode > 0 ? segmentEventData.segment.startSeconds : segmentEventData.segment.endSeconds;
-            this.video.currentTime = seconds - dateInSeconds;
+            this.video.currentTime = seconds + this.getVideoOffset();
             if (this.isPlaying) {
                 this.video.play();
             }
@@ -266,17 +261,25 @@ export class PlayerWrapper {
         event.stopPropagation();
         const segmentEventData = event.detail;
         if (segmentEventData) {
-            const currentDate = new Date(this.timestampOffset);
-            const dateInSeconds =
-                currentDate.getUTCHours() * this.SECONDS_IN_HOUR +
-                currentDate.getUTCMinutes() * this.SECONDS_IN_MINUTES +
-                currentDate.getUTCSeconds();
             this.currentSegment = event.detail.segment;
-            this.video.currentTime = event.detail.time - dateInSeconds;
+            this.video.currentTime = event.detail.time + this.getVideoOffset();
             if (this.isPlaying) {
                 this.video.play();
             }
         }
+    }
+
+    private getVideoOffset() {
+        const currentDate = new Date(this.timestampOffset);
+        // If live - add the seek range start, else add timestamp offset
+        const dateInSeconds = this.player.isLive()
+            ? this.player.seekRange().start
+            : (currentDate.getUTCHours() * this.SECONDS_IN_HOUR +
+                  currentDate.getUTCMinutes() * this.SECONDS_IN_MINUTES +
+                  currentDate.getUTCSeconds()) *
+              -1;
+
+        return dateInSeconds;
     }
 
     private toggleBodyTracking(isOn: boolean) {
@@ -499,7 +502,10 @@ export class PlayerWrapper {
         // If not live mode, init timeline
         if (!this.isLive) {
             // Update current time
-            this.onTimeSeekUpdate();
+            const displayTime = this.video?.currentTime || 0;
+            this.computeClock(displayTime);
+
+            // Update timeline
             this.removeTimelineComponent();
             this.createTimelineComponent();
         }
