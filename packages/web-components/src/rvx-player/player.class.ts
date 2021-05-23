@@ -19,8 +19,9 @@ const shaka = require('shaka-player/dist/shaka-player.ui.debug.js');
 TimelineComponent;
 
 export class PlayerWrapper {
-    private isLive = false; // TODO : when RTSP plugin will be ready, set to true
-    private isLoaded = false; // TODO : when RTSP plugin will be ready, set to true
+    private isLive = false;
+    private isLoaded = false;
+    private duringSegmentJump = false;
     private _accessToken = '';
     private _mimeType: MimeType;
     private player: shaka_player.Player = Object.create(null);
@@ -32,7 +33,6 @@ export class PlayerWrapper {
     private timelineComponent: TimelineComponent;
     private boundingBoxesDrawer: BoundingBoxDrawer;
     private segmentIndex: shaka_player.media.SegmentIndex;
-    private segmentReferences: shaka_player.media.SegmentReference[];
     private onSegmentChangeListenerRef: (event: CustomEvent) => void;
     private avaUILayer: AVAPlayerUILayer;
     private _liveStream: string = '';
@@ -112,7 +112,8 @@ export class PlayerWrapper {
         return this._accessToken;
     }
 
-    public async load(url: string, play = false) {
+    public async load(url: string) {
+        this.isLoaded = false;
         try {
             if (this.mimeType) {
                 await this.player.load(url, null, this.mimeType);
@@ -121,9 +122,6 @@ export class PlayerWrapper {
             }
 
             this.isLoaded = true;
-            if (play) {
-                this.video.play();
-            }
         } catch (error) {
             // eslint-disable-next-line no-console
             Logger.log(error.message);
@@ -139,6 +137,7 @@ export class PlayerWrapper {
 
         // Video listeners
         this.video?.removeEventListener('timeupdate', this.onTimeSeekUpdate.bind(this));
+        this.video?.removeEventListener('loadeddata', this.onLoadedData.bind(this));
         this.video?.removeEventListener('seeked', this.onSeeked.bind(this));
         this.video?.removeEventListener('play', this.onPlaying.bind(this));
         this.video?.removeEventListener('pause', this.onPause.bind(this));
@@ -160,28 +159,35 @@ export class PlayerWrapper {
     }
 
     public async toggleLiveMode(isLive: boolean) {
+        this.isLive = isLive;
         if (isLive) {
-            await this.load(this._liveStream, true);
+            await this.load(this._liveStream);
             this.removeTimelineComponent();
+            this.video.play();
         } else {
-            await this.load(this._vodStream, true);
+            await this.load(this._vodStream);
         }
         if (this.boundingBoxesDrawer) {
             this.boundingBoxesDrawer.clearInstances();
         }
-        this.isLive = isLive;
         this.isLiveCallback(this.isLive);
 
-        // TODO : add back after RTSP plugin integration
-        // this.controls.elements_[5].isLive = this.isLive;
-        // this.controls.elements_[5].button_.classList.add(this.isLive ? 'live-on' : 'live-off');
-        // this.controls.elements_[5].button_.classList.remove(this.isLive ? 'live-off' : 'live-on');
+        this.updateLiveButtonState();
         this.updateControlsClassList();
+        return this.player.isLive();
     }
 
     public retryStreaming() {
         this.player.retryStreaming();
         this.play();
+    }
+
+    private updateLiveButtonState() {
+        for (const element of this.controls.elements_) {
+            if (element?.isLiveButton) {
+                element.updateLiveState(this.isLive);
+            }
+        }
     }
 
     private updateControlsClassList() {
@@ -201,10 +207,7 @@ export class PlayerWrapper {
     }
 
     private createTimelineComponent() {
-        if (!this.segmentReferences) {
-            return;
-        }
-        const segments = createTimelineSegments(this._availableSegments, this.segmentReferences, this.timestampOffset);
+        const segments = createTimelineSegments(this._availableSegments);
 
         const date = new Date(this.date.getUTCFullYear(), this.date.getUTCMonth(), this.date.getUTCDate(), 0, 0, 0);
         const timelineConfig = {
@@ -232,9 +235,12 @@ export class PlayerWrapper {
                 currentDate.getUTCSeconds();
             this.currentSegment = segmentEventData.segment;
             const playbackMode: number = this.player.getPlaybackRate();
-            const seconds = playbackMode > 0 ? segmentEventData.segment.startSeconds + 2 : segmentEventData.segment.endSeconds - 2;
+            const seconds = playbackMode > 0 ? segmentEventData.segment.startSeconds : segmentEventData.segment.endSeconds;
             this.video.currentTime = seconds - dateInSeconds;
-            this.video.play();
+            if (this.isPlaying) {
+                this.video.play();
+            }
+            this.duringSegmentJump = false;
         }
     }
 
@@ -249,7 +255,9 @@ export class PlayerWrapper {
                 currentDate.getUTCSeconds();
             this.currentSegment = event.detail.segment;
             this.video.currentTime = event.detail.time - dateInSeconds;
-            this.video.play();
+            if (this.isPlaying) {
+                this.video.play();
+            }
         }
     }
 
@@ -264,6 +272,7 @@ export class PlayerWrapper {
     private jumpSegment(isNext: boolean) {
         let currentTime = this.video.currentTime;
 
+        this.duringSegmentJump = true;
         if (isNext) {
             currentTime = this.timelineComponent.getNextSegmentTime() || currentTime;
         } else {
@@ -317,11 +326,17 @@ export class PlayerWrapper {
             this.controls.bottomControls_.childNodes[1]
         );
 
-        // Listen for error events.
+        // Player listeners
         this.player.addEventListener('error', this.onErrorEvent.bind(this));
         this.player.addEventListener('trackschanged', this.onTrackChange.bind(this));
-
         this.player.addEventListener('emsg', this.onShakaMetadata.bind(this));
+
+        // Video listeners
+        this.video.addEventListener('seeked', this.onSeeked.bind(this));
+        this.video.addEventListener('play', this.onPlaying.bind(this));
+        this.video.addEventListener('pause', this.onPause.bind(this));
+        this.video.addEventListener('timeupdate', this.onTimeSeekUpdate.bind(this));
+        this.video.addEventListener('loadeddata', this.onLoadedData.bind(this));
 
         // Add bounding box drawer
         const options: ICanvasOptions = {
@@ -408,21 +423,15 @@ export class PlayerWrapper {
         }
         this.segmentIndex = stream.segmentIndex;
 
-        this.segmentReferences = this.segmentIndex.references;
-
         const index = this.segmentIndex.find(0) || 0;
         const reference = this.segmentIndex.get(index);
         if (reference) {
             this.timestampOffset = reference.timestampOffset * -1000;
-            this.video.addEventListener('timeupdate', this.onTimeSeekUpdate.bind(this));
-            this.video.addEventListener('seeked', this.onSeeked.bind(this));
-            this.video.addEventListener('play', this.onPlaying.bind(this));
-            this.video.addEventListener('pause', this.onPause.bind(this));
         }
 
         // If not live mode, init timeline
         if (!this.isLive) {
-            // First, update current time
+            // Update current time
             this.onTimeSeekUpdate();
             this.removeTimelineComponent();
             this.createTimelineComponent();
@@ -445,8 +454,18 @@ export class PlayerWrapper {
         }
     }
 
+    private onLoadedData() {
+        // If vod mode - start first segment
+        if (!this.isLive) {
+            this.video.currentTime = 0;
+        }
+    }
+
     private onTimeSeekUpdate() {
-        const displayTime = this.video.currentTime;
+        if (!this.isLoaded || this.duringSegmentJump) {
+            return;
+        }
+        const displayTime = this.video?.currentTime || 0;
         const time = this.computeClock(displayTime);
         this.timeUpdateCallback(time);
 

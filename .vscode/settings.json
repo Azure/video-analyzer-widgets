@@ -1,6 +1,18 @@
 {
     "files.eol": "\n",
-    "cSpell.words": ["RVX", "emsg", "mediafront", "pickadate", "npmrc", "starttime", "vsts", "infocus", "outfocus", "avarvx"],
+    "cSpell.words": [
+        "Previus",
+        "RVX",
+        "avarvx",
+        "emsg",
+        "infocus",
+        "mediafront",
+        "npmrc",
+        "outfocus",
+        "pickadate",
+        "starttime",
+        "vsts"
+    ],
     "cSpell.ignorePaths": ["**/package-lock.json", "**/node_modules/**", ".vscode", "**/webpack.config.js"],
     "typescript.tsdk": "node_modules\\typescript\\lib",
     "editor.defaultFormatter": "esbenp.prettier-vscode",

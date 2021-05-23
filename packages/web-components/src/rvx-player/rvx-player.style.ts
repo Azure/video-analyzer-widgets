@@ -46,6 +46,10 @@ export const styles = css`
         justify-content: center;
     }
 
+    :host(.no-live-data) .live-button-component {
+        display: none;
+    }
+
     ${stylesShaka}
 
     .shaka-video-container {
@@ -59,6 +63,11 @@ export const styles = css`
         padding: 8px 0;
     }
 
+    .shaka-video-container.live .hours-label,
+    .shaka-video-container.live .next-day-button,
+    .shaka-video-container.live .prev-day-button,
+    .shaka-video-container.live .prev-segment-button,
+    .shaka-video-container.live .next-segment-button,
     .shaka-video-container.live .shaka-fast-forward-button,
     .shaka-video-container.live .shaka-rewind-button {
         display: none;
@@ -66,6 +75,10 @@ export const styles = css`
 
     .shaka-video-container.vod .shaka-seek-bar-container {
         display: none;
+    }
+
+    .shaka-video-container.live .shaka-seek-bar-container {
+        top: -2px;
     }
 
     .shaka-video-container .material-icons-round {

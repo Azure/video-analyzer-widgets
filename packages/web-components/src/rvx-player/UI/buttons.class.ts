@@ -200,17 +200,25 @@ export class OverflowMenu extends shaka.ui.OverflowMenu {
 }
 
 export class LiveButton extends shaka.ui.Element {
+    public isLiveButton = true;
     private isLive = true;
     public constructor(parent: any, controls: any, private callBack: (isLive: boolean) => void) {
         super(parent, controls);
         this.init();
     }
 
+    public updateLiveState(isLive: boolean) {
+        this.isLive = isLive;
+        this.button_.classList.add(this.isLive ? 'live-on' : 'live-off');
+        this.button_.classList.remove(this.isLive ? 'live-off' : 'live-on');
+        const label = this.isLive ? 'Switch to VOD' : 'Switch to live';
+        setElementTooltip(this.button_, label);
+    }
+
     private init() {
         this.button_ = document.createElement('fast-button');
         this.button_.innerHTML = '<b>LIVE</b>';
         this.button_.classList.add('live-button-component');
-        this.button_.classList.add('live-on');
         this.parent.appendChild(this.button_);
         setElementTooltip(this.button_, ControlPanelElementsTooltip.LIVE);
 
@@ -229,6 +237,8 @@ export class NextDayButton extends shaka.ui.Element {
 
     private init() {
         this.button_ = document.createElement('fast-button');
+        setElementTooltip(this.button_, 'Next recorded day');
+
         // Create SVG
         this.svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         this.path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
@@ -238,7 +248,6 @@ export class NextDayButton extends shaka.ui.Element {
         this.svg.appendChild(this.path);
         this.button_.appendChild(this.svg);
         this.parent.appendChild(this.button_);
-        setElementTooltip(this.button_, ControlPanelElementsTooltip.NEXT_DAY);
         this.eventManager.listen(this.button_, 'click', () => {
             this.callBack();
         });
@@ -253,6 +262,8 @@ export class PrevDayButton extends shaka.ui.Element {
 
     private init() {
         this.button_ = document.createElement('fast-button');
+        setElementTooltip(this.button_, 'Previous recorded day');
+
         // Create SVG
         this.svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         this.path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
@@ -262,7 +273,6 @@ export class PrevDayButton extends shaka.ui.Element {
         this.svg.appendChild(this.path);
         this.button_.appendChild(this.svg);
         this.parent.appendChild(this.button_);
-        setElementTooltip(this.button_, ControlPanelElementsTooltip.PREVIOUS_DAY);
         this.eventManager.listen(this.button_, 'click', () => {
             this.callBack();
         });
@@ -330,10 +340,12 @@ export class NextSegment extends shaka.ui.Element {
 
     private init() {
         this.button_ = document.createElement('fast-button');
+        this.button_.setAttribute('title', 'Next time range');
         // Create SVG
         this.svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         this.path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
 
+        this.button_.classList.add('next-segment-button');
         this.path.setAttribute('d', SKIP_NEXT_PATH);
         this.svg.appendChild(this.path);
         this.button_.appendChild(this.svg);
@@ -352,10 +364,12 @@ export class PrevSegment extends shaka.ui.Element {
 
     private init() {
         this.button_ = document.createElement('fast-button');
+        this.button_.setAttribute('title', 'Previous time range');
         // Create SVG
         this.svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         this.path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
 
+        this.button_.classList.add('prev-segment-button');
         this.path.setAttribute('d', SKIP_PREV_PATH);
         this.svg.appendChild(this.path);
         this.button_.appendChild(this.svg);

@@ -137,7 +137,9 @@ export class SegmentsTimelineComponent extends FASTElement {
                 x: left,
                 width: per * 100,
                 color: segments[i].color || segmentsDefaultColor,
-                textColor: segments[i].textColor || segmentsTooltipText
+                textColor: segments[i].textColor || segmentsTooltipText,
+                start: segments[i].startSeconds,
+                end: segments[i].endSeconds
             });
         }
     }
