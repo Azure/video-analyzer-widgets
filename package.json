@@ -2,8 +2,8 @@
     "name": "@azure/video-analyzer-widgets",
     "version": "0.4.7",
     "description": "A collection of widgets (web components) using Azure Video Analyzer platform capabilities and APIs",
-    "main": "./dist/ava-widgets.min.js",
-    "typings": "./dist/index.d.ts",
+    "main": "./dist/index.min.js",
+    "typings": "./dist/npm.export.d.ts",
     "scripts": {
         "start": "webpack -w",
         "build": "webpack --mode=development",
