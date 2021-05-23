@@ -1,7 +1,7 @@
 import { BodyTracking, HoursLabel, LiveButton, NextDayButton, NextSegment, PrevDayButton, PrevSegment } from './buttons.class';
+import { shaka } from '../index';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-const shaka = require('shaka-player/dist/shaka-player.ui.debug.js');
 
 export class PlayButtonFactory {
     public create(rootElement: any, controls: any) {

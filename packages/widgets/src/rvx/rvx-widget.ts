@@ -35,6 +35,22 @@ export class Player extends BaseWidget {
         }
     }
 
+    public setDebugMode(state: boolean) {
+        if (this._config) {
+            this._config.debug = state;
+        }
+        Logger.debugMode = state;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    public get shakaPlayer(): any {
+        const rvxPlayer: PlayerComponent = this.shadowRoot.querySelector('rvx-player');
+        if (rvxPlayer) {
+            return rvxPlayer.player?.player;
+        }
+        return null;
+    }
+
     public connectedCallback() {
         super.connectedCallback();
         this.validateOrAddDesignSystem();
@@ -148,7 +164,9 @@ export class Player extends BaseWidget {
 
         AvaAPi.clientApiEndpointUrl = this.config?.clientApiEndpointUrl;
         AvaAPi.videoName = this.config?.videoName;
-        Logger.debugMode = !!this._config?.debug;
+        if (this._config?.debug !== undefined) {
+            Logger.debugMode = !!this._config?.debug;
+        }
         this.allowedControllers = this.config.playerControllers;
     }
 

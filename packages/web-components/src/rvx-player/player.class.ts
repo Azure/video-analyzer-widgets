@@ -13,18 +13,18 @@ import { AVAPlayerUILayer } from './UI/ava-ui-layer.class';
 import { BoundingBoxDrawer } from './UI/bounding-box.class';
 import { extractRealTime } from './UI/time.utils';
 import { createTimelineSegments } from './UI/timeline.utils';
-const shaka = require('shaka-player/dist/shaka-player.ui.debug.js');
+import { shaka } from './index';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-expressions
 TimelineComponent;
 
 export class PlayerWrapper {
+    public player: shaka_player.Player = Object.create(null);
     private isLive = false;
     private isLoaded = false;
     private duringSegmentJump = false;
     private _accessToken = '';
     private _mimeType: MimeType;
-    private player: shaka_player.Player = Object.create(null);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private controls: any;
     private _allowCrossCred = true;
@@ -40,6 +40,7 @@ export class PlayerWrapper {
     private _availableSegments: IAvailableMediaResponse = null;
     private currentSegment: IUISegment = null;
     private isPlaying: boolean = false;
+    private _stallDetectionTimer: number | null = null;
 
     private readonly OFFSET_MULTIPLAYER = 1000;
     private readonly SECONDS_IN_HOUR = 3600;
@@ -142,6 +143,23 @@ export class PlayerWrapper {
         this.video?.removeEventListener('play', this.onPlaying.bind(this));
         this.video?.removeEventListener('pause', this.onPause.bind(this));
 
+        // Log media events to improve the usefulness of the logs (both Shaka and video)
+        this.player?.removeEventListener('onstatechange', this.onStateChange.bind(this));
+        this.player?.removeEventListener('onstateidle', this.onStateIdle.bind(this));
+        this.player?.removeEventListener('buffering', this.onBuffering.bind(this));
+        this.player?.removeEventListener('loading', this.onLoading.bind(this));
+        this.player?.removeEventListener('loaded', this.onLoaded.bind(this));
+        this.player?.removeEventListener('unloading', this.onUnloading.bind(this));
+        this.player?.removeEventListener('largegap', this.onLargeGap.bind(this));
+        this.video?.removeEventListener('stalled', this.onStalled.bind(this));
+        this.video?.removeEventListener('suspend', this.onSuspend.bind(this));
+        this.video?.removeEventListener('waiting', this.onWaiting.bind(this));
+
+        if (this._stallDetectionTimer !== null) {
+            window.clearInterval(this._stallDetectionTimer);
+            this._stallDetectionTimer = null;
+        }
+
         // Remove BB
         if (this.boundingBoxesDrawer) {
             this.removeBoundingBoxLayer();
@@ -228,15 +246,10 @@ export class PlayerWrapper {
         event.stopPropagation();
         const segmentEventData = event.detail;
         if (segmentEventData) {
-            const currentDate = new Date(this.timestampOffset);
-            const dateInSeconds =
-                currentDate.getUTCHours() * this.SECONDS_IN_HOUR +
-                currentDate.getUTCMinutes() * this.SECONDS_IN_MINUTES +
-                currentDate.getUTCSeconds();
             this.currentSegment = segmentEventData.segment;
             const playbackMode: number = this.player.getPlaybackRate();
             const seconds = playbackMode > 0 ? segmentEventData.segment.startSeconds : segmentEventData.segment.endSeconds;
-            this.video.currentTime = seconds - dateInSeconds;
+            this.video.currentTime = seconds + this.getVideoOffset();
             if (this.isPlaying) {
                 this.video.play();
             }
@@ -248,17 +261,25 @@ export class PlayerWrapper {
         event.stopPropagation();
         const segmentEventData = event.detail;
         if (segmentEventData) {
-            const currentDate = new Date(this.timestampOffset);
-            const dateInSeconds =
-                currentDate.getUTCHours() * this.SECONDS_IN_HOUR +
-                currentDate.getUTCMinutes() * this.SECONDS_IN_MINUTES +
-                currentDate.getUTCSeconds();
             this.currentSegment = event.detail.segment;
-            this.video.currentTime = event.detail.time - dateInSeconds;
+            this.video.currentTime = event.detail.time + this.getVideoOffset();
             if (this.isPlaying) {
                 this.video.play();
             }
         }
+    }
+
+    private getVideoOffset() {
+        const currentDate = new Date(this.timestampOffset);
+        // If live - add the seek range start, else add timestamp offset
+        const dateInSeconds = this.player.isLive()
+            ? this.player.seekRange().start
+            : (currentDate.getUTCHours() * this.SECONDS_IN_HOUR +
+                  currentDate.getUTCMinutes() * this.SECONDS_IN_MINUTES +
+                  currentDate.getUTCSeconds()) *
+              -1;
+
+        return dateInSeconds;
     }
 
     private toggleBodyTracking(isOn: boolean) {
@@ -337,6 +358,55 @@ export class PlayerWrapper {
         this.video.addEventListener('pause', this.onPause.bind(this));
         this.video.addEventListener('timeupdate', this.onTimeSeekUpdate.bind(this));
         this.video.addEventListener('loadeddata', this.onLoadedData.bind(this));
+
+        // Log media events to improve the usefulness of the logs (both Shaka and video)
+        this.player.addEventListener('onstatechange', this.onStateChange.bind(this));
+        this.player.addEventListener('onstateidle', this.onStateIdle.bind(this));
+        this.player.addEventListener('buffering', this.onBuffering.bind(this));
+        this.player.addEventListener('loading', this.onLoading.bind(this));
+        this.player.addEventListener('loaded', this.onLoaded.bind(this));
+        this.player.addEventListener('unloading', this.onUnloading.bind(this));
+        this.player.addEventListener('largegap', this.onLargeGap.bind(this));
+        this.video.addEventListener('stalled', this.onStalled.bind(this));
+        this.video.addEventListener('suspend', this.onSuspend.bind(this));
+        this.video.addEventListener('waiting', this.onWaiting.bind(this));
+
+        // Install stall detection
+        let prevPosition = -1;
+        let consecutiveStalls = 0;
+        const stallIntervalMs = 3000;
+        this._stallDetectionTimer = window.setInterval(() => {
+            const video = this.player.getMediaElement() as HTMLMediaElement;
+            const currPosition = video.currentTime;
+            let newPrevPosition = currPosition;
+            if (Math.abs(currPosition - prevPosition) <= 0.001 && !video.paused) {
+                if (consecutiveStalls >= 10) {
+                    Logger.log(`STALL DETECTED: Too many consecutive stalls (${consecutiveStalls}), seeking in place.`);
+                    video.currentTime += 0;
+                } else if (!this.player.isBuffering() || video.readyState == 4) {
+                    Logger.log(`STALL DETECTED: video.currentTime=${currPosition} did not change for ` +
+                        `${stallIntervalMs} milliseconds, shaka.isBuffering=${this.player.isBuffering()}, ` +
+                        `video.readyState=${video.readyState}, consecutiveStalls=${consecutiveStalls}.`);
+                    video.currentTime += 1;
+                } else if (this.player.isLive()) {
+                    const liveToleranceBand = 30;
+                    const seekEnd = this.player.seekRange().end;
+                    const consecutiveStallTime = (consecutiveStalls + 2) * (stallIntervalMs / 1000.0);
+                    const wasAtLive = currPosition + consecutiveStallTime + liveToleranceBand >= seekEnd;
+                    const shouldSeekToLive = consecutiveStalls >= 2;
+                    Logger.log(`LIVE STALL DETECTED: video.currentTime=${currPosition}, seekRange().end=${seekEnd}, ` +
+                        `consecutiveStalls=${consecutiveStalls}, wasAtLive=${wasAtLive}, shouldSeekToLive=${shouldSeekToLive}.`);
+                    if (wasAtLive && shouldSeekToLive) {
+                        video.currentTime = seekEnd;
+                        newPrevPosition = seekEnd;
+                    }
+                }
+                consecutiveStalls += 1;
+            } else {
+                consecutiveStalls = 0;
+            }
+            prevPosition = newPrevPosition;
+        }, stallIntervalMs);
 
         // Add bounding box drawer
         const options: ICanvasOptions = {
@@ -432,7 +502,10 @@ export class PlayerWrapper {
         // If not live mode, init timeline
         if (!this.isLive) {
             // Update current time
-            this.onTimeSeekUpdate();
+            const displayTime = this.video?.currentTime || 0;
+            this.computeClock(displayTime);
+
+            // Update timeline
             this.removeTimelineComponent();
             this.createTimelineComponent();
         }
@@ -512,7 +585,47 @@ export class PlayerWrapper {
         // eslint-disable-next-line no-console
         Logger.log(event.detail);
         if (this.errorCallback) {
-            this.errorCallback(event);
+            Logger.log(`onErrorEvent: ${event.detail}`);
         }
+    }
+
+    private onStateChange(event: shaka_player.PlayerEvents.StateChangeEvent) {
+        Logger.log(`onStateChange: ${event.state}`);
+    }
+
+    private onStateIdle(event: shaka_player.PlayerEvents.StateIdleEvent) {
+        Logger.log(`onStateIdle: ${event.state}`);
+    }
+
+    private onBuffering(event: shaka_player.PlayerEvents.BufferingEvent) {
+        Logger.log(`onBuffering: ${event.buffering}`);
+    }
+
+    private onLoading(event: shaka_player.PlayerEvents.LoadingEvent) {
+        Logger.log(`onLoading: ${event.type}`);
+    }
+
+    private onLoaded(event: shaka_player.PlayerEvents.LoadedEvent) {
+        Logger.log(`onLoaded: ${event.type}`);
+    }
+
+    private onUnloading(event: shaka_player.PlayerEvents.UnloadingEvent) {
+        Logger.log(`onUnloading: ${event.type}`);
+    }
+
+    private onLargeGap(event: shaka_player.PlayerEvents.LargeGapEvent) {
+        Logger.log(`onLargeGap: type=${event.type}, currentTime=${event.currentTime}, gapSize=${event.gapSize}`);
+    }
+
+    private onStalled(event: Event) {
+        Logger.log(`onStalled: ${JSON.stringify(event)}`);
+    }
+
+    private onSuspend(event: Event) {
+        Logger.log(`onSuspend: ${JSON.stringify(event)}`);
+    }
+
+    private onWaiting(event: Event) {
+        Logger.log(`onWaiting: type=${event.type}, timeStamp=${event.timeStamp}`);
     }
 }
