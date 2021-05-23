@@ -211,6 +211,9 @@ export class LiveButton extends shaka.ui.Element {
         this.isLive = isLive;
         this.button_.classList.add(this.isLive ? 'live-on' : 'live-off');
         this.button_.classList.remove(this.isLive ? 'live-off' : 'live-on');
+        const label = this.isLive ? 'Switch to VOD' : 'Switch to live';
+        this.button_.setAttribute('title', label);
+        this.button_.setAttribute('aria-label', label);
     }
 
     private init() {
@@ -235,6 +238,9 @@ export class NextDayButton extends shaka.ui.Element {
 
     private init() {
         this.button_ = document.createElement('fast-button');
+        this.button_.setAttribute('title', 'Next recorded day');
+        this.button_.setAttribute('aria-label', 'Next recorded day');
+
         // Create SVG
         this.svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         this.path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
@@ -259,6 +265,8 @@ export class PrevDayButton extends shaka.ui.Element {
 
     private init() {
         this.button_ = document.createElement('fast-button');
+        this.button_.setAttribute('title', 'Previous recorded day');
+        this.button_.setAttribute('aria-label', 'Previous recorded day');
         // Create SVG
         this.svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         this.path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
@@ -336,6 +344,7 @@ export class NextSegment extends shaka.ui.Element {
 
     private init() {
         this.button_ = document.createElement('fast-button');
+        this.button_.setAttribute('title', 'Next time range');
         // Create SVG
         this.svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         this.path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
@@ -359,6 +368,7 @@ export class PrevSegment extends shaka.ui.Element {
 
     private init() {
         this.button_ = document.createElement('fast-button');
+        this.button_.setAttribute('title', 'Previous time range');
         // Create SVG
         this.svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         this.path = document.createElementNS('http://www.w3.org/2000/svg', 'path');

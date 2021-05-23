@@ -305,6 +305,9 @@ export class PlayerComponent extends FASTElement {
         // eslint-disable-next-line no-console
         if (segments) {
             this.currentDay++;
+            const date = new Date(Date.UTC(this.currentYear, this.currentMonth - 1, this.currentDay));
+            this.currentDate = date;
+            this.datePickerComponent.inputDate = date.toUTCString();
             this.updateVODStream(true);
         }
     }
@@ -328,28 +331,10 @@ export class PlayerComponent extends FASTElement {
         // eslint-disable-next-line no-console
         if (segments) {
             this.currentDay--;
+            const date = new Date(Date.UTC(this.currentYear, this.currentMonth - 1, this.currentDay));
+            this.currentDate = date;
+            this.datePickerComponent.inputDate = date.toUTCString();
             this.updateVODStream(true);
-        }
-    }
-
-    private async adjustNewDate(date: Date) {
-        const adjustedDateYear = date.getUTCFullYear();
-        const adjustedDateMonth = date.getUTCMonth() + 1;
-        const adjustedDateDay = date.getUTCDate();
-        // First, check if it available
-        if (this.allowedDates[adjustedDateYear] && this.allowedDates[adjustedDateYear][adjustedDateMonth]) {
-            const allowedDays = this.allowedDates[adjustedDateYear][adjustedDateMonth];
-            if (allowedDays.indexOf(adjustedDateDay) > -1) {
-                this.datePickerComponent.inputDate = date.toUTCString();
-            } else if (!allowedDays.length) {
-                // Need to fetch data there is no data for this month
-                await this.fetchAvailableDays(adjustedDateYear, adjustedDateMonth);
-                await this.updateMonthAndDates(adjustedDateYear, adjustedDateMonth);
-
-                if (this.allowedDates[adjustedDateYear][adjustedDateMonth].indexOf(adjustedDateDay) > -1) {
-                    this.datePickerComponent.inputDate = date.toUTCString();
-                }
-            }
         }
     }
 

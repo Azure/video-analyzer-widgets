@@ -21,6 +21,7 @@ TimelineComponent;
 export class PlayerWrapper {
     private isLive = false;
     private isLoaded = false;
+    private duringSegmentJump = false;
     private _accessToken = '';
     private _mimeType: MimeType;
     private player: shaka_player.Player = Object.create(null);
@@ -228,9 +229,12 @@ export class PlayerWrapper {
                 currentDate.getUTCSeconds();
             this.currentSegment = segmentEventData.segment;
             const playbackMode: number = this.player.getPlaybackRate();
-            const seconds = playbackMode > 0 ? segmentEventData.segment.startSeconds + 2 : segmentEventData.segment.endSeconds - 2;
+            const seconds = playbackMode > 0 ? segmentEventData.segment.startSeconds : segmentEventData.segment.endSeconds;
             this.video.currentTime = seconds - dateInSeconds;
-            this.video.play();
+            if (this.isPlaying) {
+                this.video.play();
+            }
+            this.duringSegmentJump = false;
         }
     }
 
@@ -245,7 +249,9 @@ export class PlayerWrapper {
                 currentDate.getUTCSeconds();
             this.currentSegment = event.detail.segment;
             this.video.currentTime = event.detail.time - dateInSeconds;
-            this.video.play();
+            if (this.isPlaying) {
+                this.video.play();
+            }
         }
     }
 
@@ -260,6 +266,7 @@ export class PlayerWrapper {
     private jumpSegment(isNext: boolean) {
         let currentTime = this.video.currentTime;
 
+        this.duringSegmentJump = true;
         if (isNext) {
             currentTime = this.timelineComponent.getNextSegmentTime() || currentTime;
         } else {
@@ -449,7 +456,7 @@ export class PlayerWrapper {
     }
 
     private onTimeSeekUpdate() {
-        if (!this.isLoaded) {
+        if (!this.isLoaded || this.duringSegmentJump) {
             return;
         }
         const displayTime = this.video?.currentTime || 0;
