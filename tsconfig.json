@@ -28,5 +28,5 @@
         }
     },
     "exclude": ["**/*.stories.ts", "**/*.spec.ts", "node_modules"],
-    "include": ["packages"]
+    "include": ["npm.export.ts"]
 }

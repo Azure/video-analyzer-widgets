@@ -1,6 +1,6 @@
-const path = require('path');
-const common = require('./webpack.common.config');
+const { join } = require('path');
 const { merge } = require('webpack-merge');
+const common = require('./webpack.common.config');
 
 module.exports = [
     /**
@@ -8,7 +8,7 @@ module.exports = [
      */
     merge(common, {
         entry: {
-            'ava-widgets': [path.join(__dirname, './index.ts')]
+            index: [join(__dirname, './npm.export.ts')]
         },
         output: {
             libraryTarget: 'umd'
@@ -20,7 +20,7 @@ module.exports = [
      */
     merge(common, {
         entry: {
-            global: [path.join(__dirname, './global.export.ts')]
+            global: [join(__dirname, './global.export.ts')]
         },
         output: {
             library: {
