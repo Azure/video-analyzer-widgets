@@ -512,6 +512,10 @@ export class PlayerWrapper {
             // Update timeline
             this.removeTimelineComponent();
             this.createTimelineComponent();
+        } else {
+            setTimeout(() => {
+                this.controls?.controlsContainer_?.setAttribute('shown', this.isLive);
+            }, 50);
         }
     }
 

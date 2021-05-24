@@ -20,7 +20,13 @@ export class BaseWidget extends FASTElement {
 
     public configure(config: IWidgetBaseConfig) {
         this._config = config;
-        Logger.debugMode = !!this._config?.debug;
+    }
+
+    public setDebugMode(state: boolean) {
+        if (this._config) {
+            this._config.debug = state;
+        }
+        Logger.debugMode = state;
     }
 
     public load(): void {}

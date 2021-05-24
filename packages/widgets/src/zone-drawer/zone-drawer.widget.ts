@@ -128,7 +128,9 @@ export class ZoneDrawerWidget extends BaseWidget {
 
     public configure(config: IZoneDrawerWidgetConfig) {
         this.config = config;
-        Logger.debugMode = !!this._config?.debug;
+        if (this.config?.debug) {
+            this.setDebugMode(this.config?.debug);
+        }
     }
 
     // @override

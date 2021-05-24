@@ -62,6 +62,8 @@ export const styles = css`
         top: 0;
         left: 0;
         display: flex;
+        width: 100%;
+        height: 100%;
     }
 
     .shaka-bottom-controls {
@@ -166,6 +168,7 @@ export const styles = css`
     video {
         width: 100%;
         min-height: calc(100% * 9 / 16);
+        aspect-ratio: 16 / 9;
         background: black;
     }
 
