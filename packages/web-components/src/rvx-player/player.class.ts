@@ -123,6 +123,8 @@ export class PlayerWrapper {
             }
 
             this.isLoaded = true;
+            // Auto play video
+            this.video.play();
         } catch (error) {
             // eslint-disable-next-line no-console
             Logger.log(error.message);
@@ -254,6 +256,7 @@ export class PlayerWrapper {
                 this.video.play();
             }
             this.duringSegmentJump = false;
+            Logger.log(`onSegmentStart: jump to ${seconds + this.getVideoOffset()}`);
         }
     }
 
@@ -266,18 +269,18 @@ export class PlayerWrapper {
             if (this.isPlaying) {
                 this.video.play();
             }
+            Logger.log(`onSegmentChange: jump to ${event.detail.time + this.getVideoOffset()}`);
         }
     }
 
     private getVideoOffset() {
         const currentDate = new Date(this.timestampOffset);
         // If live - add the seek range start, else add timestamp offset
-        const dateInSeconds = this.player.isLive()
-            ? this.player.seekRange().start
-            : (currentDate.getUTCHours() * this.SECONDS_IN_HOUR +
-                  currentDate.getUTCMinutes() * this.SECONDS_IN_MINUTES +
-                  currentDate.getUTCSeconds()) *
-              -1;
+        const dateInSeconds =
+            this.player.seekRange().start -
+            (currentDate.getUTCHours() * this.SECONDS_IN_HOUR +
+                currentDate.getUTCMinutes() * this.SECONDS_IN_MINUTES +
+                currentDate.getUTCSeconds());
 
         return dateInSeconds;
     }
@@ -300,6 +303,7 @@ export class PlayerWrapper {
             currentTime = this.timelineComponent.getPreviousSegmentTime() || currentTime;
         }
         this.timelineComponent.currentTime = currentTime;
+        Logger.log(`jump segment: jump to ${currentTime}`);
     }
 
     private onClickNextDay() {
@@ -539,6 +543,7 @@ export class PlayerWrapper {
         // If vod mode - start first segment
         if (!this.isLive) {
             this.video.currentTime = 0;
+            Logger.log(`onLoadedData: jump to ${this.video.currentTime}`);
         }
     }
 
@@ -564,12 +569,14 @@ export class PlayerWrapper {
             ) {
                 // Get next segment time
                 currentTime = this.timelineComponent.getNextSegmentTime() || currentTime;
+                Logger.log(`onTimeSeekUpdate: jump to next segment ${currentTime}`);
             } else if (
                 playbackMode < 0 &&
                 (currentTime === this.currentSegment?.startSeconds || currentTime <= this.currentSegment?.startSeconds - gapBeforeJump)
             ) {
                 // Get prev segment time
                 currentTime = this.timelineComponent.getPreviousSegmentTime(false) || currentTime;
+                Logger.log(`onTimeSeekUpdate: jump to previous segment ${currentTime}`);
             }
             this.timelineComponent.currentTime = currentTime;
         }
