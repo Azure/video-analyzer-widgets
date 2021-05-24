@@ -1,87 +1,100 @@
-![ava_widgets_banner_github.png](./ava_widgets_banner_github.png)
+![ava_widgets_banner_github.png](https://user-images.githubusercontent.com/51399662/119260323-fc97bf00-bbda-11eb-82d0-c31fa64b8e38.png)
 
-# Azure video analyzer widgets
+# Azure Video Analyzer widgets
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/%3C%2F%3E-TypeScript-%230074c1.svg)](https://www.typescriptlang.org/)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-f8bc45.svg)](https://github.com/prettier/prettier)
 
-This is the Azure video analyzer widgets repo, containing web component packages, examples, and documentation.
+This repo conatins the Azure Video Analyzer widgets and web component packages. Below you can find documentation and examples on how to use these pieces.
 
 ## Introduction
 
-A collection of widgets (web components) using Azure Video Analyzer platform capabilities and APIs
+[Video Analyzer](https://docs.microsoft.com/azure/azure-video-analyzer/video-analyzer-docs/overview) provides a platform to build intelligent video applications that span the edge and the cloud. It offers the capability to capture, record, and analyze live video along with publishing the results - video and/or video analytics.
 
-## Installing AVA library
+The material in this repository is designed to help in building applications on the Video Analyzer platform. Below you'll find sections on:
 
-1. #### For consuming as NPM package from npm:
-    1. Install the library:
-        ```
-            npm install @azure/video-analyzer-widgets
-        ```
+-   Installing the Video Analyzer widget library
+-   Player widget
 
-### `AVA player widget`
+We also have a how-to in our document site on [using the Video Analyzer player widget](https://docs.microsoft.com/azure/azure-video-analyzer/video-analyzer-docs/player-widget).
 
-### Import
+## Installing Video Analyzer library
 
-##### Native JS usage:
+The widgets are distributed as an NPM package. There are a couple ways to install the library.
 
-Import https://unpkg.com/@azure/video-analyzer-widgetss to your HTML file:
+-   **Command line** - For consuming the NPM package directly, you can install it using the npm command.
+    ```
+    npm install @azure/video-analyzer-widgets
+    ```
+-   **Javascript HTML object** - You can import the latest version of the widget directly into your HTML file by using this script segment.
 
-```html
+    ```html
+            ...
+            <!-- Add Video Analyzer player web component -->
+            <script async type="module" src="https://unpkg.com/@azure/video-analyzer-widgets"></script>
+        </body>
+    </html>
+    ```
 
-        ...
-        <!-- Add Video Analyzer player web component -->
-        <script async type="module" src="https://unpkg.com/@azure/video-analyzer-widgets"></script>
+-   **Javascript window object** - If you want expose the widget code on the window, you can import the latest version by using this script segment.
+    ```html
+            ...
+            <!-- Add Video Analyzer player web component -->
+            <script async type="module" src="https://unpkg.com/@azure/video-analyzer-widgets@latest/dist/global.min.js"></script>
+        </body>
+    </html>
+    ```
 
-    </body>
-</html>
-```
+## Player widget
 
-##### Typescript usage:
+The player widget can be used to play back video that has been stored in the Video Analyzer service. The section below details:
 
-```typescript
-import { Player } from '@azure/video-analyzer-widgets';
-```
+-   How to add a player widget to your application
+-   Properties, events, and methods
+-   Samples showing use of the widget
 
-### Getting Started
+### Creating a player widget
 
-Player widget is a web-component that can be created using HTML or dynamically.
+Player widget is a web-component that can be created in your base HTML code, or dynamically at run time.
 
-Creating using HTML:
+-   Creating using HTML
+    ```html
+      <body>
+    	<ava-player width="920px"><ava-player>
+      </body>
+    ```
+-   Creating dynamically with Javascript
+    ```typescript
+    const avaPlayer = new Player();
+    document.firstElementChild.appendChild(avaPlayer);
+    ```
+-   Creating dynamically with Typescript
 
-```html live
-  <body>
-	<ava-player widget="”920px”"><ava-player>
-  </body>
-```
+    ```typescript
+    import { Player } from '@azure/video-analyzer-widgets';
 
-Creating dynamically:
+    const avaPlayer = new Player();
+    document.firstElementChild.appendChild(avaPlayer);
+    ```
 
-##### Typescript usage:
+### Properties, events and methods
 
-```typescript
-import { Player } from '@azure/video-analyzer-widgets';
-
-const avaPlayer = new Player();
-document.firstElementChild.appendChild(avaPlayer).
-```
-
-### Properties
+The player has a series of properties as defined in the below table. Configuration is required to get the player to run initially.
 
 | Name   | Type             | Default | Description                        |
 | ------ | ---------------- | ------- | ---------------------------------- |
 | width  | string           | 100%    | Reflects the value of widget width |
 | config | IAvaPlayerConfig | null    | Widget configuration               |
 
-### Events
+There are also a couple of events that fire under various conditions. None of the events have parameters associated with them. It is important to deal with the TOKEN_EXPIRED event so that playback doesn't stop.
 
 | Name          | Parameters | Description                                       |
 | ------------- | ---------- | ------------------------------------------------- |
 | TOKEN_EXPIRED | -          | Callback to invoke when AVA JWT token is expired. |
 | PLAYER_ERROR  | -          | Callback to invoke there is an error.             |
 
-### Methods
+The player has a few methods you can use in your code. These can be useful for building your own controls.
 
 | Name           | Parameters                      | Description                                                                                              |
 | -------------- | ------------------------------- | -------------------------------------------------------------------------------------------------------- |
@@ -92,391 +105,115 @@ document.firstElementChild.appendChild(avaPlayer).
 | play           | -                               | Play the player                                                                                          |
 | pause          | -                               | Pause the player                                                                                         |
 
-### Code snippets:
+### Code samples
 
-1.  _Basic usage snippet:_ create a player widget with native JS code, configure the widget and load the data.
+There are a few code samples below detailing basic usage, how to dynamically create the widget during run time, how to deal with refreshing the token, and use in an Angular application.
 
-    ```html live
-    <body>
-        <ava-player></ava-player>
-    </body>
-    <script>
-        (function () {
-                // Get player instance
-                const avaPlayer = document.querySelector("ava-player");
+#### Basic usage
 
-                // Configure widget with AVA API configuration
-                avaPlayer.configure({
-                    token: '<AVA-API-JWT-TOKEN>',
-                    clientApiEndpointUrl: '<CLIENT-ENDPOINT-URL>',
-                    videoName: '<VIDEO-NAME-FROM-AVA-ACCOUNT>’
-                });
+This code shows how to create the player widget as an HTML tag, then configure the widget, and load the data to make it start playing using Javacript.
 
-                avaPlayer.load();
-            })()
-    </script>
-    ```
-
-2.  _Token refresh snippet:_ create a widget with native JS code, configure the widget and load the data. Once AVA-API token is expired, update the token.
-
-    ```html live
-    <body>
-        <ava-player widget="”920px”"></ava-player>
-    </body>
-    <script>
-        (function () {
-                    // Get player instance
-                    const avaPlayer = document.querySelector("ava-player");
-
-                    // Adding token expired listener
-                    avaPlayer.addEventListener('TOKEN_EXPIRED', async () => {
-                        const token = await fetch(‘<request-to-generate-token>’);
-                        avaPlayer.setAccessToken(token);
-                    });
-
-                    // Configure widget with AVA API configuration
-                    avaPlayer.configure({
-                        token: '<AVA-API-JWT-TOKEN>',
-                        clientApiEndpointUrl: '<CLIENT-ENDPOINT-URL>',
-                        videoName: '<VIDEO-NAME-FROM-AVA-ACCOUNT>’
-                    });
-
-                    // Load the widget
-                    avaPlayer.load();
-            })()
-    </script>
-    ```
-
-3.  _Dynamically creating the widget:_ create a widget dynamically with native JS code, without using configure function.
-
-    ```html live
-    <!-- Add Video Analyzer player web component -->
-    <script async type="module" src="https://unpkg.com/@azure/video-analyzer-widgets@latest/dist/global.min.js"></script>
-    <body>
-        <div id="”widget-container”"></div>
-    </body>
-    <script>
-        (function () {
-                        // Get widget container
-                        const widgetContainer = document.querySelector("#widget-container");
-
-                        // Create new player widget
-                        const playerWidget = new window.ava.widgets.player(
-                        {
-                            token: '<AVA-API-JWT-TOKEN>',
-                            clientApiEndpointUrl: '<CLIENT-ENDPOINT-URL>',
-                            videoName: '<VIDEO-NAME-FROM-AVA-ACCOUNT>’
-                        });
-
-                        widgetContainer.appendChild(playerWidget)
-
-                        // Load the widget
-                        playerWidget.load();
-                })()
-    </script>
-    ```
-
-4.  _Use ava-player in your angular application:_
-
-    1. Go to your _src/main.ts_ file and add the following code:
-
-        ```typescript
-        import { Player } from '@azure/video-analyzer-widgets';
-
-        /*
-         * Ensure that tree-shaking doesn't remove this component from * the bundle.
-         * There are multiple ways to prevent tree shaking, of which this * is one.
-         */
-        Player;
-        ```
-
-    2. To allow an NgModule to contain Non-Angular element names, add the following code in your application module typescript file _app.module.ts_:
-
-        ```typescript
-            import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-
-            @NgModule({
-                schemas: [CUSTOM_ELEMENTS_SCHEMA]
-            });
-        ```
-
-    3. Now we can start using widget. Replace the HTML template in your app.component.html, file with the following markup:
-        ```html live
-        <template>
-            <ava-player widget="”920px”"></ava-player>
-        </template>
-        ```
-        Alternatively, you can create a new instance of the widget using typescript, and add it to the DOM.
-
-### `AVA Zone Drawer widget`
-
-##### Typescript usage:
-
-```typescript
-import { ZoneDrawerWidget } from '@azure/video-analyzer-widgets';
-```
-
-### Getting Started
-
-Zone Drawer widget is a web-component that can be created using HTML or dynamically.
-
-Creating using HTML:
-
-```html live
-  <body>
-	<ava-zone-drawer><ava-zone-drawer>
-  </body>
-```
-
-Creating dynamically:
-
-##### Native JS usage:
-
-```html live
-<head>
-    <script async type="”module”" src="https://unpkg.com/@azure/video-analyzer-widgets"></script>
-</head>
-<body></body>
+```html
 <script>
-    (function () {
-        const zoneDrawer = new window.ava.widgets.zoneDrawer();
-        document.firstElementChild.appendChild(zoneDrawer);
-    })();
+    function onAVALoad() {
+        // Get player instance
+        const avaPlayer = document.querySelector('ava-player');
+
+        // Configure widget with AVA API configuration
+        avaPlayer.configure({
+            token: '<AVA-API-JWT-TOKEN>',
+            clientApiEndpointUrl: '<CLIENT-ENDPOINT-URL>',
+            videoName: '<VIDEO-NAME-FROM-AVA-ACCOUNT>'
+        });
+
+        avaPlayer.load();
+    }
 </script>
+<script async type="module" src="https://unpkg.com/@azure/video-analyzer-widgets" onload="onAVALoad()"></script>
+<body>
+    <ava-player></ava-player>
+</body>
 ```
 
-##### Typescript usage:
+#### Dynamically creating the widget
 
-```typescript
-import { ZoneDrawer } from '@azure/video-analyzer-widgets';
+This code shows how to create a widget dynamically with Javascript code without using the separate configure function. It adds the widget to a premade div container.
 
-const zoneDrawer = new ZoneDrawer();
-document.firstElementChild.appendChild(zoneDrawer).
+```html
+<script>
+    function onAVALoad() {
+        // Get widget container
+        const widgetContainer = document.querySelector('#widget-container');
+
+        // Create new player widget
+        const playerWidget = new Player({
+            token: '<AVA-API-JWT-TOKEN>',
+            clientApiEndpointUrl: '<CLIENT-ENDPOINT-URL>',
+            videoName: '<VIDEO-NAME-FROM-AVA-ACCOUNT>'
+        });
+
+        widgetContainer.appendChild(playerWidget);
+
+        // Load the widget
+        playerWidget.load();
+    }
+</script>
+<script async type="module" src="https://unpkg.com/@azure/video-analyzer-widgets" onload="onAVALoad()"></script>
+<body>
+    <div id="widget-container"></div>
+</body>
 ```
 
-### Properties
+#### Token refresh
 
-| Name   | Type                    | Default | Description                         |
-| ------ | ----------------------- | ------- | ----------------------------------- |
-| width  | string                  | 100%    | Reflects the value of widget width  |
-| height | string                  | 100%    | Reflects the value of widget height |
-| config | IZoneDrawerWidgetConfig | null    | Widget configuration                |
+This section shows create a widget with native JS code, configure the widget, and load the data. It adds in an event listener so that when the token is expired, it will update the token. You will of course need to provide your own code to generate a new token based on the method you used.
 
-### Events
+```html
+<script>
+    function onAVALoad() {
+        // Get player instance
+        const avaPlayer = document.querySelector("ava-player");
 
-| Name                    | Parameters | Description                                              |
-| ----------------------- | ---------- | -------------------------------------------------------- |
-| ZONE_DRAWER_ADDED_ZONE  | -          | Callback when user add line/polygon from zones list.     |
-| ONE_DRAWER_REMOVED_ZONE | -          | Callback when user removed line/polygon from zones list. |
-| ZONE_DRAWER_SAVE        | -          | Callback when user click save button.                    |
+        // Adding token expired listener
+        avaPlayer.addEventListener('TOKEN_EXPIRED', async () => {
+            const token = await fetch(‘<request-to-generate-token>’);
+            avaPlayer.setAccessToken(token);
+        });
 
-### Methods
+        // Configure widget with AVA API configuration
+        avaPlayer.configure({
+            token: '<AVA-API-JWT-TOKEN>',
+            clientApiEndpointUrl: '<CLIENT-ENDPOINT-URL>',
+            videoName: '<VIDEO-NAME-FROM-AVA-ACCOUNT>'
+        });
 
-| Name        | Parameters                             | Description                                                                                              |
-| ----------- | -------------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| constructor | config: IZoneDrawerWidgetConfig = null | Widget constructor. If called with config, you don’t need to call _configure_ function                   |
-| configure   | config: IZoneDrawerWidgetConfig        | Update widget configuration.                                                                             |
-| load        | -                                      | Loads and initialize the widget according to provided configuration. If not called, widget will be empty |
+        // Load the widget
+        avaPlayer.load();
+    }
+</script>
+<script async type="module" src="https://unpkg.com/@azure/video-analyzer-widgets" onload="onAVALoad()"></script>
+<body>
+    <ava-player width="920px"></ava-player>
+</body>
+```
 
-### Objects
+#### Player widget in an Angular application
 
-| Name | Description                                                                                                                                     | Examples                                                                                                                                                                                     |
-| ---- | ----------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Zone | The zone object contains x and y params. The coordinates are terminated by their relative position to the height and width the shape was drawn. | The zone area size is 400\*400 and the user set a coordinate on the top left corner 10 px from the top and 20 px from left. The zone coordinates, in that case, will be {x: 0.025, y: 0.05}. |
+To use the player widget in an Angular application, you'll need to follow the steps below.
 
-### Code snippets:
-
-1.  _Basic usage snippet:_ create a zone draw widget with native JS code, configure the widget and load the data.
-
-    The zone drawer includes the ava-player as a video HTML element. The `<ava-player></ava-player>` is a **prerequisite** for the widget and it displays the video according to configuration.
-    For more information regarding ava-player, please see its documentation.
-
-    ```html live
-    <head>
-        <script async type="”module”" src="https://unpkg.com/@azure/video-analyzer-widgets"></script>
-    </head>
-    <body>
-        <ava-zone-drawer>
-            <ava-player widget="”920px”"></ava-player>
-        </ava-zone-drawer>
-    </body>
-    <script>
-        (function () {
-            // Get zone drawer widget instance
-            const avaZoneDrawer = document.querySelector('ava-zone-drawer');
-
-            // Init draw-zone with zones object is optional
-            const zones = [
-                {
-                    id: '1',
-                    points: [
-                        {
-                            x: 0,
-                            y: 0
-                        },
-                        {
-                            x: 0.5,
-                            y: 0.5
-                        }
-                    ]
-                },
-                {
-                    id: '2',
-                    points: [
-                        {
-                            x: 0.9,
-                            y: 0.1
-                        },
-                        {
-                            x: 0.7,
-                            y: 0.8
-                        }
-                    ]
-                }
-            ];
-
-            // Configure widget with AVA API configuration
-            avaZoneDrawer.configure({
-                zones: zones
-            });
-
-            avaZoneDrawer.load();
-        })();
-    </script>
-    ```
-
-2.  _Dynamically creating the widget:_ create a widget dynamically with native JS code, without using configure function.
-
-    ```html live
-    <head>
-        <script async type="”module”" src="https://unpkg.com/@azure/video-analyzer-widgets"></script>
-    </head>
-    <body>
-        <div id="”widget-container”"></div>
-    </body>
-    <script>
-        (function () {
-            // Get widget container
-            const widgetContainer = document.querySelector('#widget-container');
-
-            // Init draw-zone with zones object is optional
-            const zones = [
-                {
-                    id: '1',
-                    points: [
-                        {
-                            x: 0,
-                            y: 0
-                        },
-                        {
-                            x: 0.5,
-                            y: 0.5
-                        }
-                    ]
-                },
-                {
-                    id: '2',
-                    points: [
-                        {
-                            x: 0.9,
-                            y: 0.1
-                        },
-                        {
-                            x: 0.7,
-                            y: 0.8
-                        }
-                    ]
-                }
-            ];
-
-            // Create new zone drawer widget
-            const zoneDrawer = new window.ava.widgets.zoneDrawer({ zones: zones });
-
-            widgetContainer.appendChild(zoneDrawer);
-
-            // Load the widget
-            zoneDrawer.load();
-        })();
-    </script>
-    ```
-
-3.  _Dynamically creating the widget:_ create a widget dynamically with native JS code. Add event listener to the widget.
-
-    ```html live
-    <head>
-        <script async type="”module”" src="https://unpkg.com/@azure/video-analyzer-widgets"></script>
-    </head>
-    <body>
-        <div id="”widget-container”"></div>
-    </body>
-    <script>
-        (function () {
-            // Get widget container
-            const widgetContainer = document.querySelector('#widget-container');
-
-            // Create new zone drawer widget
-            const zoneDrawer = new window.ava.widgets.zoneDrawer();
-
-            widgetContainer.appendChild(zoneDrawer);
-
-            // Load the widget
-            zoneDrawer.load();
-
-            // Add 'save' event listener when user click save button
-            zoneDrawer.addEventListener('ZONE_DRAWER_SAVE', (event) => {
-                /* The event includes zones array the user draw.
-                            Example: 
-                            [
-                                {
-                                    id: '1',
-                                    points: [
-                                        {
-                                            x: 0,
-                                            y: 0
-                                        },
-                                        {
-                                            x: 0.5,
-                                            y: 0.5
-                                        }
-                                    ]
-                                },
-                                {
-                                    id: '2',
-                                    points: [
-                                        {
-                                            x: 0.9,
-                                            y: 0.1
-                                        },
-                                        {
-                                            x: 0.7,
-                                            y: 0.8
-                                        }
-                                    ]
-                                }
-                            ] 
-                            The points x,y are determined by their relative position to the video width or height. */
-
-                const zones = event.details;
-            });
-        })();
-    </script>
-    ```
-
-4.  _Use ava-zone-drawer in your angular application:_
-
-5.  Go to your _src/main.ts_ file and add the following code:
+1. Go to your _src/main.ts_ file and add the following code:
 
     ```typescript
-    import { ZoneDrawerWidget } from '@azure/video-analyzer-widgets';
+    import { Player } from '@azure/video-analyzer-widgets';
 
     /*
      * Ensure that tree-shaking doesn't remove this component from * the bundle.
      * There are multiple ways to prevent tree shaking, of which this * is one.
      */
-    ZoneDrawerWidget;
+    Player;
     ```
 
-6.  To allow an NgModule to contain Non-Angular element names, add the following code in your application module typescript file _app.module.ts_:
+1. To allow an NgModule to contain Non-Angular element names, add the following code in your application module Typescript file _app.module.ts_:
 
     ```typescript
         import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
@@ -486,10 +223,10 @@ document.firstElementChild.appendChild(zoneDrawer).
         });
     ```
 
-7.  Now we can start using widget. Replace the HTML template in your app.component.html, file with the following markup:
-    ```html live
+1. Now you can start using widget. Replace the HTML template in your app.component.html, file with the following markup:
+    ```html
     <template>
-        <ava-zone-drawer></ava-zone-drawer>
+        <ava-player width="920px"></ava-player>
     </template>
     ```
-    Alternatively, you can create a new instance of the widget using typescript, and add it to the DOM.
+    Alternatively, you can create a new instance of the widget using Typescript, and add it to the DOM.

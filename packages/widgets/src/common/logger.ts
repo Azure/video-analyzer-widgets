@@ -17,7 +17,7 @@ export class Logger {
     public static log(...msg: any) {
         if (Logger.debugMode) {
             // eslint-disable-next-line no-console
-            console.log(msg);
+            console.log(...msg);
         }
     }
 
@@ -25,7 +25,7 @@ export class Logger {
     public static error(...msg: any) {
         if (Logger.debugMode) {
             // eslint-disable-next-line no-console
-            console.error(msg);
+            console.error(...msg);
         }
     }
 }

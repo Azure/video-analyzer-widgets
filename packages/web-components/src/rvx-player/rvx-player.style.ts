@@ -14,6 +14,7 @@ export const styles = css`
         --base-height-multiplier: 12;
         height: auto;
         position: relative;
+        padding-bottom: 48px;
     }
 
     .error-container {
@@ -21,18 +22,22 @@ export const styles = css`
         position: absolute;
         z-index: 10;
         /* 100% minus controllers and timeline*/
-        height: calc(100% - 48px - 43px);
+        height: calc(100% - 48px - 49px);
         width: 100%;
         flex-direction: column;
     }
 
-    .error {
-        margin-bottom: 16px;
+    .error-container > fast-button {
+        margin-top: 16px;
+    }
+
+    video.error {
+        visibility: hidden;
     }
 
     :host(.live-off) {
         /* add controllers and timeline */
-        padding-bottom: calc(48px + 43px);
+        padding-bottom: calc(48px + 49px);
     }
 
     :host(.loading),
@@ -44,6 +49,10 @@ export const styles = css`
         align-items: center;
         display: flex;
         justify-content: center;
+    }
+
+    :host(.no-live-data) .live-button-component {
+        display: none;
     }
 
     ${stylesShaka}
@@ -59,6 +68,11 @@ export const styles = css`
         padding: 8px 0;
     }
 
+    .shaka-video-container.live .hours-label,
+    .shaka-video-container.live .next-day-button,
+    .shaka-video-container.live .prev-day-button,
+    .shaka-video-container.live .prev-segment-button,
+    .shaka-video-container.live .next-segment-button,
     .shaka-video-container.live .shaka-fast-forward-button,
     .shaka-video-container.live .shaka-rewind-button {
         display: none;
@@ -68,12 +82,16 @@ export const styles = css`
         display: none;
     }
 
+    .shaka-video-container.live .shaka-seek-bar-container {
+        top: -2px;
+    }
+
     .shaka-video-container .material-icons-round {
         font-size: 16px;
     }
 
     .shaka-video-container.fullscreen .shaka-controls-container.live-off .shaka-bottom-controls {
-        padding-bottom: calc(48px + 43px + 2px) !important;
+        padding-bottom: calc(48px + 49px + 2px) !important;
     }
     .shaka-volume-bar-container {
         height: 2px;

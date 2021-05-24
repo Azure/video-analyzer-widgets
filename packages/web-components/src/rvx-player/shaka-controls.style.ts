@@ -73,7 +73,7 @@ export const stylesShaka = css`
         z-index: 1;
     }
     .shaka-controls-container.live-off {
-        height: calc(100% + 48px + 43px);
+        height: calc(100% + 48px + 49px);
     }
     .live-button-component {
         width: 34px;

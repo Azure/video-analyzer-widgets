@@ -995,6 +995,16 @@ export declare namespace shaka {
             detail: util.Error;
         }
 
+        interface StateChangeEvent extends util.ShakaEvent {
+            type: 'onstatechange';
+            state: string;
+        }
+
+        interface StateIdleEvent extends util.ShakaEvent {
+            type: 'onstateidle';
+            state: string;
+        }
+
         interface EmsgEvent extends util.ShakaEvent {
             type: 'emsg';
             detail: extern.EmsgInfo;
@@ -1028,6 +1038,10 @@ export declare namespace shaka {
             type: 'loading';
         }
 
+        interface LoadedEvent extends util.ShakaEvent {
+            type: 'loaded';
+        }
+
         interface UnloadingEvent extends util.ShakaEvent {
             type: 'unloading';
         }
@@ -1051,7 +1065,7 @@ export declare namespace shaka {
         interface LargeGapEvent extends util.ShakaEvent {
             type: 'largegap';
             currentTime: number;
-            gaSize: number;
+            gapSize: number;
         }
 
         interface StreamingEvent extends util.ShakaEvent {
@@ -1060,13 +1074,15 @@ export declare namespace shaka {
 
         interface PlayerEventMap {
             error: ErrorEvent;
+            onstatechange: StateChangeEvent;
+            onstateidle: StateIdleEvent;
             drmsessionupdate: DrmSessionUpdateEvent;
             timelineregionadded: TimelineRegionAddedEvent;
             timelineregionenter: TimelineRegionEnterEvent;
             timelineregionexit: TimelineRegionExitEvent;
             buffering: BufferingEvent;
             loading: LoadingEvent;
-            loaded: LoadingEvent;
+            loaded: LoadedEvent;
             unloading: UnloadingEvent;
             texttrackvisibility: TextTrackVisibilityEvent;
             trackschanged: TracksChangedEvent;

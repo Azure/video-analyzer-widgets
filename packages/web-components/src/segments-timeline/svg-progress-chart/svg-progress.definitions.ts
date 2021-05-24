@@ -35,6 +35,8 @@ export interface IChartData {
     selected?: boolean;
     color?: string;
     textColor?: string;
+    start?: number;
+    end?: number;
 }
 
 export interface IProgressBar {

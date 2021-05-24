@@ -206,6 +206,8 @@ export class SVGProgressChart {
                     event.color
                 );
                 newEvent.type = event.type;
+                newEvent.start = event.start;
+                newEvent.end = event.end;
                 newEvent.addClass(event.type || 'default');
                 this.components.events.push(newEvent);
                 if (this.components.progressBar.tooltip) {
@@ -359,7 +361,7 @@ export class SVGProgressChart {
     private handleMouseClick(e: MouseEvent) {
         const percent = (e.offsetX / this.options.width) * 100;
         const time = this.options.time * (percent / 100);
-        this.activeSegment = this.updateActiveRect(time);
+        this.activeSegment = this.updateActiveRect(time, false);
         if (this._activeSegmentCallback && this.activeSegment) {
             this._activeSegmentCallback({ segment: this.activeSegment, time: time });
         }
@@ -382,10 +384,10 @@ export class SVGProgressChart {
         }
     }
 
-    private updateActiveRect(time: number): IUISegment {
+    private updateActiveRect(time: number, emitEvent = true): IUISegment {
         if (this.activeRect) {
-            const startTime = (this.activeRect.x / 100) * this.options.time;
-            const endTime = (this.activeRect.width / 100) * this.options.time + startTime;
+            const startTime = this.activeRect.start || (this.activeRect.x / 100) * this.options.time;
+            const endTime = this.activeRect.end || (this.activeRect.width / 100) * this.options.time + startTime;
             if (startTime <= time && endTime >= time) {
                 return {
                     startSeconds: startTime,
@@ -399,13 +401,13 @@ export class SVGProgressChart {
         }
 
         for (const rect of this.components.events) {
-            const startTime = (rect.x / 100) * this.options.time;
-            const endTime = (rect.width / 100) * this.options.time + startTime;
+            const startTime = rect.start || (rect.x / 100) * this.options.time;
+            const endTime = rect.end || (rect.width / 100) * this.options.time + startTime;
             if (startTime <= time && endTime >= time) {
                 // New active segment
                 this.activeRect = rect;
                 this.activeRect.addClass('active');
-                if (this._segmentStartCallback) {
+                if (this._segmentStartCallback && emitEvent) {
                     this._segmentStartCallback({
                         segment: {
                             startSeconds: startTime,

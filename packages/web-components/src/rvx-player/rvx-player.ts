@@ -51,6 +51,7 @@ export class PlayerComponent extends FASTElement {
     private videoContainer!: HTMLElement;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private allowedDates: any = [];
+    private hasLiveData = false;
     private afterInit = false;
     private connected = false;
 
@@ -140,11 +141,25 @@ export class PlayerComponent extends FASTElement {
         // Select the last recorded date
         const date = new Date(Date.UTC(this.currentYear, this.currentMonth - 1, this.currentDay));
 
+        // If the last recorded day is today - try switch to live
+        const today = new Date();
+        this.isLive =
+            date.getUTCFullYear() === today.getUTCFullYear() &&
+            date.getUTCMonth() === today.getUTCMonth() &&
+            date.getUTCDate() === today.getUTCDate();
+
+        this.hasLiveData = this.isLive;
+
+        // If there is no live data - remove live button
+        if (!this.hasLiveData) {
+            this.classList.add('no-live-data');
+        }
+
         this.afterInit = true;
 
         this.currentDate = date;
         this.datePickerComponent.inputDate = date.toUTCString();
-        this.updateVODStream();
+        this.updateVODStream(false, true);
     }
 
     public cameraNameChanged() {
@@ -179,6 +194,7 @@ export class PlayerComponent extends FASTElement {
         this.hasError = false;
         this.showRetryButton = false;
         this.classList.remove('error');
+        this.video?.classList.remove('error');
     }
 
     public handleError(error: HttpError) {
@@ -195,6 +211,7 @@ export class PlayerComponent extends FASTElement {
         this.showRetryButton = true;
         this.errorString = getShakaPlayerErrorString(error);
         this.classList.add('error');
+        this.video?.classList.add('error');
         this.$emit(PlayerEvents.SHAKE_PLAYER_ERROR, error);
     }
 
@@ -206,7 +223,7 @@ export class PlayerComponent extends FASTElement {
     public async connectedCallback() {
         super.connectedCallback();
 
-        this.video = this.shadowRoot?.querySelector('#player-video') as HTMLVideoElement;
+        this.video = this.shadowRoot?.querySelector('.video-element') as HTMLVideoElement;
         this.videoContainer = this.shadowRoot?.querySelector('.video-container') as HTMLElement;
         this.timeContainer = this.shadowRoot?.querySelector('.time-container') as HTMLElement;
 
@@ -223,7 +240,7 @@ export class PlayerComponent extends FASTElement {
                 this.currentYear = this.currentDate.getUTCFullYear();
                 this.currentMonth = this.currentDate.getUTCMonth() + 1;
                 this.currentDay = this.currentDate.getUTCDate();
-                this.updateVODStream();
+                this.updateVODStream(true);
             }
             // eslint-disable-next-line no-undef
         }) as EventListener);
@@ -330,7 +347,10 @@ export class PlayerComponent extends FASTElement {
         // eslint-disable-next-line no-console
         if (segments) {
             this.currentDay++;
-            this.updateVODStream();
+            const date = new Date(Date.UTC(this.currentYear, this.currentMonth - 1, this.currentDay));
+            this.currentDate = date;
+            this.datePickerComponent.inputDate = date.toUTCString();
+            this.updateVODStream(true);
         }
     }
 
@@ -353,32 +373,14 @@ export class PlayerComponent extends FASTElement {
         // eslint-disable-next-line no-console
         if (segments) {
             this.currentDay--;
-            this.updateVODStream();
+            const date = new Date(Date.UTC(this.currentYear, this.currentMonth - 1, this.currentDay));
+            this.currentDate = date;
+            this.datePickerComponent.inputDate = date.toUTCString();
+            this.updateVODStream(true);
         }
     }
 
-    private async adjustNewDate(date: Date) {
-        const adjustedDateYear = date.getUTCFullYear();
-        const adjustedDateMonth = date.getUTCMonth() + 1;
-        const adjustedDateDay = date.getUTCDate();
-        // First, check if it available
-        if (this.allowedDates[adjustedDateYear] && this.allowedDates[adjustedDateYear][adjustedDateMonth]) {
-            const allowedDays = this.allowedDates[adjustedDateYear][adjustedDateMonth];
-            if (allowedDays.indexOf(adjustedDateDay) > -1) {
-                this.datePickerComponent.inputDate = date.toUTCString();
-            } else if (!allowedDays.length) {
-                // Need to fetch data there is no data for this month
-                await this.fetchAvailableDays(adjustedDateYear, adjustedDateMonth);
-                await this.updateMonthAndDates(adjustedDateYear, adjustedDateMonth);
-
-                if (this.allowedDates[adjustedDateYear][adjustedDateMonth].indexOf(adjustedDateDay) > -1) {
-                    this.datePickerComponent.inputDate = date.toUTCString();
-                }
-            }
-        }
-    }
-
-    private async updateVODStream() {
+    private async updateVODStream(VODMode: boolean = false, init = false) {
         if (!this.afterInit) {
             return;
         }
@@ -399,17 +401,42 @@ export class PlayerComponent extends FASTElement {
             end: end
         });
 
+        this.liveStream = MediaApi.getLiveStream();
+
+        this.isLive = this.hasLiveData ? !VODMode : false;
         // Get segments
         const segments = await this.fetchAvailableSegments(start, end);
         // Switch to VOD
         if (this.player) {
             this.player.availableSegments = segments;
             this.player.vodStream = this.vodStream;
-            this.player.toggleLiveMode(false);
+            this.player.liveStream = this.liveStream;
+            const isStreamLive = await this.player.toggleLiveMode(this.isLive);
+            // If we loaded the live stream at first time, update has live data
+            if (init && this.isLive) {
+                await this.updateLiveStateAfterStreamLoad(isStreamLive);
+            }
         }
-        this.isLive = false;
         this.classList.add(this.isLive ? 'live-on' : 'live-off');
         this.classList.remove(!this.isLive ? 'live-on' : 'live-off');
+    }
+
+    private async updateLiveStateAfterStreamLoad(isStreamLive: boolean) {
+        // If the live stream is real on - keep the existing state
+        if (isStreamLive) {
+            this.hasLiveData = true;
+            return;
+        }
+
+        // There is no live mode available - remove all live state
+        this.hasLiveData = false;
+        this.isLive = false;
+
+        // Remove live button
+        this.classList.add('no-live-data');
+
+        // Load vod stream
+        await this.player.toggleLiveMode(this.isLive);
     }
 
     private async fetchAvailableYears() {
