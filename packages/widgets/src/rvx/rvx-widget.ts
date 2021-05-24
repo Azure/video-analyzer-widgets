@@ -35,13 +35,6 @@ export class Player extends BaseWidget {
         }
     }
 
-    public setDebugMode(state: boolean) {
-        if (this._config) {
-            this._config.debug = state;
-        }
-        Logger.debugMode = state;
-    }
-
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     public get shakaPlayer(): any {
         const rvxPlayer: PlayerComponent = this.shadowRoot.querySelector('rvx-player');
@@ -80,6 +73,9 @@ export class Player extends BaseWidget {
 
     public configure(config: IAvaPlayerConfig) {
         this.config = config;
+        if (this.config?.debug) {
+            this.setDebugMode(this.config?.debug);
+        }
         this.init();
     }
 
