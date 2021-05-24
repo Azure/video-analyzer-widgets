@@ -569,15 +569,16 @@ export class PlayerWrapper {
             ) {
                 // Get next segment time
                 currentTime = this.timelineComponent.getNextSegmentTime() || currentTime;
+                Logger.log(`onTimeSeekUpdate: jump to next segment ${currentTime}`);
             } else if (
                 playbackMode < 0 &&
                 (currentTime === this.currentSegment?.startSeconds || currentTime <= this.currentSegment?.startSeconds - gapBeforeJump)
             ) {
                 // Get prev segment time
                 currentTime = this.timelineComponent.getPreviousSegmentTime(false) || currentTime;
+                Logger.log(`onTimeSeekUpdate: jump to previous segment ${currentTime}`);
             }
             this.timelineComponent.currentTime = currentTime;
-            Logger.log(`onTimeSeekUpdate: jump to ${currentTime}`);
         }
     }
 

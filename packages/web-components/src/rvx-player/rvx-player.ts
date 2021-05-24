@@ -345,7 +345,7 @@ export class PlayerComponent extends FASTElement {
         };
         const segments = await this.fetchAvailableSegments(start, end);
         // eslint-disable-next-line no-console
-        if (segments) {
+        if (segments?.timeRanges?.length) {
             this.currentDay++;
             const date = new Date(Date.UTC(this.currentYear, this.currentMonth - 1, this.currentDay));
             this.currentDate = date;
@@ -371,7 +371,7 @@ export class PlayerComponent extends FASTElement {
         };
         const segments = await this.fetchAvailableSegments(start, end);
         // eslint-disable-next-line no-console
-        if (segments) {
+        if (segments?.timeRanges?.length) {
             this.currentDay--;
             const date = new Date(Date.UTC(this.currentYear, this.currentMonth - 1, this.currentDay));
             this.currentDate = date;
