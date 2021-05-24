@@ -78,7 +78,8 @@
         "shaka-player": "^3.1.0"
     },
     "files": [
-        "dist"
+        "dist",
+        "LICENSE"
     ],
     "sideEffects": false
 }
