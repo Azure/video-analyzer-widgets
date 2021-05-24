@@ -1,16 +1,67 @@
 <html>
 
 <head>
+  <title>Sample RVX Widget</title>
   <style></style>
 </head>
 
 <body>
-  <script src="../dist/index.js"></script>
-  <h1>Sample Widgets</h1>
-  <div id="container"
-    class="widgets-container">
-    <ava-player></ava-player>
+  <h1>Example Player widget</h1>
+  <div>
+    <label for="clientApiEndpointUrlInput">Client API Endpoint:</label>
+    <input id="clientApiEndpointUrlInput"
+      style="width:700px"
+      type="text"
+      placeholder="https://9354cd75eef44462a3d91eba5ffa5358.api.westcentralus-private1.videoanalyzer.azure.net" />
   </div>
+  <div>
+    <label for="videoNameInput">Video name:</label>
+    <input id="videoNameInput"
+      style="width:300px"
+      type="text"
+      placeholder="rodrigb-toronto2" />
+  </div>
+  <div>
+    <label for="clientApiTokenInput">JWT Auth Token for Client API:</label>
+    <input id="clientApiTokenInput"
+      style="width:1000px"
+      type="text"
+      value="" />
+  </div>
+  <br />
+  <button id="play"
+    onclick="onPlayButtonClick()">Start Playback</button>
+  <br /><br />
+  <div id="container"
+    style="width:720px"
+    class="widget-container">
+    <ava-player>
+    </ava-player>
+  </div>
+  <script type="module"
+    src="../dist/index.js"
+    onload="onAVALoad()"></script>
+  <script>
+    function onAVALoad() {
+      const avaPlayer = document.querySelector("ava-player");
+      avaPlayer.addEventListener('TOKEN_EXPIRED', () => {
+        console.log('token expired');
+      });
+    }
+
+    function onPlayButtonClick() {
+      const clientApiEndpointUrlInput = document.querySelector('#clientApiEndpointUrlInput');
+      const clientApiEndpointUrl = clientApiEndpointUrlInput.value || clientApiEndpointUrlInput.placeholder;
+      const videoNameInput = document.querySelector('#videoNameInput');
+      const videoName = videoNameInput.value || videoNameInput.placeholder;
+      const clientApiTokenInput = document.querySelector('#clientApiTokenInput');
+      const token = clientApiTokenInput.value;
+
+      const avaPlayer = document.querySelector("ava-player");
+      avaPlayer.configure({ clientApiEndpointUrl, videoName, token, debug: true });
+      avaPlayer.load();
+    }
+  </script>
 </body>
 
 </html>
