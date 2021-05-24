@@ -1,5 +1,6 @@
 export class Logger {
-    private static _debugMode = false;
+    // TODO : change back to false post build
+    private static _debugMode = true;
 
     public constructor(public mode?: boolean) {
         Logger.debugMode = mode;
