@@ -1,6 +1,6 @@
 {
     "name": "@azure/video-analyzer-widgets",
-    "version": "0.4.8",
+    "version": "0.4.9",
     "description": "A collection of widgets (web components) using Azure Video Analyzer platform capabilities and APIs",
     "main": "./dist/index.min.js",
     "typings": "./dist/npm.export.d.ts",
@@ -75,7 +75,7 @@
         "lodash-es": "^4.17.21",
         "node": "^15.4.0",
         "rxjs": "^6.6.3",
-        "shaka-player": "^3.1.0"
+        "shaka-player": "3.1.0"
     },
     "files": [
         "dist",
