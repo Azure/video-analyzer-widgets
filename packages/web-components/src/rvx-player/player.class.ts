@@ -251,9 +251,10 @@ export class PlayerWrapper {
 
         // We expect server to return 404 on manifest requests that turn out to be empty,
         // so we assume there will always be at least one segment.
-        const firstSegmentStartSeconds = extractRealTimeFromISO(this._availableSegments.timeRanges[0].start);
-        Logger.log('createTimelineComponent: setting firstSegmentStartSeconds to ' +
-            `${firstSegmentStartSeconds}, ` + this.getSeekRangeString());
+        const firstSegmentStartSeconds = extractRealTimeFromISO(this._availableSegments?.timeRanges[0]?.start);
+        Logger.log(
+            'createTimelineComponent: setting firstSegmentStartSeconds to ' + `${firstSegmentStartSeconds}, ` + this.getSeekRangeString()
+        );
         this.firstSegmentStartSeconds = firstSegmentStartSeconds;
     }
 
@@ -596,7 +597,7 @@ export class PlayerWrapper {
             return '';
         }
         this.date = new Date(this.timestampOffset + time * 1000);
-        const utcDate = `${this.date.getUTCMonth() + 1}/${this.date.getUTCDate()}/${this.date.getUTCFullYear()}`;
+        const utcDate = `${this.date.getUTCMonth() + 1}-${this.date.getUTCDate()}-${this.date.getUTCFullYear()}`;
         const hour = this.date.getUTCHours();
         const minutes = this.date.getUTCMinutes();
         const seconds = this.date.getUTCSeconds();
