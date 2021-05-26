@@ -8,7 +8,7 @@ export function createTimelineSegments(availableSegments: IAvailableMediaRespons
     let segmentStart = 0;
     // go over reference
     const segments = [];
-    for (const currentSegment of availableSegments.timeRanges) {
+    for (const currentSegment of availableSegments?.timeRanges) {
         segmentEnd = extractRealTimeFromISO(currentSegment.end);
         segmentStart = extractRealTimeFromISO(currentSegment.start);
 
