@@ -38,9 +38,6 @@
     <ava-player>
     </ava-player>
   </div>
-  <script type="module"
-    src="../dist/index.js"
-    onload="onAVALoad()"></script>
   <script>
     function onAVALoad() {
       const avaPlayer = document.querySelector("ava-player");
@@ -62,6 +59,8 @@
       avaPlayer.load();
     }
   </script>
+  <script src="../dist/global.js"
+    onload="onAVALoad()"></script>
 </body>
 
 </html>

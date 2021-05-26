@@ -13,7 +13,7 @@
         "/": "${workspaceFolder}",
       },
       "sourceMapPathOverrides": {
-        "webpack://@azure/video-analyzer-widgets/./*": "${workspaceFolder}/*",
+        "webpack://ava/./*": "${workspaceFolder}/*",
       },
       "trace": true,
     }
