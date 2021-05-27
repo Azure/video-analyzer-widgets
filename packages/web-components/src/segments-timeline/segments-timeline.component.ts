@@ -54,6 +54,8 @@ export class SegmentsTimelineComponent extends FASTElement {
 
     private resizeObserver: ResizeObserver;
 
+    private readonly MIN_SECONDS_FOR_SEGMENT = 1;
+
     public constructor(config: ISegmentsTimelineConfig) {
         super();
         this.config = config || this.emptyConfig;
@@ -117,7 +119,10 @@ export class SegmentsTimelineComponent extends FASTElement {
         const segments = cloneDeep(this.config.data.segments);
         for (let i = 0; i < segments.length; i++) {
             let left = Math.min((segments[i].startSeconds / this.config.data.duration) * 100, 100);
-            let per = Math.max((segments[i].endSeconds - segments[i].startSeconds) / this.config.data.duration, 0.0051);
+            let per = Math.max(
+                (segments[i].endSeconds - segments[i].startSeconds) / this.config.data.duration,
+                this.MIN_SECONDS_FOR_SEGMENT / this.config.data.duration
+            );
 
             // Merging following segments if the time difference is less them timeSmoothing
             if (this.config.displayOptions?.timeSmoothing && this.config.displayOptions?.timeSmoothing > 0 && i > 0) {
@@ -129,7 +134,10 @@ export class SegmentsTimelineComponent extends FASTElement {
                     this.processedSegments.pop();
                     segments[i].startSeconds = lastAppearance.startSeconds;
                     left = Math.min((segments[i].startSeconds / this.config.data.duration) * 100, 100);
-                    per = Math.max((segments[i].endSeconds - segments[i].startSeconds) / this.config.data.duration, 0.0051);
+                    per = Math.max(
+                        (segments[i].endSeconds - segments[i].startSeconds) / this.config.data.duration,
+                        this.MIN_SECONDS_FOR_SEGMENT / this.config.data.duration
+                    );
                 }
             }
 
