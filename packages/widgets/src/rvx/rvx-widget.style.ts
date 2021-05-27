@@ -5,6 +5,7 @@ export const styles = css`
         background: var(--player-background);
     }
     :host {
-        display: flex;
+        display: table;
+        width: 100%;
     }
 `;
