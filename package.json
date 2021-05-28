@@ -1,6 +1,6 @@
 {
     "name": "@azure/video-analyzer-widgets",
-    "version": "0.5.0",
+    "version": "0.5.1",
     "description": "A collection of widgets (web components) using Azure Video Analyzer platform capabilities and APIs",
     "main": "./dist/index.min.js",
     "typings": "./dist/npm.export.d.ts",
