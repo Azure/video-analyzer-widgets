@@ -113,7 +113,8 @@ export class SVGProgressChart {
             time = Math.ceil(time);
         }
 
-        this.activeSegment = this.updateActiveRect(time);
+        const segmentEvent = this.updateActiveRect(time);
+        this.activeSegment = segmentEvent ? segmentEvent.segment : null;
 
         this.setProgressBarProgress(timeType, time);
         this.setSeekBarProgress(timeType, time);
@@ -361,9 +362,10 @@ export class SVGProgressChart {
     private handleMouseClick(e: MouseEvent) {
         const percent = (e.offsetX / this.options.width) * 100;
         const time = this.options.time * (percent / 100);
-        this.activeSegment = this.updateActiveRect(time, false);
+        const activeEvent = this.updateActiveRect(time, false);
+        this.activeSegment = activeEvent ? activeEvent.segment : null;
         if (this._activeSegmentCallback && this.activeSegment) {
-            this._activeSegmentCallback({ segment: this.activeSegment, time: time });
+            this._activeSegmentCallback({ segment: this.activeSegment, time: activeEvent?.time });
         }
 
         if (this.options.renderProgress) {
@@ -384,15 +386,18 @@ export class SVGProgressChart {
         }
     }
 
-    private updateActiveRect(time: number, emitEvent = true): IUISegment {
+    private updateActiveRect(time: number, emitEvent = true): IUISegmentEventData {
         if (this.activeRect) {
             const startTime = this.activeRect.start || (this.activeRect.x / 100) * this.options.time;
             const endTime = this.activeRect.end || (this.activeRect.width / 100) * this.options.time + startTime;
             if (startTime <= time && endTime >= time) {
                 return {
-                    startSeconds: startTime,
-                    endSeconds: endTime,
-                    color: this.activeRect.color
+                    segment: {
+                        startSeconds: startTime,
+                        endSeconds: endTime,
+                        color: this.activeRect.color
+                    },
+                    time: time
                 };
             } else {
                 this.activeRect.removeClass('active');
@@ -418,13 +423,52 @@ export class SVGProgressChart {
                     });
                 }
                 return {
-                    startSeconds: startTime,
-                    endSeconds: endTime,
-                    color: rect.color
+                    segment: {
+                        startSeconds: startTime,
+                        endSeconds: endTime,
+                        color: rect.color
+                    },
+                    time: time
                 };
             }
         }
 
+        // Fallback - select the closest rect
+        let closestRect: Rect = null;
+        for (const rect of this.components.events) {
+            const startTime = rect.start || (rect.x / 100) * this.options.time;
+            if (!closestRect) {
+                closestRect = rect;
+            } else {
+                const closestRectStartTime = closestRect.start || (closestRect.x / 100) * this.options.time;
+                if (closestRect === null || Math.abs(closestRectStartTime - time) > Math.abs(startTime - time)) {
+                    closestRect = rect;
+                }
+            }
+        }
+
+        if (closestRect) {
+            this.activeRect = closestRect;
+            this.activeRect.addClass('active');
+            if (this._segmentStartCallback && emitEvent) {
+                this._segmentStartCallback({
+                    segment: {
+                        startSeconds: closestRect.start,
+                        endSeconds: closestRect.end,
+                        color: closestRect.color
+                    },
+                    time: closestRect.start
+                });
+            }
+            return {
+                segment: {
+                    startSeconds: closestRect.start,
+                    endSeconds: closestRect.end,
+                    color: closestRect.color
+                },
+                time: closestRect.start
+            };
+        }
         return null;
     }
 
