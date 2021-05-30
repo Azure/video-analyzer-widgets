@@ -7,6 +7,11 @@ import { ILayerLabelConfig, ILayerLabelOutputEvent, LayerLabelEvents, LayerLabel
 import { styles } from './layer-label.style';
 import { template } from './layer-label.template';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-expressions
+EditableTextFieldComponent;
+// eslint-disable-next-line @typescript-eslint/no-unused-expressions
+ActionsMenuComponent;
+
 /**
  * An layer label web component.
  * @public

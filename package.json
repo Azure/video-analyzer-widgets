@@ -75,7 +75,8 @@
         "lodash-es": "^4.17.21",
         "node": "^15.4.0",
         "rxjs": "^6.6.3",
-        "shaka-player": "3.1.0"
+        "shaka-player": "3.1.0",
+        "simplebar": "^5.3.3"
     },
     "files": [
         "dist",

@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 import { FASTSlider } from '@microsoft/fast-components';
 import { attr, customElement, FASTElement } from '@microsoft/fast-element';
+import { getKeyCode, keyCodeEnter, keyCodeSpace } from '@microsoft/fast-web-utilities';
 import { closestElement } from '../../../common/utils/elements';
 import { guid } from '../../../common/utils/guid';
 import { SegmentsTimelineComponent } from '../segments-timeline';
@@ -9,7 +10,9 @@ import { TimeRulerComponent } from '../time-ruler';
 import { ITimeLineConfig, TimelineEvents } from './timeline.definitions';
 import { styles } from './timeline.style';
 import { template } from './timeline.template';
+import SimpleBar from 'simplebar';
 
+SimpleBar;
 SegmentsTimelineComponent;
 TimeRulerComponent;
 
@@ -53,12 +56,15 @@ export class TimelineComponent extends FASTElement {
     private timeRuler: TimeRulerComponent;
     private fastSlider: FASTSlider;
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    private simpleBar: any;
     private resizeObserver: ResizeObserver;
 
     private readonly SLIDER_DENSITY = 32;
     private readonly SLIDER_MAX_ZOOM = 22;
     private readonly SEEK_BAR_TOP = '#FAF9F8';
     private readonly SEEK_BAR_BODY_COLOR = '#D02E00';
+    private readonly CANVAS_MAX_WIDTH = 32767;
 
     public configChanged() {
         setTimeout(() => {
@@ -95,19 +101,14 @@ export class TimelineComponent extends FASTElement {
             return;
         }
 
-        // Disabling zoom on FireFox since we can't modify the scrollbar on FireFox
-        if (navigator.userAgent.includes('Firefox')) {
-            this.config.enableZoom = false;
-        }
-
-        if (this.config.enableZoom && !this.fastSlider) {
-            /* eslint-disable-next-line  @typescript-eslint/no-explicit-any */
-            this.fastSlider = document.createElement('fast-slider') as any;
-            this.$fastController.element.shadowRoot.appendChild(this.fastSlider);
-            this.fastSlider?.addEventListener('change', this.fastSliderChange.bind(this));
-        } else if (!this.fastSlider) {
-            this.$fastController.element.style.overflowX = 'hidden';
-        }
+        const element = this.shadowRoot.querySelector('.scroll-container');
+        this.simpleBar = new SimpleBar(element as HTMLElement, {
+            autoHide: false,
+            forceVisible: 'x',
+            classNames: {},
+            scrollbarMinSize: 100
+        });
+        this.simpleBar.recalculate();
     }
 
     public getNextSegmentTime(returnStartTime = true): number {
@@ -145,6 +146,74 @@ export class TimelineComponent extends FASTElement {
         });
     }
 
+    public fastSliderConnectedCallback() {
+        setTimeout(() => {
+            this.fastSlider = this.shadowRoot?.querySelector('fast-slider');
+            this.fastSlider?.addEventListener('change', this.fastSliderChange.bind(this));
+            setTimeout(() => {
+                this.initSlider();
+            }, 50);
+        });
+    }
+
+    public handleZoomInMouseUp(e: Event): boolean {
+        switch (getKeyCode(e as KeyboardEvent)) {
+            case 1: // left mouse button.
+                this.zoomIn();
+                return false;
+        }
+
+        return true;
+    }
+
+    public handleZoomInKeyUp(e: KeyboardEvent): boolean {
+        switch (getKeyCode(e)) {
+            case keyCodeEnter:
+            case keyCodeSpace:
+                this.zoomIn();
+                return false;
+        }
+
+        return true;
+    }
+
+    public handleZoomOutMouseUp(e: Event): boolean {
+        switch (getKeyCode(e as KeyboardEvent)) {
+            case 1: // left mouse button.
+                this.zoomOut();
+                return false;
+        }
+
+        return true;
+    }
+
+    public handleZoomOutKeyUp(e: KeyboardEvent): boolean {
+        switch (getKeyCode(e)) {
+            case keyCodeEnter:
+            case keyCodeSpace:
+                this.zoomOut();
+                return false;
+        }
+
+        return true;
+    }
+
+    private zoomIn() {
+        if (+this.fastSlider.value + this.SLIDER_DENSITY <= this.SLIDER_MAX_ZOOM * this.SLIDER_DENSITY) {
+            this.fastSlider.value = `${+this.fastSlider.value + this.SLIDER_DENSITY}`;
+        } else {
+            this.fastSlider.value = `${+this.SLIDER_MAX_ZOOM * this.SLIDER_DENSITY}`;
+        }
+    }
+
+    private zoomOut() {
+        if (+this.fastSlider.value - this.SLIDER_DENSITY >= this.SLIDER_DENSITY) {
+            this.fastSlider.value = `${+this.fastSlider.value - this.SLIDER_DENSITY}`;
+        } else {
+            this.fastSlider.value = `${this.SLIDER_DENSITY}`;
+        }
+    }
+
     private initTimeLine() {
         if (!this.timeRulerReady || !this.segmentsTimelineReady) {
             return;
@@ -154,17 +223,15 @@ export class TimelineComponent extends FASTElement {
         this.initTimeRuler();
         setTimeout(() => {
             this.initSlider();
+            this.simpleBar?.recalculate();
         }, 50);
     }
 
     private initSlider() {
-        if (!this.config?.enableZoom || !this.fastSlider) {
+        if (!this.fastSlider) {
             return;
         }
 
-        const boundingClientRect = this.$fastController.element.getBoundingClientRect();
-        this.fastSlider.style.top = `${boundingClientRect.top + boundingClientRect.height - 20}px`;
-        this.fastSlider.style.left = `${boundingClientRect.left + boundingClientRect.width - 93}px`;
         this.fastSlider.min = this.SLIDER_DENSITY;
         this.fastSlider.max = this.SLIDER_MAX_ZOOM * this.SLIDER_DENSITY;
         this.fastSlider.value = `${this.zoom * this.SLIDER_DENSITY}`;
@@ -209,8 +276,16 @@ export class TimelineComponent extends FASTElement {
     }
 
     private fastSliderChange() {
-        this.zoom = +this.fastSlider.value / this.SLIDER_DENSITY;
+        const zoom = +this.fastSlider.value / this.SLIDER_DENSITY;
+        // Do not zoom when canvas is more then 32,767 (max canvas width)
+        if (zoom * this.$fastController.element.offsetWidth >= this.CANVAS_MAX_WIDTH) {
+            return;
+        }
+        this.zoom = zoom;
         this.initSegmentsTimeline();
         this.initTimeRuler();
+        setTimeout(() => {
+            this.simpleBar?.recalculate();
+        });
     }
 }
