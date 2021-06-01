@@ -30,6 +30,8 @@ import {
 } from './zone-drawer.definitions';
 import { Logger } from '../common/logger';
 import { AvaDesignSystemProvider } from '../../../styles';
+import { Localization } from '../../../common/services/localization/localization.class';
+import { IDictionary } from '../../../common/services/localization/localization.definitions';
 
 AvaDesignSystemProvider;
 ZonesViewComponent;
@@ -58,6 +60,7 @@ export class ZoneDrawerWidget extends BaseWidget {
     public disableDrawing = false;
 
     public config: IZoneDrawerWidgetConfig = {};
+    public resources: IDictionary;
 
     private readonly MAX_ZONES = 10;
 
@@ -71,6 +74,9 @@ export class ZoneDrawerWidget extends BaseWidget {
 
     public constructor(config: IZoneDrawerWidgetConfig) {
         super(config);
+
+        Localization.load(config?.locale, ['common', 'zone-drawer']);
+        this.resources = Localization.dictionary;
     }
 
     public connectedCallback() {
@@ -126,7 +132,7 @@ export class ZoneDrawerWidget extends BaseWidget {
         this.isLineDrawMode = !this.isLineDrawMode;
     }
 
-    public configure(config: IZoneDrawerWidgetConfig) {
+    public configure(config?: IZoneDrawerWidgetConfig) {
         this.config = config;
         if (this.config?.debug) {
             this.setDebugMode(this.config?.debug);
