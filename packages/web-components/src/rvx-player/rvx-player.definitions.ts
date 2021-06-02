@@ -22,7 +22,7 @@ export enum ControlPanelElements {
     MUTE = 'mute',
     VOLUME = 'volume',
     SPACER = 'spacer',
-    META_DATA_LAYER = 'body_tracking',
+    META_DATA_LAYER = 'meta_data_layer',
     OVERFLOW_MENU = 'overflow_menu',
     FULLSCREEN = 'fullscreen',
     NEXT_DAY = 'next_day',
