@@ -1,5 +1,6 @@
 import { AvaDesignSystemProvider } from '../../../styles';
 import { EditableTextFieldComponent } from './editable-text-field.component';
+import { Localization } from './../../../common/services/localization/localization.class';
 
 // Prevent tree-shaking
 AvaDesignSystemProvider;
@@ -26,7 +27,7 @@ const EditableTextFieldComponentTemplate = (data: ITemplate) => {
 export const EditableTextField = (args: ITemplate) => EditableTextFieldComponentTemplate(args);
 
 export default {
-    title: 'Editable Text Field Component',
+    title: Localization.dictionary.EDITABLE_TEXT_FIELD_ComponentTitle,
     argTypes: {
         darkTheme: { control: 'boolean', defaultValue: true },
         text: { control: 'text' },

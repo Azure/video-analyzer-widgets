@@ -3,6 +3,7 @@ import { DELETE_SVG_PATH, MORE_SVG_PATH, RENAME_SVG_PATH } from '../../../styles
 import { DrawingColors } from '../../../styles/system-providers/ava-design-system-provider.definitions';
 import { LayerLabelComponent } from './layer-label.component';
 import { LayerLabelMode } from './layer-label.definitions';
+import { Localization } from './../../../common/services/localization/localization.class';
 
 // Prevent tree-shaking
 AvaDesignSystemProvider;
@@ -48,7 +49,7 @@ const LayerLabelComponentTemplate = (data: ITemplate) => {
 export const LayerLabel = (args: ITemplate) => LayerLabelComponentTemplate(args);
 
 export default {
-    title: 'Layer Label Component',
+    title: Localization.dictionary.LAYER_LABEL_ComponentTitle,
     argTypes: {
         darkTheme: { control: 'boolean', defaultValue: true },
         label: { control: 'text' },

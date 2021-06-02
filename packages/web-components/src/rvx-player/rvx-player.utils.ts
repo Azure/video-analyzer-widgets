@@ -1,21 +1,22 @@
 import { HttpError, StatusCodes } from '../../../common/utils/http.error';
+import { Localization } from './../../../common/services/localization/localization.class';
 
 export function getPlayerErrorString(error: HttpError) {
     switch (error?.code) {
         case StatusCodes.BAD_REQUEST: {
-            return 'Account ID missing in host name';
+            return Localization.dictionary.PLAYER_UTILS_BAD_REQUEST;
         }
         case StatusCodes.FORBIDDEN: {
-            return 'Access forbidden';
+            return Localization.dictionary.PLAYER_UTILS_FORBIDDEN;
         }
         case StatusCodes.NOT_FOUND: {
-            return 'The requested resource was not found';
+            return Localization.dictionary.PLAYER_UTILS_NOT_FOUND;
         }
         case StatusCodes.PRECONDITION_FAILED: {
-            return error.message || 'Invalid Action';
+            return error.message || Localization.dictionary.PLAYER_UTILS_PRECONDITION_FAILED;
         }
         default:
-            return error.message || 'Unknown Error';
+            return error.message || Localization.dictionary.PLAYER_UTILS_UnknownError;
     }
 }
 
@@ -24,25 +25,25 @@ export function getShakaPlayerErrorString(error: any) {
     switch (error?.detail.category) {
         case 1: {
             // shaka_player.util.Error.Category.NETWORK
-            return 'Errors from the network stack.';
+            return Localization.dictionary.PLAYER_UTILS_ShakaError_Network;
         }
         case 3: {
             // shaka_player.util.Error.Category.MEDIA
-            return 'Errors parsing or processing audio or video streams.';
+            return Localization.dictionary.PLAYER_UTILS_ShakaError_Media;
         }
         case 4: {
             // shaka_player.util.Error.Category.MANIFEST
-            return 'Errors parsing the Manifest.';
+            return Localization.dictionary.PLAYER_UTILS_ShakaError_Manifest;
         }
         case 5: {
             // shaka_player.util.Error.Category.STREAMING
-            return 'Errors related to streaming.';
+            return Localization.dictionary.PLAYER_UTILS_ShakaError_Streaming;
         }
         case 9: {
             // shaka_player.util.Error.Category.STORAGE
-            return 'Errors in the database storage (offline).';
+            return Localization.dictionary.PLAYER_UTILS_ShakaError_Storage;
         }
         default:
-            return 'Unknown Error';
+            return Localization.dictionary.PLAYER_UTILS_UnknownError;
     }
 }

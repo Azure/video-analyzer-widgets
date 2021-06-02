@@ -1,6 +1,7 @@
 import { TimelineComponent } from '.';
 import { AvaDesignSystemProvider } from '../../../styles';
 import { ITimeLineConfig } from './timeline.definitions';
+import { Localization } from './../../../common/services/localization/localization.class';
 interface ITemplate {
     darkTheme?: boolean;
     date?: Date;
@@ -50,7 +51,7 @@ const TimelineComponentTemplate = (data: ITemplate) => {
 export const Timeline = (args: ITemplate) => TimelineComponentTemplate(args);
 
 export default {
-    title: 'Timeline Component',
+    title: Localization.dictionary.TIMELINE_ComponentTitle,
     argTypes: {
         darkTheme: { control: 'boolean', defaultValue: true },
         enableZoom: { control: 'boolean', defaultValue: false },

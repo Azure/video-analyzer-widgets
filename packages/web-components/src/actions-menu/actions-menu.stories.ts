@@ -2,6 +2,7 @@ import { ActionsMenuComponent } from '.';
 import { AvaDesignSystemProvider } from '../../../styles';
 import { DELETE_SVG_PATH, MORE_SVG_PATH, RENAME_SVG_PATH } from '../../../styles/svg/svg.shapes';
 import { IAction } from './actions-menu.definitions';
+import { Localization } from './../../../common/services/localization/localization.class';
 
 // Prevent tree-shaking
 AvaDesignSystemProvider;
@@ -29,17 +30,17 @@ export const ActionsMenu = (args: ITemplate) => ActionsMenuComponentTemplate(arg
 
 const actions: IAction[] = [
     {
-        label: 'Rename',
+        label: Localization.dictionary.ACTIONS_MENU_Rename,
         svgPath: RENAME_SVG_PATH
     },
     {
-        label: 'Delete',
+        label: Localization.dictionary.ACTIONS_MENU_Delete,
         svgPath: DELETE_SVG_PATH
     }
 ];
 
 export default {
-    title: 'Actions Menu Component',
+    title: Localization.dictionary.ACTIONS_MENU_ComponentTitle,
     argTypes: {
         darkTheme: { control: 'boolean', defaultValue: true },
         opened: { control: 'boolean', defaultValue: false }

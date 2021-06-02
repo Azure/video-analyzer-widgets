@@ -23,11 +23,12 @@ export class Localization {
                     const jsonFile = this.getJsonFile(compType, locale);
                     if (jsonFile && Object.keys(jsonFile).length !== 0) {
                         for (var val in jsonFile) {
-                            dict[val] = jsonFile[val];//.push({value: jsonFile[value]});
+                            dict[val] = jsonFile[val];
                         }
                     }
                 }
                 // After import the fileJson add the content to the _localizations map
+                // Example: this._localizations = {'en': { }, 'de': { }}
                 this._localizations.set(locale, dict);
             }
 

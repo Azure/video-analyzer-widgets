@@ -11,6 +11,8 @@ import { ControlPanelElements, LiveState } from './rvx-player.definitions';
 import { styles } from './rvx-player.style';
 import { template } from './rvx-player.template';
 import { getPlayerErrorString, getShakaPlayerErrorString } from './rvx-player.utils';
+import { Localization } from './../../../common/services/localization/localization.class';
+import { IDictionary } from '../../../common/services/localization/localization.definitions';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-expressions
 DatePickerComponent;
@@ -45,6 +47,7 @@ export class PlayerComponent extends FASTElement {
 
     public player: PlayerWrapper;
     public datePickerComponent: DatePickerComponent;
+    public resources: IDictionary;
 
     private video!: HTMLVideoElement;
     private timeContainer!: HTMLElement;
@@ -59,6 +62,8 @@ export class PlayerComponent extends FASTElement {
         super();
         this.classList.add(this.isLive ? LiveState.ON : LiveState.OFF);
         this.classList.remove(!this.isLive ? LiveState.ON : LiveState.OFF);
+
+        this.resources = Localization.dictionary;
     }
 
     public async init(allowCrossSiteCredentials = true, accessToken?: string, allowedControllers?: ControlPanelElements[]) {
@@ -323,7 +328,7 @@ export class PlayerComponent extends FASTElement {
             return await availableHours.json();
         } catch (error) {
             // eslint-disable-next-line no-console
-            console.log('error fetching available segments');
+            console.log(this.resources.PLAYER_ErrorFetchSegments);
             return null;
         }
     }
@@ -460,7 +465,7 @@ export class PlayerComponent extends FASTElement {
             };
         } catch (error) {
             this.handleError(error);
-            throw new WidgetGeneralError('Cannot parse available media');
+            throw new WidgetGeneralError(this.resources.PLAYER_CannotParseMedia);
         }
     }
 
@@ -497,7 +502,7 @@ export class PlayerComponent extends FASTElement {
             }
         } catch (error) {
             this.handleError(error);
-            throw new WidgetGeneralError('Cannot parse available media');
+            throw new WidgetGeneralError(this.resources.PLAYER_CannotParseMedia);
         }
     }
 
@@ -538,7 +543,7 @@ export class PlayerComponent extends FASTElement {
             }
         } catch (error) {
             this.handleError(error);
-            throw new WidgetGeneralError('Cannot parse available media');
+            throw new WidgetGeneralError(this.resources.PLAYER_CannotParseMedia);
         }
     }
 

@@ -1,6 +1,7 @@
 import { DatePickerComponent } from '.';
 import { SegmentsTimelineComponent } from '..';
 import { AvaDesignSystemProvider } from '../../../styles';
+import { Localization } from './../../../common/services/localization/localization.class';
 
 interface ITemplate {
     date: string;
@@ -35,7 +36,7 @@ const DatePickerComponentTemplate = (data: ITemplate) => {
 export const Example = (args: ITemplate) => DatePickerComponentTemplate(args);
 
 export default {
-    title: 'Date Picker Component',
+    title: Localization.dictionary.ACTIONS_MENU_DatePickerTitle,
     argTypes: {
         date: { control: 'text' },
         allowedMonths: { control: 'text' },

@@ -12,6 +12,8 @@ import { ControlPanelElements, ISource } from '../../../web-components/src/rvx-p
 import { Logger } from '../common/logger';
 import { AvaDesignSystemProvider } from '../../../styles';
 import { HttpError } from '../../../common/utils/http.error';
+import { Localization } from './../../../common/services/localization/localization.class';
+import { IDictionary } from '../../../common/services/localization/localization.definitions';
 
 AvaDesignSystemProvider;
 PlayerComponent;
@@ -24,6 +26,7 @@ PlayerComponent;
 export class Player extends BaseWidget {
     @attr({ mode: 'fromView' })
     public config: IAvaPlayerConfig;
+    public resources: IDictionary;
     private loaded = false;
     private source: ISource = null;
     private allowedControllers: ControlPanelElements[] = null;
@@ -33,6 +36,8 @@ export class Player extends BaseWidget {
         if (this.config) {
             this.init();
         }
+        Localization.load(this.config?.locale, ['common', 'player']);
+        this.resources = Localization.dictionary;
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

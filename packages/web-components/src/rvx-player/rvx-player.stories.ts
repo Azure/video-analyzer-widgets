@@ -1,5 +1,6 @@
 import { PlayerComponent } from '.';
 import { AvaDesignSystemProvider } from '../../../styles';
+import { Localization } from './../../../common/services/localization/localization.class';
 interface ITemplate {
     width: string;
     height: string;
@@ -26,7 +27,7 @@ const PlayerComponentTemplate = (data: ITemplate) => {
 export const Example = (args: ITemplate) => PlayerComponentTemplate(args);
 
 export default {
-    title: 'player Component',
+    title: Localization.dictionary.PLAYER_ComponentTitle,
     argTypes: {
         width: { control: 'text' },
         height: { control: 'text' }
