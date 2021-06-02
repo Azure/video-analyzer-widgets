@@ -27,6 +27,14 @@ export const styles = css`
         flex-direction: column;
     }
 
+    .upper-bounding .hide {
+        display: none !important;
+    }
+
+    :host(.loading) .upper-bounding {
+        visibility: hidden;
+    }
+
     .error-container > fast-button {
         margin-top: 16px;
     }

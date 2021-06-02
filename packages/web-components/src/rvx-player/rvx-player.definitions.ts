@@ -22,14 +22,17 @@ export enum ControlPanelElements {
     MUTE = 'mute',
     VOLUME = 'volume',
     SPACER = 'spacer',
-    BODY_TRACKING = 'body_tracking',
+    META_DATA_LAYER = 'meta_data_layer',
     OVERFLOW_MENU = 'overflow_menu',
     FULLSCREEN = 'fullscreen',
     NEXT_DAY = 'next_day',
     PREVIOUS_DAY = 'previous_day',
     HOURS_LABEL = 'hours_label',
     NEXT_SEGMENT = 'next_segment',
-    PREV_SEGMENT = 'prev_segment'
+    PREV_SEGMENT = 'prev_segment',
+    DATE_PICKER = 'date_picker',
+    CAMERA_NAME = 'camera_name',
+    TIMESTAMP = 'timestamp'
 }
 
 export enum LiveState {
@@ -47,8 +50,8 @@ export enum ControlPanelElementsTooltip {
     UNMUTE = 'Unmute',
     VOLUME = 'Volume',
     SPACER = 'Spacer',
-    BODY_TRACKING_ON = 'Turn on object metadata overlay',
-    BODY_TRACKING_OFF = 'Turn off object metadata overlay',
+    META_DATA_LAYER_ON = 'Turn on object metadata overlay',
+    META_DATA_LAYER_OFF = 'Turn off object metadata overlay',
     OVERFLOW_MENU = 'More options',
     FULLSCREEN = 'Enter fullscreen',
     EXIT_FULLSCREEN = 'Exit fullscreen',
