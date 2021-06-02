@@ -2,6 +2,7 @@
 import { FASTSlider } from '@microsoft/fast-components';
 import { attr, customElement, FASTElement } from '@microsoft/fast-element';
 import { getKeyCode, keyCodeEnter, keyCodeSpace } from '@microsoft/fast-web-utilities';
+import SimpleBar from 'simplebar';
 import { closestElement } from '../../../common/utils/elements';
 import { guid } from '../../../common/utils/guid';
 import { SegmentsTimelineComponent } from '../segments-timeline';
@@ -10,7 +11,6 @@ import { TimeRulerComponent } from '../time-ruler';
 import { ITimeLineConfig, TimelineEvents } from './timeline.definitions';
 import { styles } from './timeline.style';
 import { template } from './timeline.template';
-import SimpleBar from 'simplebar';
 
 SimpleBar;
 SegmentsTimelineComponent;
@@ -68,7 +68,6 @@ export class TimelineComponent extends FASTElement {
 
     public configChanged() {
         setTimeout(() => {
-            this.initData();
             this.initTimeLine();
         });
     }
@@ -81,7 +80,6 @@ export class TimelineComponent extends FASTElement {
 
     public connectedCallback() {
         super.connectedCallback();
-        this.initData();
 
         const parent = this.$fastController?.element?.parentElement;
         this.resizeObserver = new ResizeObserver(this.resize.bind(this));
@@ -96,8 +94,8 @@ export class TimelineComponent extends FASTElement {
         this.segmentsTimeline?.removeEventListener(SegmentsTimelineEvents.SEGMENT_CLICKED, null);
     }
 
-    public initData() {
-        if (!this.config) {
+    public initSimpleBar() {
+        if (this.simpleBar || this.config?.disableZoom) {
             return;
         }
 
@@ -151,6 +149,7 @@ export class TimelineComponent extends FASTElement {
             this.fastSlider = this.shadowRoot?.querySelector('fast-slider');
             this.fastSlider?.addEventListener('change', this.fastSliderChange.bind(this));
             setTimeout(() => {
+                this.initSimpleBar();
                 this.initSlider();
             }, 50);
         });
@@ -221,10 +220,13 @@ export class TimelineComponent extends FASTElement {
 
         this.initSegmentsTimeline();
         this.initTimeRuler();
-        setTimeout(() => {
-            this.initSlider();
-            this.simpleBar?.recalculate();
-        }, 50);
+
+        if (!this.config.disableZoom) {
+            setTimeout(() => {
+                this.initSlider();
+                this.simpleBar?.recalculate();
+            }, 50);
+        }
     }
 
     private initSlider() {

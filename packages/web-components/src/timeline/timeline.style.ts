@@ -49,6 +49,10 @@ export const styles = css`
         padding-bottom: 20px;
     }
 
+    .scroll-container.disable-zoom {
+        padding-bottom: 0;
+    }
+
     .zoom-controls-container {
         display: inline-flex;
         width: 100%;

@@ -4,7 +4,7 @@ import { ITimeLineConfig } from './timeline.definitions';
 interface ITemplate {
     darkTheme?: boolean;
     date?: Date;
-    enableZoom?: boolean;
+    disableZoom?: boolean;
 }
 
 // Prevent tree-shaking
@@ -40,7 +40,7 @@ const TimelineComponentTemplate = (data: ITemplate) => {
         config.date = date;
     }
 
-    config.enableZoom = data.enableZoom;
+    config.disableZoom = data.disableZoom;
 
     timeLine.config = config;
     designSystem.appendChild(timeLine);
@@ -53,7 +53,7 @@ export default {
     title: 'Timeline Component',
     argTypes: {
         darkTheme: { control: 'boolean', defaultValue: true },
-        enableZoom: { control: 'boolean', defaultValue: false },
+        disableZoom: { control: 'boolean', defaultValue: false },
         date: { control: 'date' }
     }
 };
