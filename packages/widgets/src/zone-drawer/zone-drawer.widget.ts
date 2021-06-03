@@ -35,6 +35,7 @@ AvaDesignSystemProvider;
 ZonesViewComponent;
 PolygonDrawerComponent;
 LineDrawerComponent;
+LayerLabelComponent;
 
 @customElement({
     name: 'ava-zone-drawer',

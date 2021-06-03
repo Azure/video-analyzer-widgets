@@ -6,7 +6,7 @@ import { WidgetGeneralError } from '../../../widgets/src';
 import { Logger } from '../../../widgets/src/common/logger';
 import { IUISegment, IUISegmentEventData } from '../segments-timeline/segments-timeline.definitions';
 import { TimelineComponent } from '../timeline';
-import { TimelineEvents } from '../timeline/timeline.definitions';
+import { ITimeLineConfig, TimelineEvents } from '../timeline/timeline.definitions';
 import { ControlPanelElements, LiveState } from './rvx-player.definitions';
 import { shaka as shaka_player } from './shaka';
 import { AVAPlayerUILayer } from './UI/ava-ui-layer.class';
@@ -236,9 +236,12 @@ export class PlayerWrapper {
         const segments = createTimelineSegments(this._availableSegments);
 
         const date = new Date(this.date.getUTCFullYear(), this.date.getUTCMonth(), this.date.getUTCDate(), 0, 0, 0);
-        const timelineConfig = {
+
+        const enableZoom = this.allowedControllers ? this.allowedControllers.indexOf(ControlPanelElements.TIMELINE_ZOOM) > -1 : true;
+        const timelineConfig: ITimeLineConfig = {
             segments: segments,
-            date: date
+            date: date,
+            disableZoom: !enableZoom
         };
         this.timelineComponent = new TimelineComponent();
         this.controls.bottomControls_.insertBefore(this.timelineComponent, this.controls.bottomControls_.childNodes[2]);

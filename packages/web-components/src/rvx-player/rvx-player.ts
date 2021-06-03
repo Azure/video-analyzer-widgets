@@ -28,6 +28,9 @@ export class PlayerComponent extends FASTElement {
     @attr public liveStream: string;
     @attr public vodStream: string;
     @attr public cameraName = '';
+    @attr public showCameraName = true;
+    @attr public showDatePicker = true;
+    @attr public showTimestamp = true;
 
     @observable public isLive = false;
     @observable public isFullscreen = false;
@@ -59,14 +62,20 @@ export class PlayerComponent extends FASTElement {
         super();
         this.classList.add(this.isLive ? LiveState.ON : LiveState.OFF);
         this.classList.remove(!this.isLive ? LiveState.ON : LiveState.OFF);
+
+        // Add loading mode
+        this.classList.add('loading');
     }
 
     public async init(allowCrossSiteCredentials = true, accessToken?: string, allowedControllers?: ControlPanelElements[]) {
-        // Add loading mode
-        this.classList.add('loading');
-
         if (!this.connected) {
             return;
+        }
+
+        if (allowedControllers) {
+            this.showCameraName = allowedControllers.indexOf(ControlPanelElements.CAMERA_NAME) > -1;
+            this.showDatePicker = allowedControllers.indexOf(ControlPanelElements.DATE_PICKER) > -1;
+            this.showTimestamp = allowedControllers.indexOf(ControlPanelElements.TIMESTAMP) > -1;
         }
 
         // Reload player

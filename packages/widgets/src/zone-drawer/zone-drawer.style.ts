@@ -48,9 +48,9 @@ export const styles = css`
 
     .draw-zone-container {
         width: 100%;
-        height: calc(100% - 147px);
+        height: calc(100% - 165px);
         position: absolute;
-        padding-bottom: 98px;
+        padding-bottom: 117px;
         padding-top: 49px;
         display: block;
     }
@@ -84,7 +84,7 @@ export const styles = css`
     }
 
     ava-player {
-        display: flex;
+        display: table;
     }
 
     .action-buttons {

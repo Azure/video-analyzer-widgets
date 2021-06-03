@@ -1,11 +1,11 @@
 import { css } from '@microsoft/fast-element';
+import { simpleBarStyles } from './scrollbar.style';
 
 export const styles = css`
     :host {
         display: inline-block;
         font-family: var(--font-family);
         width: 100%;
-        overflow-x: scroll;
     }
 
     media-time-ruler {
@@ -13,28 +13,84 @@ export const styles = css`
     }
 
     fast-slider {
-        width: 90px;
+        width: 92px;
         position: absolute;
         --corner-radius: 10;
-        --design-unit: 3;
-    }
-
-    :host::-webkit-scrollbar {
-        width: 40px; /* width of the entire scrollbar */
+        --design-unit: 1;
+        right: 20px;
+        bottom: 0px;
         height: 20px;
-        position: relative;
+        margin: 0px;
+        border-top: 1px solid var(--divider-alt);
+        border-bottom: 1px solid var(--divider-alt);
+        border-radius: 0px;
+        padding-bottom: 4px;
     }
 
-    :host::-webkit-scrollbar-track {
-        background: #201f1e; /* color of the tracking area */
-        margin-right: 96px;
+    .fast-slider-svg {
+        width: 10px;
+        height: 8px;
+        margin-top: 2px;
+    }
+
+    .minus-svg {
+        width: 100%;
+        height: 1px;
+        padding: 3px 0px 0 1px;
+    }
+
+    .plus-svg {
+        width: 100%;
+        height: 12px;
+        padding: 3px 0px 0px 2px;
+    }
+
+    .scroll-container {
+        padding-bottom: 20px;
+    }
+
+    .scroll-container.disable-zoom {
+        padding-bottom: 0;
+    }
+
+    .zoom-controls-container {
         display: inline-flex;
+        width: 100%;
         position: relative;
     }
 
-    :host::-webkit-scrollbar-thumb {
-        background-color: #484644; /* color of the scroll thumb */
-        border-radius: 20px; /* roundness of the scroll thumb */
-        border: 6px solid #201f1e; /* creates padding around scroll thumb */
+    .marker-path {
+        color: var(--action);
     }
+
+    .marker-bg-path {
+        color: var(--bg-controls);
+    }
+
+    .left-button,
+    .right-button {
+        width: 18px;
+        height: 18px;
+        display: inline-grid;
+        position: absolute;
+        bottom: 0;
+        border: 1px solid var(--divider-alt);
+        --base-height-multiplier: 8px;
+        border-radius: 0;
+    }
+
+    .right-button {
+        right: 0px;
+    }
+
+    .left-button {
+        right: 112px;
+    }
+
+    .simplebar-scrollbar::before {
+        background-color: var(--divider-alt); /* color of the scroll thumb */
+        border-radius: 4px; /* roundness of the scroll thumb */
+    }
+
+    ${simpleBarStyles}
 `;

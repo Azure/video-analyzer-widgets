@@ -35,7 +35,7 @@ export class AVAPlayerUILayer {
             ControlPanelElements.NEXT_DAY,
             ControlPanelElements.HOURS_LABEL,
             ControlPanelElements.SPACER,
-            ControlPanelElements.BODY_TRACKING,
+            ControlPanelElements.META_DATA_LAYER,
             ControlPanelElements.OVERFLOW_MENU,
             ControlPanelElements.FULLSCREEN
         ],
@@ -129,7 +129,7 @@ export class AVAPlayerUILayer {
         BodyTrackingButtonFactory.callBack = (isOn: boolean) => {
             this.toggleBodyTracking(isOn);
         };
-        this.shaka.ui.Controls.registerElement(ControlPanelElements.BODY_TRACKING, new BodyTrackingButtonFactory());
+        this.shaka.ui.Controls.registerElement(ControlPanelElements.META_DATA_LAYER, new BodyTrackingButtonFactory());
 
         NextSegmentButtonFactory.callBack = (isNext: boolean) => {
             this.jumpSegmentCallBack(isNext);
