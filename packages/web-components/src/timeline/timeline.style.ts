@@ -30,7 +30,7 @@ export const styles = css`
     .fast-slider-svg {
         width: 10px;
         height: 8px;
-        margin-top: 2px;
+        margin-bottom: 2px;
     }
 
     .minus-svg {
@@ -54,7 +54,6 @@ export const styles = css`
     }
 
     .zoom-controls-container {
-        display: inline-flex;
         width: 100%;
         position: relative;
     }
