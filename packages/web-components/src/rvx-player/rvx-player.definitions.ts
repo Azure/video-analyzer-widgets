@@ -32,7 +32,8 @@ export enum ControlPanelElements {
     PREV_SEGMENT = 'prev_segment',
     DATE_PICKER = 'date_picker',
     CAMERA_NAME = 'camera_name',
-    TIMESTAMP = 'timestamp'
+    TIMESTAMP = 'timestamp',
+    TIMELINE_ZOOM = 'timeline_zoom'
 }
 
 export enum LiveState {
