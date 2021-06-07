@@ -8,7 +8,7 @@ export function createTimelineSegments(availableSegments: IAvailableMediaRespons
     let segmentStart = 0;
     // go over reference
     const segments = [];
-    for (const currentSegment of availableSegments.timeRanges) {
+    for (const currentSegment of availableSegments?.timeRanges) {
         segmentEnd = extractRealTimeFromISO(currentSegment.end);
         segmentStart = extractRealTimeFromISO(currentSegment.start);
 
@@ -22,5 +22,23 @@ export function createTimelineSegments(availableSegments: IAvailableMediaRespons
         }
     }
 
-    return segments;
+    const mergedSegments = [];
+
+    for (let index = 0; index < segments.length; index++) {
+        const currentSegment = segments[index];
+        const nextSegment = segments[index + 1];
+
+        if (currentSegment?.endSeconds === nextSegment?.startSeconds) {
+            // Merge
+            mergedSegments.push({
+                startSeconds: currentSegment.startSeconds,
+                endSeconds: nextSegment.endSeconds
+            });
+            index++;
+        } else {
+            mergedSegments.push(currentSegment);
+        }
+    }
+
+    return mergedSegments;
 }

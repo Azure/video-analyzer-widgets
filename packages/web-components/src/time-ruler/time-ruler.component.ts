@@ -61,6 +61,7 @@ export class TimeRulerComponent extends FASTElement {
     public disconnectedCallback() {
         super.disconnectedCallback();
         this.resizeObserver.disconnect();
+        this.$fastController.element.shadowRoot?.removeChild(this.ruler?.canvas);
     }
 
     public initRuler() {

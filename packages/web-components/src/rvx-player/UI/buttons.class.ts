@@ -306,10 +306,10 @@ export class BodyTracking extends shaka.ui.Element {
     public updateIcon_() {
         if (this.isOn) {
             this.button_.classList.add('body-tracking-on');
-            setElementTooltip(this.button_, ControlPanelElementsTooltip.BODY_TRACKING_OFF);
+            setElementTooltip(this.button_, ControlPanelElementsTooltip.META_DATA_LAYER_OFF);
         } else {
             this.button_.classList.remove('body-tracking-on');
-            setElementTooltip(this.button_, ControlPanelElementsTooltip.BODY_TRACKING_ON);
+            setElementTooltip(this.button_, ControlPanelElementsTooltip.META_DATA_LAYER_ON);
         }
     }
 
@@ -324,7 +324,7 @@ export class BodyTracking extends shaka.ui.Element {
         this.button_.appendChild(this.svg);
         this.parent.appendChild(this.button_);
         this.updateIcon_();
-        setElementTooltip(this.button_, ControlPanelElementsTooltip.BODY_TRACKING_ON);
+        setElementTooltip(this.button_, ControlPanelElementsTooltip.META_DATA_LAYER_ON);
         this.eventManager.listen(this.button_, 'click', () => {
             this.isOn = !this.isOn;
             this.updateIcon_();

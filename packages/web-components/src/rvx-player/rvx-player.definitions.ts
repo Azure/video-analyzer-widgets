@@ -23,14 +23,18 @@ export enum ControlPanelElements {
     MUTE = 'mute',
     VOLUME = 'volume',
     SPACER = 'spacer',
-    BODY_TRACKING = 'body_tracking',
+    META_DATA_LAYER = 'meta_data_layer',
     OVERFLOW_MENU = 'overflow_menu',
     FULLSCREEN = 'fullscreen',
     NEXT_DAY = 'next_day',
     PREVIOUS_DAY = 'previous_day',
     HOURS_LABEL = 'hours_label',
     NEXT_SEGMENT = 'next_segment',
-    PREV_SEGMENT = 'prev_segment'
+    PREV_SEGMENT = 'prev_segment',
+    DATE_PICKER = 'date_picker',
+    CAMERA_NAME = 'camera_name',
+    TIMESTAMP = 'timestamp',
+    TIMELINE_ZOOM = 'timeline_zoom'
 }
 
 export enum LiveState {
@@ -48,8 +52,8 @@ export const ControlPanelElementsTooltip = {
     UNMUTE: Localization.dictionary.PLAYER_Tooltip_Unmute,
     VOLUME: Localization.dictionary.PLAYER_Tooltip_Volume,
     SPACER: Localization.dictionary.PLAYER_Tooltip_Spacer,
-    BODY_TRACKING_ON: Localization.dictionary.PLAYER_Tooltip_TurnOnMetadata,
-    BODY_TRACKING_OFF: Localization.dictionary.PLAYER_Tooltip_TurnOffMetadata,
+    META_DATA_LAYER_ON: Localization.dictionary.PLAYER_Tooltip_TurnOnMetadata,
+    META_DATA_LAYER_OFF: Localization.dictionary.PLAYER_Tooltip_TurnOffMetadata,
     OVERFLOW_MENU: Localization.dictionary.PLAYER_Tooltip_MoreOptions,
     FULLSCREEN: Localization.dictionary.PLAYER_Tooltip_EnterFullscreen,
     EXIT_FULLSCREEN: Localization.dictionary.PLAYER_Tooltip_ExitFullscreen,

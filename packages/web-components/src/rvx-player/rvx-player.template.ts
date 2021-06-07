@@ -9,10 +9,13 @@ import { PlayerComponent } from '.';
 export const template = html<PlayerComponent>`
     <template>
         <div class="upper-bounding">
-            <span class="col camera-name">${(x) => x.cameraName}</span>
+            <span class="col camera-name ${(x) => (x.showCameraName ? 'show' : 'hide')}">${(x) => x.cameraName}</span>
             <div class="date-picker col">
-                <span class="time-container">${(x) => x.time}</span>
-                <media-date-picker class="date-picker-component" alignRight="${true}"></media-date-picker>
+                <span class="time-container ${(x) => (x.showTimestamp ? 'show' : 'hide')}">${(x) => x.time}</span>
+                <media-date-picker
+                    class="date-picker-component ${(x) => (x.showDatePicker ? 'show' : 'hide')}"
+                    alignRight="${true}"
+                ></media-date-picker>
             </div>
         </div>
         ${when(

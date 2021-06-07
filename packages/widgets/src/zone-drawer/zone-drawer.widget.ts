@@ -37,6 +37,7 @@ AvaDesignSystemProvider;
 ZonesViewComponent;
 PolygonDrawerComponent;
 LineDrawerComponent;
+LayerLabelComponent;
 
 @customElement({
     name: 'ava-zone-drawer',
@@ -258,7 +259,7 @@ export class ZoneDrawerWidget extends BaseWidget {
             name: newZone.name || this.getNewZoneName(),
             color: newZone.color || this.getNextColor(),
             points: [...newZone.points],
-            type: newZone.type
+            type: newZone.type ? newZone.type : newZone.points.length === 2 ? ZoneDrawerMode.Line : ZoneDrawerMode.Polygon
         };
 
         this.zones.push(zone);
@@ -385,7 +386,7 @@ export class ZoneDrawerWidget extends BaseWidget {
                 output = {
                     '@type': '#Microsoft.VideoAnalyzer.NamedPolygonString',
                     name: name,
-                    line: points
+                    polygon: points
                 };
                 break;
         }

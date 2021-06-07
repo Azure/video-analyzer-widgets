@@ -6,13 +6,14 @@ import { WidgetGeneralError } from '../../../widgets/src';
 import { Logger } from '../../../widgets/src/common/logger';
 import { IUISegment, IUISegmentEventData } from '../segments-timeline/segments-timeline.definitions';
 import { TimelineComponent } from '../timeline';
-import { TimelineEvents } from '../timeline/timeline.definitions';
+import { ITimeLineConfig, TimelineEvents } from '../timeline/timeline.definitions';
 import { ControlPanelElements, LiveState } from './rvx-player.definitions';
 import { shaka as shaka_player } from './shaka';
 import { AVAPlayerUILayer } from './UI/ava-ui-layer.class';
 import { BoundingBoxDrawer } from './UI/bounding-box.class';
 import { extractRealTime } from './UI/time.utils';
 import { createTimelineSegments } from './UI/timeline.utils';
+import { extractRealTimeFromISO } from './UI/time.utils';
 import { shaka } from './index';
 import { Localization } from './../../../common/services/localization/localization.class';
 import { IDictionary } from '../../../common/services/localization/localization.definitions';
@@ -33,6 +34,7 @@ export class PlayerWrapper {
     private controls: any;
     private _allowCrossCred = true;
     private timestampOffset: number;
+    private firstSegmentStartSeconds: number;
     private date: Date;
     private timelineComponent: TimelineComponent;
     private boundingBoxesDrawer: BoundingBoxDrawer;
@@ -231,13 +233,20 @@ export class PlayerWrapper {
         }
     }
 
+    private getSeekRangeString() {
+        return `seekRange=${JSON.stringify(this.player.seekRange())}`;
+    }
+
     private createTimelineComponent() {
         const segments = createTimelineSegments(this._availableSegments);
 
         const date = new Date(this.date.getUTCFullYear(), this.date.getUTCMonth(), this.date.getUTCDate(), 0, 0, 0);
-        const timelineConfig = {
+
+        const enableZoom = this.allowedControllers ? this.allowedControllers.indexOf(ControlPanelElements.TIMELINE_ZOOM) > -1 : true;
+        const timelineConfig: ITimeLineConfig = {
             segments: segments,
-            date: date
+            date: date,
+            disableZoom: !enableZoom
         };
         this.timelineComponent = new TimelineComponent();
         this.controls.bottomControls_.insertBefore(this.timelineComponent, this.controls.bottomControls_.childNodes[2]);
@@ -247,6 +256,14 @@ export class PlayerWrapper {
         // eslint-disable-next-line no-undef
         this.timelineComponent.addEventListener(TimelineEvents.SEGMENT_START, this.onSegmentStart.bind(this) as EventListener);
         this.timelineComponent.config = timelineConfig;
+
+        // We expect server to return 404 on manifest requests that turn out to be empty,
+        // so we assume there will always be at least one segment.
+        const firstSegmentStartSeconds = extractRealTimeFromISO(this._availableSegments?.timeRanges[0]?.start);
+        Logger.log(
+            'createTimelineComponent: setting firstSegmentStartSeconds to ' + `${firstSegmentStartSeconds}, ` + this.getSeekRangeString()
+        );
+        this.firstSegmentStartSeconds = firstSegmentStartSeconds;
     }
 
     private onSegmentStart(event: CustomEvent<IUISegmentEventData>) {
@@ -256,12 +273,13 @@ export class PlayerWrapper {
             this.currentSegment = segmentEventData.segment;
             const playbackMode: number = this.player.getPlaybackRate();
             const seconds = playbackMode > 0 ? segmentEventData.segment.startSeconds : segmentEventData.segment.endSeconds;
-            this.video.currentTime = seconds + this.getVideoOffset();
+            const newCurrentTime = seconds + this.getVideoOffset();
+            Logger.log(`onSegmentStart: jump to ${newCurrentTime}, ` + this.getSeekRangeString());
+            this.video.currentTime = newCurrentTime;
             if (this.isPlaying) {
                 this.video.play();
             }
             this.duringSegmentJump = false;
-            Logger.log(`onSegmentStart: jump to ${seconds + this.getVideoOffset()}`);
         }
     }
 
@@ -270,24 +288,19 @@ export class PlayerWrapper {
         const segmentEventData = event.detail;
         if (segmentEventData) {
             this.currentSegment = event.detail.segment;
-            this.video.currentTime = event.detail.time + this.getVideoOffset();
+            const newCurrentTime = event.detail.time + this.getVideoOffset();
+            Logger.log(`onSegmentChange: jump to ${newCurrentTime}, ` + this.getSeekRangeString());
+            this.video.currentTime = newCurrentTime;
             if (this.isPlaying) {
                 this.video.play();
             }
-            Logger.log(`onSegmentChange: jump to ${event.detail.time + this.getVideoOffset()}`);
         }
     }
 
     private getVideoOffset() {
-        const currentDate = new Date(this.timestampOffset);
-        // If live - add the seek range start, else add timestamp offset
-        const dateInSeconds =
-            this.player.seekRange().start -
-            (currentDate.getUTCHours() * this.SECONDS_IN_HOUR +
-                currentDate.getUTCMinutes() * this.SECONDS_IN_MINUTES +
-                currentDate.getUTCSeconds());
-
-        return dateInSeconds;
+        // This offset, when added to a seek position expressed in seconds since today GMT 00:00,
+        // will cause the start of the first segment to be mapped to start of seek range.
+        return this.player.seekRange().start - this.firstSegmentStartSeconds;
     }
 
     private toggleBodyTracking(isOn: boolean) {
@@ -547,8 +560,8 @@ export class PlayerWrapper {
     private onLoadedData() {
         // If vod mode - start first segment
         if (!this.isLive) {
+            Logger.log('onLoadedData: jump to 0, ' + this.getSeekRangeString());
             this.video.currentTime = 0;
-            Logger.log(`onLoadedData: jump to ${this.video.currentTime}`);
         }
     }
 
@@ -592,7 +605,7 @@ export class PlayerWrapper {
             return '';
         }
         this.date = new Date(this.timestampOffset + time * 1000);
-        const utcDate = `${this.date.getUTCMonth() + 1}/${this.date.getUTCDate()}/${this.date.getUTCFullYear()}`;
+        const utcDate = `${this.date.getUTCMonth() + 1}-${this.date.getUTCDate()}-${this.date.getUTCFullYear()}`;
         const hour = this.date.getUTCHours();
         const minutes = this.date.getUTCMinutes();
         const seconds = this.date.getUTCSeconds();
