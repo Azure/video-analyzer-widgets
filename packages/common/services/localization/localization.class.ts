@@ -64,6 +64,10 @@ export class Localization {
         return this._dictionary;
     }
 
+    public static get locale() {
+        return this._currentLocale;
+    }
+
     private static getMappedLocale(locale: string) {
         return locale && SupportedLocaleLanguages[locale.toLowerCase()] || DEFAULT_LOCALE_LANGUAGE;
     }

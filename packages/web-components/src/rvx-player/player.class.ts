@@ -358,6 +358,9 @@ export class PlayerWrapper {
             }
         });
 
+        // shaka
+        // this.player.selectTextLanguage('de'); //Localization.locale);
+
         // Set up authentication handler
         this.player.getNetworkingEngine().registerRequestFilter(this.authenticationHandler.bind(this));
         // Setting up shaka player UI
@@ -368,6 +371,9 @@ export class PlayerWrapper {
             this.controls.bottomControls_.childNodes[2],
             this.controls.bottomControls_.childNodes[1]
         );
+
+        // Init localization
+        this.controls.getLocalization().changeLocale(Localization.locale);
 
         // Player listeners
         this.player.addEventListener('error', this.onErrorEvent.bind(this));

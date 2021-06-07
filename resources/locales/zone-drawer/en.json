@@ -1,9 +1,9 @@
 {
-    "ZONE_DRAWER_Save": "Save",
-    "ZONE_DRAWER_Line": "Line",
-    "ZONE_DRAWER_Polygon": "Polygon",
-    "ZONE_DRAWER_WidgetsInstructions": "Draw polygons or lines around the zone of interest in the frame.",
-    "ZONE_DRAWER_IsDisabled": "Zone drawer is disabled.",
-    "ZONE_DRAWER_Draw_a_line": "Draw a line",
-    "ZONE_DRAWER_Draw_a_polygon": "Draw a polygon"
+    "ZONE_DRAWER_Save": "Opslaan",
+    "ZONE_DRAWER_Line": "Lijn",
+    "ZONE_DRAWER_Polygoon": "Veelhoek",
+    "ZONE_DRAWER_WidgetsInstructions": "Teken polygonen of lijnen rond de zone van belang in het frame.",
+    "ZONE_DRAWER_IsDisabled": "Zonelade is uitgeschakeld.",
+    "ZONE_DRAWER_Draw_a_line": "Teken een lijn",
+    "ZONE_DRAWER_Draw_a_polygon": "Teken een polygoon"
 }
