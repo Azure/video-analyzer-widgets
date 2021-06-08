@@ -14,9 +14,13 @@ import { AvaDesignSystemProvider } from '../../../styles';
 import { HttpError } from '../../../common/utils/http.error';
 import { Localization } from './../../../common/services/localization/localization.class';
 import { IDictionary } from '../../../common/services/localization/localization.definitions';
+import { Locale } from '../definitions/locale.definitions';
 
 AvaDesignSystemProvider;
 PlayerComponent;
+Localization;
+
+export const LocalizationService = Localization;
 
 @customElement({
     name: 'ava-player',
@@ -36,8 +40,15 @@ export class Player extends BaseWidget {
         if (this.config) {
             this.init();
         }
-        Localization.load(this.config?.locale, ['common', 'player']);
-        this.resources = Localization.dictionary;
+    }
+
+    public localize(locale: Locale) {
+        if (this.config) {
+            this.config.locale = locale;
+        }
+        
+        LocalizationService.load(locale, ['common', 'player']);
+        this.resources = LocalizationService.dictionary;
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -81,6 +92,7 @@ export class Player extends BaseWidget {
         if (this.config?.debug) {
             this.setDebugMode(this.config?.debug);
         }
+        this.localize(this.config?.locale);
         this.init();
     }
 

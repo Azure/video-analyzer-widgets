@@ -1,11 +1,15 @@
 import { attr, customElement, FASTElement, observable } from '@microsoft/fast-element';
+import { IDictionary } from '../../../common/services/localization/localization.definitions';
 import { DatePickerEvent, IAllowedDates, IDatePickerRenderEvent } from './date-picker.definitions';
 import { styles } from './date-picker.style';
 import { template } from './date-picker.template';
 import { DatePicker } from './pickadate/Jquery.DatePicker';
+import { Localization } from './../../../common/services/localization/localization.class';
 const PickaDate = require('../../../scripts/PickaDate.script');
 // eslint-disable-next-line @typescript-eslint/no-unused-expressions
 PickaDate;
+
+export const LocalizationService = Localization;
 
 /**
  * Date picker component
@@ -72,8 +76,11 @@ export class DatePickerComponent extends FASTElement {
     private datePickerCSSLoaded = false;
     private uiConnected = false;
 
+    public resources: IDictionary;
+
     public constructor() {
         super();
+        this.resources = LocalizationService.dictionary;
     }
 
     public allowedDatesChanged() {

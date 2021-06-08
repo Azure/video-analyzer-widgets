@@ -64,8 +64,8 @@ export const SupportedLocaleLanguages = {
 export const DEFAULT_LOCALE_LANGUAGE = 'en';
 
 export const SUPPORTED_LOCALES: string[] = [
-    /* 'cs',
-    'de', */
+    /* 'cs',*/
+    'de', 
     'en',
     /* 'es',
     'fr',

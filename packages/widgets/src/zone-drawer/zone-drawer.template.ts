@@ -15,8 +15,8 @@ export const template = html<ZoneDrawerWidget>`
                 <div class="draw-buttons">
                     <fast-button
                         class=${(x) => (!x.isLineDrawMode ? 'selected' : '')}
-                        aria-label="${(x) => x.resources.ZONE_DRAWER_Polygon}"
-                        title="${(x) => x.resources.ZONE_DRAWER_Polygon}"
+                        aria-label="${(x) => x.resources?.ZONE_DRAWER_Polygon}"
+                        title="${(x) => x.resources?.ZONE_DRAWER_Polygon}"
                         ?disabled="${(x) => x.disableDrawing}"
                         @click="${(x) => x.toggleDrawerMode()}"
                     >
@@ -26,8 +26,8 @@ export const template = html<ZoneDrawerWidget>`
                     </fast-button>
                     <fast-button
                         class=${(x) => (x.isLineDrawMode ? 'selected' : '')}
-                        aria-label="${(x) => x.resources.ZONE_DRAWER_Line}"
-                        title="${(x) => x.resources.ZONE_DRAWER_Line}"
+                        aria-label="${(x) => x.resources?.ZONE_DRAWER_Line}"
+                        title="${(x) => x.resources?.ZONE_DRAWER_Line}"
                         ?disabled="${(x) => x.disableDrawing}"
                         @click="${(x) => x.toggleDrawerMode()}"
                     >
@@ -36,8 +36,8 @@ export const template = html<ZoneDrawerWidget>`
                         </svg>
                     </fast-button>
                 </div>
-                <span>${(x) => (x.isLineDrawMode ? x.resources.ZONE_DRAWER_Draw_a_line
-        : x.resources.ZONE_DRAWER_Draw_a_polygon)}</span>
+                <span>${(x) => (x.isLineDrawMode ? x.resources?.ZONE_DRAWER_Draw_a_line
+        : x.resources?.ZONE_DRAWER_Draw_a_polygon)}</span>
             </div>
             <div class="zones-container">
                 <div class="zones-draw-container">
@@ -71,20 +71,20 @@ export const template = html<ZoneDrawerWidget>`
                     <ul class="labels-list"></ul>
                     ${when(
                         (x) => x.isLabelsListEmpty,
-                        html`<span>${(x) => x.resources.ZONE_DRAWER_WidgetsInstructions}</span> `
+                        html`<span>${(x) => x.resources?.ZONE_DRAWER_WidgetsInstructions}</span> `
                     )}
-                    ${when((x) => x.disableDrawing, html`<span>${(x) => x.resources.ZONE_DRAWER_IsDisabled}</span> `)}
+                    ${when((x) => x.disableDrawing, html`<span>${(x) => x.resources?.ZONE_DRAWER_IsDisabled}</span> `)}
                 </div>
             </div>
             <div class="action-buttons">
                 <fast-button
                     ?disabled="${(x) => !x.isDirty}"
                     appearance="accent"
-                    aria-label="${(x) => x.resources.ZONE_DRAWER_Save}"
-                    title="${(x) => x.resources.ZONE_DRAWER_Save}"
+                    aria-label="${(x) => x.resources?.ZONE_DRAWER_Save}"
+                    title="${(x) => x.resources?.ZONE_DRAWER_Save}"
                     @click="${(x) => x.save()}"
                 >
-                   ${(x) => x.resources.ZONE_DRAWER_Save}
+                   ${(x) => x.resources?.ZONE_DRAWER_Save}
                 </fast-button>
             </div>
         </div>

@@ -13,6 +13,8 @@ export class BaseWidget extends FASTElement {
         super();
         if (config) {
             this._config = config;
+        } else {
+            this._config = {};
         }
         this.width = config?.width || '100%';
         this.height = config?.height || '100%';

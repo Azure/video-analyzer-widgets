@@ -32,12 +32,16 @@ import { Logger } from '../common/logger';
 import { AvaDesignSystemProvider } from '../../../styles';
 import { Localization } from '../../../common/services/localization/localization.class';
 import { IDictionary } from '../../../common/services/localization/localization.definitions';
+import { Locale } from '../definitions/locale.definitions';
 
 AvaDesignSystemProvider;
 ZonesViewComponent;
 PolygonDrawerComponent;
 LineDrawerComponent;
 LayerLabelComponent;
+Localization;
+
+export const LocalizationService = Localization;
 
 @customElement({
     name: 'ava-zone-drawer',
@@ -75,9 +79,15 @@ export class ZoneDrawerWidget extends BaseWidget {
 
     public constructor(config: IZoneDrawerWidgetConfig) {
         super(config);
+    }
 
-        Localization.load(config?.locale, ['common', 'zone-drawer']);
-        this.resources = Localization.dictionary;
+    public localize(locale: Locale) {
+        /* if (this.config) {
+            this.config.locale = locale;
+        } */
+        
+        LocalizationService.load(locale, ['common', 'zone-drawer']);
+        this.resources = LocalizationService.dictionary;
     }
 
     public connectedCallback() {
@@ -138,6 +148,7 @@ export class ZoneDrawerWidget extends BaseWidget {
         if (this.config?.debug) {
             this.setDebugMode(this.config?.debug);
         }
+        this.localize(this.config?.locale);
     }
 
     // @override

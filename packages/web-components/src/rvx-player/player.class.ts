@@ -20,6 +20,9 @@ import { IDictionary } from '../../../common/services/localization/localization.
 
 // eslint-disable-next-line @typescript-eslint/no-unused-expressions
 TimelineComponent;
+Localization;
+
+export const LocalizationService = Localization;
 
 export class PlayerWrapper {
     public player: shaka_player.Player = Object.create(null);
@@ -62,7 +65,8 @@ export class PlayerWrapper {
         private errorCallback: (error: shaka_player.PlayerEvents.ErrorEvent) => void,
         private allowedControllers: ControlPanelElements[]
     ) {
-        this.resources = Localization.dictionary;
+        
+        this.resources = LocalizationService.dictionary;
         // Install built-in polyfills to patch browser incompatibilities.
         shaka.polyfill.installAll();
 
@@ -358,9 +362,6 @@ export class PlayerWrapper {
             }
         });
 
-        // shaka
-        // this.player.selectTextLanguage('de'); //Localization.locale);
-
         // Set up authentication handler
         this.player.getNetworkingEngine().registerRequestFilter(this.authenticationHandler.bind(this));
         // Setting up shaka player UI
@@ -372,8 +373,8 @@ export class PlayerWrapper {
             this.controls.bottomControls_.childNodes[1]
         );
 
-        // Init localization
-        this.controls.getLocalization().changeLocale(Localization.locale);
+        // Set shaka player languages
+        this.controls.getLocalization().changeLocale(LocalizationService.locale);
 
         // Player listeners
         this.player.addEventListener('error', this.onErrorEvent.bind(this));

@@ -1,6 +1,8 @@
 export type MimeType = 'video/mp4' | 'application/dash+xml' | 'application/vnd.apple.mpegurl';
 import { Localization } from './../../../common/services/localization/localization.class';
 
+export const LocalizationService = Localization;
+
 export interface ISource {
     // Authentication Token for the player.
     authenticationToken?: string;
@@ -42,22 +44,22 @@ export enum LiveState {
     OFF = 'live-off'
 }
 
-export const ControlPanelElementsTooltip = {
-    REWIND: Localization.dictionary.PLAYER_Tooltip_Rewind,
-    PLAY: Localization.dictionary.PLAYER_Tooltip_Play,
-    PAUSE: Localization.dictionary.PLAYER_Tooltip_Pause,
-    FAST_FORWARD: Localization.dictionary.PLAYER_Tooltip_FastForward,
-    LIVE: Localization.dictionary.PLAYER_Tooltip_Live,
-    MUTE: Localization.dictionary.PLAYER_Tooltip_Mute,
-    UNMUTE: Localization.dictionary.PLAYER_Tooltip_Unmute,
-    VOLUME: Localization.dictionary.PLAYER_Tooltip_Volume,
-    SPACER: Localization.dictionary.PLAYER_Tooltip_Spacer,
-    META_DATA_LAYER_ON: Localization.dictionary.PLAYER_Tooltip_TurnOnMetadata,
-    META_DATA_LAYER_OFF: Localization.dictionary.PLAYER_Tooltip_TurnOffMetadata,
-    OVERFLOW_MENU: Localization.dictionary.PLAYER_Tooltip_MoreOptions,
-    FULLSCREEN: Localization.dictionary.PLAYER_Tooltip_EnterFullscreen,
-    EXIT_FULLSCREEN: Localization.dictionary.PLAYER_Tooltip_ExitFullscreen,
-    NEXT_DAY: Localization.dictionary.PLAYER_Tooltip_NextDay,
-    PREVIOUS_DAY: Localization.dictionary.PLAYER_Tooltip_PreviousDay,
-    HOURS_LABEL: Localization.dictionary.PLAYER_Tooltip_Hours
+export var ControlPanelElementsTooltip = {
+    REWIND: 'Rewind',
+    PLAY: 'Play',
+    PAUSE: 'Pause',
+    FAST_FORWARD: 'Fast forward',
+    LIVE: 'Live',
+    MUTE: 'Mute',
+    UNMUTE: 'Unmute',
+    VOLUME: 'Volume',
+    SPACER: 'Spacer',
+    META_DATA_LAYER_ON: 'Turn on object metadata overlay',
+    META_DATA_LAYER_OFF: 'Turn off object metadata overlay',
+    OVERFLOW_MENU: 'More options',
+    FULLSCREEN: 'Enter fullscreen',
+    EXIT_FULLSCREEN: 'Exit fullscreen',
+    NEXT_DAY: 'Next day',
+    PREVIOUS_DAY: 'Previous day',
+    HOURS_LABEL: 'Hours'
 }

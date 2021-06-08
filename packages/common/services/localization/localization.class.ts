@@ -44,12 +44,12 @@ export class Localization {
         this._dictionary = this._localizations.get(this._currentLocale);
     }
 
-    public static translate(keys: string[]) {
-        let resources: IDictionary = {};
-        for (const key of keys) {
-            resources[key] = this.resolve(key);
+    public static translate(keys: string[] | IDictionary, keyPrefix?: string) {
+        // let resources: IDictionary = {};
+        for (const key in keys) {
+            keys[key] = this.resolve(keyPrefix + key);
         }
-        return resources;
+        // return resources;
     }
 
     public static resolve(key: string): string {

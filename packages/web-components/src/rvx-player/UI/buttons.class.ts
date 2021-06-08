@@ -17,6 +17,7 @@ import { ControlPanelElementsTooltip } from '../rvx-player.definitions';
 import { shaka } from '../index';
 import { Localization } from './../../../../common/services/localization/localization.class';
 
+export const LocalizationService = Localization;
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 export class PlayButton extends shaka.ui.PlayButton {
@@ -168,7 +169,7 @@ export class OverflowMenu extends shaka.ui.OverflowMenu {
         const settingsLabel = document.createElement('label');
         settingsLabel.classList.add('settings-header');
         const settingsSpan = document.createElement('span');
-        settingsSpan.innerText = Localization.dictionary.BUTTONS_CLASS_Settings;
+        settingsSpan.innerText = LocalizationService.dictionary.BUTTONS_CLASS_Settings;
         settingsLabel.prepend(settingsSpan);
         this.overflowMenu_.prepend(settingsLabel);
     }
@@ -218,7 +219,7 @@ export class LiveButton extends shaka.ui.Element {
 
     private init() {
         this.button_ = document.createElement('fast-button');
-        this.button_.innerHTML = `<b>${Localization.dictionary.BUTTONS_CLASS_Live}</b>`;
+        this.button_.innerHTML = `<b>${LocalizationService.dictionary.BUTTONS_CLASS_Live}</b>`;
         this.button_.classList.add('live-button-component');
         this.parent.appendChild(this.button_);
         setElementTooltip(this.button_, ControlPanelElementsTooltip.LIVE);
@@ -238,7 +239,7 @@ export class NextDayButton extends shaka.ui.Element {
 
     private init() {
         this.button_ = document.createElement('fast-button');
-        setElementTooltip(this.button_, Localization.dictionary.BUTTONS_CLASS_NextRecordedDay);
+        setElementTooltip(this.button_, LocalizationService.dictionary.BUTTONS_CLASS_NextRecordedDay);
 
         // Create SVG
         this.svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
@@ -263,7 +264,7 @@ export class PrevDayButton extends shaka.ui.Element {
 
     private init() {
         this.button_ = document.createElement('fast-button');
-        setElementTooltip(this.button_, Localization.dictionary.BUTTONS_CLASS_PreviousRecordedDay);
+        setElementTooltip(this.button_, LocalizationService.dictionary.BUTTONS_CLASS_PreviousRecordedDay);
 
         // Create SVG
         this.svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
@@ -288,7 +289,7 @@ export class HoursLabel extends shaka.ui.Element {
 
     private init() {
         this.button_ = document.createElement('span');
-        this.button_.innerHTML = Localization.dictionary.BUTTONS_CLASS_24Hours;
+        this.button_.innerHTML = LocalizationService.dictionary.BUTTONS_CLASS_24Hours;
         this.button_.classList.add('hours-label');
         this.parent.appendChild(this.button_);
         setElementTooltip(this.button_, ControlPanelElementsTooltip.HOURS_LABEL);
@@ -341,7 +342,7 @@ export class NextSegment extends shaka.ui.Element {
 
     private init() {
         this.button_ = document.createElement('fast-button');
-        this.button_.setAttribute('title', Localization.dictionary.BUTTONS_CLASS_NextTimeRange);
+        this.button_.setAttribute('title', LocalizationService.dictionary.BUTTONS_CLASS_NextTimeRange);
         // Create SVG
         this.svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         this.path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
@@ -365,7 +366,7 @@ export class PrevSegment extends shaka.ui.Element {
 
     private init() {
         this.button_ = document.createElement('fast-button');
-        this.button_.setAttribute('title', Localization.dictionary.BUTTONS_CLASS_PreviousTimeRange);
+        this.button_.setAttribute('title', LocalizationService.dictionary.BUTTONS_CLASS_PreviousTimeRange);
         // Create SVG
         this.svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         this.path = document.createElementNS('http://www.w3.org/2000/svg', 'path');

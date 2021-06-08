@@ -29,8 +29,8 @@ export const template = html<PlayerComponent>`
                             <fast-button
                                 appearance="accent"
                                 class="secondary"
-                                aria-label="${(x) => x.resources.PLAYER_Retry}"
-                                title="${(x) => x.resources.PLAYER_Retry}"
+                                aria-label="${(x) => x.resources?.PLAYER_Retry}"
+                                title="${(x) => x.resources?.PLAYER_Retry}"
                                 @keyup="${(x, c) => x.handleRetryKeyUp(c.event as KeyboardEvent)}"
                                 @mouseup="${(x, c) => x.handleRetryMouseUp(c.event as MouseEvent)}"
                                 >Retry</fast-button

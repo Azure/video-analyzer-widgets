@@ -7,7 +7,7 @@ import { PlayerEvents, WidgetGeneralError } from '../../../widgets/src';
 import { DatePickerComponent } from '../date-picker';
 import { DatePickerEvent, IDatePickerRenderEvent } from '../date-picker/date-picker.definitions';
 import { PlayerWrapper } from './player.class';
-import { ControlPanelElements, LiveState } from './rvx-player.definitions';
+import { ControlPanelElements, ControlPanelElementsTooltip, LiveState } from './rvx-player.definitions';
 import { styles } from './rvx-player.style';
 import { template } from './rvx-player.template';
 import { getPlayerErrorString, getShakaPlayerErrorString } from './rvx-player.utils';
@@ -16,6 +16,9 @@ import { IDictionary } from '../../../common/services/localization/localization.
 
 // eslint-disable-next-line @typescript-eslint/no-unused-expressions
 DatePickerComponent;
+Localization;
+
+export const LocalizationService = Localization;
 
 /**
  * RVX Player web component
@@ -66,8 +69,6 @@ export class PlayerComponent extends FASTElement {
         this.classList.add(this.isLive ? LiveState.ON : LiveState.OFF);
         this.classList.remove(!this.isLive ? LiveState.ON : LiveState.OFF);
 
-        this.resources = Localization.dictionary;
-
         // Add loading mode
         this.classList.add('loading');
     }
@@ -76,6 +77,9 @@ export class PlayerComponent extends FASTElement {
         if (!this.connected) {
             return;
         }
+
+        this.resources = LocalizationService.dictionary;
+        LocalizationService.translate(ControlPanelElementsTooltip, "PLAYER_Tooltip_");
 
         if (allowedControllers) {
             this.showCameraName = allowedControllers.indexOf(ControlPanelElements.CAMERA_NAME) > -1;
