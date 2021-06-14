@@ -28,6 +28,7 @@
         <ava-design-system-provider theme="dark"
             use-defaults>
             <ava-zone-drawer id="zone-draw-widget">
+                <ava-player id="ava-player-widget"></ava-player>
             </ava-zone-drawer>
         </ava-design-system-provider>
     </div>
@@ -95,6 +96,16 @@
 
         zoneDrawerWidget.load();
         // zoneDrawerWidget.config = { zones: zones };
+
+        const playerWidget = document.querySelector("ava-player");
+
+        playerWidget.configure({
+          token: 'eyJhbGciOiJSUzI1NiIsImtpZCI6IjQ5NjUzRjE5OEQ3RUZGNkNBQkEwNTUxRjI3QTU2Mzc4RkQ0NzVGM0QiLCJ4NXQiOiJTV1VfR1kxLV8yeXJvRlVmSjZWamVQMUhYejAiLCJ0eXAiOiJKV1QifQ.eyJuYmYiOjE2MjEzNTc2MDQsImV4cCI6NDEwMjQ0NDgwMCwiaWF0IjoxNjIxMzU3OTA0LCJpc3MiOiJodHRwczovL2NvbnRvc28uY29tIiwiYXVkIjoiaHR0cHM6Ly92aWRlb2FuYWx5emVyLmF6dXJlLm5ldCJ9.qpT1f7layZEg_sPoZD4aqQYCeAjM_e4nZ_6FHeJxGgklKZ2L-v8gw1IvReusVrCx6Y9JyvMkietOpqSN8KzfJYsyxiZ8QRA_1L08nL-quwvB9Wt0cGXaTXktg8XuEceZh9FsgNXm8SG87fbXtHHsKDAsenp8RcLG4WIGLFiYLUPKmd9K0HbIYrqLEWqtHT8pU5cNLKOuLayGerSGbSLUAywURNZxhEUbI5s8SWBBAagMoghoeGx-z4dkwYuz47YSwZ8f8oUcC1ctLJ8Yfo6Y53RzZYMmsV8AGuSJTM7RWjyNap9xUY33ehoOfW0Qs8kMMdUzT0v5jStzMuEj_mg6SQ',
+          clientApiEndpointUrl: 'https://9354cd75eef44462a3d91eba5ffa5358.api.westcentralus-private1.videoanalyzer.azure.net',
+          videoName: 'rodrigb-vehicle-counting-cvr-008',
+          locale: 'de'
+        });
+        playerWidget.load();
     })()
 </script>
 

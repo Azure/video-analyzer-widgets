@@ -56,6 +56,8 @@ export class DatePickerComponent extends FASTElement {
      */
     @attr public inputDate: string;
 
+    @observable public resources: IDictionary = {};
+
     /**
      * Represents available dates - years months and days.
      *
@@ -76,11 +78,9 @@ export class DatePickerComponent extends FASTElement {
     private datePickerCSSLoaded = false;
     private uiConnected = false;
 
-    public resources: IDictionary;
-
     public constructor() {
         super();
-        this.resources = LocalizationService.dictionary;
+        // this.resources = ;
     }
 
     public allowedDatesChanged() {
@@ -96,6 +96,10 @@ export class DatePickerComponent extends FASTElement {
         // Update date object and set the date picker
         this.date = dateObj;
         this.datePicker?.picker?.set('select', this.date);
+    }
+
+    public resourcesChanged() {
+        console.log("re");
     }
 
     public connectedCallback() {
@@ -146,6 +150,10 @@ export class DatePickerComponent extends FASTElement {
 
                 // Show date picker only after initialization
                 this.enableUI = true;
+
+                if (Object.keys(this.resources).length === 0) {
+                    this.resources = Localization.dictionary;
+                }
 
                 setTimeout(() => {
                     this.datePicker.picker.set('select', this.date);

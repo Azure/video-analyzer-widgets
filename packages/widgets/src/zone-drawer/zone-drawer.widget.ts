@@ -80,15 +80,14 @@ export class ZoneDrawerWidget extends BaseWidget {
     private labelListIndex = 1;
     private resizeObserver: ResizeObserver;
 
-
     public constructor(config: IZoneDrawerWidgetConfig) {
         super(config);
     }
 
     public localize(locale: Locale) {
-        /* if (this.config) {
+        if (this.config) {
             this.config.locale = locale;
-        } */
+        }
 
         LocalizationService.load(locale, ['common', 'zone-drawer']);
         this.resources = LocalizationService.dictionary;

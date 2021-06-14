@@ -47,13 +47,13 @@ export class PlayerComponent extends FASTElement {
     @observable public errorString = '';
     @observable public hasError = false;
     @observable public showRetryButton = false;
+    @observable public resources: IDictionary;
     @observable private currentYear: number = 0;
     @observable private currentMonth: number = 0;
     @observable private currentDay: number = 0;
 
     public player: PlayerWrapper;
     public datePickerComponent: DatePickerComponent;
-    public resources: IDictionary;
 
     private video!: HTMLVideoElement;
     private timeContainer!: HTMLElement;
@@ -250,6 +250,12 @@ export class PlayerComponent extends FASTElement {
             return;
         }
 
+        this.initDatePicker();
+
+        document.addEventListener('fullscreenchange', this.updateFullScreen.bind(this));
+    }
+
+    public initDatePicker() {
         this.datePickerComponent = this.shadowRoot?.querySelector('media-date-picker');
 
         this.datePickerComponent.addEventListener(DatePickerEvent.DATE_CHANGE, ((event: CustomEvent<Date>) => {
@@ -270,8 +276,6 @@ export class PlayerComponent extends FASTElement {
             }
             // eslint-disable-next-line no-undef
         }) as EventListener);
-
-        document.addEventListener('fullscreenchange', this.updateFullScreen.bind(this));
     }
 
     public handleRetryMouseUp(e: MouseEvent): boolean {
