@@ -1,5 +1,5 @@
 {
-    "ACTIONS_MENU_Naam wijzigen": "Naam wijzigen",
+    "ACTIONS_MENU_Rename": "Naam wijzigen",
     "ACTIONS_MENU_Delete": "Verwijderen",
     "ACTIONS_MENU_ComponentTitle": "Onderdeel van het menu Acties",
     "ACTIONS_MENU_Options": "Opties",
@@ -17,7 +17,7 @@
     "BUTTONS_CLASS_NextTimeRange": "Volgende periode",
     "BUTTONS_CLASS_PreviousTimeRange": "Vorige periode",
     "PLAYER_ComponentTitle": "Spelercomponent",
-    "PLAYER_Tooltip_Terugspoelen": "Terugspoelen",
+    "PLAYER_Tooltip_REWIND": "Terugspoelen",
     "PLAYER_Tooltip_PAUSE": "Pauze",
     "PLAYER_Tooltip_PLAY": "Spelen",
     "PLAYER_Tooltip_FAST_FORWARD": "Snel vooruit",

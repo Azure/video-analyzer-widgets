@@ -1,4 +1,4 @@
-import { attr, customElement, FASTElement, observable } from '@microsoft/fast-element';
+import { attr, customElement, DOM, FASTElement, observable } from '@microsoft/fast-element';
 import { IDictionary } from '../../../common/services/localization/localization.definitions';
 import { DatePickerEvent, IAllowedDates, IDatePickerRenderEvent } from './date-picker.definitions';
 import { styles } from './date-picker.style';

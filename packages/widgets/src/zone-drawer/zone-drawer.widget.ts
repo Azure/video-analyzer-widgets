@@ -33,6 +33,7 @@ import { AvaDesignSystemProvider } from '../../../styles';
 import { Localization } from '../../../common/services/localization/localization.class';
 import { IDictionary } from '../../../common/services/localization/localization.definitions';
 import { Locale } from '../definitions/locale.definitions';
+import { DOM } from '@microsoft/fast-element';
 
 AvaDesignSystemProvider;
 ZonesViewComponent;
@@ -63,9 +64,11 @@ export class ZoneDrawerWidget extends BaseWidget {
     public isLabelsListEmpty = true;
     @observable
     public disableDrawing = false;
-
+    @observable
+    public resources: IDictionary = {};
+    @observable
+    public isLoaded = "";
     public config: IZoneDrawerWidgetConfig = {};
-    public resources: IDictionary;
 
     private readonly MAX_ZONES = 10;
 
@@ -77,6 +80,7 @@ export class ZoneDrawerWidget extends BaseWidget {
     private labelListIndex = 1;
     private resizeObserver: ResizeObserver;
 
+
     public constructor(config: IZoneDrawerWidgetConfig) {
         super(config);
     }
@@ -85,9 +89,10 @@ export class ZoneDrawerWidget extends BaseWidget {
         /* if (this.config) {
             this.config.locale = locale;
         } */
-        
+
         LocalizationService.load(locale, ['common', 'zone-drawer']);
         this.resources = LocalizationService.dictionary;
+        this.isLoaded = "true";
     }
 
     public connectedCallback() {
@@ -148,7 +153,11 @@ export class ZoneDrawerWidget extends BaseWidget {
         if (this.config?.debug) {
             this.setDebugMode(this.config?.debug);
         }
-        this.localize(this.config?.locale);
+
+        DOM.queueUpdate(() => {
+            this.localize(this.config?.locale);
+        });
+        DOM.nextUpdate();
     }
 
     // @override

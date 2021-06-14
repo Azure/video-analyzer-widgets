@@ -1,6 +1,9 @@
 {
-    "PLAYER_Opnieuw proberen": "Opnieuw proberen",
-    "PLAYER_ErrorFetchSegments": "fout bij ophalen van beschikbare segmenten",
-    "PLAYER_CannotParseMedia": "Kan beschikbare media niet ontleden",
-    "PLAYER_BrowserNotSupported": "Browser niet ondersteund!"
+    "ZONE_DRAWER_Save": "Opslaan",
+     "ZONE_DRAWER_Line": "Lijn",
+     "ZONE_DRAWER_Polygoon": "Veelhoek",
+     "ZONE_DRAWER_WidgetsInstructions": "Teken polygonen of lijnen rond de zone van belang in het frame.",
+     "ZONE_DRAWER_IsDisabled": "Zonelade is uitgeschakeld.",
+     "ZONE_DRAWER_Draw_a_line": "Teken een lijn",
+     "ZONE_DRAWER_Draw_a_polygon": "Teken een polygoon"
 }

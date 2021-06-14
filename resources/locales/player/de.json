@@ -1,5 +1,5 @@
 {
-    "PLAYER_Opnieuw proberen": "Opnieuw proberen",
+    "PLAYER_Retry": "Opnieuw proberen",
     "PLAYER_ErrorFetchSegments": "fout bij ophalen van beschikbare segmenten",
     "PLAYER_CannotParseMedia": "Kan beschikbare media niet ontleden",
     "PLAYER_BrowserNotSupported": "Browser niet ondersteund!"
