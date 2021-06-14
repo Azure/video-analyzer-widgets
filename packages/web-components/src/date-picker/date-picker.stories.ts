@@ -1,7 +1,6 @@
 import { DatePickerComponent } from '.';
 import { SegmentsTimelineComponent } from '..';
 import { AvaDesignSystemProvider } from '../../../styles';
-import { Localization } from './../../../common/services/localization/localization.class';
 
 interface ITemplate {
     date: string;

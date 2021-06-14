@@ -1,6 +1,5 @@
 import { AvaDesignSystemProvider } from '../../../styles';
 import { EditableTextFieldComponent } from './editable-text-field.component';
-import { Localization } from './../../../common/services/localization/localization.class';
 
 // Prevent tree-shaking
 AvaDesignSystemProvider;

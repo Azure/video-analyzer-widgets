@@ -1,7 +1,6 @@
 import { TimelineComponent } from '.';
 import { AvaDesignSystemProvider } from '../../../styles';
 import { ITimeLineConfig } from './timeline.definitions';
-
 interface ITemplate {
     darkTheme?: boolean;
     date?: Date;
