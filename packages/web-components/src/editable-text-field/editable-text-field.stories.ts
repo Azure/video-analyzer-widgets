@@ -27,7 +27,7 @@ const EditableTextFieldComponentTemplate = (data: ITemplate) => {
 export const EditableTextField = (args: ITemplate) => EditableTextFieldComponentTemplate(args);
 
 export default {
-    title: Localization.dictionary.EDITABLE_TEXT_FIELD_ComponentTitle,
+    title: 'Editable Text Field Component',
     argTypes: {
         darkTheme: { control: 'boolean', defaultValue: true },
         text: { control: 'text' },

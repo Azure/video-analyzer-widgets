@@ -1,5 +1,4 @@
 import { PolygonDrawerComponent } from '.';
-import { Localization } from './../../../common/services/localization/localization.class';
 
 interface ITemplate {
     borderColor: string;
@@ -26,7 +25,7 @@ const PolygonDrawerComponentTemplate = (data: ITemplate) => {
 export const polygonDrawer = (args) => PolygonDrawerComponentTemplate(args);
 
 export default {
-    title: Localization.dictionary.POLYGON_DRAWER_ComponentTitle,
+    title: 'Polygon Drawer Component',
     argTypes: {
         borderColor: { control: 'text' },
         fillColor: { control: 'text' }

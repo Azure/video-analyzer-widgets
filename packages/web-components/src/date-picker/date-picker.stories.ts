@@ -36,7 +36,7 @@ const DatePickerComponentTemplate = (data: ITemplate) => {
 export const Example = (args: ITemplate) => DatePickerComponentTemplate(args);
 
 export default {
-    title: Localization.dictionary.ACTIONS_MENU_DatePickerTitle,
+    title: 'Date Picker Component',
     argTypes: {
         date: { control: 'text' },
         allowedMonths: { control: 'text' },

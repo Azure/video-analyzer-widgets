@@ -30,17 +30,17 @@ export const ActionsMenu = (args: ITemplate) => ActionsMenuComponentTemplate(arg
 
 const actions: IAction[] = [
     {
-        label: Localization.dictionary.ACTIONS_MENU_Rename,
+        label: 'Rename',
         svgPath: RENAME_SVG_PATH
     },
     {
-        label: Localization.dictionary.ACTIONS_MENU_Delete,
+        label: 'Delete',
         svgPath: DELETE_SVG_PATH
     }
 ];
 
 export default {
-    title: Localization.dictionary.ACTIONS_MENU_ComponentTitle,
+    title: 'Actions Menu Component',
     argTypes: {
         darkTheme: { control: 'boolean', defaultValue: true },
         opened: { control: 'boolean', defaultValue: false }

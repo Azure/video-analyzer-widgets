@@ -2,7 +2,6 @@ import { SegmentsTimelineComponent } from '.';
 import { AvaDesignSystemProvider } from '../../../styles';
 import { AvaTheme } from '../../../styles/system-providers/ava-design-system-provider.definitions';
 import { ISegmentsTimelineConfig } from './segments-timeline.definitions';
-import { Localization } from './../../../common/services/localization/localization.class';
 
 // Prevent tree-shaking
 AvaDesignSystemProvider;
@@ -65,7 +64,7 @@ const SegmentsTimelineComponentTemplate = (data: ITemplate) => {
 export const SegmentsTimeline = (args: ITemplate) => SegmentsTimelineComponentTemplate(args);
 
 export default {
-    title: Localization.dictionary.SEGMENTS_TIMELINE_ComponentTitle,
+    title: 'Segments Timeline Component',
     argTypes: {
         duration: { control: 'number', defaultValue: 90 },
         timeSmoothing: { control: 'number', defaultValue: 0 },

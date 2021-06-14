@@ -33,7 +33,7 @@ import { AvaDesignSystemProvider } from '../../../styles';
 import { Localization } from '../../../common/services/localization/localization.class';
 import { IDictionary } from '../../../common/services/localization/localization.definitions';
 import { Locale } from '../definitions/locale.definitions';
-import { DOM } from '@microsoft/fast-element';
+import {  } from '@microsoft/fast-element';
 
 AvaDesignSystemProvider;
 ZonesViewComponent;
@@ -153,10 +153,7 @@ export class ZoneDrawerWidget extends BaseWidget {
             this.setDebugMode(this.config?.debug);
         }
 
-        DOM.queueUpdate(() => {
-            this.localize(this.config?.locale);
-        });
-        DOM.nextUpdate();
+        this.localize(this.config?.locale);
     }
 
     // @override
