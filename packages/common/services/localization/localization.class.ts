@@ -45,11 +45,9 @@ export class Localization {
     }
 
     public static translate(keys: string[] | IDictionary, keyPrefix?: string) {
-        // let resources: IDictionary = {};
         for (const key in keys) {
             keys[key] = this.resolve(keyPrefix + key);
         }
-        // return resources;
     }
 
     public static resolve(key: string): string {

@@ -33,7 +33,6 @@ import { AvaDesignSystemProvider } from '../../../styles';
 import { Localization } from '../../../common/services/localization/localization.class';
 import { IDictionary } from '../../../common/services/localization/localization.definitions';
 import { Locale } from '../definitions/locale.definitions';
-import {  } from '@microsoft/fast-element';
 
 AvaDesignSystemProvider;
 ZonesViewComponent;
@@ -66,8 +65,6 @@ export class ZoneDrawerWidget extends BaseWidget {
     public disableDrawing = false;
     @observable
     public resources: IDictionary = {};
-    @observable
-    public isLoaded = "";
     public config: IZoneDrawerWidgetConfig = {};
 
     private readonly MAX_ZONES = 10;
@@ -91,7 +88,6 @@ export class ZoneDrawerWidget extends BaseWidget {
 
         LocalizationService.load(locale, ['common', 'zone-drawer']);
         this.resources = LocalizationService.dictionary;
-        this.isLoaded = "true";
     }
 
     public connectedCallback() {
