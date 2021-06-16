@@ -3,7 +3,7 @@
 `media-zones-view` is an implementation of a [Fast element](https://www.fast.design/).
 
 The component showing lines and polygons over canvas element.
-@Input: zone:IZone[] - a list reflects existing zones. Can be optional
+@Input: zones:IZone[] - a list reflects existing zones on component initialization.
 
 ```typescript
 export interface IPoint {

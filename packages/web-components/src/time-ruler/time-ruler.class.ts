@@ -114,10 +114,14 @@ export class TimeRuler extends CanvasElement {
     }
 
     public drawPoints() {
-        for (const point of this.canvasPointsDataList) {
+        for (const [index, point] of this.canvasPointsDataList.entries()) {
             this.context.fillStyle = point.color;
             if (point.text) {
-                this.context?.fillText(point.text, point.x, point.y);
+                if (index === 1) {
+                    this.context?.fillText(point.text, point.x, point.y);
+                } else {
+                    this.context?.fillText(point.text, point.x - this.displayTextWidth(point.text) / 2, point.y);
+                }
             } else {
                 this.context?.fillRect(point.x, point.y, point.w, point.h);
             }
@@ -126,5 +130,10 @@ export class TimeRuler extends CanvasElement {
 
     private nearestPow2(num: number) {
         return Math.pow(2, Math.round(Math.log(num) / Math.log(2)));
+    }
+
+    private displayTextWidth(text: string) {
+        const metrics = this.context.measureText(text);
+        return metrics.width;
     }
 }
