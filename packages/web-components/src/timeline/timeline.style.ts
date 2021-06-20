@@ -1,4 +1,5 @@
 import { css } from '@microsoft/fast-element';
+import { timeTooltipStyle } from '../rvx-player/UI/definitions';
 import { simpleBarStyles } from './scrollbar.style';
 
 export const styles = css`
@@ -30,7 +31,7 @@ export const styles = css`
     .fast-slider-svg {
         width: 10px;
         height: 8px;
-        margin-bottom: 2px;
+        padding-top: 2px;
     }
 
     .minus-svg {
@@ -90,6 +91,8 @@ export const styles = css`
         background-color: var(--divider-alt); /* color of the scroll thumb */
         border-radius: 4px; /* roundness of the scroll thumb */
     }
+
+    ${timeTooltipStyle}
 
     ${simpleBarStyles}
 `;

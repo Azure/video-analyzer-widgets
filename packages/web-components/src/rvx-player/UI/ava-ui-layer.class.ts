@@ -1,5 +1,7 @@
+import { TimelineComponent } from '../../timeline';
 import { ControlPanelElements } from '../rvx-player.definitions';
-import { ForwardButton, FullscreenButton, MuteButton, OverflowMenu, PlayButton, RewindButton } from './buttons.class';
+import { ISeekBarElement } from './definitions';
+import { ForwardButton, FullscreenButton, MuteButton, OverflowMenu, PlayButton, RewindButton, SeekBarDecorator } from './ui.class';
 import {
     BodyTrackingButtonFactory,
     ForwardButtonFactory,
@@ -14,7 +16,7 @@ import {
     PrevDayButtonFactory,
     PrevSegmentButtonFactory,
     RewindButtonFactory
-} from './buttons.factory';
+} from './ui.factory';
 
 /**
  * AVAPlayerUILayer
@@ -48,6 +50,7 @@ export class AVAPlayerUILayer {
         }
     };
 
+    private seekBarDecorator: SeekBarDecorator;
     public constructor(
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         private shaka: any,
@@ -68,6 +71,25 @@ export class AVAPlayerUILayer {
 
     public set uiConfiguration(value) {
         this._uiConfiguration = value;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    public addLiveSeekBarTooltip(controls: any, computeClock: (time: number) => string) {
+        this.seekBarDecorator?.destroy();
+        const seekBarElement: ISeekBarElement = {
+            bar: controls.seekBar_.bar,
+            container: controls.seekBar_.container
+        };
+        this.seekBarDecorator = new SeekBarDecorator(seekBarElement, controls.localVideo_, computeClock);
+    }
+
+    public destroySeekBar() {
+        this.seekBarDecorator?.destroy();
+    }
+
+    public addTimelineSeekBarTooltip(timeline: TimelineComponent, video: HTMLElement, computeClock: (time: number) => string) {
+        this.seekBarDecorator?.destroy();
+        this.seekBarDecorator = new SeekBarDecorator(timeline.seekBarElement, video, computeClock);
     }
 
     private updateAvailableControllers() {

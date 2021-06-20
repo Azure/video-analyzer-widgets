@@ -5,6 +5,7 @@ import { getKeyCode, keyCodeEnter, keyCodeSpace } from '@microsoft/fast-web-util
 import SimpleBar from 'simplebar';
 import { closestElement } from '../../../common/utils/elements';
 import { guid } from '../../../common/utils/guid';
+import { IBarElement, ISeekBarElement } from '../rvx-player/UI/definitions';
 import { SegmentsTimelineComponent } from '../segments-timeline';
 import { ISegmentsTimelineConfig, IUISegmentEventData, SegmentsTimelineEvents } from '../segments-timeline/segments-timeline.definitions';
 import { TimeRulerComponent } from '../time-ruler';
@@ -65,6 +66,10 @@ export class TimelineComponent extends FASTElement {
     private readonly SEEK_BAR_TOP = '#FAF9F8';
     private readonly SEEK_BAR_BODY_COLOR = '#D02E00';
     private readonly CANVAS_MAX_WIDTH = 32767;
+
+    public constructor(private callback: () => void = null) {
+        super();
+    }
 
     public configChanged() {
         setTimeout(() => {
@@ -132,6 +137,10 @@ export class TimelineComponent extends FASTElement {
             }) as EventListener);
 
             this.segmentsTimelineReady = true;
+
+            if (this.callback) {
+                this.callback();
+            }
             this.initTimeLine();
         });
     }
@@ -195,6 +204,16 @@ export class TimelineComponent extends FASTElement {
         }
 
         return true;
+    }
+
+    public get seekBarElement(): ISeekBarElement {
+        const barElement: IBarElement = this.segmentsTimeline?.bar;
+        barElement.min = '0';
+        barElement.max = `${this.DAY_DURATION_IN_SECONDS}`;
+        return {
+            bar: barElement,
+            container: this.shadowRoot.querySelector('.scroll-container')
+        };
     }
 
     private zoomIn() {

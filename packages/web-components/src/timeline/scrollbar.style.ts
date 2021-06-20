@@ -142,7 +142,7 @@ export const simpleBarStyles = css`
     .simplebar-scrollbar:before {
         position: absolute;
         content: '';
-        background: black;
+        background-color: var(--divider-alt);
         border-radius: 7px;
         left: 2px;
         right: 2px;
