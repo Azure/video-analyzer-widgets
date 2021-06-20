@@ -18,6 +18,7 @@ export const styles = css`
         position: absolute;
         --corner-radius: 10;
         --design-unit: 1;
+        --density: 0;
         right: 20px;
         bottom: 0px;
         height: 20px;
@@ -25,25 +26,25 @@ export const styles = css`
         border-top: 1px solid var(--divider-alt);
         border-bottom: 1px solid var(--divider-alt);
         border-radius: 0px;
-        padding-bottom: 4px;
+        padding-bottom: 1px;
     }
 
     .fast-slider-svg {
         width: 10px;
         height: 8px;
-        padding-top: 2px;
+        position: relative;
+        bottom: 1px;
+        right: 3px;
     }
 
     .minus-svg {
-        width: 100%;
+        width: 11px;
         height: 1px;
-        padding: 3px 0px 0 1px;
     }
 
     .plus-svg {
-        width: 100%;
-        height: 12px;
-        padding: 3px 0px 0px 2px;
+        width: 11px;
+        height: 11px;
     }
 
     .scroll-container {

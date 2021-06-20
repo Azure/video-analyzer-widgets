@@ -2,8 +2,7 @@
 
 `media-actions-menu` is an implementation of a [Fast element](https://www.fast.design/).
 
-The component showing actions menu with IAction[] input.
-actions list input contains:
+The component for showing actions menu with a list of IAction[] inputs, where each input is:
 
 ```ts
 export interface IAction {
