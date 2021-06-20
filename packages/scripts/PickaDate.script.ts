@@ -1,3 +1,4 @@
+// @ts-nocheck
 !(function (a) {
     'object' == typeof exports ? (module.exports = a(require('jquery'))) : (this.Picker = a(jQuery));
 })(function (a) {
