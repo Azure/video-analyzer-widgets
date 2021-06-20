@@ -378,7 +378,7 @@
     );
 }),
     (function (a) {
-        'object' == typeof exports ? (module.exports = a(require('./picker.js'), require('jquery'))) : a(Picker, jQuery);
+        'object' == typeof exports ? (module.exports = a(require('./picker.ts'), require('jquery'))) : a(Picker, jQuery);
     })(function (a, b) {
         function c(a, b) {
             const c = this,
