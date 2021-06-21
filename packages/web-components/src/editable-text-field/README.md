@@ -2,8 +2,8 @@
 
 `media-editable-text-field` is an implementation of a [Fast element](https://www.fast.design/).
 
-The component showing text label with edit mode option
-The component inputs:
+The component for showing a text label with an option to edit the text.
+The component has the following inputs:
 
 ```ts
 export class EditableTextFieldComponent extends FASTElement {
