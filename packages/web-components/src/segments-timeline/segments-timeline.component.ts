@@ -220,6 +220,11 @@ export class SegmentsTimelineComponent extends FASTElement {
         return 0;
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    public get bar(): any {
+        return this.timelineProgress?.rootElement;
+    }
+
     private initSVGProgress() {
         const container = this.$fastController.element.shadowRoot?.querySelector('svg');
         const containerWidth = this.$fastController.element.offsetWidth * (this.config.displayOptions.zoom || 1);

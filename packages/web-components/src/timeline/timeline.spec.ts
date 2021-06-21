@@ -33,7 +33,7 @@ describe('TimelineComponent', () => {
         el.configChanged();
         const isFirefoxBrowser = navigator.userAgent.includes('Firefox');
         // styles count as element on FF
-        const childLength = isFirefoxBrowser ? 4 : 2;
+        const childLength = isFirefoxBrowser ? 5 : 2;
 
         await expect(el.shadowRoot.children.length).to.equal(childLength);
     });

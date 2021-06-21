@@ -1,4 +1,4 @@
-import { BodyTracking, HoursLabel, LiveButton, NextDayButton, NextSegment, PrevDayButton, PrevSegment } from './buttons.class';
+import { BodyTracking, HoursLabel, LiveButton, NextDayButton, NextSegment, PrevDayButton, PrevSegment } from './ui.class';
 import { shaka } from '../index';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */

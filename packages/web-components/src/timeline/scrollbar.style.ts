@@ -142,7 +142,7 @@ export const simpleBarStyles = css`
     .simplebar-scrollbar:before {
         position: absolute;
         content: '';
-        background: black;
+        background-color: var(--divider-alt);
         border-radius: 7px;
         left: 2px;
         right: 2px;
@@ -170,6 +170,7 @@ export const simpleBarStyles = css`
         left: 0;
         height: 20px;
         margin-right: 132px; /* slider width */
+        margin-left: 1px;
         background: var(--bg-dialog);
     }
 
