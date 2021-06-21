@@ -43,8 +43,6 @@ export class Player extends BaseWidget {
     }
 
     public localize(locale: Locale) {
-        this.config.locale = locale;
-        
         LocalizationService.load(locale, ['common', 'player']);
         this.resources = LocalizationService.dictionary;
     }
@@ -90,6 +88,11 @@ export class Player extends BaseWidget {
         if (this.config?.debug) {
             this.setDebugMode(this.config?.debug);
         }
+
+        if (this.config?.locale) {
+            this.setLocale(this.config?.locale);
+        }
+
         this.localize(this.config?.locale);
         this.init();
     }

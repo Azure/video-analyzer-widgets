@@ -146,6 +146,10 @@ export class ZoneDrawerWidget extends BaseWidget {
             this.setDebugMode(this.config?.debug);
         }
 
+        if (this.config?.locale) {
+            this.setLocale(this.config?.locale);
+        }
+
         this.localize(this.config?.locale);
     }
 

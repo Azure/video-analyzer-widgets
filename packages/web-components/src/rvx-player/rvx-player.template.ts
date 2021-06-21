@@ -33,7 +33,7 @@ export const template = html<PlayerComponent>`
                                 title="${(x) => x.resources?.PLAYER_Retry}"
                                 @keyup="${(x, c) => x.handleRetryKeyUp(c.event as KeyboardEvent)}"
                                 @mouseup="${(x, c) => x.handleRetryMouseUp(c.event as MouseEvent)}"
-                                >Retry</fast-button
+                                >${(x) => x.resources?.PLAYER_Retry}</fast-button
                             >
                         `
                     )}

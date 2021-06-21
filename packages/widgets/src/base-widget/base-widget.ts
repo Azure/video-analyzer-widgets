@@ -3,6 +3,7 @@ import { closestElement } from '../../../common/utils/elements';
 import { AvaDesignSystemProvider } from '../../../styles/system-providers';
 import { Logger } from '../common/logger';
 import { IWidgetBaseConfig } from '../definitions/base-widget-config.definitions';
+import { Locale } from '../definitions/locale.definitions';
 
 export class BaseWidget extends FASTElement {
     @attr public _config: IWidgetBaseConfig;
@@ -28,6 +29,16 @@ export class BaseWidget extends FASTElement {
             this._config.debug = state;
         }
         Logger.debugMode = state;
+    }
+
+    public setLocale(locale: Locale) {
+        if (this._config) {
+            this._config.locale = locale;
+        } else {
+            this._config = {
+                locale: locale
+            }
+        }
     }
 
     public load(): void {}
