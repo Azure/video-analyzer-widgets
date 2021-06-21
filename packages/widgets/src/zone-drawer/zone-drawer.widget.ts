@@ -31,15 +31,13 @@ import {
 import { Logger } from '../common/logger';
 import { AvaDesignSystemProvider } from '../../../styles';
 import { Localization } from '../../../common/services/localization/localization.class';
-import { IDictionary } from '../../../common/services/localization/localization.definitions';
-import { Locale } from '../definitions/locale.definitions';
 
 AvaDesignSystemProvider;
 ZonesViewComponent;
 PolygonDrawerComponent;
 LineDrawerComponent;
 LayerLabelComponent;
-Localization;
+
 
 export const LocalizationService = Localization;
 
@@ -63,8 +61,7 @@ export class ZoneDrawerWidget extends BaseWidget {
     public isLabelsListEmpty = true;
     @observable
     public disableDrawing = false;
-    @observable
-    public resources: IDictionary = {};
+
     public config: IZoneDrawerWidgetConfig = {};
 
     private readonly MAX_ZONES = 10;
@@ -79,12 +76,6 @@ export class ZoneDrawerWidget extends BaseWidget {
 
     public constructor(config: IZoneDrawerWidgetConfig) {
         super(config);
-    }
-
-    public localize(locale: Locale) {
-        this.config.locale = locale;
-        LocalizationService.load(locale, ['common', 'zone-drawer']);
-        this.resources = LocalizationService.dictionary;
     }
 
     public connectedCallback() {
@@ -146,11 +137,7 @@ export class ZoneDrawerWidget extends BaseWidget {
             this.setDebugMode(this.config?.debug);
         }
 
-        if (this.config?.locale) {
-            this.setLocale(this.config?.locale);
-        }
-
-        this.localize(this.config?.locale);
+        this.setLocalization(this.config?.locale, ['common', 'zone-drawer']);
     }
 
     // @override

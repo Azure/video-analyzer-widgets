@@ -21,24 +21,24 @@ export class Localization {
     * If locale is null, the default locale is 'en'.
     */
     public static load(locale?: string, componentTypes: IComponentsType[] = ['common']) {
-        try {
-            for (const locale of this._locales) {
-                let dict: IDictionary = {};
-                for (const compType of componentTypes) {
+
+        for (const locale of this._locales) {
+            let dict: IDictionary = {};
+            for (const compType of componentTypes) {
+                try {
                     const jsonFile = this.getJsonFile(compType, locale);
                     if (jsonFile && Object.keys(jsonFile).length) {
                         for (var val in jsonFile) {
                             dict[val] = jsonFile[val];
                         }
                     }
+                } catch (error) {
+                    Logger.log(error);
                 }
-                // After import the fileJson add the content to the _localizations map
-                // Example: this._localizations = {'en': { }, 'de': { }}
-                this._localizations.set(locale, dict);
             }
-
-        } catch (error) {
-            Logger.log(error);
+            // After import the fileJson add the content to the _localizations map
+            // Example: this._localizations = {'en': { }, 'de': { }}
+            this._localizations.set(locale, dict);
         }
 
         this.changeLocale(locale);

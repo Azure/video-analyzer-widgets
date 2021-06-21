@@ -1,14 +1,21 @@
-import { attr, FASTElement } from '@microsoft/fast-element';
+import { attr, FASTElement, observable } from '@microsoft/fast-element';
+import { IComponentsType, IDictionary } from '../../../common/services/localization/localization.definitions';
 import { closestElement } from '../../../common/utils/elements';
 import { AvaDesignSystemProvider } from '../../../styles/system-providers';
 import { Logger } from '../common/logger';
 import { IWidgetBaseConfig } from '../definitions/base-widget-config.definitions';
 import { Locale } from '../definitions/locale.definitions';
+import { Localization } from './../../../common/services/localization/localization.class';
+
+Localization;
 
 export class BaseWidget extends FASTElement {
     @attr public _config: IWidgetBaseConfig;
     @attr public width: string;
     @attr public height: string;
+
+    @observable
+    public resources: IDictionary = {};
 
     public constructor(config?: IWidgetBaseConfig) {
         super();
@@ -31,7 +38,7 @@ export class BaseWidget extends FASTElement {
         Logger.debugMode = state;
     }
 
-    public setLocale(locale: Locale) {
+    public setLocalization(locale: Locale, widgets: IComponentsType[]) {
         if (this._config) {
             this._config.locale = locale;
         } else {
@@ -39,6 +46,9 @@ export class BaseWidget extends FASTElement {
                 locale: locale
             }
         }
+
+        Localization.load(locale, widgets);
+        this.resources = Localization.dictionary;
     }
 
     public load(): void {}
@@ -66,6 +76,7 @@ export class BaseWidget extends FASTElement {
             } else {
                 Logger.log('Need to import AvaDesignSystemProvider');
             }
+
         }
     }
 }

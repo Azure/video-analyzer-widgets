@@ -12,15 +12,9 @@ import { ControlPanelElements, ISource } from '../../../web-components/src/rvx-p
 import { Logger } from '../common/logger';
 import { AvaDesignSystemProvider } from '../../../styles';
 import { HttpError } from '../../../common/utils/http.error';
-import { Localization } from './../../../common/services/localization/localization.class';
-import { IDictionary } from '../../../common/services/localization/localization.definitions';
-import { Locale } from '../definitions/locale.definitions';
 
 AvaDesignSystemProvider;
 PlayerComponent;
-Localization;
-
-export const LocalizationService = Localization;
 
 @customElement({
     name: 'ava-player',
@@ -30,7 +24,6 @@ export const LocalizationService = Localization;
 export class Player extends BaseWidget {
     @attr({ mode: 'fromView' })
     public config: IAvaPlayerConfig;
-    public resources: IDictionary;
     private loaded = false;
     private source: ISource = null;
     private allowedControllers: ControlPanelElements[] = null;
@@ -40,11 +33,6 @@ export class Player extends BaseWidget {
         if (this.config) {
             this.init();
         }
-    }
-
-    public localize(locale: Locale) {
-        LocalizationService.load(locale, ['common', 'player']);
-        this.resources = LocalizationService.dictionary;
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -89,11 +77,8 @@ export class Player extends BaseWidget {
             this.setDebugMode(this.config?.debug);
         }
 
-        if (this.config?.locale) {
-            this.setLocale(this.config?.locale);
-        }
-
-        this.localize(this.config?.locale);
+        this.setLocalization(this.config?.locale, ['common', 'player']);
+     
         this.init();
     }
 
