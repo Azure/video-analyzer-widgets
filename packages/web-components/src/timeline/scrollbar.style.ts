@@ -170,6 +170,7 @@ export const simpleBarStyles = css`
         left: 0;
         height: 20px;
         margin-right: 132px; /* slider width */
+        margin-left: 1px;
         background: var(--bg-dialog);
     }
 
