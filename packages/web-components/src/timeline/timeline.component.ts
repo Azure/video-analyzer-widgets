@@ -221,7 +221,7 @@ export class TimelineComponent extends FASTElement {
         this.initSegmentsTimeline();
         this.initTimeRuler();
 
-        if (!this.config.disableZoom) {
+        if (!this.config?.disableZoom) {
             setTimeout(() => {
                 this.initSlider();
                 this.simpleBar?.recalculate();
