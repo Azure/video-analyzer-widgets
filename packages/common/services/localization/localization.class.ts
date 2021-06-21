@@ -4,6 +4,11 @@ import {
     SupportedLocaleLanguages, SUPPORTED_LOCALES, IComponentsType
 } from './localization.definitions';
 
+
+/* 
+* Localization class provides the user the ability
+* to localize the strings within UI including messages.
+*/
 export class Localization {
 
     private static _dictionary: IDictionary = {};
@@ -21,7 +26,7 @@ export class Localization {
                 let dict: IDictionary = {};
                 for (const compType of componentTypes) {
                     const jsonFile = this.getJsonFile(compType, locale);
-                    if (jsonFile && Object.keys(jsonFile).length !== 0) {
+                    if (jsonFile && Object.keys(jsonFile).length) {
                         for (var val in jsonFile) {
                             dict[val] = jsonFile[val];
                         }

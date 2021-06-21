@@ -80,7 +80,6 @@ export class DatePickerComponent extends FASTElement {
 
     public constructor() {
         super();
-        // this.resources = ;
     }
 
     public allowedDatesChanged() {
@@ -96,10 +95,6 @@ export class DatePickerComponent extends FASTElement {
         // Update date object and set the date picker
         this.date = dateObj;
         this.datePicker?.picker?.set('select', this.date);
-    }
-
-    public resourcesChanged() {
-        console.log("re");
     }
 
     public connectedCallback() {
@@ -151,7 +146,7 @@ export class DatePickerComponent extends FASTElement {
                 // Show date picker only after initialization
                 this.enableUI = true;
 
-                if (Object.keys(this.resources).length === 0) {
+                if (!Object.keys(this.resources).length) {
                     this.resources = Localization.dictionary;
                 }
 
