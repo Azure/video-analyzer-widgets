@@ -31,7 +31,7 @@ describe('TimelineComponent', () => {
         const el = await fixture<TimelineComponent>(html`<media-timeline></media-timeline>`);
         el.config = config;
         el.configChanged();
-        await expect(el.shadowRoot.children.length).to.equal(4);
+        await expect(el.shadowRoot.children.length).to.equal(2);
     });
 
     xit('with zoom - should have 4 children', async () => {
