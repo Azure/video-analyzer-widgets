@@ -8,7 +8,6 @@ import { ISegmentsTimelineConfig, IUISegment, IUISegmentEventData, SegmentsTimel
 import { styles } from './segments-timeline.style';
 import { template } from './segments-timeline.template';
 import { closestElement } from '../../../common/utils/elements';
-import { IBarElement } from '../rvx-player/UI/definitions';
 
 /**
  * Segments Timeline Component
@@ -221,8 +220,9 @@ export class SegmentsTimelineComponent extends FASTElement {
         return 0;
     }
 
-    public get bar(): IBarElement {
-        return this.shadowRoot.querySelector('.show');
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    public get bar(): any {
+        return this.timelineProgress?.rootElement;
     }
 
     private initSVGProgress() {

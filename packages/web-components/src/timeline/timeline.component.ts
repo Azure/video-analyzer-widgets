@@ -50,6 +50,7 @@ export class TimelineComponent extends FASTElement {
     public readonly DAY_DURATION_IN_SECONDS = 86400; // 60 (sec) * 60 (min) * 24 (hours)
 
     public zoom: number = 1;
+    public scrollContainer: Element;
 
     private timeRulerReady = false;
     private segmentsTimelineReady = false;
@@ -89,6 +90,8 @@ export class TimelineComponent extends FASTElement {
         const parent = this.$fastController?.element?.parentElement;
         this.resizeObserver = new ResizeObserver(this.resize.bind(this));
         this.resizeObserver.observe(parent || this.$fastController?.element);
+
+        this.scrollContainer = this.shadowRoot.querySelector('.scroll-container');
     }
 
     public disconnectedCallback() {
@@ -104,8 +107,7 @@ export class TimelineComponent extends FASTElement {
             return;
         }
 
-        const element = this.shadowRoot.querySelector('.scroll-container');
-        this.simpleBar = new SimpleBar(element as HTMLElement, {
+        this.simpleBar = new SimpleBar(this.scrollContainer as HTMLElement, {
             autoHide: false,
             forceVisible: 'x',
             classNames: {},
@@ -212,7 +214,7 @@ export class TimelineComponent extends FASTElement {
         barElement.max = `${this.DAY_DURATION_IN_SECONDS}`;
         return {
             bar: barElement,
-            container: this.shadowRoot.querySelector('.scroll-container')
+            container: this.scrollContainer
         };
     }
 

@@ -1,7 +1,7 @@
 import { css } from '@microsoft/fast-element';
 import { secondaryAccentButtonStyle } from '../../../styles/system-providers/ava-design-system-provider.style';
 import { stylesShaka } from './shaka-controls.style';
-import { timeTooltipStyle } from './UI/definitions';
+import { timeTooltipStyle } from './UI/time-tooltip.style';
 
 export const styles = css`
     :host {
@@ -192,7 +192,7 @@ export const styles = css`
         align-items: center;
         display: grid;
         grid-template-rows: auto;
-        grid-template-columns: [camera-name] 150px [date-picker] auto;
+        grid-template-columns: [camera-name] 1fr [date-picker] 2fr;
     }
 
     .col.camera-name {

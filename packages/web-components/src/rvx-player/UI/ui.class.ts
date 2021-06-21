@@ -15,7 +15,7 @@ import {
 } from '../../../../styles/svg/svg.shapes';
 import { ControlPanelElementsTooltip } from '../rvx-player.definitions';
 import { shaka } from '../index';
-import { IBarElement, ISeekBarElement } from './definitions';
+import { ISeekBarElement } from './definitions';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
