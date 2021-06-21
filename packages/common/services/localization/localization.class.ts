@@ -3,7 +3,7 @@ import {
     IDictionary, DEFAULT_LOCALE_LANGUAGE,
     SupportedLocaleLanguages, SUPPORTED_LOCALES, IComponentsType
 } from './localization.definitions';
-
+import { Logger } from './../../../widgets/src/common/logger';
 
 /* 
 * Localization class provides the user the ability
@@ -38,7 +38,7 @@ export class Localization {
             }
 
         } catch (error) {
-            console.log(error);
+            Logger.log(error);
         }
 
         this.changeLocale(locale);

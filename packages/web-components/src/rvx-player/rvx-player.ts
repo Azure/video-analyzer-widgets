@@ -13,6 +13,7 @@ import { template } from './rvx-player.template';
 import { getPlayerErrorString, getShakaPlayerErrorString } from './rvx-player.utils';
 import { Localization } from './../../../common/services/localization/localization.class';
 import { IDictionary } from '../../../common/services/localization/localization.definitions';
+import { Logger } from './../../../widgets/src/common/logger';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-expressions
 DatePickerComponent;
@@ -344,8 +345,7 @@ export class PlayerComponent extends FASTElement {
 
             return await availableHours.json();
         } catch (error) {
-            // eslint-disable-next-line no-console
-            console.log(this.resources.PLAYER_ErrorFetchSegments);
+            Logger.log(this.resources.PLAYER_ErrorFetchSegments);
             return null;
         }
     }

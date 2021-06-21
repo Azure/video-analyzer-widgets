@@ -82,10 +82,7 @@ export class ZoneDrawerWidget extends BaseWidget {
     }
 
     public localize(locale: Locale) {
-        if (this.config) {
-            this.config.locale = locale;
-        }
-
+        this.config.locale = locale;
         LocalizationService.load(locale, ['common', 'zone-drawer']);
         this.resources = LocalizationService.dictionary;
     }

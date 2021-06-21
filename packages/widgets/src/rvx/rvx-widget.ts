@@ -43,9 +43,7 @@ export class Player extends BaseWidget {
     }
 
     public localize(locale: Locale) {
-        if (this.config) {
-            this.config.locale = locale;
-        }
+        this.config.locale = locale;
         
         LocalizationService.load(locale, ['common', 'player']);
         this.resources = LocalizationService.dictionary;
@@ -159,12 +157,10 @@ export class Player extends BaseWidget {
                     }
                 })
                 .catch((error) => {
-                    // eslint-disable-next-line no-console
-                    console.log(error);
+                    Logger.log(error);
                     this.handelFallback(error);
                 });
         } catch (error) {
-            // console.log(error);
             this.handelFallback(error);
         }
     }

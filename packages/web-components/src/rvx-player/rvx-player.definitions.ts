@@ -44,7 +44,7 @@ export enum LiveState {
     OFF = 'live-off'
 }
 
-export var ControlPanelElementsTooltip = {
+export const ControlPanelElementsTooltip = {
     REWIND: 'Rewind',
     PLAY: 'Play',
     PAUSE: 'Pause',
