@@ -1,5 +1,6 @@
 # Canvas Element
 
-`CanvasElement` is abstract class for components that use canvas
-basic class that create canvas with options configuration
-use setCanvasSize to draw make the canvas with the right width and height depending on the ratio
+`CanvasElement` is an abstract class for components that use the canvas HTML element.
+
+It creates a canvas based on the configuration options.
+You can use `setCanvasSize` to set the canvas with predefined width and height, depending on the ratio of the element.
