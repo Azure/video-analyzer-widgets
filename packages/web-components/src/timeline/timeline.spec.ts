@@ -31,7 +31,11 @@ describe('TimelineComponent', () => {
         const el = await fixture<TimelineComponent>(html`<media-timeline></media-timeline>`);
         el.config = config;
         el.configChanged();
-        await expect(el.shadowRoot.children.length).to.equal(2);
+        const isFirefoxBrowser = navigator.userAgent.includes('Firefox');
+        // styles count as element on FF
+        const childLength = isFirefoxBrowser ? 5 : 2;
+
+        await expect(el.shadowRoot.children.length).to.equal(childLength);
     });
 
     xit('with zoom - should have 4 children', async () => {
