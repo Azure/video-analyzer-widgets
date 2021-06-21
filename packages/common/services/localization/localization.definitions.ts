@@ -67,7 +67,7 @@ export const SUPPORTED_LOCALES: string[] = [
     'cs',
     'de', 
     'en',
-    'es',
+    /* 'es',
     'fr',
     'hu',
     'id',
@@ -82,7 +82,7 @@ export const SUPPORTED_LOCALES: string[] = [
     'sv',
     'tr',
     'zh-Hans',
-    'zh-Hant'
+    'zh-Hant' */
 ];
 
 export type IComponentsType = 'common' | 'player' | 'zone-drawer';

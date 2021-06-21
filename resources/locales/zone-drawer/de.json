@@ -5,5 +5,7 @@
      "ZONE_DRAWER_WidgetsInstructions": "Teken polygonen of lijnen rond de zone van belang in het frame.",
      "ZONE_DRAWER_IsDisabled": "Zonelade is uitgeschakeld.",
      "ZONE_DRAWER_Draw_a_line": "Teken een lijn",
-     "ZONE_DRAWER_Draw_a_polygon": "Teken een polygoon"
+     "ZONE_DRAWER_Draw_a_polygon": "Teken een polygoon",
+     "ZONE_DRAWER_Actions_RENAME": "Naam wijzigen",
+     "ZONE_DRAWER_Actions_DELETE": "Verwijderen"
 }
