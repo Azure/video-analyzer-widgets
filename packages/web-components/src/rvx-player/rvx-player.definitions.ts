@@ -1,7 +1,4 @@
 export type MimeType = 'video/mp4' | 'application/dash+xml' | 'application/vnd.apple.mpegurl';
-import { Localization } from './../../../common/services/localization/localization.class';
-
-export const LocalizationService = Localization;
 
 export interface ISource {
     // Authentication Token for the player.

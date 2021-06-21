@@ -9,8 +9,6 @@ const PickaDate = require('../../../scripts/PickaDate.script');
 // eslint-disable-next-line @typescript-eslint/no-unused-expressions
 PickaDate;
 
-export const LocalizationService = Localization;
-
 /**
  * Date picker component
  * @public

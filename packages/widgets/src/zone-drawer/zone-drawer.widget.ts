@@ -30,16 +30,12 @@ import {
 } from './zone-drawer.definitions';
 import { Logger } from '../common/logger';
 import { AvaDesignSystemProvider } from '../../../styles';
-import { Localization } from '../../../common/services/localization/localization.class';
 
 AvaDesignSystemProvider;
 ZonesViewComponent;
 PolygonDrawerComponent;
 LineDrawerComponent;
 LayerLabelComponent;
-
-
-export const LocalizationService = Localization;
 
 @customElement({
     name: 'ava-zone-drawer',

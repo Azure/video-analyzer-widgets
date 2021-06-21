@@ -22,8 +22,6 @@ import { IDictionary } from '../../../common/services/localization/localization.
 TimelineComponent;
 Localization;
 
-export const LocalizationService = Localization;
-
 export class PlayerWrapper {
     public player: shaka_player.Player = Object.create(null);
     public resources: IDictionary;
@@ -66,7 +64,7 @@ export class PlayerWrapper {
         private allowedControllers: ControlPanelElements[]
     ) {
         
-        this.resources = LocalizationService.dictionary;
+        this.resources = Localization.dictionary;
         // Install built-in polyfills to patch browser incompatibilities.
         shaka.polyfill.installAll();
 
@@ -374,7 +372,7 @@ export class PlayerWrapper {
         );
 
         // Set shaka player languages
-        this.controls.getLocalization().changeLocale(LocalizationService.locale);
+        this.controls.getLocalization().changeLocale(Localization.locale);
 
         // Player listeners
         this.player.addEventListener('error', this.onErrorEvent.bind(this));

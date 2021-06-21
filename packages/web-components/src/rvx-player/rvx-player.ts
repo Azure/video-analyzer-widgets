@@ -19,8 +19,6 @@ import { Logger } from './../../../widgets/src/common/logger';
 DatePickerComponent;
 Localization;
 
-export const LocalizationService = Localization;
-
 /**
  * RVX Player web component
  * @public
@@ -79,8 +77,8 @@ export class PlayerComponent extends FASTElement {
             return;
         }
 
-        this.resources = LocalizationService.dictionary;
-        LocalizationService.translate(ControlPanelElementsTooltip, "PLAYER_Tooltip_");
+        this.resources = Localization.dictionary;
+        Localization.translate(ControlPanelElementsTooltip, "PLAYER_Tooltip_");
 
         if (allowedControllers) {
             this.showCameraName = allowedControllers.indexOf(ControlPanelElements.CAMERA_NAME) > -1;
