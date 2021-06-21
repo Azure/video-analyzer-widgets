@@ -2,7 +2,7 @@ import { html, fixture, expect } from '@open-wc/testing';
 import { TimelineComponent } from './timeline.component';
 import { ITimeLineConfig } from './timeline.definitions';
 
-// TimelineComponent;
+TimelineComponent;
 
 const segments = [
     { startSeconds: 0, endSeconds: 3600 },
@@ -15,35 +15,36 @@ const segments = [
 
 const config: ITimeLineConfig = {
     segments: segments,
-    date: new Date()
+    date: new Date(),
+    disableZoom: true
 };
 
-// describe('TimelineComponent', () => {
-//     it('passes the a11y audit', async () => {
-//         const el = await fixture<TimelineComponent>(html`<media-timeline></media-timeline>`);
+describe('TimelineComponent', () => {
+    it('passes the a11y audit', async () => {
+        const el = await fixture<TimelineComponent>(html`<media-timeline></media-timeline>`);
+        el.config = config;
+        el.configChanged();
+        await expect(el).shadowDom.to.be.accessible();
+    });
 
-//         await expect(el).shadowDom.to.be.accessible();
-//     });
+    it('without zoom - should have 2 children', async () => {
+        const el = await fixture<TimelineComponent>(html`<media-timeline></media-timeline>`);
+        el.config = config;
+        el.configChanged();
+        const isFirefoxBrowser = navigator.userAgent.includes('Firefox');
+        // styles count as element on FF
+        const childLength = isFirefoxBrowser ? 4 : 2;
 
-//     it('without zoom - should have 2 children', async () => {
-//         const el = await fixture<TimelineComponent>(html`<media-timeline></media-timeline>`);
-//         config.enableZoom = false;
-//         el.config = config;
-//         el.initData();
-//         const isFirefoxBrowser = navigator.userAgent.includes('Firefox');
-//         // styles count as element on FF
-//         const childLength = isFirefoxBrowser ? 3 : 2;
+        await expect(el.shadowRoot.children.length).to.equal(childLength);
+    });
 
-//         await expect(el.shadowRoot.children.length).to.equal(childLength);
-//     });
+    xit('with zoom - should have 4 children', async () => {
+        const el = await fixture<TimelineComponent>(html`<media-timeline></media-timeline>`);
+        config.disableZoom = false;
+        el.config = config;
+        el.configChanged();
 
-//     it('with zoom - should have 3 children', async () => {
-//         const el = await fixture<TimelineComponent>(html`<media-timeline></media-timeline>`);
-//         config.enableZoom = true;
-//         el.config = config;
-//         el.initData();
-
-//         // styles count as element on FF, but we removing the slider on FF so both need to be 3
-//         await expect(el.shadowRoot.children.length).to.equal(3);
-//     });
-// });
+        // styles count as element on FF, but we removing the slider on FF so both need to be 4
+        await expect(el.shadowRoot.children.length).to.equal(4);
+    });
+});
