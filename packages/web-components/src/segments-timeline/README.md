@@ -24,7 +24,7 @@ config input contains:
   "renderTooltip"?: boolean;
   "renderProgress"?: boolean;
 },
-"timeSmoothing"?: number // time in seconds to merge near segments
+"timeSmoothing"?: number // When showing segments on a timescale that is too large – for example on a 24 hour timeline, it is not possible to show distinct segments when they are separated by too small a distance, say 1.3 seconds. By setting timeSmoothing to 1.3, you can combine segments when they are separated by less than this distance.
 }
 ```
 

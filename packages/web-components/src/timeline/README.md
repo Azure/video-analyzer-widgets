@@ -9,11 +9,11 @@ config input contains:
 {
   "segments": // list of segments
   [{
-    "startSeconds": number;
-    "endSeconds": number;
-    "color"?: string; // * to customize colors
+    "startSeconds": number; // Between zero and 24*3600
+    "endSeconds": number; //  Between zero and 24*3600 (endSeconds > startSeconds)
+    "color"?: string; // customize segment colors
   }];
-  "date": Date; // start date for the timeline
+  "date": Date; // start date for the timeline (Date in UTC)
   "enableZoom": boolean; // enable zoom option on timeline
 }
 ```
