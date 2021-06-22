@@ -8,9 +8,9 @@ The component offers a drop-down control that’s optimized for picking a single
 {
   "inputDate": Date; // selected date for the date picker
   "allowedDates": IAllowedDates = { // allowed dates object
-    days: string;  // a list of the allowed days separate by comma
-    months: string; // a list of the allowed months separate by comma
-    years: string; // a list of the allowed years separate by comma
+    days: string;  // a list of the allowed days separated by a comma
+    months: string; // a list of the allowed months separated by a comma
+    years: string; // a list of the allowed years separated by a comma
   }
 }
 ```
