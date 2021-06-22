@@ -1,6 +1,7 @@
 import { css } from '@microsoft/fast-element';
 import { secondaryAccentButtonStyle } from '../../../styles/system-providers/ava-design-system-provider.style';
 import { stylesShaka } from './shaka-controls.style';
+import { timeTooltipStyle } from './UI/time-tooltip.style';
 
 export const styles = css`
     :host {
@@ -59,6 +60,10 @@ export const styles = css`
         justify-content: center;
     }
 
+    :host(.error) .shaka-spinner-container {
+        display: none;
+    }
+
     :host(.no-live-data) .live-button-component {
         display: none;
     }
@@ -75,7 +80,7 @@ export const styles = css`
     }
 
     .shaka-bottom-controls {
-        padding: 8px 0;
+        padding: 0 !important;
     }
 
     .shaka-video-container.live .hours-label,
@@ -93,7 +98,7 @@ export const styles = css`
     }
 
     .shaka-video-container.live .shaka-seek-bar-container {
-        top: -2px;
+        top: 0px;
     }
 
     .shaka-video-container .material-icons-round {
@@ -187,7 +192,7 @@ export const styles = css`
         align-items: center;
         display: grid;
         grid-template-rows: auto;
-        grid-template-columns: [camera-name] 150px [date-picker] auto;
+        grid-template-columns: [camera-name] 1fr [date-picker] 2fr;
     }
 
     .col.camera-name {
@@ -215,6 +220,8 @@ export const styles = css`
         vertical-align: middle;
         color: var(--action);
     }
+
+    ${timeTooltipStyle}
 
     ${secondaryAccentButtonStyle}
 `;

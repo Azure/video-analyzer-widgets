@@ -106,7 +106,7 @@ export const stylesShaka = css`
         padding: 0px 0px 8px !important;
     }
     .shaka-controls-button-panel {
-        padding: 0 14px;
+        padding: 7px 14px;
         height: auto;
         margin: 0;
         display: flex;

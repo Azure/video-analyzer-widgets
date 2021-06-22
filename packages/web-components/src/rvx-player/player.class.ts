@@ -250,7 +250,9 @@ export class PlayerWrapper {
             date: date,
             disableZoom: !enableZoom
         };
-        this.timelineComponent = new TimelineComponent();
+        this.timelineComponent = new TimelineComponent(() => {
+            this.avaUILayer.addTimelineSeekBarTooltip(this.timelineComponent, this.video, this.computeClockWithSegmentOffset.bind(this));
+        });
         this.controls.bottomControls_.insertBefore(this.timelineComponent, this.controls.bottomControls_.childNodes[2]);
         this.onSegmentChangeListenerRef = this.onSegmentChange.bind(this);
         // eslint-disable-next-line no-undef
@@ -540,6 +542,8 @@ export class PlayerWrapper {
             this.removeTimelineComponent();
             this.createTimelineComponent();
         } else {
+            // Wrap range element and add time tooltip
+            this.avaUILayer.addLiveSeekBarTooltip(this.controls, this.computeClockForLive.bind(this));
             setTimeout(() => {
                 this.controls?.controlsContainer_?.setAttribute('shown', this.isLive);
             }, 50);
@@ -605,7 +609,7 @@ export class PlayerWrapper {
         }
     }
 
-    private computeClock(time: number) {
+    private computeClock(time: number, showDate = true) {
         if (!this.timestampOffset) {
             return '';
         }
@@ -615,7 +619,15 @@ export class PlayerWrapper {
         const minutes = this.date.getUTCMinutes();
         const seconds = this.date.getUTCSeconds();
         const utcTime = `${(hour > 9 ? '' : '0') + hour}:${(minutes > 9 ? '' : '0') + minutes}:${(seconds > 9 ? '' : '0') + seconds}`;
-        return `${utcDate} ${utcTime}`;
+        return showDate ? `${utcDate} ${utcTime}` : `${utcTime}`;
+    }
+
+    private computeClockWithSegmentOffset(time: number) {
+        return this.computeClock(time + this.getVideoOffset(), false);
+    }
+
+    private computeClockForLive(time: number) {
+        return this.computeClock(time, false);
     }
 
     private onErrorEvent(event: shaka_player.PlayerEvents.ErrorEvent) {

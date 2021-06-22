@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 /* !
  * pickadate.js v3.5.3, 2014/07/12
  * By Amsul, http://amsul.ca

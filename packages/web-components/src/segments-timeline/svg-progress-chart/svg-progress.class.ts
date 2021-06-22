@@ -361,13 +361,35 @@ export class SVGProgressChart {
     }
 
     private handleMouseClick(e: MouseEvent) {
-        const percent = (e.offsetX / this.options.width) * 100;
-        const time = this.options.time * (percent / 100);
+        const rect = this.rootElement.getBoundingClientRect();
+        const min = 0;
+        const max = this.options.time;
+
+        // Calculate the range value based on the touch position.
+
+        // Pixels from the left of the range element
+        const touchPosition = e.clientX - rect.left;
+
+        // Pixels per unit value of the range element.
+        const scale = (max - min) / rect.width;
+
+        // Touch position in units, which may be outside the allowed range.
+        let time = min + scale * touchPosition;
+
+        // Keep value within bounds.
+        if (time < min) {
+            time = min;
+        } else if (time > max) {
+            time = max;
+        }
+
         const activeEvent = this.updateActiveRect(time, false);
         this.activeSegment = activeEvent ? activeEvent.segment : null;
         if (this._activeSegmentCallback && this.activeSegment) {
             this._activeSegmentCallback({ segment: this.activeSegment, time: activeEvent?.time });
         }
+
+        const percent = (touchPosition / rect.width) * 100;
 
         if (this.options.renderProgress) {
             window.requestAnimationFrame(() => {

@@ -16,6 +16,7 @@ import {
 import { ControlPanelElementsTooltip } from '../rvx-player.definitions';
 import { shaka } from '../index';
 import { Localization } from './../../../../common/services/localization/localization.class';
+import { ISeekBarElement } from './definitions';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -379,4 +380,150 @@ export class PrevSegment extends shaka.ui.Element {
             this.callBack(false);
         });
     }
+}
+
+export class SeekBarDecorator {
+    private timeTooltip: HTMLSpanElement;
+    private mouseDisplayContainer: HTMLDivElement;
+    public constructor(
+        private seekBarElement: ISeekBarElement,
+        private video: HTMLElement,
+        private computeClock: (time: number) => string
+    ) {
+        this.seekBarElement.bar.addEventListener('mousemove', this.onMouseMove.bind(this));
+        this.seekBarElement.bar.addEventListener('mouseout', this.onMouseOut.bind(this));
+    }
+
+    public destroy() {
+        this.seekBarElement.bar.removeEventListener('mousemove', this.onMouseMove.bind(this));
+        this.seekBarElement.bar.removeEventListener('mouseout', this.onMouseOut.bind(this));
+        if (this.mouseDisplayContainer) {
+            this.mouseDisplayContainer.removeChild(this.timeTooltip);
+            this.seekBarElement.container.removeChild(this.mouseDisplayContainer);
+
+            this.mouseDisplayContainer = null;
+            this.timeTooltip = null;
+        }
+    }
+
+    private onMouseOut() {
+        if (this.mouseDisplayContainer) {
+            this.mouseDisplayContainer.style.display = 'none';
+        }
+    }
+
+    private onMouseMove(event: MouseEvent) {
+        // eslint-disable-next-line no-console
+        event.preventDefault();
+
+        const rect = this.seekBarElement.bar.getBoundingClientRect();
+        const min = parseFloat(this.seekBarElement.bar.min);
+        const max = parseFloat(this.seekBarElement.bar.max);
+
+        // Calculate the range value based on the touch position.
+
+        // Pixels from the left of the range element
+        const touchPosition = event.clientX - rect.left;
+
+        // Pixels per unit value of the range element.
+        const scale = (max - min) / rect.width;
+
+        // Touch position in units, which may be outside the allowed range.
+        let value = min + scale * touchPosition;
+
+        // Keep value within bounds.
+        if (value < min) {
+            value = min;
+        } else if (value > max) {
+            value = max;
+        }
+
+        if (!this.mouseDisplayContainer) {
+            this.mouseDisplayContainer = document.createElement('div');
+            this.mouseDisplayContainer.classList.add('mouse-display-container');
+
+            this.timeTooltip = document.createElement('span');
+            this.timeTooltip.classList.add('time-tooltip');
+
+            this.mouseDisplayContainer.prepend(this.timeTooltip);
+            this.seekBarElement.container.prepend(this.mouseDisplayContainer);
+        }
+
+        this.mouseDisplayContainer.style.display = 'block';
+        this.timeTooltip.textContent = this.computeClock(value);
+
+        // Calculate position
+        const position = event.pageX - findElPosition(this.mouseDisplayContainer.parentNode).left;
+        this.mouseDisplayContainer.style.left = `${position}px`;
+
+        // Calculate tooltip relative
+        // eslint-disable-next-line no-unused-vars
+        const test: any = window.getComputedStyle(this.video).width;
+        const playerWidth = parseFloat(test);
+        const tooltipWidthHalf = this.timeTooltip.offsetWidth / 2;
+        let actualPosition = position;
+
+        if (position < tooltipWidthHalf) {
+            actualPosition = Math.ceil(this.timeTooltip.offsetWidth - position);
+        } else if (position > playerWidth - tooltipWidthHalf) {
+            actualPosition = Math.floor(playerWidth - position);
+        } else {
+            actualPosition = tooltipWidthHalf;
+        }
+        this.timeTooltip.style.right = -actualPosition + 'px';
+    }
+}
+
+export function findElPosition(el: any) {
+    let box;
+
+    if (el.getBoundingClientRect && el.parentNode) {
+        box = el.getBoundingClientRect();
+    }
+
+    if (!box) {
+        return {
+            left: 0,
+            top: 0
+        };
+    }
+
+    const docEl: any = document.documentElement;
+    const body = document.body;
+
+    const clientLeft = docEl.clientLeft || body.clientLeft || 0;
+    const scrollLeft = window.pageXOffset || body.scrollLeft;
+
+    const clientTop = docEl.clientTop || body.clientTop || 0;
+    const scrollTop = window.pageYOffset || body.scrollTop;
+
+    const top = box.top + scrollTop - clientTop;
+    let left;
+
+    /*
+    When zoomed on a Microsoft device on Edge or IE, getBoundingClientRect() returns
+    the left value differently.  Normally the value would be relative to the viewport,
+    and we thus have to take into account and compensate for the leftScroll.  When zoomed,
+    the value is already accounted for and the further you scroll to the right, the further
+    the pointer thinks it is from where you are trying to tap or touch.
+      docEl.msContentZoomFactor only exists on IE and Edge, so we can safely use it as a check
+    to determine if we are dealing with Edge or IE, and then again to verify it is in fact zoomed.
+    */
+
+    // check if this is zoomed on a Microsoft touchscreen device.
+    const zoomFactor = docEl.msContentZoomFactor;
+
+    if (zoomFactor && zoomFactor > 1) {
+        // don't account for scrollLeft as zooming already is
+        left = box.left - clientLeft;
+    } else {
+        // otherwise just calculate like normal accounting for scrollLeft
+        left = box.left + scrollLeft - clientLeft;
+    }
+
+    // Android sometimes returns slightly off decimal values, so need to round
+    return {
+        left: Math.round(left),
+        top: Math.round(top)
+    };
 }
