@@ -11,7 +11,7 @@ PlayerComponent;
 
 const PlayerComponentTemplate = (data: ITemplate) => {
     const designSystem = document.createElement('ava-design-system-provider') as AvaDesignSystemProvider;
-    const btn = document.createElement('player-component') as PlayerComponent;
+    const btn = document.createElement('media-player') as PlayerComponent;
     designSystem.appendChild(btn);
     return designSystem;
 };

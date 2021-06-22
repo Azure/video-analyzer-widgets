@@ -1,4 +1,3 @@
-export * from './example-web-component';
 export * from './player-component';
 export * from './line-drawer';
 export * from './segments-timeline';

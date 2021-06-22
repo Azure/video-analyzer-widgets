@@ -20,7 +20,7 @@ DatePickerComponent;
  * @public
  */
 @customElement({
-    name: 'player-component',
+    name: 'media-player',
     template,
     styles
 })

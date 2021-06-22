@@ -7,9 +7,9 @@ import { Player } from './player-widget';
  */
 export const template = html<Player>`
     <template>
-        <player-component
+        <media-player
             cameraName="${(x) => x.config?.videoName}"
             style="${(x) => (x.width ? 'width: ' + x.width + ';' : '')}"
-        ></player-component>
+        ></media-player>
     </template>
 `;

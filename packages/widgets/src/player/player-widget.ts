@@ -37,7 +37,7 @@ export class Player extends BaseWidget {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     public get shakaPlayer(): any {
-        const playerComponent: PlayerComponent = this.shadowRoot.querySelector('player-component');
+        const playerComponent: PlayerComponent = this.shadowRoot.querySelector('media-player');
         if (playerComponent) {
             return playerComponent.player?.player;
         }
@@ -62,12 +62,12 @@ export class Player extends BaseWidget {
     }
 
     public play() {
-        const playerComponent: PlayerComponent = this.shadowRoot.querySelector('player-component');
+        const playerComponent: PlayerComponent = this.shadowRoot.querySelector('media-player');
         playerComponent.play();
     }
 
     public pause() {
-        const playerComponent: PlayerComponent = this.shadowRoot.querySelector('player-component');
+        const playerComponent: PlayerComponent = this.shadowRoot.querySelector('media-player');
         playerComponent.pause();
     }
 
@@ -83,7 +83,7 @@ export class Player extends BaseWidget {
         this.source = source;
         MediaApi.baseStream = this.source.src;
         if (this.loaded) {
-            const playerComponent: PlayerComponent = this.shadowRoot.querySelector('player-component');
+            const playerComponent: PlayerComponent = this.shadowRoot.querySelector('media-player');
             playerComponent.cameraName = AvaAPi.videoName;
             playerComponent.init(this.source.allowCrossSiteCredentials, this.source.authenticationToken, this.allowedControllers);
         }
@@ -104,7 +104,7 @@ export class Player extends BaseWidget {
     }
 
     public setPlaybackAuthorization(token: string) {
-        const playerComponent: PlayerComponent = this.shadowRoot.querySelector('player-component');
+        const playerComponent: PlayerComponent = this.shadowRoot.querySelector('media-player');
 
         playerComponent.setPlaybackAuthorization(token);
     }
@@ -115,7 +115,7 @@ export class Player extends BaseWidget {
 
     public async load() {
         this.loaded = true;
-        const playerComponent: PlayerComponent = this.shadowRoot.querySelector('player-component');
+        const playerComponent: PlayerComponent = this.shadowRoot.querySelector('media-player');
 
         // If set source state
         if (this.source) {
@@ -167,7 +167,7 @@ export class Player extends BaseWidget {
     }
 
     private handelFallback(error: HttpError) {
-        const player: PlayerComponent = this.shadowRoot.querySelector('player-component');
+        const player: PlayerComponent = this.shadowRoot.querySelector('media-player');
         player.cameraName = AvaAPi.videoName;
         player.init(true, '', this.allowedControllers);
         player.handleError(error);
