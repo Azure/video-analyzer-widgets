@@ -54,7 +54,7 @@ export class SegmentsTimelineComponent extends FASTElement {
 
     private resizeObserver: ResizeObserver;
 
-    private readonly MIN_SECONDS_FOR_SEGMENT = 1;
+    private readonly MIN_SECONDS_FOR_SEGMENT = 2;
 
     public constructor(config: ISegmentsTimelineConfig) {
         super();
