@@ -13,7 +13,7 @@ import {
     SKIP_NEXT_PATH,
     SKIP_PREV_PATH
 } from '../../../../styles/svg/svg.shapes';
-import { ControlPanelElementsTooltip } from '../rvx-player.definitions';
+import { ControlPanelElementsTooltip } from '../player-component.definitions';
 import { shaka } from '../index';
 import { ISeekBarElement } from './definitions';
 

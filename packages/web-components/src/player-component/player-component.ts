@@ -7,20 +7,20 @@ import { PlayerEvents, WidgetGeneralError } from '../../../widgets/src';
 import { DatePickerComponent } from '../date-picker';
 import { DatePickerEvent, IDatePickerRenderEvent } from '../date-picker/date-picker.definitions';
 import { PlayerWrapper } from './player.class';
-import { ControlPanelElements, LiveState } from './rvx-player.definitions';
-import { styles } from './rvx-player.style';
-import { template } from './rvx-player.template';
-import { getPlayerErrorString, getShakaPlayerErrorString } from './rvx-player.utils';
+import { ControlPanelElements, LiveState } from './player-component.definitions';
+import { styles } from './player-component.style';
+import { template } from './player-component.template';
+import { getPlayerErrorString, getShakaPlayerErrorString } from './player-component.utils';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-expressions
 DatePickerComponent;
 
 /**
- * RVX Player web component
+ * Player web component
  * @public
  */
 @customElement({
-    name: 'rvx-player',
+    name: 'player-component',
     template,
     styles
 })

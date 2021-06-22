@@ -1,5 +1,5 @@
 import { TimelineComponent } from '../../timeline';
-import { ControlPanelElements } from '../rvx-player.definitions';
+import { ControlPanelElements } from '../player-component.definitions';
 import { ISeekBarElement } from './definitions';
 import { ForwardButton, FullscreenButton, MuteButton, OverflowMenu, PlayButton, RewindButton, SeekBarDecorator } from './ui.class';
 import {

@@ -11,14 +11,7 @@ PlayerComponent;
 
 const PlayerComponentTemplate = (data: ITemplate) => {
     const designSystem = document.createElement('ava-design-system-provider') as AvaDesignSystemProvider;
-    const btn = document.createElement('rvx-player') as PlayerComponent;
-    if (data.height) {
-        btn.height = data.height;
-    }
-
-    if (data.width) {
-        btn.width = data.width;
-    }
+    const btn = document.createElement('player-component') as PlayerComponent;
     designSystem.appendChild(btn);
     return designSystem;
 };
@@ -26,9 +19,5 @@ const PlayerComponentTemplate = (data: ITemplate) => {
 export const Example = (args: ITemplate) => PlayerComponentTemplate(args);
 
 export default {
-    title: 'player Component',
-    argTypes: {
-        width: { control: 'text' },
-        height: { control: 'text' }
-    }
+    title: 'player Component'
 };
