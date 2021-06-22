@@ -1,5 +1,4 @@
-export * from './example-web-component';
-export * from './rvx-player';
+export * from './player-component';
 export * from './line-drawer';
 export * from './segments-timeline';
 export * from './polygon-drawer';

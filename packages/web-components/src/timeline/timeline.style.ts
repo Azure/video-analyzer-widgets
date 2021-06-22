@@ -1,5 +1,5 @@
 import { css } from '@microsoft/fast-element';
-import { timeTooltipStyle } from '../rvx-player/UI/time-tooltip.style';
+import { timeTooltipStyle } from '../player-component/UI/time-tooltip.style';
 import { simpleBarStyles } from './scrollbar.style';
 
 export const styles = css`

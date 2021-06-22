@@ -11,7 +11,7 @@ import { styles } from './zone-drawer.style';
 import { template } from './zone-drawer.template';
 import { ZonesViewComponent } from '../../../web-components/src/zones-view/zones-view.component';
 import { BaseWidget } from '../base-widget/base-widget';
-import { Player } from './../rvx/rvx-widget';
+import { Player } from './../player/player-widget';
 import { ZoneDrawerActions } from './actions';
 import {
     ILayerLabelConfig,
@@ -209,8 +209,8 @@ export class ZoneDrawerWidget extends BaseWidget {
 
     private resize() {
         if (this.labelsList) {
-            const rvxContainer = this.shadowRoot.querySelector('.rvx-widget-container');
-            this.labelsList.style.maxHeight = `${rvxContainer.clientHeight}px`;
+            const playerContainer = this.shadowRoot.querySelector('.player-widget-container');
+            this.labelsList.style.maxHeight = `${playerContainer.clientHeight}px`;
         }
     }
 

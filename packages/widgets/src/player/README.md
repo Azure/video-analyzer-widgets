@@ -20,4 +20,4 @@ Extends IWidgetBaseConfig interface.
 
 ## Code examples:
 
--   [Example 1](../examples/rvx-widget.html)
+-   [Example 1](../examples/player-widget.html)
