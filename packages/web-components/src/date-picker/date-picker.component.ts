@@ -139,6 +139,8 @@ export class DatePickerComponent extends FASTElement {
                 const DatePickerElements = this.shadowRoot.querySelectorAll('.ms-DatePicker');
                 this.datePicker = new DatePicker(DatePickerElements[0], {});
 
+                this.setPickerDateJsLocalization();
+
                 this.datePicker.picker.on('open', this.onDateOpen.bind(this));
                 this.datePicker.picker.on('set', this.onDateChange.bind(this));
                 this.datePicker.picker.on('render', this.onRenderDates.bind(this));
@@ -157,6 +159,24 @@ export class DatePickerComponent extends FASTElement {
         } catch (error) {
             // eslint-disable-next-line no-console
             console.error(error);
+        }
+    }
+
+    private setPickerDateJsLocalization() {
+        if (this.datePicker?.picker?.component?.settings) {
+            for (const key in this.datePicker.picker.component.settings) {
+
+                if (typeof this.datePicker.picker.component.settings[key] === 'string') {
+                    this.datePicker.picker.component.settings[key] = Localization.resolve(`DATE_PICKER_${key}`)
+                        || this.datePicker.picker.component.settings[key];
+                } else if (typeof this.datePicker.picker.component.settings[key] === 'object') {
+                    // Loop in the object and translate
+                    for (const k in this.datePicker.picker.component.settings[key]) {
+                        this.datePicker.picker.component.settings[key][k] = Localization.resolve(`DATE_PICKER_${key}_${k}`)
+                            || this.datePicker.picker.component.settings[key][k];
+                    }
+                }
+            }
         }
     }
 

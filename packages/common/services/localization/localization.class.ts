@@ -37,7 +37,7 @@ export class Localization {
             }
             // After import the fileJson add the content to the _localizations map
             // Example: this._localizations = {'en': { }, 'de': { }}
-            this._localizations.set(locale, dict);
+            this._localizations.set(l, dict);
         }
 
         this.changeLocale(locale);

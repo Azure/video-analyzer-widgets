@@ -39,6 +39,8 @@ LineDrawerComponent;
 LayerLabelComponent;
 Localization;
 
+export const LocalizationService = Localization;
+
 @customElement({
     name: 'ava-zone-drawer',
     template,
@@ -137,7 +139,7 @@ export class ZoneDrawerWidget extends BaseWidget {
 
         this.setLocalization(this.config?.locale, ['common', 'zone-drawer']);
         ZoneDrawerActions.forEach((e)=> {
-            e.label = Localization.resolve(`ZONE_DRAWER_Actions_${e.type}`);
+            e.label = LocalizationService.resolve(`ZONE_DRAWER_Actions_${e.type}`);
         });
     }
 
