@@ -65,8 +65,8 @@ export const DEFAULT_LOCALE_LANGUAGE = 'en';
 
 export const SUPPORTED_LOCALES: string[] = [
     'cs',
-    'de', 
-    'en',
+    'de',
+    'en'
     /* 'es',
     'fr',
     'hu',
@@ -87,6 +87,6 @@ export const SUPPORTED_LOCALES: string[] = [
 
 export type IComponentsType = 'common' | 'player' | 'zone-drawer';
 
-export type IDictionary = {
-    [key: string]: string
+export interface IDictionary {
+    [key: string]: string;
 };

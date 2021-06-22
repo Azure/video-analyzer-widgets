@@ -1,11 +1,10 @@
-
 import {
     IDictionary, DEFAULT_LOCALE_LANGUAGE,
     SupportedLocaleLanguages, SUPPORTED_LOCALES, IComponentsType
 } from './localization.definitions';
 import { Logger } from './../../../widgets/src/common/logger';
 
-/* 
+/*
 * Localization class provides the user the ability
 * to localize the strings within UI including messages.
 */
@@ -16,19 +15,19 @@ export class Localization {
     private static _locales: string[] = SUPPORTED_LOCALES;
     private static _currentLocale: string = DEFAULT_LOCALE_LANGUAGE;
 
-    /* 
+    /*
     * Load the resources and set the dictionary with a specific locale.
     * If locale is null, the default locale is 'en'.
     */
     public static load(locale?: string, componentTypes: IComponentsType[] = ['common']) {
 
-        for (const locale of this._locales) {
-            let dict: IDictionary = {};
+        for (const l of this._locales) {
+            const dict: IDictionary = {};
             for (const compType of componentTypes) {
                 try {
-                    const jsonFile = this.getJsonFile(compType, locale);
+                    const jsonFile = this.getJsonFile(compType, l);
                     if (jsonFile && Object.keys(jsonFile).length) {
-                        for (var val in jsonFile) {
+                        for (const val in jsonFile) {
                             dict[val] = jsonFile[val];
                         }
                     }

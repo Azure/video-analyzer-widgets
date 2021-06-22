@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-expressions */
 import { BaseWidget } from '../base-widget';
 import { customElement, attr } from '@microsoft/fast-element';
 import { IAvaPlayerConfig, PlayerEvents } from './definitions';
@@ -13,6 +12,7 @@ import { Logger } from '../common/logger';
 import { AvaDesignSystemProvider } from '../../../styles';
 import { HttpError } from '../../../common/utils/http.error';
 
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 AvaDesignSystemProvider;
 PlayerComponent;
 
@@ -78,7 +78,7 @@ export class Player extends BaseWidget {
         }
 
         this.setLocalization(this.config?.locale, ['common', 'player']);
-     
+
         this.init();
     }
 

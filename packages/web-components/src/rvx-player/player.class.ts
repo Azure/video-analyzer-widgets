@@ -18,7 +18,7 @@ import { shaka } from './index';
 import { Localization } from './../../../common/services/localization/localization.class';
 import { IDictionary } from '../../../common/services/localization/localization.definitions';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-expressions
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 TimelineComponent;
 Localization;
 
@@ -63,7 +63,7 @@ export class PlayerWrapper {
         private errorCallback: (error: shaka_player.PlayerEvents.ErrorEvent) => void,
         private allowedControllers: ControlPanelElements[]
     ) {
-        
+
         this.resources = Localization.dictionary;
         // Install built-in polyfills to patch browser incompatibilities.
         shaka.polyfill.installAll();

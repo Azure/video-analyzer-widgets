@@ -52,5 +52,7 @@
     "DATE_PICKER_Sep": "Sep",
     "DATE_PICKER_Oct": "Okt",
     "DATE_PICKER_Nov": "Nov",
-    "DATE_PICKER_Dec": "Dec"
+    "DATE_PICKER_Dec": "Dec",
+    "TIMELINE_ZoomOut": "Zoom out",
+    "TIMELINE_ZoomIn": "Zoom in"
 }

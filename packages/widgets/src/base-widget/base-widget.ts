@@ -7,6 +7,7 @@ import { IWidgetBaseConfig } from '../definitions/base-widget-config.definitions
 import { Locale } from '../definitions/locale.definitions';
 import { Localization } from './../../../common/services/localization/localization.class';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-expressions
 Localization;
 
 export class BaseWidget extends FASTElement {
@@ -44,7 +45,7 @@ export class BaseWidget extends FASTElement {
         } else {
             this._config = {
                 locale: locale
-            }
+            };
         }
 
         Localization.load(locale, widgets);

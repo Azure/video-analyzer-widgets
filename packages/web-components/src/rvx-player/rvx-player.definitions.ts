@@ -59,4 +59,4 @@ export const ControlPanelElementsTooltip = {
     NEXT_DAY: 'Next day',
     PREVIOUS_DAY: 'Previous day',
     HOURS_LABEL: 'Hours'
-}
+};

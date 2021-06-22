@@ -1,4 +1,4 @@
-import { attr, customElement, DOM, FASTElement, observable } from '@microsoft/fast-element';
+import { attr, customElement, FASTElement, observable } from '@microsoft/fast-element';
 import { IDictionary } from '../../../common/services/localization/localization.definitions';
 import { DatePickerEvent, IAllowedDates, IDatePickerRenderEvent } from './date-picker.definitions';
 import { styles } from './date-picker.style';
@@ -6,8 +6,10 @@ import { template } from './date-picker.template';
 import { DatePicker } from './pickadate/Jquery.DatePicker';
 import { Localization } from './../../../common/services/localization/localization.class';
 const PickaDate = require('../../../scripts/PickaDate.script');
-// eslint-disable-next-line @typescript-eslint/no-unused-expressions
+
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 PickaDate;
+Localization;
 
 /**
  * Date picker component
