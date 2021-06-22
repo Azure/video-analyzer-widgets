@@ -16,7 +16,7 @@
     "cSpell.ignorePaths": ["**/package-lock.json", "**/node_modules/**", ".vscode", "**/webpack.config.js"],
     "typescript.tsdk": "node_modules\\typescript\\lib",
     "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "editor.formatOnSave": false,
+    "editor.formatOnSave": true,
     "prettier.configPath": ".prettierrc",
     "html.format.wrapAttributes": "force",
     "html.format.wrapLineLength": 140,
