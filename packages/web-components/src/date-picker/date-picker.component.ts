@@ -1,11 +1,15 @@
 import { attr, customElement, FASTElement, observable } from '@microsoft/fast-element';
+import { IDictionary } from '../../../common/services/localization/localization.definitions';
 import { DatePickerEvent, IAllowedDates, IDatePickerRenderEvent } from './date-picker.definitions';
 import { styles } from './date-picker.style';
 import { template } from './date-picker.template';
 import { DatePicker } from './pickadate/Jquery.DatePicker';
+import { Localization } from './../../../common/services/localization/localization.class';
 const PickaDate = require('../../../scripts/PickaDate.script');
-// eslint-disable-next-line @typescript-eslint/no-unused-expressions
+
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 PickaDate;
+Localization;
 
 /**
  * Date picker component
@@ -51,6 +55,8 @@ export class DatePickerComponent extends FASTElement {
      * HTML attribute: inputDate
      */
     @attr public inputDate: string;
+
+    @observable public resources: IDictionary = {};
 
     /**
      * Represents available dates - years months and days.
@@ -133,12 +139,18 @@ export class DatePickerComponent extends FASTElement {
                 const DatePickerElements = this.shadowRoot.querySelectorAll('.ms-DatePicker');
                 this.datePicker = new DatePicker(DatePickerElements[0], {});
 
+                this.setPickerDateJsLocalization();
+
                 this.datePicker.picker.on('open', this.onDateOpen.bind(this));
                 this.datePicker.picker.on('set', this.onDateChange.bind(this));
                 this.datePicker.picker.on('render', this.onRenderDates.bind(this));
 
                 // Show date picker only after initialization
                 this.enableUI = true;
+
+                if (!Object.keys(this.resources).length) {
+                    this.resources = Localization.dictionary;
+                }
 
                 setTimeout(() => {
                     this.datePicker.picker.set('select', this.date);
@@ -147,6 +159,23 @@ export class DatePickerComponent extends FASTElement {
         } catch (error) {
             // eslint-disable-next-line no-console
             console.error(error);
+        }
+    }
+
+    private setPickerDateJsLocalization() {
+        if (this.datePicker?.picker?.component?.settings) {
+            for (const key in this.datePicker.picker.component.settings) {
+                if (typeof this.datePicker.picker.component.settings[key] === 'string') {
+                    this.datePicker.picker.component.settings[key] = Localization.resolve(`DATE_PICKER_${key}`)
+                        || this.datePicker.picker.component.settings[key];
+                } else if (typeof this.datePicker.picker.component.settings[key] === 'object') {
+                    // Loop in the object and translate
+                    for (const k in this.datePicker.picker.component.settings[key]) {
+                        this.datePicker.picker.component.settings[key][k] = Localization.resolve(`DATE_PICKER_${key}_${k}`)
+                            || this.datePicker.picker.component.settings[key][k];
+                    }
+                }
+            }
         }
     }
 

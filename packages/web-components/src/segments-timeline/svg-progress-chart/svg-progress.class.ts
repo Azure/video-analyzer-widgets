@@ -1,6 +1,7 @@
 import { IUISegment, IUISegmentEventData } from '../segments-timeline.definitions';
 import { IChartData, IChartOptions, IComponentTree, Colors } from './svg-progress.definitions';
 import { SeekBar, Rect, Tooltip } from './svg-progress.models';
+import { Localization } from './../../../../common/services/localization/localization.class';
 
 // Define the main class for the progress chart.
 export class SVGProgressChart {
@@ -10,7 +11,7 @@ export class SVGProgressChart {
     /* eslint-disable-next-line  @typescript-eslint/no-explicit-any */
     public timer: any;
     public lastMatch = false;
-    public currentTooltipType: string = 'default';
+    public currentTooltipType: string = Localization.dictionary.SVG_PROGRESS_Default;
     public options: IChartOptions = {
         height: 500,
         width: 500,
@@ -31,7 +32,7 @@ export class SVGProgressChart {
 
     public constructor(element?: SVGElement, options?: IChartOptions) {
         if (!element) {
-            throw new Error('Root SVG Element is missing');
+            throw new Error(Localization.dictionary.SVG_PROGRESS_SVGIsMissingError);
         }
         this.rootElement = element;
         this.id = this.rootElement.id;

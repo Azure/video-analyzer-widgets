@@ -5,17 +5,21 @@ import { getKeyCode, keyCodeEnter, keyCodeSpace } from '@microsoft/fast-web-util
 import SimpleBar from 'simplebar';
 import { closestElement } from '../../../common/utils/elements';
 import { guid } from '../../../common/utils/guid';
-import { IBarElement, ISeekBarElement } from '../rvx-player/UI/definitions';
+import { IBarElement, ISeekBarElement } from '../player-component/UI/definitions';
 import { SegmentsTimelineComponent } from '../segments-timeline';
 import { ISegmentsTimelineConfig, IUISegmentEventData, SegmentsTimelineEvents } from '../segments-timeline/segments-timeline.definitions';
 import { TimeRulerComponent } from '../time-ruler';
 import { ITimeLineConfig, TimelineEvents } from './timeline.definitions';
 import { styles } from './timeline.style';
 import { template } from './timeline.template';
+import { Localization } from './../../../common/services/localization/localization.class';
+import { IDictionary } from '../../../common/services/localization/localization.definitions';
+import { observable } from '@microsoft/fast-element';
 
 SimpleBar;
 SegmentsTimelineComponent;
 TimeRulerComponent;
+Localization;
 
 /**
  * Time Line component.
@@ -46,6 +50,8 @@ export class TimelineComponent extends FASTElement {
      * HTML attribute: current time
      */
     @attr public currentTime: number = 0;
+
+    @observable public resources: IDictionary = {};
 
     public readonly DAY_DURATION_IN_SECONDS = 86400; // 60 (sec) * 60 (min) * 24 (hours)
 
@@ -86,6 +92,10 @@ export class TimelineComponent extends FASTElement {
 
     public connectedCallback() {
         super.connectedCallback();
+
+        if (!Object.keys(this.resources).length) {
+            this.resources = Localization.dictionary;
+        }
 
         const parent = this.$fastController?.element?.parentElement;
         this.resizeObserver = new ResizeObserver(this.resize.bind(this));

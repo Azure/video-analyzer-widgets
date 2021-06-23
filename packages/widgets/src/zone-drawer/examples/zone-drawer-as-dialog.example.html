@@ -140,23 +140,24 @@
       videoName: 'name',
       debug: true,
       playerControllers: [
-        'rewind',
-        'play_pause',
-        'fast_forward',
-        'mute',
-        'volume',
-        'spacer',
-        'next_day',
-        'previous_day',
-        'hours_label'
-      ]
+          'rewind',
+          'play_pause',
+          'fast_forward',
+          'mute',
+          'volume',
+          'spacer',
+          'next_day',
+          'previous_day',
+          'hours_label'
+      ],
+      locale: 'de'
     });
-
     playerWidget.load();
-    zoneDrawerWidget.configure({
-      debug: true
-    });
 
+    zoneDrawerWidget.configure({
+      debug: true,
+      locale: 'de'
+    });
     zoneDrawerWidget.load();
   })()
 </script>

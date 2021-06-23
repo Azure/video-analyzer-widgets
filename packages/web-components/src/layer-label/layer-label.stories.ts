@@ -1,5 +1,5 @@
 import { AvaDesignSystemProvider } from '../../../styles';
-import { DELETE_SVG_PATH, MORE_SVG_PATH, RENAME_SVG_PATH } from '../../../styles/svg/svg.shapes';
+import { DELETE_SVG_PATH, RENAME_SVG_PATH } from '../../../styles/svg/svg.shapes';
 import { DrawingColors } from '../../../styles/system-providers/ava-design-system-provider.definitions';
 import { LayerLabelComponent } from './layer-label.component';
 import { LayerLabelMode } from './layer-label.definitions';

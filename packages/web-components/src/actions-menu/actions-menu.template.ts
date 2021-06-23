@@ -12,8 +12,8 @@ export const template = html<ActionsMenuComponent>`
     <template>
         <fast-button
             appearance="stealth"
-            aria-label="Options"
-            title="Options"
+            aria-label="${(x) => x.resources?.ACTIONS_MENU_Options}"
+            title="${(x) => x.resources?.ACTIONS_MENU_Options}"
             @focusout="${(x, c) => x.handleFocusOut(c.event as FocusEvent)}"
             @click="${(x) => x.toggleMenu()}"
         >
