@@ -6,10 +6,9 @@ import { IWidgetBaseConfig } from '../definitions/base-widget-config.definitions
  */
 export interface IZoneDrawerWidgetConfig extends IWidgetBaseConfig {
     /**
-     * This the zones
+     * Zones according to template
      */
-    zones?: IZone[];
-
+    zones?: (IPolygonZone | ILineZone)[];
     /**
      * Disable the drawing
      */
@@ -24,18 +23,18 @@ export interface IZone {
     type?: ZoneDrawerMode;
 }
 
-export interface IZoneOutput {
+export interface IZoneTemplate {
     '@type': ZoneType;
     name: string;
 }
 
 export type ZoneType = '#Microsoft.VideoAnalyzer.NamedPolygonString' | '#Microsoft.VideoAnalyzer.NamedLineString';
 
-export interface IPolygonZone extends IZoneOutput {
+export interface IPolygonZone extends IZoneTemplate {
     polygon: IPoint[];
 }
 
-export interface ILineZone extends IZoneOutput {
+export interface ILineZone extends IZoneTemplate {
     line: IPoint[];
 }
 

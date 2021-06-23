@@ -23,7 +23,7 @@ import {
     IZone,
     IZoneDrawerWidgetConfig,
     ZoneDrawerWidgetEvents,
-    IZoneOutput,
+    IZoneTemplate,
     ILineZone,
     IPolygonZone,
     ZoneDrawerMode
@@ -42,7 +42,7 @@ LayerLabelComponent;
     template,
     styles
 })
-export class ZoneDrawerWidget extends BaseWidget {
+export class ZoneDrawer extends BaseWidget {
     @observable
     public zones: IZone[] = [];
     @observable
@@ -149,11 +149,38 @@ export class ZoneDrawerWidget extends BaseWidget {
 
         if (this.config?.zones) {
             for (const zone of this.config.zones) {
-                this.addZone(zone);
+                this.addZone(this.convertTemplateToZone(zone));
             }
         }
 
         this.disableDrawing = !!this.config?.disableDrawing;
+    }
+
+    private convertTemplateToZone(zoneTemplate: IPolygonZone | ILineZone) {
+        let zone: IZone = null;
+        if ((zoneTemplate as IPolygonZone).polygon) {
+            // Zone is polygon
+            const currentZone = zoneTemplate as IPolygonZone;
+            zone = {
+                points: [...currentZone.polygon],
+                name: currentZone.name,
+                id: guid(),
+                color: this.getNextColor(),
+                type: ZoneDrawerMode.Polygon
+            };
+        } else {
+            // Zone is line
+            const currentZone = zoneTemplate as ILineZone;
+            zone = {
+                points: [...currentZone.line],
+                name: currentZone.name,
+                id: guid(),
+                color: this.getNextColor(),
+                type: ZoneDrawerMode.Line
+            };
+        }
+
+        return zone;
     }
 
     private initZoneDrawComponents() {
@@ -350,8 +377,8 @@ export class ZoneDrawerWidget extends BaseWidget {
         };
     }
 
-    private getZonesOutputs(): IZoneOutput[] {
-        const outputs: IZoneOutput[] = [];
+    private getZonesOutputs(): IZoneTemplate[] {
+        const outputs: IZoneTemplate[] = [];
         for (const zone of this.zones) {
             let output: ILineZone | IPolygonZone;
             if (zone.points.length === 2) {
@@ -368,19 +395,27 @@ export class ZoneDrawerWidget extends BaseWidget {
 
     private getZoneOutputByType(type: ZoneDrawerMode, name: string, points: IPoint[]): ILineZone | IPolygonZone {
         let output: ILineZone | IPolygonZone;
+        // Go over points and remove the cursor
+        const newPoints: IPoint[] = [];
+        for (const point of points) {
+            newPoints.push({
+                x: point.x,
+                y: point.y
+            });
+        }
         switch (type) {
             case ZoneDrawerMode.Line:
                 output = {
                     '@type': '#Microsoft.VideoAnalyzer.NamedLineString',
                     name: name,
-                    line: points
+                    line: newPoints
                 };
                 break;
             case ZoneDrawerMode.Polygon:
                 output = {
                     '@type': '#Microsoft.VideoAnalyzer.NamedPolygonString',
                     name: name,
-                    polygon: points
+                    polygon: newPoints
                 };
                 break;
         }

@@ -37,61 +37,49 @@
 <script>(function () {
         const zones = [
             {
-                id: '1',
-                points: [
+                '@type': "#Microsoft.VideoAnalyzer.NamedLineString",
+                line: [
                     {
-                        x: 0,
-                        y: 0
+                        x: 0.8407407407407408,
+                        y: 0.6631578947368421
                     },
                     {
-                        x: 0.5,
-                        y: 0.5
+                        x: 0.6351851851851852,
+                        y: 0.22807017543859648
                     }
-                ]
+                ],
+                name: 'Line number 1'
             },
             {
-                id: '2',
-                points: [
+                '@type': "#Microsoft.VideoAnalyzer.NamedLineString",
+                line: [
                     {
-                        x: 0.9,
-                        y: 0.1
+                        x: 0.2814814814814815,
+                        y: 0.8912280701754386
                     },
                     {
-                        x: 0.7,
-                        y: 0.8
+                        x: 0.3037037037037037,
+                        y: 0.2736842105263158
                     }
-                ]
+                ],
+                name: 'Line 2'
             },
             {
-                id: '3',
-                points: [
-                    {
-                        x: 0.8,
-                        y: 0.1
-                    },
-                    {
-                        x: 0.9,
-                        y: 0.8
-                    }
+                '@type': "#Microsoft.VideoAnalyzer.NamedPolygonString",
+                name: "Zone 3",
+                polygon: [
+                    { x: 0.48518518518518516, y: 0.05964912280701754 },
+                    { x: 0.4462962962962963, y: 0.44912280701754387 },
+                    { x: 0.6166666666666667, y: 0.41403508771929826 }
                 ]
-            },
-            {
-                points: [
-                    {
-                        x: 0.3,
-                        y: 0.1
-                    },
-                    {
-                        x: 0.3,
-                        y: 0.8
-                    }
-                ]
-            },
+            }
         ];
 
         const zoneDrawerWidget = document.querySelector("ava-zone-drawer");
 
-        zoneDrawerWidget.configure();
+        zoneDrawerWidget.configure({
+            zones: zones
+        });
 
         zoneDrawerWidget.load();
         // zoneDrawerWidget.config = { zones: zones };

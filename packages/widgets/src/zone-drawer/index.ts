@@ -1,1 +1,1 @@
-export { ZoneDrawerWidget } from './zone-drawer.widget';
+export { ZoneDrawer } from './zone-drawer.widget';
