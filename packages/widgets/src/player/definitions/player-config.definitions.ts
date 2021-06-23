@@ -1,8 +1,8 @@
-import { ControlPanelElements } from '../../../../web-components/src/rvx-player/rvx-player.definitions';
+import { ControlPanelElements } from '../../../../web-components/src/player-component/player-component.definitions';
 import { IWidgetBaseConfig } from '../../definitions/base-widget-config.definitions';
 
 /**
- * RVX config, contains basic configurations for rvx widget.
+ * Player config, contains basic configurations for player widget.
  */
 export interface IAvaPlayerConfig extends IWidgetBaseConfig {
     /**

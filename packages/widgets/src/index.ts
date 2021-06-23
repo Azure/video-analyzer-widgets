@@ -1,3 +1,3 @@
 export * from './common';
-export * from './rvx';
+export * from './player';
 export * from './zone-drawer';

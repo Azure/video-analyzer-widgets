@@ -7,10 +7,10 @@ import { PlayerEvents, WidgetGeneralError } from '../../../widgets/src';
 import { DatePickerComponent } from '../date-picker';
 import { DatePickerEvent, IDatePickerRenderEvent } from '../date-picker/date-picker.definitions';
 import { PlayerWrapper } from './player.class';
-import { ControlPanelElements, ControlPanelElementsTooltip, LiveState } from './rvx-player.definitions';
-import { styles } from './rvx-player.style';
-import { template } from './rvx-player.template';
-import { getPlayerErrorString, getShakaPlayerErrorString } from './rvx-player.utils';
+import { ControlPanelElements, ControlPanelElementsTooltip, LiveState } from './player-component.definitions';
+import { styles } from './player-component.style';
+import { template } from './player-component.template';
+import { getPlayerErrorString, getShakaPlayerErrorString } from './player-component.utils';
 import { Localization } from './../../../common/services/localization/localization.class';
 import { IDictionary } from '../../../common/services/localization/localization.definitions';
 import { Logger } from './../../../widgets/src/common/logger';
@@ -20,11 +20,11 @@ DatePickerComponent;
 Localization;
 
 /**
- * RVX Player web component
+ * Player web component
  * @public
  */
 @customElement({
-    name: 'rvx-player',
+    name: 'media-player',
     template,
     styles
 })

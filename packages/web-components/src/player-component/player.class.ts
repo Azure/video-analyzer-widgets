@@ -7,7 +7,7 @@ import { Logger } from '../../../widgets/src/common/logger';
 import { IUISegment, IUISegmentEventData } from '../segments-timeline/segments-timeline.definitions';
 import { TimelineComponent } from '../timeline';
 import { ITimeLineConfig, TimelineEvents } from '../timeline/timeline.definitions';
-import { ControlPanelElements, LiveState } from './rvx-player.definitions';
+import { ControlPanelElements, LiveState } from './player-component.definitions';
 import { shaka as shaka_player } from './shaka';
 import { AVAPlayerUILayer } from './UI/ava-ui-layer.class';
 import { BoundingBoxDrawer } from './UI/bounding-box.class';

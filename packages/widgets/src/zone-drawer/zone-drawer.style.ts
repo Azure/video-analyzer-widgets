@@ -76,7 +76,7 @@ export const styles = css`
         overflow-y: auto;
     }
 
-    .rvx-widget-container {
+    .player-widget-container {
         width: 100%;
         background: black;
         min-height: 200px;

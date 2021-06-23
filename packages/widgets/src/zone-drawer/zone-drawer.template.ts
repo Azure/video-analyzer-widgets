@@ -62,8 +62,8 @@ export const template = html<ZoneDrawerWidget>`
                             )}
                         </div>
                     </div>
-                    <div class="rvx-widget-container">
-                        <!-- rvx widget -->
+                    <div class="player-widget-container">
+                        <!-- player widget -->
                         <slot></slot>
                     </div>
                 </div>

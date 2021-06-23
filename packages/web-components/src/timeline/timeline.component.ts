@@ -5,7 +5,7 @@ import { getKeyCode, keyCodeEnter, keyCodeSpace } from '@microsoft/fast-web-util
 import SimpleBar from 'simplebar';
 import { closestElement } from '../../../common/utils/elements';
 import { guid } from '../../../common/utils/guid';
-import { IBarElement, ISeekBarElement } from '../rvx-player/UI/definitions';
+import { IBarElement, ISeekBarElement } from '../player-component/UI/definitions';
 import { SegmentsTimelineComponent } from '../segments-timeline';
 import { ISegmentsTimelineConfig, IUISegmentEventData, SegmentsTimelineEvents } from '../segments-timeline/segments-timeline.definitions';
 import { TimeRulerComponent } from '../time-ruler';
