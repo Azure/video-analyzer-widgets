@@ -1,7 +1,7 @@
 # Player widget Component
 
 `ava-player` is a web component implementation of a [Fast element](https://www.fast.design/).
-The player widget can be used to play back video that has been recorded to your Azure Video Analyzer (AVA) account).
+The player widget can be used to play back video that has been recorded to your Azure Video Analyzer (AVA) account.
 
 The class inherits from BaseWidget which inherits from FastElement.
 
