@@ -1,4 +1,4 @@
-# Build intelligent video applications with AVA widgets
+# Build intelligent video applications with Azure Video Analyzer (AVA) widgets
 
 In this tutorial you will learn how to use Azure Video Analyzer Player widget within your application.
 you'll be editing an existing HTML static website. If you'd like to follow the step-by-step guide, you'll need some tools. Start with a code editor like Visual Studio Code. You'll also need a local development server. A simple way to set one up is to use the Live Server extension for VS Code.
