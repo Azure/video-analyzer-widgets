@@ -7,13 +7,17 @@ import { PlayerEvents, WidgetGeneralError } from '../../../widgets/src';
 import { DatePickerComponent } from '../date-picker';
 import { DatePickerEvent, IDatePickerRenderEvent } from '../date-picker/date-picker.definitions';
 import { PlayerWrapper } from './player.class';
-import { ControlPanelElements, LiveState } from './player-component.definitions';
+import { ControlPanelElements, ControlPanelElementsTooltip, LiveState } from './player-component.definitions';
 import { styles } from './player-component.style';
 import { template } from './player-component.template';
 import { getPlayerErrorString, getShakaPlayerErrorString } from './player-component.utils';
+import { Localization } from './../../../common/services/localization/localization.class';
+import { IDictionary } from '../../../common/services/localization/localization.definitions';
+import { Logger } from './../../../widgets/src/common/logger';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-expressions
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 DatePickerComponent;
+Localization;
 
 /**
  * Player web component
@@ -42,6 +46,7 @@ export class PlayerComponent extends FASTElement {
     @observable public errorString = '';
     @observable public hasError = false;
     @observable public showRetryButton = false;
+    @observable public resources: IDictionary;
     @observable private currentYear: number = 0;
     @observable private currentMonth: number = 0;
     @observable private currentDay: number = 0;
@@ -71,6 +76,9 @@ export class PlayerComponent extends FASTElement {
         if (!this.connected) {
             return;
         }
+
+        this.resources = Localization.dictionary;
+        Localization.translate(ControlPanelElementsTooltip, 'PLAYER_Tooltip_');
 
         if (allowedControllers) {
             this.showCameraName = allowedControllers.indexOf(ControlPanelElements.CAMERA_NAME) > -1;
@@ -241,6 +249,12 @@ export class PlayerComponent extends FASTElement {
             return;
         }
 
+        this.initDatePicker();
+
+        document.addEventListener('fullscreenchange', this.updateFullScreen.bind(this));
+    }
+
+    public initDatePicker() {
         this.datePickerComponent = this.shadowRoot?.querySelector('media-date-picker');
 
         this.datePickerComponent.addEventListener(DatePickerEvent.DATE_CHANGE, ((event: CustomEvent<Date>) => {
@@ -261,8 +275,6 @@ export class PlayerComponent extends FASTElement {
             }
             // eslint-disable-next-line no-undef
         }) as EventListener);
-
-        document.addEventListener('fullscreenchange', this.updateFullScreen.bind(this));
     }
 
     public handleRetryMouseUp(e: MouseEvent): boolean {
@@ -331,8 +343,7 @@ export class PlayerComponent extends FASTElement {
 
             return await availableHours.json();
         } catch (error) {
-            // eslint-disable-next-line no-console
-            console.log('error fetching available segments');
+            Logger.log(this.resources.PLAYER_ErrorFetchSegments);
             return null;
         }
     }
@@ -469,7 +480,7 @@ export class PlayerComponent extends FASTElement {
             };
         } catch (error) {
             this.handleError(error);
-            throw new WidgetGeneralError('Cannot parse available media');
+            throw new WidgetGeneralError(this.resources.PLAYER_CannotParseMedia);
         }
     }
 
@@ -506,7 +517,7 @@ export class PlayerComponent extends FASTElement {
             }
         } catch (error) {
             this.handleError(error);
-            throw new WidgetGeneralError('Cannot parse available media');
+            throw new WidgetGeneralError(this.resources.PLAYER_CannotParseMedia);
         }
     }
 
@@ -547,7 +558,7 @@ export class PlayerComponent extends FASTElement {
             }
         } catch (error) {
             this.handleError(error);
-            throw new WidgetGeneralError('Cannot parse available media');
+            throw new WidgetGeneralError(this.resources.PLAYER_CannotParseMedia);
         }
     }
 

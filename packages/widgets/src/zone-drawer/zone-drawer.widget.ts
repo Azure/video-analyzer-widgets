@@ -30,12 +30,16 @@ import {
 } from './zone-drawer.definitions';
 import { Logger } from '../common/logger';
 import { AvaDesignSystemProvider } from '../../../styles';
+import { Localization } from './../../../common/services/localization/localization.class';
 
 AvaDesignSystemProvider;
 ZonesViewComponent;
 PolygonDrawerComponent;
 LineDrawerComponent;
 LayerLabelComponent;
+Localization;
+
+export const LocalizationService = Localization;
 
 @customElement({
     name: 'ava-zone-drawer',
@@ -127,11 +131,16 @@ export class ZoneDrawerWidget extends BaseWidget {
         this.isLineDrawMode = !this.isLineDrawMode;
     }
 
-    public configure(config: IZoneDrawerWidgetConfig) {
+    public configure(config?: IZoneDrawerWidgetConfig) {
         this.config = config;
         if (this.config?.debug) {
             this.setDebugMode(this.config?.debug);
         }
+
+        this.setLocalization(this.config?.locale, ['common', 'zone-drawer']);
+        ZoneDrawerActions.forEach((e)=> {
+            e.label = LocalizationService.resolve(`ZONE_DRAWER_Actions_${e.type}`);
+        });
     }
 
     // @override

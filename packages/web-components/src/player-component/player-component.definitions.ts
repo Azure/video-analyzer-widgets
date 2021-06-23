@@ -41,22 +41,22 @@ export enum LiveState {
     OFF = 'live-off'
 }
 
-export enum ControlPanelElementsTooltip {
-    REWIND = 'Rewind',
-    PLAY = 'Play',
-    PAUSE = 'Pause',
-    FAST_FORWARD = 'Fast forward',
-    LIVE = 'Live',
-    MUTE = 'Mute',
-    UNMUTE = 'Unmute',
-    VOLUME = 'Volume',
-    SPACER = 'Spacer',
-    META_DATA_LAYER_ON = 'Turn on object metadata overlay',
-    META_DATA_LAYER_OFF = 'Turn off object metadata overlay',
-    OVERFLOW_MENU = 'More options',
-    FULLSCREEN = 'Enter fullscreen',
-    EXIT_FULLSCREEN = 'Exit fullscreen',
-    NEXT_DAY = 'Next day',
-    PREVIOUS_DAY = 'Previous day',
-    HOURS_LABEL = 'Hours'
-}
+export const ControlPanelElementsTooltip = {
+    REWIND: 'Rewind',
+    PLAY: 'Play',
+    PAUSE: 'Pause',
+    FAST_FORWARD: 'Fast forward',
+    LIVE: 'Live',
+    MUTE: 'Mute',
+    UNMUTE: 'Unmute',
+    VOLUME: 'Volume',
+    SPACER: 'Spacer',
+    META_DATA_LAYER_ON: 'Turn on object metadata overlay',
+    META_DATA_LAYER_OFF: 'Turn off object metadata overlay',
+    OVERFLOW_MENU: 'More options',
+    FULLSCREEN: 'Enter fullscreen',
+    EXIT_FULLSCREEN: 'Exit fullscreen',
+    NEXT_DAY: 'Next day',
+    PREVIOUS_DAY: 'Previous day',
+    HOURS_LABEL: 'Hours'
+};

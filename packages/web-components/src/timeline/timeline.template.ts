@@ -30,8 +30,8 @@ export const template = html<TimelineComponent>`
                 <div class="zoom-controls-container">
                     <fast-button
                         class="left-button"
-                        aria-label="Zoom out"
-                        title="Zoom out"
+                        aria-label="${(x) => (x.resources?.TIMELINE_ZoomOut)}"
+                        title="${(x) => (x.resources?.TIMELINE_ZoomOut)}"
                         @keyup="${(x, c) => x.handleZoomOutKeyUp(c.event as KeyboardEvent)}"
                         @mouseup="${(x, c) => x.handleZoomOutMouseUp(c.event as MouseEvent)}"
                     >
@@ -47,8 +47,8 @@ export const template = html<TimelineComponent>`
                     </fast-slider>
                     <fast-button
                         class="right-button"
-                        aria-label="Zoom in"
-                        title="Zoom in"
+                        aria-label="${(x) => (x.resources?.TIMELINE_ZoomIn)}"
+                        title="${(x) => (x.resources?.TIMELINE_ZoomIn)}"
                         @keyup="${(x, c) => x.handleZoomInKeyUp(c.event as KeyboardEvent)}"
                         @mouseup="${(x, c) => x.handleZoomInMouseUp(c.event as MouseEvent)}"
                     >

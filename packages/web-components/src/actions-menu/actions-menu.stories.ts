@@ -1,6 +1,6 @@
 import { ActionsMenuComponent } from '.';
 import { AvaDesignSystemProvider } from '../../../styles';
-import { DELETE_SVG_PATH, MORE_SVG_PATH, RENAME_SVG_PATH } from '../../../styles/svg/svg.shapes';
+import { DELETE_SVG_PATH, RENAME_SVG_PATH } from '../../../styles/svg/svg.shapes';
 import { IAction } from './actions-menu.definitions';
 
 // Prevent tree-shaking

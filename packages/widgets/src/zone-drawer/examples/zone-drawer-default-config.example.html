@@ -28,6 +28,7 @@
         <ava-design-system-provider theme="dark"
             use-defaults>
             <ava-zone-drawer id="zone-draw-widget">
+                <ava-player id="ava-player-widget"></ava-player>
             </ava-zone-drawer>
         </ava-design-system-provider>
     </div>
@@ -91,10 +92,32 @@
 
         const zoneDrawerWidget = document.querySelector("ava-zone-drawer");
 
-        zoneDrawerWidget.configure();
+        zoneDrawerWidget.configure({});
 
         zoneDrawerWidget.load();
         // zoneDrawerWidget.config = { zones: zones };
+
+        const playerWidget = document.querySelector("ava-player");
+
+        playerWidget.configure({
+            token: 'token',
+            clientApiEndpointUrl: 'endpoint',
+            videoName: 'name',
+            debug: true,
+            playerControllers: [
+                'rewind',
+                'play_pause',
+                'fast_forward',
+                'mute',
+                'volume',
+                'spacer',
+                'next_day',
+                'previous_day',
+                'hours_label'
+            ],
+            locale: 'de'
+        });
+        playerWidget.load();
     })()
 </script>
 

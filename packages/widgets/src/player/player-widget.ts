@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-expressions */
 import { BaseWidget } from '../base-widget';
 import { customElement, attr } from '@microsoft/fast-element';
 import { IAvaPlayerConfig, PlayerEvents } from './definitions';
@@ -13,6 +12,7 @@ import { Logger } from '../common/logger';
 import { AvaDesignSystemProvider } from '../../../styles';
 import { HttpError } from '../../../common/utils/http.error';
 
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 AvaDesignSystemProvider;
 PlayerComponent;
 
@@ -76,6 +76,9 @@ export class Player extends BaseWidget {
         if (this.config?.debug) {
             this.setDebugMode(this.config?.debug);
         }
+
+        this.setLocalization(this.config?.locale, ['common', 'player']);
+
         this.init();
     }
 
@@ -142,12 +145,10 @@ export class Player extends BaseWidget {
                     }
                 })
                 .catch((error) => {
-                    // eslint-disable-next-line no-console
-                    console.log(error);
+                    Logger.log(error);
                     this.handelFallback(error);
                 });
         } catch (error) {
-            // console.log(error);
             this.handelFallback(error);
         }
     }

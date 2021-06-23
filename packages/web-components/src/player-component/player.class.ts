@@ -15,12 +15,17 @@ import { extractRealTime } from './UI/time.utils';
 import { createTimelineSegments } from './UI/timeline.utils';
 import { extractRealTimeFromISO } from './UI/time.utils';
 import { shaka } from './index';
+import { Localization } from './../../../common/services/localization/localization.class';
+import { IDictionary } from '../../../common/services/localization/localization.definitions';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-expressions
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 TimelineComponent;
+Localization;
 
 export class PlayerWrapper {
     public player: shaka_player.Player = Object.create(null);
+    public resources: IDictionary;
+
     private isLive = false;
     private isLoaded = false;
     private duringSegmentJump = false;
@@ -58,6 +63,8 @@ export class PlayerWrapper {
         private errorCallback: (error: shaka_player.PlayerEvents.ErrorEvent) => void,
         private allowedControllers: ControlPanelElements[]
     ) {
+
+        this.resources = Localization.dictionary;
         // Install built-in polyfills to patch browser incompatibilities.
         shaka.polyfill.installAll();
 
@@ -67,7 +74,7 @@ export class PlayerWrapper {
             this.init();
         } else {
             // This browser does not have the minimum set of APIs we need.
-            throw new WidgetGeneralError('Browser not supported!');
+            throw new WidgetGeneralError(this.resources.PLAYER_BrowserNotSupported);
         }
     }
 
@@ -365,6 +372,9 @@ export class PlayerWrapper {
             this.controls.bottomControls_.childNodes[2],
             this.controls.bottomControls_.childNodes[1]
         );
+
+        // Set shaka player languages
+        this.controls.getLocalization().changeLocale(Localization.locale);
 
         // Player listeners
         this.player.addEventListener('error', this.onErrorEvent.bind(this));
