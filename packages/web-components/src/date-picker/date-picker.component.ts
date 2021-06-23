@@ -165,7 +165,6 @@ export class DatePickerComponent extends FASTElement {
     private setPickerDateJsLocalization() {
         if (this.datePicker?.picker?.component?.settings) {
             for (const key in this.datePicker.picker.component.settings) {
-
                 if (typeof this.datePicker.picker.component.settings[key] === 'string') {
                     this.datePicker.picker.component.settings[key] = Localization.resolve(`DATE_PICKER_${key}`)
                         || this.datePicker.picker.component.settings[key];
