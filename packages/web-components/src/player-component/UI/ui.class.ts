@@ -219,7 +219,7 @@ export class LiveButton extends shaka.ui.Element {
 
     private init() {
         this.button_ = document.createElement('fast-button');
-        this.button_.innerHTML = `<b>${Localization.dictionary.BUTTONS_CLASS_Live}</b>`;
+        this.button_.innerHTML = `<b>${Localization.dictionary.BUTTONS_CLASS_Live.toUpperCase()}</b>`;
         this.button_.classList.add('live-button-component');
         this.parent.appendChild(this.button_);
         setElementTooltip(this.button_, ControlPanelElementsTooltip.LIVE);

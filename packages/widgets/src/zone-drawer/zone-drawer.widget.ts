@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
-import { customElement, observable } from '@microsoft/fast-element';
+import { customElement, DOM, observable } from '@microsoft/fast-element';
 import { DrawerEvents, IPoint } from '../../../common/drawer-canvas/drawer-canvas.definitions';
 import { guid } from '../../../common/utils/guid';
 import { DrawingColors } from '../../../styles/system-providers/ava-design-system-provider.definitions';
@@ -31,6 +31,7 @@ import {
 import { Logger } from '../common/logger';
 import { AvaDesignSystemProvider } from '../../../styles';
 import { Localization } from './../../../common/services/localization/localization.class';
+import { PlayerEvents } from '../player';
 
 AvaDesignSystemProvider;
 ZonesViewComponent;
@@ -94,7 +95,8 @@ export class ZoneDrawer extends BaseWidget {
 
     public disconnectedCallback() {
         super.disconnectedCallback();
-
+        this.player?.removeEventListener(PlayerEvents.PLAYER_ERROR, this.onPlayerError);
+        this.player?.removeEventListener(PlayerEvents.TOGGLE_MODE, this.onPlayerToggle as EventListener);
         this.resizeObserver.disconnect();
     }
 
@@ -138,7 +140,7 @@ export class ZoneDrawer extends BaseWidget {
         }
 
         this.setLocalization(this.config?.locale, ['common', 'zone-drawer']);
-        ZoneDrawerActions.forEach((e)=> {
+        ZoneDrawerActions.forEach((e) => {
             e.label = LocalizationService.resolve(`ZONE_DRAWER_Actions_${e.type}`);
         });
     }
@@ -203,6 +205,8 @@ export class ZoneDrawer extends BaseWidget {
 
         if (!this.player) {
             this.player = this.$fastController.element.querySelector('ava-player');
+            this.player?.addEventListener(PlayerEvents.PLAYER_ERROR, this.onPlayerError.bind(this));
+            this.player?.addEventListener(PlayerEvents.TOGGLE_MODE, this.onPlayerToggle.bind(this) as EventListener);
         }
     }
 
@@ -223,6 +227,22 @@ export class ZoneDrawer extends BaseWidget {
             this.polygonDrawer?.setAttribute('borderColor', this.getNextColor());
             // eslint-disable-next-line no-undef
             this.polygonDrawer?.addEventListener(DrawerEvents.COMPLETE, this.drawerComplete.bind(this) as EventListener);
+        }
+    }
+
+    private onPlayerError() {
+        this.disableDrawing = true;
+    }
+
+    private onPlayerToggle(event: CustomEvent) {
+        // Update container height
+        const zonesContainer = this.shadowRoot.querySelector('.draw-zone-container');
+        zonesContainer.classList.remove('live-on');
+        zonesContainer.classList.remove('live-off');
+        if (event.detail.isLive) {
+            zonesContainer.classList.add('live-on');
+        } else {
+            zonesContainer.classList.add('live-off');
         }
     }
 

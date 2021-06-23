@@ -229,7 +229,7 @@ export class PlayerComponent extends FASTElement {
         this.errorString = getShakaPlayerErrorString(error);
         this.classList.add('error');
         this.video?.classList.add('error');
-        this.$emit(PlayerEvents.SHAKE_PLAYER_ERROR, error);
+        this.$emit(PlayerEvents.SHAKA_PLAYER_ERROR, error);
     }
 
     public disconnectedCallback() {
@@ -319,6 +319,7 @@ export class PlayerComponent extends FASTElement {
         this.isLive = isLive;
         this.classList.add(this.isLive ? LiveState.ON : LiveState.OFF);
         this.classList.remove(!this.isLive ? LiveState.ON : LiveState.OFF);
+        this.$emit(PlayerEvents.TOGGLE_MODE, { isLive: isLive });
     }
 
     private async fetchAvailableSegments(startDate: IExpandedDate, end: IExpandedDate): Promise<IAvailableMediaResponse> {
