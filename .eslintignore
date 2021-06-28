@@ -1,0 +1,25 @@
+# Never lint node_modules
+node_modules
+
+# external scripts
+packages/scripts/PickaDate.script.ts
+packages/scripts/picker.ts
+
+# Never lint build output
+dist
+
+# Never lint webpack file
+webpack.config.js
+
+# Never lint stories
+packages/web-components/src/**/*.stories.ts
+
+# Never lint spec
+packages/web-components/src/**/*.spec.ts
+packages/widgets/src/**/*.spec.ts
+packages/scripts/*.js
+mocks/simplebar.js
+
+# Never lint test build output
+out
+coverage
