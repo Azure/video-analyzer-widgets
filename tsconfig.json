@@ -1,0 +1,32 @@
+{
+    "compilerOptions": {
+        "experimentalDecorators": true,
+        "outDir": "./dist",
+        "declaration": true,
+        "forceConsistentCasingInFileNames": true,
+        "module": "ES2015",
+        "noFallthroughCasesInSwitch": true,
+        "allowSyntheticDefaultImports": true,
+        "noImplicitAny": true,
+        "allowJs": true,
+        "noImplicitReturns": true,
+        "removeComments": true,
+        "sourceMap": true,
+        "target": "ES2015",
+        "lib": ["es2015", "es2016", "es2017", "es2018", "dom", "esnext"],
+        "strict": true,
+        "esModuleInterop": true,
+        "strictNullChecks": false,
+        "suppressImplicitAnyIndexErrors": true,
+        "strictPropertyInitialization": false,
+        "pretty": true,
+        "moduleResolution": "node",
+        "importHelpers": true,
+        "declarationMap": true,
+        "paths": {
+            "*": ["./node_modules/*", "./packages/types/*"]
+        }
+    },
+    "exclude": ["**/*.stories.ts", "**/*.spec.ts", "node_modules"],
+    "include": ["npm.export.ts"]
+}

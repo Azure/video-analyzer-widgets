@@ -1,0 +1,38 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.half {
+    display: inline-block;
+    width: calc(50% - 2px);
+}
+
+.preview-controls {
+    display: grid;
+    grid-auto-rows: max-content;
+    gap: 20px;
+}
+
+.control-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.control-container-2 {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 20px;
+}
+
+.control-container-grid {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    text-align: start;
+    color: var(--neutral-foreground-rest);
+}
+
+.control-container p {
+    margin-inline-start: calc(var(--design-unit) * 2px + 2px);
+}

@@ -1,0 +1,9 @@
+# Everything outside the src and test directory
+/dist/*
+/node_modules/*
+out
+coverage
+
+# debug
+local/
+*.tgz
