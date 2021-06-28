@@ -1,0 +1,59 @@
+<html>
+
+<body>
+    <script src="../../../../../dist/index.js"></script>
+    <h1>Timeline Component</h1>
+    <div>
+        <ava-design-system-provider theme="dark">
+            <h1>Timeline Component Example - Dark</h1>
+            <media-timeline id='media-timeline-without-zoom'></media-timeline>
+        </ava-design-system-provider>
+    </div>
+
+    <div>
+        <ava-design-system-provider theme="">
+            <h1>Timeline Component Example - Default (Zoom enabled)</h1>
+            <media-timeline id='media-timeline-with-zoom'></media-timeline>
+        </ava-design-system-provider>
+    </div>
+</body>
+
+<script>(function () {
+        const segments = [
+            { startSeconds: 10, endSeconds: 3600 },
+            { startSeconds: 4500, endSeconds: 5000, color: 'red' },
+            { startSeconds: 20000, endSeconds: 30000 },
+            { startSeconds: 55000, endSeconds: 57000, color: 'blue' },
+            { startSeconds: 60600, endSeconds: 64200 },
+            { startSeconds: 80000, endSeconds: 81000, color: 'blue' }
+        ];
+
+        const date = new Date();
+        date.setMonth(1);
+        date.setDate(1);
+
+        const configWithoutZoom = {
+            segments: segments,
+            date: date,
+            disableZoom: true
+        }
+
+        const configWithZoom = {
+            segments: segments,
+            date: date
+        }
+
+        const mediaTimeLineWithoutZoom = document.getElementById("media-timeline-without-zoom");
+        const mediaTimeLineWithZoom = document.getElementById("media-timeline-with-zoom");
+
+        mediaTimeLineWithoutZoom.config = configWithoutZoom;
+        mediaTimeLineWithZoom.config = configWithZoom;
+
+        window.addEventListener('SEGMENTS_TIMELINE_SEGMENT_CLICKED', (s) => {
+            console.log('SEGMENTS_TIMELINE_SEGMENT_CLICKED');
+            console.log(s);
+        })
+    })()
+</script>
+
+</html>

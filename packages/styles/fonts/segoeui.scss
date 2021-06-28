@@ -1,0 +1,10 @@
+@import './variables';
+
+@font-face {
+    font-family: 'Segoe UI';
+    font-display: swap;
+    src: url('#{$ava-font-path}segoeui.woff2') format('woff2'), url('#{$ava-font-path}segoeui.woff') format('woff'),
+        url('#{$ava-font-path}segoeui.ttf') format('truetype'), url('#{$ava-font-path}segoeui.svg') format('svg'),
+        url('#{$ava-font-path}segoeui.eot') format('eot'), local('Segoe UI');
+    font-weight: 400;
+}

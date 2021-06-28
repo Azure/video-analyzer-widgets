@@ -1,0 +1,32 @@
+<html>
+
+<head>
+</head>
+
+<body>
+    <script src="../../../../../dist/index.js"></script>
+    <h1>Actions Menu</h1>
+    <div>
+        <ava-design-system-provider theme="dark"
+            use-defaults>
+            <media-actions-menu id="actions-menu"></media-actions-menu>
+        </ava-design-system-provider>
+    </div>
+</body>
+<script>(function () {
+        const actionsMenu = document.getElementById("actions-menu");
+        actionsMenu.actions = [
+            {
+                label: 'Rename',
+                svgPath: 'M1.992 8.977v-1.984h6.016v1.984h-6.016zM10.008 11.008h-10.016v-6.016h10.016v1.016h-9v3.984h9v1.016zM16.008 4.992v6.016h-3.016v-1.016h2v-3.984h-2v-1.016h3.016zM12.008 12.242q0.867 0.75 1.992 0.75h0.008v1.016h-0.008q-1.375 0-2.484-0.859-0.547 0.422-1.184 0.641t-1.332 0.219h-0.008v-1.016h0.008q1.133 0 1.992-0.727v-8.563q-0.406-0.344-0.91-0.52t-1.082-0.176h-0.008v-1.016h0.008q0.711 0 1.348 0.211t1.168 0.617q1.078-0.828 2.484-0.828h0.008v1.016h-0.008q-1.156 0-1.992 0.719v8.516z'
+            },
+            {
+                label: 'Delete',
+                svgPath: 'M14 3h-1v11.5q0 0.313-0.117 0.586t-0.32 0.477-0.477 0.32-0.586 0.117h-8q-0.313 0-0.586-0.117t-0.477-0.32-0.32-0.477-0.117-0.586v-11.5h-1v-1h4v-1q0-0.211 0.078-0.391t0.215-0.316 0.316-0.215 0.391-0.078h3q0.211 0 0.391 0.078t0.316 0.215 0.215 0.316 0.078 0.391v1h4v1zM6 2h3v-1h-3v1zM12 3h-9v11.5q0 0.203 0.148 0.352t0.352 0.148h8q0.203 0 0.352-0.148t0.148-0.352v-11.5zM6 13h-1v-8h1v8zM8 13h-1v-8h1v8zM10 13h-1v-8h1v8z'
+            }
+        ]
+
+    })()
+</script>
+
+</html>
