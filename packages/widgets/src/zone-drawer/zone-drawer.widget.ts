@@ -61,7 +61,7 @@ export class ZoneDrawer extends BaseWidget {
     @observable
     public isLabelsListEmpty = true;
     @observable
-    public disableDrawing = false;
+    public disableDrawing = true;
 
     public config: IZoneDrawerWidgetConfig = {};
 
