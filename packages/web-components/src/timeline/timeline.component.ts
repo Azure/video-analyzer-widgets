@@ -5,16 +5,21 @@ import { getKeyCode, keyCodeEnter, keyCodeSpace } from '@microsoft/fast-web-util
 import SimpleBar from 'simplebar';
 import { closestElement } from '../../../common/utils/elements';
 import { guid } from '../../../common/utils/guid';
+import { IBarElement, ISeekBarElement } from '../player-component/UI/definitions';
 import { SegmentsTimelineComponent } from '../segments-timeline';
 import { ISegmentsTimelineConfig, IUISegmentEventData, SegmentsTimelineEvents } from '../segments-timeline/segments-timeline.definitions';
 import { TimeRulerComponent } from '../time-ruler';
 import { ITimeLineConfig, TimelineEvents } from './timeline.definitions';
 import { styles } from './timeline.style';
 import { template } from './timeline.template';
+import { Localization } from './../../../common/services/localization/localization.class';
+import { IDictionary } from '../../../common/services/localization/localization.definitions';
+import { observable } from '@microsoft/fast-element';
 
 SimpleBar;
 SegmentsTimelineComponent;
 TimeRulerComponent;
+Localization;
 
 /**
  * Time Line component.
@@ -46,9 +51,12 @@ export class TimelineComponent extends FASTElement {
      */
     @attr public currentTime: number = 0;
 
+    @observable public resources: IDictionary = {};
+
     public readonly DAY_DURATION_IN_SECONDS = 86400; // 60 (sec) * 60 (min) * 24 (hours)
 
     public zoom: number = 1;
+    public scrollContainer: Element;
 
     private timeRulerReady = false;
     private segmentsTimelineReady = false;
@@ -66,6 +74,10 @@ export class TimelineComponent extends FASTElement {
     private readonly SEEK_BAR_BODY_COLOR = '#D02E00';
     private readonly CANVAS_MAX_WIDTH = 32767;
 
+    public constructor(private callback: () => void = null) {
+        super();
+    }
+
     public configChanged() {
         setTimeout(() => {
             this.initTimeLine();
@@ -81,9 +93,15 @@ export class TimelineComponent extends FASTElement {
     public connectedCallback() {
         super.connectedCallback();
 
+        if (!Object.keys(this.resources).length) {
+            this.resources = Localization.dictionary;
+        }
+
         const parent = this.$fastController?.element?.parentElement;
         this.resizeObserver = new ResizeObserver(this.resize.bind(this));
         this.resizeObserver.observe(parent || this.$fastController?.element);
+
+        this.scrollContainer = this.shadowRoot.querySelector('.scroll-container');
     }
 
     public disconnectedCallback() {
@@ -99,8 +117,7 @@ export class TimelineComponent extends FASTElement {
             return;
         }
 
-        const element = this.shadowRoot.querySelector('.scroll-container');
-        this.simpleBar = new SimpleBar(element as HTMLElement, {
+        this.simpleBar = new SimpleBar(this.scrollContainer as HTMLElement, {
             autoHide: false,
             forceVisible: 'x',
             classNames: {},
@@ -132,6 +149,10 @@ export class TimelineComponent extends FASTElement {
             }) as EventListener);
 
             this.segmentsTimelineReady = true;
+
+            if (this.callback) {
+                this.callback();
+            }
             this.initTimeLine();
         });
     }
@@ -197,6 +218,16 @@ export class TimelineComponent extends FASTElement {
         return true;
     }
 
+    public get seekBarElement(): ISeekBarElement {
+        const barElement: IBarElement = this.segmentsTimeline?.bar;
+        barElement.min = '0';
+        barElement.max = `${this.DAY_DURATION_IN_SECONDS}`;
+        return {
+            bar: barElement,
+            container: this.scrollContainer
+        };
+    }
+
     private zoomIn() {
         if (+this.fastSlider.value + this.SLIDER_DENSITY <= this.SLIDER_MAX_ZOOM * this.SLIDER_DENSITY) {
             this.fastSlider.value = `${+this.fastSlider.value + this.SLIDER_DENSITY}`;
@@ -221,7 +252,7 @@ export class TimelineComponent extends FASTElement {
         this.initSegmentsTimeline();
         this.initTimeRuler();
 
-        if (!this.config.disableZoom) {
+        if (!this.config?.disableZoom) {
             setTimeout(() => {
                 this.initSlider();
                 this.simpleBar?.recalculate();

@@ -15,8 +15,8 @@ export const template = html<ZoneDrawerWidget>`
                 <div class="draw-buttons">
                     <fast-button
                         class=${(x) => (!x.isLineDrawMode ? 'selected' : '')}
-                        aria-label="Polygon"
-                        title="Polygon"
+                        aria-label="${(x) => x.resources?.ZONE_DRAWER_Polygon}"
+                        title="${(x) => x.resources?.ZONE_DRAWER_Polygon}"
                         ?disabled="${(x) => x.disableDrawing}"
                         @click="${(x) => x.toggleDrawerMode()}"
                     >
@@ -26,8 +26,8 @@ export const template = html<ZoneDrawerWidget>`
                     </fast-button>
                     <fast-button
                         class=${(x) => (x.isLineDrawMode ? 'selected' : '')}
-                        aria-label="Line"
-                        title="Line"
+                        aria-label="${(x) => x.resources?.ZONE_DRAWER_Line}"
+                        title="${(x) => x.resources?.ZONE_DRAWER_Line}"
                         ?disabled="${(x) => x.disableDrawing}"
                         @click="${(x) => x.toggleDrawerMode()}"
                     >
@@ -36,7 +36,8 @@ export const template = html<ZoneDrawerWidget>`
                         </svg>
                     </fast-button>
                 </div>
-                <span>Draw a ${(x) => (x.isLineDrawMode ? 'line' : 'polygon')}</span>
+                <span>${(x) => (x.isLineDrawMode ? x.resources?.ZONE_DRAWER_Draw_a_line
+        : x.resources?.ZONE_DRAWER_Draw_a_polygon)}</span>
             </div>
             <div class="zones-container">
                 <div class="zones-draw-container">
@@ -61,8 +62,8 @@ export const template = html<ZoneDrawerWidget>`
                             )}
                         </div>
                     </div>
-                    <div class="rvx-widget-container">
-                        <!-- rvx widget -->
+                    <div class="player-widget-container">
+                        <!-- player widget -->
                         <slot></slot>
                     </div>
                 </div>
@@ -70,20 +71,20 @@ export const template = html<ZoneDrawerWidget>`
                     <ul class="labels-list"></ul>
                     ${when(
                         (x) => x.isLabelsListEmpty,
-                        html`<span>Draw polygons or lines around the zone of interest in the frame.</span> `
+                        html`<span>${(x) => x.resources?.ZONE_DRAWER_WidgetsInstructions}</span> `
                     )}
-                    ${when((x) => x.disableDrawing, html`<span>Zone drawer is disabled.</span> `)}
+                    ${when((x) => x.disableDrawing, html`<span>${(x) => x.resources?.ZONE_DRAWER_IsDisabled}</span> `)}
                 </div>
             </div>
             <div class="action-buttons">
                 <fast-button
                     ?disabled="${(x) => !x.isDirty}"
                     appearance="accent"
-                    aria-label="Save"
-                    title="Save"
+                    aria-label="${(x) => x.resources?.ZONE_DRAWER_Save}"
+                    title="${(x) => x.resources?.ZONE_DRAWER_Save}"
                     @click="${(x) => x.save()}"
                 >
-                    Save
+                   ${(x) => x.resources?.ZONE_DRAWER_Save}
                 </fast-button>
             </div>
         </div>

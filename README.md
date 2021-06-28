@@ -91,7 +91,7 @@ There are also a couple of events that fire under various conditions. None of th
 
 | Name          | Parameters | Description                                       |
 | ------------- | ---------- | ------------------------------------------------- |
-| TOKEN_EXPIRED | -          | Callback to invoke when AVA JWT token is expired. |
+| TOKEN_EXPIRED | -          | Callback to invoke when Azure Video Analyzer (AVA) JWT token is expired. |
 | PLAYER_ERROR  | -          | Callback to invoke there is an error.             |
 
 The player has a few methods you can use in your code. These can be useful for building your own controls.

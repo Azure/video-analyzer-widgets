@@ -54,7 +54,7 @@ export class SegmentsTimelineComponent extends FASTElement {
 
     private resizeObserver: ResizeObserver;
 
-    private readonly MIN_SECONDS_FOR_SEGMENT = 1;
+    private readonly MIN_SECONDS_FOR_SEGMENT = 2;
 
     public constructor(config: ISegmentsTimelineConfig) {
         super();
@@ -218,6 +218,11 @@ export class SegmentsTimelineComponent extends FASTElement {
 
         this.timelineProgress.activeSegment = null;
         return 0;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    public get bar(): any {
+        return this.timelineProgress?.rootElement;
     }
 
     private initSVGProgress() {

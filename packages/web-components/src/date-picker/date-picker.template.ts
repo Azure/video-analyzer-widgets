@@ -22,7 +22,7 @@ export const template = html<DatePickerComponent>`
                 <span class="ms-DatePicker-prevMonth js-prevMonth"><i class="ms-Icon i-arrow-page-up"></i></span>
                 <div class="ms-DatePicker-headerToggleView js-showMonthPicker"></div>
             </div>
-            <span class="ms-DatePicker-goToday js-goToday">Go to today</span>
+            <span class="ms-DatePicker-goToday js-goToday">${(x) => (x.resources?.DATE_PICKER_GoToToday)}</span>
             <div class="ms-DatePicker-monthPicker">
                 <div class="ms-DatePicker-header">
                     <div class="ms-DatePicker-yearComponents">
@@ -32,18 +32,18 @@ export const template = html<DatePickerComponent>`
                     <div class="ms-DatePicker-currentYear js-showYearPicker"></div>
                 </div>
                 <div class="ms-DatePicker-optionGrid">
-                    <span class="ms-DatePicker-monthOption js-changeDate" data-month="0">Jan</span>
-                    <span class="ms-DatePicker-monthOption js-changeDate" data-month="1">Feb</span>
-                    <span class="ms-DatePicker-monthOption js-changeDate" data-month="2">Mar</span>
-                    <span class="ms-DatePicker-monthOption js-changeDate" data-month="3">Apr</span>
-                    <span class="ms-DatePicker-monthOption js-changeDate" data-month="4">May</span>
-                    <span class="ms-DatePicker-monthOption js-changeDate" data-month="5">Jun</span>
-                    <span class="ms-DatePicker-monthOption js-changeDate" data-month="6">Jul</span>
-                    <span class="ms-DatePicker-monthOption js-changeDate" data-month="7">Aug</span>
-                    <span class="ms-DatePicker-monthOption js-changeDate" data-month="8">Sep</span>
-                    <span class="ms-DatePicker-monthOption js-changeDate" data-month="9">Oct</span>
-                    <span class="ms-DatePicker-monthOption js-changeDate" data-month="10">Nov</span>
-                    <span class="ms-DatePicker-monthOption js-changeDate" data-month="11">Dec</span>
+                    <span class="ms-DatePicker-monthOption js-changeDate" data-month="0">${(x) => (x.resources?.DATE_PICKER_Jan)}</span>
+                    <span class="ms-DatePicker-monthOption js-changeDate" data-month="1">${(x) => (x.resources?.DATE_PICKER_Feb)}</span>
+                    <span class="ms-DatePicker-monthOption js-changeDate" data-month="2">${(x) => (x.resources?.DATE_PICKER_Mar)}</span>
+                    <span class="ms-DatePicker-monthOption js-changeDate" data-month="3">${(x) => (x.resources?.DATE_PICKER_Apr)}</span>
+                    <span class="ms-DatePicker-monthOption js-changeDate" data-month="4">${(x) => (x.resources?.DATE_PICKER_May)}</span>
+                    <span class="ms-DatePicker-monthOption js-changeDate" data-month="5">${(x) => (x.resources?.DATE_PICKER_Jun)}</span>
+                    <span class="ms-DatePicker-monthOption js-changeDate" data-month="6">${(x) => (x.resources?.DATE_PICKER_Jul)}</span>
+                    <span class="ms-DatePicker-monthOption js-changeDate" data-month="7">${(x) => (x.resources?.DATE_PICKER_Aug)}</span>
+                    <span class="ms-DatePicker-monthOption js-changeDate" data-month="8">${(x) => (x.resources?.DATE_PICKER_Sep)}</span>
+                    <span class="ms-DatePicker-monthOption js-changeDate" data-month="9">${(x) => (x.resources?.DATE_PICKER_Oct)}</span>
+                    <span class="ms-DatePicker-monthOption js-changeDate" data-month="10">${(x) => (x.resources?.DATE_PICKER_Nov)}</span>
+                    <span class="ms-DatePicker-monthOption js-changeDate" data-month="11">${(x) => (x.resources?.DATE_PICKER_Dec)}</span>
                 </div>
             </div>
             <div class="ms-DatePicker-yearPicker">

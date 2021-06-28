@@ -1,9 +1,11 @@
 import { FASTMenu } from '@microsoft/fast-components';
 import { attr, customElement, FASTElement } from '@microsoft/fast-element';
 import { keyCodeEnter, keyCodeSpace } from '@microsoft/fast-web-utilities';
+import { IDictionary } from '../../../common/services/localization/localization.definitions';
 import { ActionsMenuEvents, IAction } from './actions-menu.definitions';
 import { styles } from './actions-menu.style';
 import { template } from './actions-menu.template';
+import { Localization } from './../../../common/services/localization/localization.class';
 
 /**
  * An actions menu web component.
@@ -33,8 +35,14 @@ export class ActionsMenuComponent extends FASTElement {
      */
     @attr({ attribute: 'edit-mode', mode: 'boolean' })
     public opened: boolean = false;
+    public resources: IDictionary;
 
     private fastMenu: FASTMenu;
+
+    public constructor() {
+        super();
+        this.resources = Localization.dictionary;
+    }
 
     public connectedCallback() {
         super.connectedCallback();

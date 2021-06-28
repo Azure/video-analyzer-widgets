@@ -11,7 +11,7 @@ import { styles } from './zone-drawer.style';
 import { template } from './zone-drawer.template';
 import { ZonesViewComponent } from '../../../web-components/src/zones-view/zones-view.component';
 import { BaseWidget } from '../base-widget/base-widget';
-import { Player } from './../rvx/rvx-widget';
+import { Player } from './../player/player-widget';
 import { ZoneDrawerActions } from './actions';
 import {
     ILayerLabelConfig,
@@ -30,12 +30,16 @@ import {
 } from './zone-drawer.definitions';
 import { Logger } from '../common/logger';
 import { AvaDesignSystemProvider } from '../../../styles';
+import { Localization } from './../../../common/services/localization/localization.class';
 
 AvaDesignSystemProvider;
 ZonesViewComponent;
 PolygonDrawerComponent;
 LineDrawerComponent;
 LayerLabelComponent;
+Localization;
+
+export const LocalizationService = Localization;
 
 @customElement({
     name: 'ava-zone-drawer',
@@ -127,11 +131,16 @@ export class ZoneDrawerWidget extends BaseWidget {
         this.isLineDrawMode = !this.isLineDrawMode;
     }
 
-    public configure(config: IZoneDrawerWidgetConfig) {
+    public configure(config?: IZoneDrawerWidgetConfig) {
         this.config = config;
         if (this.config?.debug) {
             this.setDebugMode(this.config?.debug);
         }
+
+        this.setLocalization(this.config?.locale, ['common', 'zone-drawer']);
+        ZoneDrawerActions.forEach((e)=> {
+            e.label = LocalizationService.resolve(`ZONE_DRAWER_Actions_${e.type}`);
+        });
     }
 
     // @override
@@ -209,8 +218,8 @@ export class ZoneDrawerWidget extends BaseWidget {
 
     private resize() {
         if (this.labelsList) {
-            const rvxContainer = this.shadowRoot.querySelector('.rvx-widget-container');
-            this.labelsList.style.maxHeight = `${rvxContainer.clientHeight}px`;
+            const playerContainer = this.shadowRoot.querySelector('.player-widget-container');
+            this.labelsList.style.maxHeight = `${playerContainer.clientHeight}px`;
         }
     }
 
