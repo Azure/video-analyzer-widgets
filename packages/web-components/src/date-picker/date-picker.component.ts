@@ -111,6 +111,21 @@ export class DatePickerComponent extends FASTElement {
         this.shadowRoot.removeChild(this.shadowRoot.querySelector('#date-picker-css-link'));
     }
 
+    public initLocalization() {
+        this.setPickerDateJsLocalization();
+
+        this.resources = Localization.dictionary;
+        // Translate months
+        const monthsElements = this.shadowRoot.querySelectorAll('.ms-DatePicker-monthOption.js-changeDate');
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
+        for (let index = 0; index < monthsElements.length; index++) {
+            const element = monthsElements[index];
+            const month = parseInt(element?.getAttribute('data-month'), 10) + 1;
+            const resourcePath = `DATE_PICKER_Month_${month}`;
+            element.textContent = `${this.resources[resourcePath]}`;
+        }
+    }
+
     private createFabricDatePicker() {
         const datePickerCSS = document.createElement('link');
         datePickerCSS.setAttribute('id', 'date-picker-css-link');
@@ -166,13 +181,13 @@ export class DatePickerComponent extends FASTElement {
         if (this.datePicker?.picker?.component?.settings) {
             for (const key in this.datePicker.picker.component.settings) {
                 if (typeof this.datePicker.picker.component.settings[key] === 'string') {
-                    this.datePicker.picker.component.settings[key] = Localization.resolve(`DATE_PICKER_${key}`)
-                        || this.datePicker.picker.component.settings[key];
+                    this.datePicker.picker.component.settings[key] =
+                        Localization.resolve(`DATE_PICKER_${key}`) || this.datePicker.picker.component.settings[key];
                 } else if (typeof this.datePicker.picker.component.settings[key] === 'object') {
                     // Loop in the object and translate
                     for (const k in this.datePicker.picker.component.settings[key]) {
-                        this.datePicker.picker.component.settings[key][k] = Localization.resolve(`DATE_PICKER_${key}_${k}`)
-                            || this.datePicker.picker.component.settings[key][k];
+                        this.datePicker.picker.component.settings[key][k] =
+                            Localization.resolve(`DATE_PICKER_${key}_${k}`) || this.datePicker.picker.component.settings[key][k];
                     }
                 }
             }

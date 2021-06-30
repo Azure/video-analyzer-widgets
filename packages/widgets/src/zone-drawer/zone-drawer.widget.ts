@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
-import { customElement, DOM, observable } from '@microsoft/fast-element';
+import { customElement, observable } from '@microsoft/fast-element';
 import { DrawerEvents, IPoint } from '../../../common/drawer-canvas/drawer-canvas.definitions';
 import { guid } from '../../../common/utils/guid';
 import { DrawingColors } from '../../../styles/system-providers/ava-design-system-provider.definitions';
@@ -23,10 +23,10 @@ import {
     IZone,
     IZoneDrawerWidgetConfig,
     ZoneDrawerWidgetEvents,
-    IZoneTemplate,
     ILineZone,
     IPolygonZone,
-    ZoneDrawerMode
+    ZoneDrawerMode,
+    IZoneTemplate
 } from './zone-drawer.definitions';
 import { Logger } from '../common/logger';
 import { AvaDesignSystemProvider } from '../../../styles';
@@ -83,6 +83,13 @@ export class ZoneDrawer extends BaseWidget {
         super.connectedCallback();
 
         this.validateOrAddDesignSystem();
+
+        const designSystem = this.shadowRoot.querySelector('ava-design-system-provider') as AvaDesignSystemProvider;
+        if (designSystem) {
+            designSystem.style.width = this.width;
+            designSystem.style.height = this.height;
+        }
+
         this.isReady = true;
         const parent = this.$fastController?.element?.parentElement;
         this.resizeObserver = new ResizeObserver(() =>
@@ -96,6 +103,7 @@ export class ZoneDrawer extends BaseWidget {
     public disconnectedCallback() {
         super.disconnectedCallback();
         this.player?.removeEventListener(PlayerEvents.PLAYER_ERROR, this.onPlayerError);
+        // eslint-disable-next-line no-undef
         this.player?.removeEventListener(PlayerEvents.TOGGLE_MODE, this.onPlayerToggle as EventListener);
         this.resizeObserver.disconnect();
     }
@@ -206,6 +214,7 @@ export class ZoneDrawer extends BaseWidget {
         if (!this.player) {
             this.player = this.$fastController.element.querySelector('ava-player');
             this.player?.addEventListener(PlayerEvents.PLAYER_ERROR, this.onPlayerError.bind(this));
+            // eslint-disable-next-line no-undef
             this.player?.addEventListener(PlayerEvents.TOGGLE_MODE, this.onPlayerToggle.bind(this) as EventListener);
         }
     }

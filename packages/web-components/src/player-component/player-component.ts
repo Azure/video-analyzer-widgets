@@ -79,6 +79,7 @@ export class PlayerComponent extends FASTElement {
 
         this.resources = Localization.dictionary;
         Localization.translate(ControlPanelElementsTooltip, 'PLAYER_Tooltip_');
+        this.datePickerComponent.initLocalization();
 
         if (allowedControllers) {
             this.showCameraName = allowedControllers.indexOf(ControlPanelElements.CAMERA_NAME) > -1;
