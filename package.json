@@ -1,6 +1,6 @@
 {
     "name": "@azure/video-analyzer-widgets",
-    "version": "0.5.3",
+    "version": "0.5.4",
     "description": "A collection of widgets (web components) using Azure Video Analyzer platform capabilities and APIs",
     "main": "./dist/index.min.js",
     "typings": "./dist/npm.export.d.ts",
@@ -84,5 +84,13 @@
         "dist",
         "LICENSE"
     ],
+    "homepage": "https://github.com/Azure/video-analyzer-widgets",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Azure/video-analyzer-widgets.git"
+    },
+    "bugs": {
+        "url": "https://github.com/Azure/video-analyzer-widgets/issues"
+    },
     "sideEffects": false
 }
