@@ -46,9 +46,16 @@ export const styles = css`
         position: relative;
     }
 
+    .live-on.draw-zone-container {
+        height: calc(100% - 101px);
+    }
+
+    .live-off.draw-zone-container {
+        height: calc(100% - 153px);
+    }
+
     .draw-zone-container {
         width: 100%;
-        height: calc(100% - 165px);
         position: absolute;
         padding-bottom: 117px;
         padding-top: 49px;

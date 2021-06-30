@@ -31,7 +31,7 @@ export const styles = css`
 
     .fast-slider-svg {
         width: 10px;
-        height: 8px;
+        height: 15px;
         position: relative;
         bottom: 1px;
         right: 3px;
