@@ -92,20 +92,6 @@ export class Player extends BaseWidget {
         }
     }
 
-    public widthChanged() {
-        const designSystem = this.shadowRoot.querySelector('ava-design-system-provider') as AvaDesignSystemProvider;
-        if (designSystem) {
-            designSystem.style.width = this.width;
-        }
-    }
-
-    public heightChanged() {
-        const designSystem = this.shadowRoot.querySelector('ava-design-system-provider') as AvaDesignSystemProvider;
-        if (designSystem) {
-            designSystem.style.height = this.height;
-        }
-    }
-
     public setPlaybackAuthorization(token: string) {
         const playerComponent: PlayerComponent = this.shadowRoot.querySelector('media-player');
 

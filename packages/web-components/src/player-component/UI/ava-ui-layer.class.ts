@@ -36,7 +36,6 @@ export class AVAPlayerUILayer {
             ControlPanelElements.PREVIOUS_DAY,
             ControlPanelElements.NEXT_DAY,
             ControlPanelElements.HOURS_LABEL,
-            ControlPanelElements.SPACER,
             ControlPanelElements.META_DATA_LAYER,
             ControlPanelElements.OVERFLOW_MENU,
             ControlPanelElements.FULLSCREEN
@@ -63,6 +62,7 @@ export class AVAPlayerUILayer {
     ) {
         this.createControllers();
         this.updateAvailableControllers();
+        this.addSpacers();
     }
 
     public get uiConfiguration() {
@@ -106,6 +106,36 @@ export class AVAPlayerUILayer {
             if (index > -1) {
                 newControlPanelElements.push(iterator);
             }
+        }
+
+        this._uiConfiguration.controlPanelElements = newControlPanelElements;
+    }
+
+    private addSpacers() {
+        let hasMiddleSpacer = false;
+        let hasRightSpacer = false;
+
+        const newControlPanelElements = [];
+        for (const iterator of this._uiConfiguration.controlPanelElements) {
+            if (
+                !hasMiddleSpacer &&
+                (iterator === ControlPanelElements.PREVIOUS_DAY ||
+                    iterator === ControlPanelElements.NEXT_DAY ||
+                    iterator === ControlPanelElements.HOURS_LABEL)
+            ) {
+                newControlPanelElements.push(ControlPanelElements.SPACER);
+                hasMiddleSpacer = true;
+            } else if (
+                !hasRightSpacer &&
+                (iterator === ControlPanelElements.META_DATA_LAYER ||
+                    iterator === ControlPanelElements.OVERFLOW_MENU ||
+                    iterator === ControlPanelElements.FULLSCREEN)
+            ) {
+                newControlPanelElements.push(ControlPanelElements.SPACER);
+                hasRightSpacer = true;
+            }
+
+            newControlPanelElements.push(iterator);
         }
 
         this._uiConfiguration.controlPanelElements = newControlPanelElements;

@@ -1,10 +1,10 @@
 import { html, fixture, expect } from '@open-wc/testing';
 import { IZone, IZoneDrawerWidgetConfig } from './zone-drawer.definitions';
-import { ZoneDrawerWidget } from './zone-drawer.widget';
+import { ZoneDrawer } from './zone-drawer.widget';
 
-// ZoneDrawerWidget;
+// ZoneDrawer;
 
-// describe('ZoneDrawerWidget', () => {
+// describe('ZoneDrawer', () => {
 //     const zones: IZone[] = [
 //         {
 //             points: [
@@ -56,13 +56,13 @@ import { ZoneDrawerWidget } from './zone-drawer.widget';
 //     };
 
 //     it('passes the a11y audit', async () => {
-//         const el = await fixture<ZoneDrawerWidget>(html`<ava-zone-drawer></ava-zone-drawer>`);
+//         const el = await fixture<ZoneDrawer>(html`<ava-zone-drawer></ava-zone-drawer>`);
 
 //         await expect(el).shadowDom.to.be.accessible();
 //     });
 
 //     it('widget zones should equal the config zones length', async () => {
-//         const el = await fixture<ZoneDrawerWidget>(html`<ava-zone-drawer></ava-zone-drawer>`);
+//         const el = await fixture<ZoneDrawer>(html`<ava-zone-drawer></ava-zone-drawer>`);
 
 //         el.configure(configWithZones);
 //         el.load();
@@ -72,7 +72,7 @@ import { ZoneDrawerWidget } from './zone-drawer.widget';
 //     });
 
 //     it('labels-list elements count should equal the config zones length', async () => {
-//         const el = await fixture<ZoneDrawerWidget>(html`<ava-zone-drawer></ava-zone-drawer>`);
+//         const el = await fixture<ZoneDrawer>(html`<ava-zone-drawer></ava-zone-drawer>`);
 
 //         el.config = configWithZones;
 //         el.load();
@@ -83,7 +83,7 @@ import { ZoneDrawerWidget } from './zone-drawer.widget';
 //     });
 
 //     it('toggleDrawerMode should change isLineDrawMode', async () => {
-//         const el = await fixture<ZoneDrawerWidget>(html`<ava-zone-drawer></ava-zone-drawer>`);
+//         const el = await fixture<ZoneDrawer>(html`<ava-zone-drawer></ava-zone-drawer>`);
 
 //         const isLineDrawMode = el.isLineDrawMode;
 //         el.load();

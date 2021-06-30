@@ -1,5 +1,5 @@
 import { html, when } from '@microsoft/fast-element';
-import { ZoneDrawerWidget } from './zone-drawer.widget';
+import { ZoneDrawer } from './zone-drawer.widget';
 import { POLYGON_SVG_PATH, LINE_SVG_PATH } from '../../../styles/svg/svg.shapes';
 
 /**
@@ -8,7 +8,7 @@ import { POLYGON_SVG_PATH, LINE_SVG_PATH } from '../../../styles/svg/svg.shapes'
  */
 /* eslint-disable  @typescript-eslint/indent */
 /* eslint-disable  @typescript-eslint/no-shadow */
-export const template = html<ZoneDrawerWidget>`
+export const template = html<ZoneDrawer>`
     <template>
         <div class="zone-drawer-wrapper">
             <div class="draw-options-container">

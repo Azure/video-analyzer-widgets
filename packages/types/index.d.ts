@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
-import { Player, ZoneDrawerWidget } from '../widgets/src';
+import { Player, ZoneDrawer } from '../widgets/src';
 
 export {};
 
 declare global {
     interface IWidgets {
         player: typeof Player;
-        zoneDrawer: typeof ZoneDrawerWidget;
+        zoneDrawer: typeof ZoneDrawer;
     }
 
     interface IAva {

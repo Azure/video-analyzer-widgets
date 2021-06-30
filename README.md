@@ -89,10 +89,10 @@ The player has a series of properties as defined in the below table. Configurati
 
 There are also a couple of events that fire under various conditions. None of the events have parameters associated with them. It is important to deal with the TOKEN_EXPIRED event so that playback doesn't stop.
 
-| Name          | Parameters | Description                                       |
-| ------------- | ---------- | ------------------------------------------------- |
+| Name          | Parameters | Description                                                              |
+| ------------- | ---------- | ------------------------------------------------------------------------ |
 | TOKEN_EXPIRED | -          | Callback to invoke when Azure Video Analyzer (AVA) JWT token is expired. |
-| PLAYER_ERROR  | -          | Callback to invoke there is an error.             |
+| PLAYER_ERROR  | -          | Callback to invoke there is an error.                                    |
 
 The player has a few methods you can use in your code. These can be useful for building your own controls.
 
@@ -230,3 +230,7 @@ To use the player widget in an Angular application, you'll need to follow the st
     </template>
     ```
     Alternatively, you can create a new instance of the widget using Typescript, and add it to the DOM.
+
+#### Theme
+
+AVA widgets has two themes, default (light theme) and dark. More information [here](./packages/styles/README.MD)
