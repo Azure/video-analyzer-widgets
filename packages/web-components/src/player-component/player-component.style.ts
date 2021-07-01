@@ -149,10 +149,6 @@ export const styles = css`
         margin: 0px 9px;
     }
 
-    .prev-day-button {
-        margin-left: 93px;
-    }
-
     .prev-day-button,
     .next-day-button {
         border: 1px solid var(--secondary-stroke);

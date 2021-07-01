@@ -5,7 +5,6 @@ export const timeTooltipStyle = css`
         position: absolute;
         pointer-events: none;
         width: 1px;
-        height: 100%;
         z-index: 1;
         display: none;
     }

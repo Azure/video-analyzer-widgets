@@ -63,7 +63,6 @@ export class PlayerWrapper {
         private errorCallback: (error: shaka_player.PlayerEvents.ErrorEvent) => void,
         private allowedControllers: ControlPanelElements[]
     ) {
-
         this.resources = Localization.dictionary;
         // Install built-in polyfills to patch browser incompatibilities.
         shaka.polyfill.installAll();
@@ -140,7 +139,7 @@ export class PlayerWrapper {
         }
     }
 
-    public destroy() {
+    public async destroy() {
         // Player listeners
         this.player?.removeEventListener('error', this.onErrorEvent.bind(this));
         this.player?.removeEventListener('trackschanged', this.onTrackChange.bind(this));
@@ -181,8 +180,9 @@ export class PlayerWrapper {
         this.removeTimelineComponent();
 
         if (this.isLoaded) {
-            this.player?.unload();
-            // this.player?.destroy();
+            this.video.pause();
+            this.video.src = '';
+            await this.player?.unload();
         }
         this.isLoaded = false;
     }
@@ -212,7 +212,7 @@ export class PlayerWrapper {
     }
 
     private updateLiveButtonState() {
-        for (const element of this.controls.elements_) {
+        for (const element of this.controls?.elements_) {
             if (element?.isLiveButton) {
                 element.updateLiveState(this.isLive);
             }
