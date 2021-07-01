@@ -23,14 +23,15 @@ import {
     IZone,
     IZoneDrawerWidgetConfig,
     ZoneDrawerWidgetEvents,
-    IZoneOutput,
     ILineZone,
     IPolygonZone,
-    ZoneDrawerMode
+    ZoneDrawerMode,
+    IZoneTemplate
 } from './zone-drawer.definitions';
 import { Logger } from '../common/logger';
 import { AvaDesignSystemProvider } from '../../../styles';
 import { Localization } from './../../../common/services/localization/localization.class';
+import { PlayerEvents } from '../player';
 
 AvaDesignSystemProvider;
 ZonesViewComponent;
@@ -46,7 +47,7 @@ export const LocalizationService = Localization;
     template,
     styles
 })
-export class ZoneDrawerWidget extends BaseWidget {
+export class ZoneDrawer extends BaseWidget {
     @observable
     public zones: IZone[] = [];
     @observable
@@ -60,7 +61,7 @@ export class ZoneDrawerWidget extends BaseWidget {
     @observable
     public isLabelsListEmpty = true;
     @observable
-    public disableDrawing = false;
+    public disableDrawing = true;
 
     public config: IZoneDrawerWidgetConfig = {};
 
@@ -82,6 +83,13 @@ export class ZoneDrawerWidget extends BaseWidget {
         super.connectedCallback();
 
         this.validateOrAddDesignSystem();
+
+        const designSystem = this.shadowRoot.querySelector('ava-design-system-provider') as AvaDesignSystemProvider;
+        if (designSystem) {
+            designSystem.style.width = this.width;
+            designSystem.style.height = this.height;
+        }
+
         this.isReady = true;
         const parent = this.$fastController?.element?.parentElement;
         this.resizeObserver = new ResizeObserver(() =>
@@ -94,7 +102,9 @@ export class ZoneDrawerWidget extends BaseWidget {
 
     public disconnectedCallback() {
         super.disconnectedCallback();
-
+        this.player?.removeEventListener(PlayerEvents.PLAYER_ERROR, this.onPlayerError);
+        // eslint-disable-next-line no-undef
+        this.player?.removeEventListener(PlayerEvents.TOGGLE_MODE, this.onPlayerToggle as EventListener);
         this.resizeObserver.disconnect();
     }
 
@@ -138,7 +148,7 @@ export class ZoneDrawerWidget extends BaseWidget {
         }
 
         this.setLocalization(this.config?.locale, ['common', 'zone-drawer']);
-        ZoneDrawerActions.forEach((e)=> {
+        ZoneDrawerActions.forEach((e) => {
             e.label = LocalizationService.resolve(`ZONE_DRAWER_Actions_${e.type}`);
         });
     }
@@ -158,11 +168,38 @@ export class ZoneDrawerWidget extends BaseWidget {
 
         if (this.config?.zones) {
             for (const zone of this.config.zones) {
-                this.addZone(zone);
+                this.addZone(this.convertTemplateToZone(zone));
             }
         }
 
         this.disableDrawing = !!this.config?.disableDrawing;
+    }
+
+    private convertTemplateToZone(zoneTemplate: IPolygonZone | ILineZone) {
+        let zone: IZone = null;
+        if ((zoneTemplate as IPolygonZone).polygon) {
+            // Zone is polygon
+            const currentZone = zoneTemplate as IPolygonZone;
+            zone = {
+                points: [...currentZone.polygon],
+                name: currentZone.name,
+                id: guid(),
+                color: this.getNextColor(),
+                type: ZoneDrawerMode.Polygon
+            };
+        } else {
+            // Zone is line
+            const currentZone = zoneTemplate as ILineZone;
+            zone = {
+                points: [...currentZone.line],
+                name: currentZone.name,
+                id: guid(),
+                color: this.getNextColor(),
+                type: ZoneDrawerMode.Line
+            };
+        }
+
+        return zone;
     }
 
     private initZoneDrawComponents() {
@@ -176,6 +213,9 @@ export class ZoneDrawerWidget extends BaseWidget {
 
         if (!this.player) {
             this.player = this.$fastController.element.querySelector('ava-player');
+            this.player?.addEventListener(PlayerEvents.PLAYER_ERROR, this.onPlayerError.bind(this));
+            // eslint-disable-next-line no-undef
+            this.player?.addEventListener(PlayerEvents.TOGGLE_MODE, this.onPlayerToggle.bind(this) as EventListener);
         }
     }
 
@@ -196,6 +236,22 @@ export class ZoneDrawerWidget extends BaseWidget {
             this.polygonDrawer?.setAttribute('borderColor', this.getNextColor());
             // eslint-disable-next-line no-undef
             this.polygonDrawer?.addEventListener(DrawerEvents.COMPLETE, this.drawerComplete.bind(this) as EventListener);
+        }
+    }
+
+    private onPlayerError() {
+        this.disableDrawing = true;
+    }
+
+    private onPlayerToggle(event: CustomEvent) {
+        // Update container height
+        const zonesContainer = this.shadowRoot.querySelector('.draw-zone-container');
+        zonesContainer.classList.remove('live-on');
+        zonesContainer.classList.remove('live-off');
+        if (event.detail.isLive) {
+            zonesContainer.classList.add('live-on');
+        } else {
+            zonesContainer.classList.add('live-off');
         }
     }
 
@@ -359,8 +415,8 @@ export class ZoneDrawerWidget extends BaseWidget {
         };
     }
 
-    private getZonesOutputs(): IZoneOutput[] {
-        const outputs: IZoneOutput[] = [];
+    private getZonesOutputs(): IZoneTemplate[] {
+        const outputs: IZoneTemplate[] = [];
         for (const zone of this.zones) {
             let output: ILineZone | IPolygonZone;
             if (zone.points.length === 2) {
@@ -377,19 +433,27 @@ export class ZoneDrawerWidget extends BaseWidget {
 
     private getZoneOutputByType(type: ZoneDrawerMode, name: string, points: IPoint[]): ILineZone | IPolygonZone {
         let output: ILineZone | IPolygonZone;
+        // Go over points and remove the cursor
+        const newPoints: IPoint[] = [];
+        for (const point of points) {
+            newPoints.push({
+                x: point.x,
+                y: point.y
+            });
+        }
         switch (type) {
             case ZoneDrawerMode.Line:
                 output = {
                     '@type': '#Microsoft.VideoAnalyzer.NamedLineString',
                     name: name,
-                    line: points
+                    line: newPoints
                 };
                 break;
             case ZoneDrawerMode.Polygon:
                 output = {
                     '@type': '#Microsoft.VideoAnalyzer.NamedPolygonString',
                     name: name,
-                    polygon: points
+                    polygon: newPoints
                 };
                 break;
         }

@@ -1,4 +1,4 @@
-# Zone Drawer Component
+# Zone Drawer widget
 
 `ava-zone-drawer` is a web component implementation of a [Fast element](https://www.fast.design/).
 The zone drawer widget is allow the user to draw over a video as HTML element. There are 2 option of drawing: line or polygon.

@@ -52,6 +52,20 @@ export class BaseWidget extends FASTElement {
         this.resources = Localization.dictionary;
     }
 
+    public widthChanged() {
+        const designSystem = this.shadowRoot.querySelector('ava-design-system-provider') as AvaDesignSystemProvider;
+        if (designSystem) {
+            designSystem.style.width = this.width;
+        }
+    }
+
+    public heightChanged() {
+        const designSystem = this.shadowRoot.querySelector('ava-design-system-provider') as AvaDesignSystemProvider;
+        if (designSystem) {
+            designSystem.style.height = this.height;
+        }
+    }
+
     public load(): void {}
 
     protected init(): void {}
@@ -77,7 +91,6 @@ export class BaseWidget extends FASTElement {
             } else {
                 Logger.log('Need to import AvaDesignSystemProvider');
             }
-
         }
     }
 }
