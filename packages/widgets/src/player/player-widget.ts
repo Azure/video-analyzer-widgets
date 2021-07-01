@@ -85,6 +85,7 @@ export class Player extends BaseWidget {
     public setSource(source: ISource) {
         this.source = source;
         MediaApi.baseStream = this.source.src;
+        this.setLocalization(this.config?.locale, ['common', 'player']);
         if (this.loaded) {
             const playerComponent: PlayerComponent = this.shadowRoot.querySelector('media-player');
             playerComponent.cameraName = AvaAPi.videoName;

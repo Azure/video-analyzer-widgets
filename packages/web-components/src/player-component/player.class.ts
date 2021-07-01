@@ -211,7 +211,7 @@ export class PlayerWrapper {
     }
 
     private updateLiveButtonState() {
-        for (const element of this.controls.elements_) {
+        for (const element of this.controls?.elements_) {
             if (element?.isLiveButton) {
                 element.updateLiveState(this.isLive);
             }
