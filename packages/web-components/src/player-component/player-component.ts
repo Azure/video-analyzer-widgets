@@ -91,7 +91,7 @@ export class PlayerComponent extends FASTElement {
         if (this.player) {
             // If there was an existing error -clear state
             this.clearError();
-            this.player.destroy();
+            await this.player.destroy();
             this.player = null;
         }
 

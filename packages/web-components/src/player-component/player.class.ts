@@ -139,7 +139,7 @@ export class PlayerWrapper {
         }
     }
 
-    public destroy() {
+    public async destroy() {
         // Player listeners
         this.player?.removeEventListener('error', this.onErrorEvent.bind(this));
         this.player?.removeEventListener('trackschanged', this.onTrackChange.bind(this));
@@ -180,8 +180,9 @@ export class PlayerWrapper {
         this.removeTimelineComponent();
 
         if (this.isLoaded) {
-            this.player?.unload();
-            // this.player?.destroy();
+            this.video.pause();
+            this.video.src = '';
+            await this.player?.unload();
         }
         this.isLoaded = false;
     }

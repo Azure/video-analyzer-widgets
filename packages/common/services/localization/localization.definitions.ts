@@ -50,24 +50,24 @@ export const SupportedLocaleLanguages = {
     ko_kr: 'ko',
     'ko-kr': 'ko',
     'nl-nl': 'nl',
-    'nl': 'nl',
+    nl: 'nl',
     'cs-cz': 'cs',
-    'cs': 'cs',
+    cs: 'cs',
     'pl-pl': 'pl',
-    'pl': 'pl',
+    pl: 'pl',
     'sv-se': 'sv',
-    'sv': 'sv',
+    sv: 'sv',
     'hu-hu': 'hu',
-    'hu': 'hu'
+    hu: 'hu'
 };
 
 export const DEFAULT_LOCALE_LANGUAGE = 'en';
 
 export const SUPPORTED_LOCALES: string[] = [
-    'cs',
     'de',
     'en'
     /* 'es',
+    'cs',
     'fr',
     'hu',
     'id',
@@ -89,4 +89,4 @@ export type IComponentsType = 'common' | 'player' | 'zone-drawer';
 
 export interface IDictionary {
     [key: string]: string;
-};
+}
