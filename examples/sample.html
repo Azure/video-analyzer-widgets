@@ -29,6 +29,21 @@
       value="" />
   </div>
   <br />
+  <div>
+    <label for="startTimeInput">Start Time:</label>
+    <input id="startTimeInput"
+      style="width:1000px"
+      type="text"
+      value="28 Jun 2021 00:00:12 UTC" />
+  </div>
+  <div>
+    <label for="endTimeInput">End time:</label>
+    <input id="endTimeInput"
+      style="width:1000px"
+      type="text"
+      value="28 Jun 2021 00:01:12 UTC" />
+  </div>
+  <br />
   <button id="play"
     onclick="onPlayButtonClick()">Start Playback</button>
   <br /><br />
@@ -48,15 +63,29 @@
 
     function onPlayButtonClick() {
       const clientApiEndpointUrlInput = document.querySelector('#clientApiEndpointUrlInput');
-      const clientApiEndpointUrl = clientApiEndpointUrlInput.value || clientApiEndpointUrlInput.placeholder;
+      let clientApiEndpointUrl = clientApiEndpointUrlInput.value || clientApiEndpointUrlInput.placeholder;
       const videoNameInput = document.querySelector('#videoNameInput');
-      const videoName = videoNameInput.value || videoNameInput.placeholder;
+      let videoName = videoNameInput.value || videoNameInput.placeholder;
       const clientApiTokenInput = document.querySelector('#clientApiTokenInput');
-      const token = clientApiTokenInput.value;
+      let token = clientApiTokenInput.value;
+      clientApiEndpointUrl = "https://c60290ecafd24f02a900833bf5a888ef.api.westus2-2.videoanalyzer.azure.net";
+      token = "eyJhbGciOiJSUzI1NiIsImtpZCI6IjlENUIzRkY4RTZFQ0JEOTUwQ0RDRUNBMUI0RDBCRTdCRjQxNEU1RDEiLCJ4NXQiOiJuVnNfLU9ic3ZaVU0zT3lodE5DLWVfUVU1ZEUiLCJ0eXAiOiJKV1QifQ.eyJuYmYiOjE2MjUxNjE5NDksImV4cCI6NDEwMjQ0NDgwMCwiaWF0IjoxNjI1MTYyMjQ5LCJpc3MiOiJodHRwczovL2NvbnRvc28uY29tIiwiYXVkIjoiaHR0cHM6Ly9jNjAyOTBlY2FmZDI0ZjAyYTkwMDgzM2JmNWE4ODhlZi5hcGkud2VzdHVzMi0yLnZpZGVvYW5hbHl6ZXIuYXp1cmUubmV0L3ZpZGVvcy8qIn0.KmUNg413R_v46Z729VACSZvQQZjXijVZoZ9E0u-kmEytF5gngVV4qReb4-mjLe9_XMxVUHbJoz4ZXYp7Eye3Kg5fuRfBbSn7B67W9NDpRXAuriJ1zgW4-HLvGNJg568EAxVGFiRam0voaLfOoNbIvsL-pZwYzpXx91k7hm1dWMy1H0f75nisWWMS0KLLZu5OrQO68auaECmznPGmLvG1kIfVsqbSLqRVwpoCscIOq3NGR_lOGrvIq8Jq4hJcb9eY-pjJSelL3_tK9etn913dnyXKm6xXu-5Jd4qCKvyzuJ1_bc-FzodwelAlgdN1rrN2P-XIJLBIw1BWJUsYgCuCaA"
+      videoName = "sample-motion-video-sink-files"
+      //videoName = "sample-cvr-video-sink"
 
       const avaPlayer = document.querySelector("ava-player");
+
+      const startTimeInput = document.querySelector('#startTimeInput');
+      const endTimeInput = document.querySelector('#endTimeInput');
       avaPlayer.configure({ clientApiEndpointUrl, videoName, token, debug: true });
-      avaPlayer.load();
+
+      if (startTimeInput.value && endTimeInput.value) {
+        let startDate = new Date(startTimeInput.value);
+        let endDate = new Date(endTimeInput.value);
+        avaPlayer.load({ startTime: startDate, endTime: endDate });
+      } else {
+        avaPlayer.load();
+      }
     }
   </script>
   <script src="../dist/global.js"

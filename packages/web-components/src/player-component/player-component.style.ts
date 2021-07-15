@@ -89,15 +89,31 @@ export const styles = css`
     .shaka-video-container.live .prev-segment-button,
     .shaka-video-container.live .next-segment-button,
     .shaka-video-container.live .shaka-fast-forward-button,
-    .shaka-video-container.live .shaka-rewind-button {
+    .shaka-video-container.live .shaka-rewind-button,
+    .shaka-video-container.live .shaka-current-time {
         display: none;
     }
 
-    .shaka-video-container.vod .shaka-seek-bar-container {
+    .shaka-video-container.vod .shaka-seek-bar-container,
+    .shaka-video-container.vod .shaka-current-time {
         display: none;
     }
 
     .shaka-video-container.live .shaka-seek-bar-container {
+        top: 0px;
+    }
+
+    .shaka-video-container.clip .hours-label,
+    .shaka-video-container.clip .next-day-button,
+    .shaka-video-container.clip .prev-day-button,
+    .shaka-video-container.clip .prev-segment-button,
+    .shaka-video-container.clip .next-segment-button,
+    .shaka-video-container.clip .shaka-fast-forward-button,
+    .shaka-video-container.clip .shaka-rewind-button {
+        display: none;
+    }
+
+    .shaka-video-container.clip .shaka-seek-bar-container {
         top: 0px;
     }
 

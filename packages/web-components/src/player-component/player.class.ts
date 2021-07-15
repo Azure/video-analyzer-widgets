@@ -27,6 +27,7 @@ export class PlayerWrapper {
     public resources: IDictionary;
 
     private isLive = false;
+    private isClip = false;
     private isLoaded = false;
     private duringSegmentJump = false;
     private _accessToken = '';
@@ -204,6 +205,14 @@ export class PlayerWrapper {
         this.updateLiveButtonState();
         this.updateControlsClassList();
         return this.player.isLive();
+    }
+
+    public toggleClipMode(isClip: boolean) {
+        this.isClip = isClip;
+        this.removeTimelineComponent();
+        if (!this.isClip) {
+            this.createTimelineComponent();
+        }
     }
 
     public retryStreaming() {
@@ -533,7 +542,7 @@ export class PlayerWrapper {
         }
 
         // If not live mode, init timeline
-        if (!this.isLive) {
+        if (!this.isLive && !this.isClip) {
             // Update current time
             const displayTime = this.video?.currentTime || 0;
             this.computeClock(displayTime);
@@ -545,7 +554,7 @@ export class PlayerWrapper {
             // Wrap range element and add time tooltip
             this.avaUILayer.addLiveSeekBarTooltip(this.controls, this.computeClockForLive.bind(this));
             setTimeout(() => {
-                this.controls?.controlsContainer_?.setAttribute('shown', this.isLive);
+                this.controls?.controlsContainer_?.setAttribute('shown', this.isLive || this.isClip);
             }, 50);
         }
     }
