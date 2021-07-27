@@ -2,7 +2,15 @@ import { IExpandedTimeRange, IExpandedDate, Precision, VideoFormat } from './med
 
 export class MediaApi {
     private static _baseStream = '';
-    private static _format = VideoFormat.DASH;
+    private static _format = MediaApi.supportsMediaSource() ?  VideoFormat.DASH : VideoFormat.HLS;
+
+    public static supportsMediaSource(): boolean {
+        return !!window.MediaSource;
+    }
+
+    public static isApple(): boolean {
+        return !!navigator.vendor && navigator.vendor.includes('Apple');
+    }
 
     public static set format(value: VideoFormat) {
         MediaApi._format = value;

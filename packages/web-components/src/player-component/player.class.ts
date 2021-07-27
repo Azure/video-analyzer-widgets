@@ -17,6 +17,7 @@ import { extractRealTimeFromISO } from './UI/time.utils';
 import { shaka } from './index';
 import { Localization } from './../../../common/services/localization/localization.class';
 import { IDictionary } from '../../../common/services/localization/localization.definitions';
+import { MediaApi } from '../../../common/services/media/media-api.class';
 
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 TimelineComponent;
@@ -518,18 +519,25 @@ export class PlayerWrapper {
 
     private async onTrackChange() {
         // Get player manifest
-        const manifest = this.player.getManifest();
-        const variant = manifest.variants[0];
-        const stream = variant.video || variant.audio;
-        if (!stream.segmentIndex) {
-            await stream.createSegmentIndex();
-        }
-        this.segmentIndex = stream.segmentIndex;
+        if (!MediaApi.supportsMediaSource()) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const date = (this.video as any).getStartDate();
+            Logger.log(`video start date is ${date} ${date.getUTCDate()}`);
+            this.timestampOffset = date.getTime();
+        } else {
+            const manifest = this.player.getManifest();
+            const variant = manifest.variants[0];
+            const stream = variant.video || variant.audio;
+            if (!stream.segmentIndex) {
+                await stream.createSegmentIndex();
+            }
 
-        const index = this.segmentIndex.find(0) || 0;
-        const reference = this.segmentIndex.get(index);
-        if (reference) {
-            this.timestampOffset = reference.timestampOffset * -1000;
+            this.segmentIndex = stream.segmentIndex;
+            const index = this.segmentIndex.find(0) || 0;
+            const reference = this.segmentIndex.get(index);
+            if (reference) {
+                this.timestampOffset = reference.timestampOffset * -1000;
+            }
         }
 
         // If not live mode, init timeline
