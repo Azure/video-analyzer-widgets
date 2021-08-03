@@ -36,6 +36,7 @@ export class AVAPlayerUILayer {
             ControlPanelElements.PREVIOUS_DAY,
             ControlPanelElements.NEXT_DAY,
             ControlPanelElements.HOURS_LABEL,
+            ControlPanelElements.Time_And_Duration,
             ControlPanelElements.META_DATA_LAYER,
             ControlPanelElements.OVERFLOW_MENU,
             ControlPanelElements.FULLSCREEN

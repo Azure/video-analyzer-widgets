@@ -3,7 +3,7 @@ import { keyCodeEnter, keyCodeSpace } from '@microsoft/fast-web-utilities';
 import { MediaApi } from '../../../common/services/media/media-api.class';
 import { IAvailableMediaResponse, IExpandedDate, Precision } from '../../../common/services/media/media.definitions';
 import { HttpError } from '../../../common/utils/http.error';
-import { PlayerEvents, WidgetGeneralError } from '../../../widgets/src';
+import { PlayerEvents, WidgetGeneralError, IClipTimeRange } from '../../../widgets/src';
 import { DatePickerComponent } from '../date-picker';
 import { DatePickerEvent, IDatePickerRenderEvent } from '../date-picker/date-picker.definitions';
 import { PlayerWrapper } from './player.class';
@@ -37,6 +37,7 @@ export class PlayerComponent extends FASTElement {
     @attr public showTimestamp = true;
 
     @observable public isLive = false;
+    @observable public isClip = false;
     @observable public isFullscreen = false;
     @observable public currentDate: Date = null;
     @observable public currentAllowedDays: string[] = [];
@@ -62,6 +63,7 @@ export class PlayerComponent extends FASTElement {
     private hasLiveData = false;
     private afterInit = false;
     private connected = false;
+    private clipTimeRange: IClipTimeRange;
 
     public constructor() {
         super();
@@ -72,7 +74,12 @@ export class PlayerComponent extends FASTElement {
         this.classList.add('loading');
     }
 
-    public async init(allowCrossSiteCredentials = true, accessToken?: string, allowedControllers?: ControlPanelElements[]) {
+    public async init(
+        allowCrossSiteCredentials = true,
+        accessToken?: string,
+        allowedControllers?: ControlPanelElements[],
+        clipTimeRange?: IClipTimeRange
+    ) {
         if (!this.connected) {
             return;
         }
@@ -113,6 +120,13 @@ export class PlayerComponent extends FASTElement {
 
         if (!MediaApi.baseStream) {
             return;
+        }
+        if (clipTimeRange?.startTime && clipTimeRange?.endTime) {
+            this.isClip = true;
+            this.clipTimeRange = clipTimeRange;
+        } else {
+            this.isClip = false;
+            this.clipTimeRange = null;
         }
         await this.initializeAvailableMedia();
 
@@ -264,6 +278,10 @@ export class PlayerComponent extends FASTElement {
                 this.currentYear = this.currentDate.getUTCFullYear();
                 this.currentMonth = this.currentDate.getUTCMonth() + 1;
                 this.currentDay = this.currentDate.getUTCDate();
+                this.isClip = false;
+                if (this.player) {
+                    this.player?.toggleClipMode(this.isClip);
+                }
                 this.updateVODStream(true);
             }
             // eslint-disable-next-line no-undef
@@ -418,10 +436,14 @@ export class PlayerComponent extends FASTElement {
             month: nextDay.getUTCMonth() + 1,
             day: nextDay.getUTCDate()
         };
-        this.vodStream = MediaApi.getVODStream({
-            start: start,
-            end: end
-        });
+        if (this.isClip) {
+            this.vodStream = MediaApi.getVODStreamForCLip(this.clipTimeRange.startTime, this.clipTimeRange.endTime);
+        } else {
+            this.vodStream = MediaApi.getVODStream({
+                start: start,
+                end: end
+            });
+        }
 
         this.liveStream = MediaApi.getLiveStream();
 
@@ -433,6 +455,9 @@ export class PlayerComponent extends FASTElement {
             this.player.availableSegments = segments;
             this.player.vodStream = this.vodStream;
             this.player.liveStream = this.liveStream;
+            if (this.isClip) {
+                this.player.toggleClipMode(this.isClip);
+            }
             const isStreamLive = await this.player.toggleLiveMode(this.isLive);
             // If we loaded the live stream at first time, update has live data
             if (init && this.isLive) {

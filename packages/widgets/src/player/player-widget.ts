@@ -11,6 +11,7 @@ import { ControlPanelElements, ISource } from '../../../web-components/src/playe
 import { Logger } from '../common/logger';
 import { AvaDesignSystemProvider } from '../../../styles';
 import { HttpError } from '../../../common/utils/http.error';
+import { IClipTimeRange } from './definitions/player-config.definitions';
 
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 AvaDesignSystemProvider;
@@ -27,6 +28,7 @@ export class Player extends BaseWidget {
     private loaded = false;
     private source: ISource = null;
     private allowedControllers: ControlPanelElements[] = null;
+    private clipTimeRange: IClipTimeRange;
 
     public constructor(config: IAvaPlayerConfig) {
         super(config);
@@ -103,9 +105,15 @@ export class Player extends BaseWidget {
         AvaAPi.fallbackAPIBase = apiBase;
     }
 
-    public async load() {
+    public async load(clipTimeRange?: IClipTimeRange) {
         this.loaded = true;
         const playerComponent: PlayerComponent = this.shadowRoot.querySelector('media-player');
+
+        if (clipTimeRange) {
+            this.clipTimeRange = clipTimeRange;
+        } else {
+            this.clipTimeRange = null;
+        }
 
         // If set source state
         if (this.source) {
@@ -128,7 +136,7 @@ export class Player extends BaseWidget {
                         // Authorize video
                         await AvaAPi.authorize();
                         playerComponent.cameraName = AvaAPi.videoName;
-                        playerComponent.init(true, '', this.allowedControllers);
+                        playerComponent.init(true, '', this.allowedControllers, this.clipTimeRange);
                     }
                 })
                 .catch((error) => {
