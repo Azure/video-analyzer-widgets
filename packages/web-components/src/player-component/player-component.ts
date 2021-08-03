@@ -124,6 +124,9 @@ export class PlayerComponent extends FASTElement {
         if (clipTimeRange?.startTime && clipTimeRange?.endTime) {
             this.isClip = true;
             this.clipTimeRange = clipTimeRange;
+        } else {
+            this.isClip = false;
+            this.clipTimeRange = null;
         }
         await this.initializeAvailableMedia();
 

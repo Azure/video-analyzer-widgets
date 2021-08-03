@@ -12,14 +12,14 @@
     <input id="clientApiEndpointUrlInput"
       style="width:700px"
       type="text"
-      placeholder="https://9354cd75eef44462a3d91eba5ffa5358.api.westcentralus-private1.videoanalyzer.azure.net" />
+      placeholder="client api endpoint url" />
   </div>
   <div>
     <label for="videoNameInput">Video name:</label>
     <input id="videoNameInput"
       style="width:300px"
       type="text"
-      placeholder="rodrigb-toronto2" />
+      placeholder="video name" />
   </div>
   <div>
     <label for="clientApiTokenInput">JWT Auth Token for Client API:</label>
@@ -34,14 +34,16 @@
     <input id="startTimeInput"
       style="width:1000px"
       type="text"
-      value="28 Jun 2021 00:00:12 UTC" />
+      value=""
+      placeholder="start time in UTC eg: 13 May 2021 19:59:00 UTC" />
   </div>
   <div>
     <label for="endTimeInput">End time:</label>
     <input id="endTimeInput"
       style="width:1000px"
       type="text"
-      value="28 Jun 2021 00:01:12 UTC" />
+      value=""
+      placeholder="end time in UTC eg: 13 May 2021 20:02:00 UTC" />/>
   </div>
   <br />
   <button id="play"
@@ -63,11 +65,11 @@
 
     function onPlayButtonClick() {
       const clientApiEndpointUrlInput = document.querySelector('#clientApiEndpointUrlInput');
-      let clientApiEndpointUrl = clientApiEndpointUrlInput.value || clientApiEndpointUrlInput.placeholder;
+      const clientApiEndpointUrl = clientApiEndpointUrlInput.value;
       const videoNameInput = document.querySelector('#videoNameInput');
-      let videoName = videoNameInput.value || videoNameInput.placeholder;
+      const videoName = videoNameInput.value;
       const clientApiTokenInput = document.querySelector('#clientApiTokenInput');
-      let token = clientApiTokenInput.value;
+      const token = clientApiTokenInput.value;
 
       const avaPlayer = document.querySelector("ava-player");
 

@@ -111,6 +111,8 @@ export class Player extends BaseWidget {
 
         if (clipTimeRange) {
             this.clipTimeRange = clipTimeRange;
+        } else {
+            this.clipTimeRange = null;
         }
 
         // If set source state
