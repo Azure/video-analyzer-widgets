@@ -43,7 +43,7 @@
       style="width:1000px"
       type="text"
       value=""
-      placeholder="end time in UTC eg: 13 May 2021 20:02:00 UTC" />/>
+      placeholder="end time in UTC eg: 13 May 2021 20:02:00 UTC" />
   </div>
   <br />
   <button id="play"
@@ -61,6 +61,10 @@
       avaPlayer.addEventListener('TOKEN_EXPIRED', () => {
         console.log('token expired');
       });
+
+      // avaPlayer.addEventListener('CLOCK_TIME_UPDATED', (event) => {
+      //   console.log(`event type:${event.type}, event detail: ${event.detail}`);
+      // });
     }
 
     function onPlayButtonClick() {
