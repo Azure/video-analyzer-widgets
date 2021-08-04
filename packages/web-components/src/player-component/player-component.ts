@@ -627,12 +627,13 @@ export class PlayerComponent extends FASTElement {
             }
         }
     }
-    private timeUpdateCallBack(time: string) {
-        if (this.time === time || !time) {
+    private timeUpdateCallBack(time: Date, timeString: string) {
+        if (this.time === timeString || !timeString) {
             return;
         }
 
-        this.time = time;
+        this.time = timeString;
+        this.$emit(PlayerEvents.CLOCK_TIME_UPDATED, time);
         this.timeContainer.innerText = this.time;
     }
 }
