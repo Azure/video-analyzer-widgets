@@ -1,97 +1,105 @@
-<html>
-
-<head>
-  <title>Sample Player Widget</title>
-  <style></style>
-</head>
-
+<!DOCTYPE html>
+<html lang="en">
+<head></head>
 <body>
-  <h1>Example Player widget</h1>
-  <div>
-    <label for="clientApiEndpointUrlInput">Client API Endpoint:</label>
-    <input id="clientApiEndpointUrlInput"
-      style="width:700px"
-      type="text"
-      placeholder="client api endpoint url" />
-  </div>
-  <div>
-    <label for="videoNameInput">Video name:</label>
-    <input id="videoNameInput"
-      style="width:300px"
-      type="text"
-      placeholder="video name" />
-  </div>
-  <div>
-    <label for="clientApiTokenInput">JWT Auth Token for Client API:</label>
-    <input id="clientApiTokenInput"
-      style="width:1000px"
-      type="text"
-      value="" />
-  </div>
-  <br />
-  <div>
-    <label for="startTimeInput">Start Time:</label>
-    <input id="startTimeInput"
-      style="width:1000px"
-      type="text"
-      value=""
-      placeholder="start time in UTC eg: 13 May 2021 19:59:00 UTC" />
-  </div>
-  <div>
-    <label for="endTimeInput">End time:</label>
-    <input id="endTimeInput"
-      style="width:1000px"
-      type="text"
-      value=""
-      placeholder="end time in UTC eg: 13 May 2021 20:02:00 UTC" />
-  </div>
-  <br />
-  <button id="play"
-    onclick="onPlayButtonClick()">Start Playback</button>
-  <br /><br />
-  <div id="container"
-    style="width:720px"
-    class="widget-container">
-    <ava-player>
-    </ava-player>
-  </div>
-  <script>
-    function onAVALoad() {
-      const avaPlayer = document.querySelector("ava-player");
-      avaPlayer.addEventListener('TOKEN_EXPIRED', () => {
-        console.log('token expired');
-      });
+    <script>
+        function onAVALoad() {
+            const avaPlayer = document.querySelector("ava-player");
+            avaPlayer.configure({
+                token: '',
+                clientApiEndpointUrl: '',
+                videoName: ''
+            });
+            avaPlayer.load();
+        }
+    </script>
+    <script type="module"
+        async
+        src="https://unpkg.com/@azure/video-analyzer-widgets"
+        onload="onAVALoad()"></script>
 
-      // avaPlayer.addEventListener('CLOCK_TIME_UPDATED', (event) => {
-      //   console.log(`event type:${event.type}, event detail: ${event.detail}`);
-      // });
-    }
+    <h1>Example Player widget</h1>
+    <div>
+        <label for="clientApiEndpointUrlInput">Client API Endpoint:</label>
+        <input id="clientApiEndpointUrlInput"
+        style="width:700px"
+        type="text"
+        placeholder="client api endpoint url" />
+    </div>
+    <div>
+        <label for="videoNameInput">Video name:</label>
+        <input id="videoNameInput"
+        style="width:300px"
+        type="text"
+        placeholder="video name" />
+    </div>
+    <div>
+        <label for="clientApiTokenInput">JWT Auth Token for Client API:</label>
+        <input id="clientApiTokenInput"
+        style="width:1000px"
+        type="text"
+        value="" />
+    </div>
+    <br />
+    <div>
+        <label for="startTimeInput">Start Time:</label>
+        <input id="startTimeInput"
+        style="width:1000px"
+        type="text"
+        value=""
+        placeholder="start time in UTC eg: 8 May 2021 19:59:00 UTC" />
+    </div>
+    <div>
+        <label for="endTimeInput">End time:</label>
+        <input id="endTimeInput"
+        style="width:1000px"
+        type="text"
+        value=""
+        placeholder="end time in UTC eg: 8 May 2021 20:02:00 UTC" />
+    </div>
+    <br />
+    <button id="play"
+        onclick="onPlayButtonClick()">Start Playback</button>
+    <br /><br />
+    <div id="container" 
+        style="width:720px; visibility:hidden"
+        class="widget-container"
+        >
+        <ava-player></ava-player>
+    </div>
+        <script>
+            function onAVALoad() {
+              const avaPlayer = document.querySelector("ava-player");
+              avaPlayer.addEventListener('TOKEN_EXPIRED', () => {
+                console.log('token expired');
+              });
+            }
+        
+            function onPlayButtonClick() {
+              const clientApiEndpointUrlInput = document.querySelector('#clientApiEndpointUrlInput');
+              const clientApiEndpointUrl = clientApiEndpointUrlInput.value;
+              const videoNameInput = document.querySelector('#videoNameInput');
+              const videoName = videoNameInput.value;
+              const clientApiTokenInput = document.querySelector('#clientApiTokenInput');
+              const token = clientApiTokenInput.value;
+        
+              const avaPlayer = document.querySelector("ava-player");
+        
+              const startTimeInput = document.querySelector('#startTimeInput');
+              const endTimeInput = document.querySelector('#endTimeInput');
 
-    function onPlayButtonClick() {
-      const clientApiEndpointUrlInput = document.querySelector('#clientApiEndpointUrlInput');
-      const clientApiEndpointUrl = clientApiEndpointUrlInput.value;
-      const videoNameInput = document.querySelector('#videoNameInput');
-      const videoName = videoNameInput.value;
-      const clientApiTokenInput = document.querySelector('#clientApiTokenInput');
-      const token = clientApiTokenInput.value;
+              const container = document.getElementById('container');
 
-      const avaPlayer = document.querySelector("ava-player");
-
-      const startTimeInput = document.querySelector('#startTimeInput');
-      const endTimeInput = document.querySelector('#endTimeInput');
-      avaPlayer.configure({ clientApiEndpointUrl, videoName, token, debug: true });
-
-      if (startTimeInput.value && endTimeInput.value) {
-        let startDate = new Date(startTimeInput.value);
-        let endDate = new Date(endTimeInput.value);
-        avaPlayer.load({ startTime: startDate, endTime: endDate });
-      } else {
-        avaPlayer.load();
-      }
-    }
-  </script>
-  <script src="../dist/global.js"
-    onload="onAVALoad()"></script>
+              avaPlayer.configure({ clientApiEndpointUrl, videoName, token, debug: true });
+              container.style.visibility = 'visible';
+              if (startTimeInput.value && endTimeInput.value) {
+                let startDate = new Date(startTimeInput.value);
+                let endDate = new Date(endTimeInput.value);
+                
+                avaPlayer.load({ startTime: startDate, endTime: endDate });
+              } else {
+                avaPlayer.load();
+              }
+            }
+        </script>
 </body>
-
-</html>
