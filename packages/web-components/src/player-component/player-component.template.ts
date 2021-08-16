@@ -45,7 +45,7 @@ export const template = html<PlayerComponent>`
             class="video-container 
             ${(x) => (x.isLive ? 'live' : x.isClip ? 'clip' : 'vod')} ${(x) => (x.isFullscreen ? 'fullscreen' : '')}"
         >
-            <video class="video-element"></video>
+            <video class="video-element" muted></video>
         </div>
     </template>
 `;
