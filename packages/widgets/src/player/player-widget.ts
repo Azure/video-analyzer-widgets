@@ -29,6 +29,7 @@ export class Player extends BaseWidget {
     private source: ISource = null;
     private allowedControllers: ControlPanelElements[] = null;
     private clipTimeRange: IClipTimeRange;
+    private isMuted: boolean;
 
     public constructor(config: IAvaPlayerConfig) {
         super(config);
@@ -136,7 +137,7 @@ export class Player extends BaseWidget {
                         // Authorize video
                         await AvaAPi.authorize();
                         playerComponent.cameraName = AvaAPi.videoName;
-                        playerComponent.init(true, '', this.allowedControllers, this.clipTimeRange);
+                        playerComponent.init(true, '', this.allowedControllers, this.clipTimeRange, this.isMuted);
                     }
                 })
                 .catch((error) => {
@@ -160,6 +161,7 @@ export class Player extends BaseWidget {
             Logger.debugMode = !!this._config?.debug;
         }
         this.allowedControllers = this.config.playerControllers;
+        this.isMuted = this.config?.isMuted ?? true;
     }
 
     private handelFallback(error: HttpError) {

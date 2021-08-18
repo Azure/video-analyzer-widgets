@@ -28,7 +28,13 @@
       type="text"
       value="" />
   </div>
-  <br />
+  <div>
+    <label for="muteInput">Muted:</label>
+    <select id="muteInput">
+      <option value="true" selected>Yes</option>
+      <option value="false">No</option>
+    </select>
+  </div>
   <div>
     <label for="startTimeInput">Start Time:</label>
     <input id="startTimeInput"
@@ -74,12 +80,14 @@
       const videoName = videoNameInput.value;
       const clientApiTokenInput = document.querySelector('#clientApiTokenInput');
       const token = clientApiTokenInput.value;
+      const muteInput = document.querySelector('#muteInput');
+      const mute = (muteInput.value==="true") ? true : false;
 
       const avaPlayer = document.querySelector("ava-player");
 
       const startTimeInput = document.querySelector('#startTimeInput');
       const endTimeInput = document.querySelector('#endTimeInput');
-      avaPlayer.configure({ clientApiEndpointUrl, videoName, token, debug: true });
+      avaPlayer.configure({ clientApiEndpointUrl, videoName, token, debug: true, isMuted: mute});
 
       if (startTimeInput.value && endTimeInput.value) {
         let startDate = new Date(startTimeInput.value);

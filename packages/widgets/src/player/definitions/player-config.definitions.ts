@@ -21,6 +21,10 @@ export interface IAvaPlayerConfig extends IWidgetBaseConfig {
      * AVA player controllers - adjust ava player controllers
      */
     playerControllers?: ControlPanelElements[];
+    /**
+     * AVA player is muted or not
+     */
+    isMuted?: boolean;
 }
 
 export interface IClipTimeRange {
