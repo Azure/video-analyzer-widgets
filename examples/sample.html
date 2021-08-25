@@ -12,14 +12,14 @@
     <input id="clientApiEndpointUrlInput"
       style="width:700px"
       type="text"
-      placeholder="https://9354cd75eef44462a3d91eba5ffa5358.api.westcentralus-private1.videoanalyzer.azure.net" />
+      placeholder="client api endpoint url" />
   </div>
   <div>
     <label for="videoNameInput">Video name:</label>
     <input id="videoNameInput"
       style="width:300px"
       type="text"
-      placeholder="rodrigb-toronto2" />
+      placeholder="video name" />
   </div>
   <div>
     <label for="clientApiTokenInput">JWT Auth Token for Client API:</label>
@@ -27,6 +27,23 @@
       style="width:1000px"
       type="text"
       value="" />
+  </div>
+  <br />
+  <div>
+    <label for="startTimeInput">Start Time:</label>
+    <input id="startTimeInput"
+      style="width:1000px"
+      type="text"
+      value=""
+      placeholder="start time in UTC eg: 13 May 2021 19:59:00 UTC" />
+  </div>
+  <div>
+    <label for="endTimeInput">End time:</label>
+    <input id="endTimeInput"
+      style="width:1000px"
+      type="text"
+      value=""
+      placeholder="end time in UTC eg: 13 May 2021 20:02:00 UTC" />
   </div>
   <br />
   <button id="play"
@@ -44,19 +61,33 @@
       avaPlayer.addEventListener('TOKEN_EXPIRED', () => {
         console.log('token expired');
       });
+
+      // avaPlayer.addEventListener('CLOCK_TIME_UPDATED', (event) => {
+      //   console.log(`event type:${event.type}, event detail: ${event.detail}`);
+      // });
     }
 
     function onPlayButtonClick() {
       const clientApiEndpointUrlInput = document.querySelector('#clientApiEndpointUrlInput');
-      const clientApiEndpointUrl = clientApiEndpointUrlInput.value || clientApiEndpointUrlInput.placeholder;
+      const clientApiEndpointUrl = clientApiEndpointUrlInput.value;
       const videoNameInput = document.querySelector('#videoNameInput');
-      const videoName = videoNameInput.value || videoNameInput.placeholder;
+      const videoName = videoNameInput.value;
       const clientApiTokenInput = document.querySelector('#clientApiTokenInput');
       const token = clientApiTokenInput.value;
 
       const avaPlayer = document.querySelector("ava-player");
+
+      const startTimeInput = document.querySelector('#startTimeInput');
+      const endTimeInput = document.querySelector('#endTimeInput');
       avaPlayer.configure({ clientApiEndpointUrl, videoName, token, debug: true });
-      avaPlayer.load();
+
+      if (startTimeInput.value && endTimeInput.value) {
+        let startDate = new Date(startTimeInput.value);
+        let endDate = new Date(endTimeInput.value);
+        avaPlayer.load({ startTime: startDate, endTime: endDate });
+      } else {
+        avaPlayer.load();
+      }
     }
   </script>
   <script src="../dist/global.js"

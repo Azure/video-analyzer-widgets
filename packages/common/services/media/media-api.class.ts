@@ -45,6 +45,20 @@ export class MediaApi {
         return `${this.baseStream}/manifest(format=${format}${range_query})${extension}`;
     }
 
+    public static getVODStreamForCLip(startTime: Date, endTime: Date): string {
+        const format = MediaApi._format === VideoFormat.HLS ? 'm3u8-cmaf' : 'mpd-time-cmaf';
+        const extension = MediaApi._format === VideoFormat.HLS ? '.m3u8' : '.mpd';
+
+        let range_query = '';
+        const startTimeISOFormat = startTime && startTime.toISOString();
+        const endTimeISOFormat = endTime && endTime.toISOString();
+        if (startTimeISOFormat && endTimeISOFormat) {
+            range_query = `,starttime=${startTimeISOFormat},endtime=${endTimeISOFormat}`;
+        }
+
+        return `${this.baseStream}/manifest(format=${format}${range_query})${extension}`;
+    }
+
     public static getAvailableMedia(
         precision: Precision,
         range: IExpandedTimeRange = null,

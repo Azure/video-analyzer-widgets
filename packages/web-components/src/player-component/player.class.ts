@@ -28,6 +28,7 @@ export class PlayerWrapper {
     public resources: IDictionary;
 
     private isLive = false;
+    private isClip = false;
     private isLoaded = false;
     private duringSegmentJump = false;
     private _accessToken = '';
@@ -58,7 +59,7 @@ export class PlayerWrapper {
     public constructor(
         private video: HTMLVideoElement,
         private videoContainer: HTMLElement,
-        private timeUpdateCallback: (time: string) => void,
+        private timeUpdateCallback: (time: Date, timeString: string) => void,
         private isLiveCallback: (isLive: boolean) => void,
         private changeDayCallBack: (isNext: boolean) => void,
         private errorCallback: (error: shaka_player.PlayerEvents.ErrorEvent) => void,
@@ -205,6 +206,14 @@ export class PlayerWrapper {
         this.updateLiveButtonState();
         this.updateControlsClassList();
         return this.player.isLive();
+    }
+
+    public toggleClipMode(isClip: boolean) {
+        this.isClip = isClip;
+        this.removeTimelineComponent();
+        if (!this.isClip) {
+            this.createTimelineComponent();
+        }
     }
 
     public retryStreaming() {
@@ -541,10 +550,10 @@ export class PlayerWrapper {
         }
 
         // If not live mode, init timeline
-        if (!this.isLive) {
+        if (!this.isLive && !this.isClip) {
             // Update current time
             const displayTime = this.video?.currentTime || 0;
-            this.computeClock(displayTime);
+            this.getClockTimeString(displayTime);
 
             // Update timeline
             this.removeTimelineComponent();
@@ -553,7 +562,7 @@ export class PlayerWrapper {
             // Wrap range element and add time tooltip
             this.avaUILayer.addLiveSeekBarTooltip(this.controls, this.computeClockForLive.bind(this));
             setTimeout(() => {
-                this.controls?.controlsContainer_?.setAttribute('shown', this.isLive);
+                this.controls?.controlsContainer_?.setAttribute('shown', this.isLive || this.isClip);
             }, 50);
         }
     }
@@ -587,8 +596,7 @@ export class PlayerWrapper {
             return;
         }
         const displayTime = this.video?.currentTime || 0;
-        const time = this.computeClock(displayTime);
-        this.timeUpdateCallback(time);
+        this.timeUpdateCallback(this.getClockTime(displayTime), this.getClockTimeString(displayTime));
 
         // if theres a timeline - update time
         if (this.timelineComponent) {
@@ -617,11 +625,18 @@ export class PlayerWrapper {
         }
     }
 
-    private computeClock(time: number, showDate = true) {
+    private getClockTime(time: number) {
         if (!this.timestampOffset) {
+            return null;
+        }
+        return new Date(this.timestampOffset + time * 1000);
+    }
+
+    private getClockTimeString(time: number, showDate = true) {
+        this.date = this.getClockTime(time);
+        if (this.date == null) {
             return '';
         }
-        this.date = new Date(this.timestampOffset + time * 1000);
         const utcDate = `${this.date.getUTCMonth() + 1}-${this.date.getUTCDate()}-${this.date.getUTCFullYear()}`;
         const hour = this.date.getUTCHours();
         const minutes = this.date.getUTCMinutes();
@@ -631,11 +646,11 @@ export class PlayerWrapper {
     }
 
     private computeClockWithSegmentOffset(time: number) {
-        return this.computeClock(time + this.getVideoOffset(), false);
+        return this.getClockTimeString(time + this.getVideoOffset(), false);
     }
 
     private computeClockForLive(time: number) {
-        return this.computeClock(time, false);
+        return this.getClockTimeString(time, false);
     }
 
     private onErrorEvent(event: shaka_player.PlayerEvents.ErrorEvent) {
