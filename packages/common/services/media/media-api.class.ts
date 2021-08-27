@@ -2,6 +2,7 @@ import { IExpandedTimeRange, IExpandedDate, Precision, VideoFormat } from './med
 
 export class MediaApi {
     private static _baseStream = '';
+    private static _liveStream: string | undefined;
     private static _format = MediaApi.supportsMediaSource() ?  VideoFormat.DASH : VideoFormat.HLS;
 
     public static supportsMediaSource(): boolean {
@@ -13,18 +14,26 @@ export class MediaApi {
     }
 
     public static set format(value: VideoFormat) {
-        MediaApi._format = value;
+        this._format = value;
     }
 
     public static get baseStream() {
-        return MediaApi._baseStream;
+        return this._baseStream;
     }
 
     public static set baseStream(value) {
-        MediaApi._baseStream = value;
+        this._baseStream = value;
+    }
+
+    public static set liveStream(value: string) {
+        this._liveStream = value;
     }
 
     public static getLiveStream(): string {
+        // if RTSP is present use RTSP URL.
+        if (this._liveStream && this.supportsMediaSource()) {
+            return this._liveStream;
+        }
         const format = MediaApi._format === VideoFormat.HLS ? 'm3u8-cmaf' : 'mpd-time-cmaf';
         const extension = MediaApi._format === VideoFormat.HLS ? '.m3u8' : '.mpd';
 
