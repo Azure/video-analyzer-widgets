@@ -18,6 +18,7 @@ import { shaka } from './index';
 import { Localization } from './../../../common/services/localization/localization.class';
 import { IDictionary } from '../../../common/services/localization/localization.definitions';
 import { MediaApi } from '../../../common/services/media/media-api.class';
+import { MimeType } from './player-component.definitions';
 
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 TimelineComponent;
@@ -107,6 +108,13 @@ export class PlayerWrapper {
         return this._mimeType;
     }
 
+    public getMimeType(url: string): MimeType | undefined {
+        if (url.startsWith('ws')) {
+            return 'application/rtsp';
+        }
+        return undefined;
+    }
+
     public pause() {
         this.video.pause();
     }
@@ -126,12 +134,7 @@ export class PlayerWrapper {
     public async load(url: string) {
         this.isLoaded = false;
         try {
-            if (this.mimeType) {
-                await this.player.load(url, null, this.mimeType);
-            } else {
-                await this.player.load(url);
-            }
-
+            await this.player.load(url, null, this.getMimeType(url));
             this.isLoaded = true;
             // Auto play video
             this.video.play();
