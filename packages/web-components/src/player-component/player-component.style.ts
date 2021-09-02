@@ -221,6 +221,22 @@ export const styles = css`
         color: var(--action);
     }
 
+    #player-container {
+        display: flex;
+    }
+
+    #metadata-timelines-panel {
+        width: 50%;
+        padding: 20px;
+    }
+
+    #main-player {
+        width: 50%;
+    }
+
+    .hidden {
+        display: none;
+    }
     ${timeTooltipStyle}
 
     ${secondaryAccentButtonStyle}

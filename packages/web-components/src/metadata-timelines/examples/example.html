@@ -1,0 +1,63 @@
+<html>
+
+<body>
+    <script src="../../../../../dist/index.js"></script>
+    <h1>Metadata Timelines Component</h1>
+
+    <div>
+        <ava-design-system-provider theme="dark">
+            <h1>Metadata Timelines Example</h1>
+            <metadata-timelines id='metadata-timelines-with-zoom'></metadata-timelines>
+        </ava-design-system-provider>
+    </div>
+</body>
+
+<script>(function () {
+        window.addEventListener('TIMELINE_CURRENT_TIME_CHANGE', (s) => {
+            console.log('TIMELINE_CURRENT_TIME_CHANGE');
+            console.log(s);
+            const metadataTimelines = document.querySelector('metadata-timelines');
+            metadataTimelines.currentTime = s.detail.time;
+        })
+        const catSegments = [
+            { startSeconds: 10, endSeconds: 3600 },
+            { startSeconds: 4500, endSeconds: 5000 },
+            { startSeconds: 20000, endSeconds: 30000 },
+            { startSeconds: 55000, endSeconds: 57000 },
+            { startSeconds: 60600, endSeconds: 64200 },
+            { startSeconds: 80000, endSeconds: 81000 }
+        ];
+
+        const dogSegments = [
+            { startSeconds: 200, endSeconds: 3000 },
+            { startSeconds: 8000, endSeconds: 8500 },
+            { startSeconds: 12000, endSeconds: 30000 },
+            { startSeconds: 60000, endSeconds: 78000 },
+        ];
+
+        const segmentConfig = [
+            {
+                tag: "cat",
+                segments: catSegments
+            },
+            {
+                tag: "dog",
+                segments: dogSegments
+            }
+        ];
+
+        const date = new Date();
+        date.setMonth(1);
+        date.setDate(1);
+
+        const config = {
+            data: segmentConfig,
+            duration: 86400,
+            date: date
+        };
+
+        document.querySelector('metadata-timelines').config = config;
+    })()
+</script>
+
+</html>

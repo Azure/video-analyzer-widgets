@@ -9,3 +9,4 @@ export * from './zones-view';
 export * from './editable-text-field';
 export * from './actions-menu';
 export * from './layer-label';
+export * from './metadata-timelines';

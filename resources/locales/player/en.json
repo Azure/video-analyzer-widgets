@@ -2,5 +2,6 @@
     "PLAYER_Retry": "Retry",
     "PLAYER_ErrorFetchSegments": "error fetching available segments",
     "PLAYER_CannotParseMedia": "Cannot parse available media",
-    "PLAYER_BrowserNotSupported": "Browser not supported!"
+    "PLAYER_BrowserNotSupported": "Browser not supported!",
+    "PLAYER_ErrorFetchMetadata": "Error fetching timed metadata segments"
 }

@@ -100,13 +100,11 @@ export class TimelineComponent extends FASTElement {
         const parent = this.$fastController?.element?.parentElement;
         this.resizeObserver = new ResizeObserver(this.resize.bind(this));
         this.resizeObserver.observe(parent || this.$fastController?.element);
-
         this.scrollContainer = this.shadowRoot.querySelector('.scroll-container');
     }
 
     public disconnectedCallback() {
         super.disconnectedCallback();
-
         this.resizeObserver?.disconnect();
         this.fastSlider?.removeEventListener('change', this.fastSliderChange);
         this.segmentsTimeline?.removeEventListener(SegmentsTimelineEvents.SEGMENT_CLICKED, null);
@@ -134,10 +132,13 @@ export class TimelineComponent extends FASTElement {
         return this.segmentsTimeline?.getPreviousSegment(returnStartTime);
     }
 
+    public getSegmentFromTime(time: number) {
+        return this.segmentsTimeline.getSegmentFromTime(time);
+    }
+
     public segmentsTimelineConnectedCallback() {
         setTimeout(() => {
-            this.segmentsTimeline = <SegmentsTimelineComponent>this.shadowRoot?.querySelector('media-segments-timeline');
-
+            this.segmentsTimeline = <SegmentsTimelineComponent>this.shadowRoot?.querySelector('#media-segments-timeline-' + this.id);
             this.segmentsTimeline?.addEventListener(SegmentsTimelineEvents.SEGMENT_CLICKED, ((event: CustomEvent<IUISegmentEventData>) => {
                 this.$emit(TimelineEvents.SEGMENT_CHANGE, event.detail);
                 // eslint-disable-next-line no-undef
@@ -248,10 +249,8 @@ export class TimelineComponent extends FASTElement {
         if (!this.timeRulerReady || !this.segmentsTimelineReady) {
             return;
         }
-
         this.initSegmentsTimeline();
         this.initTimeRuler();
-
         if (!this.config?.disableZoom) {
             setTimeout(() => {
                 this.initSlider();

@@ -12,14 +12,17 @@ import { shaka as shaka_player } from './shaka';
 import { AVAPlayerUILayer } from './UI/ava-ui-layer.class';
 import { BoundingBoxDrawer } from './UI/bounding-box.class';
 import { extractRealTime } from './UI/time.utils';
-import { createTimelineSegments } from './UI/timeline.utils';
+import { createMetadataTimelineSegmentsDictionary, createMetadataTimelinesSegments, createTimelineSegments } from './UI/timeline.utils';
 import { extractRealTimeFromISO } from './UI/time.utils';
 import { shaka } from './index';
 import { Localization } from './../../../common/services/localization/localization.class';
 import { IDictionary } from '../../../common/services/localization/localization.definitions';
+import { IAvailableMetadataResponse, IMetadataTimelinesConfig } from '../metadata-timelines/metadata-timelines.definitions';
+import { MetadataTimelines } from '../metadata-timelines';
 
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 TimelineComponent;
+MetadataTimelines;
 Localization;
 
 export class PlayerWrapper {
@@ -38,6 +41,7 @@ export class PlayerWrapper {
     private firstSegmentStartSeconds: number;
     private date: Date;
     private timelineComponent: TimelineComponent;
+    private _metadataTimelinesComponent: MetadataTimelines;
     private boundingBoxesDrawer: BoundingBoxDrawer;
     private segmentIndex: shaka_player.media.SegmentIndex;
     private onSegmentChangeListenerRef: (event: CustomEvent) => void;
@@ -45,6 +49,7 @@ export class PlayerWrapper {
     private _liveStream: string = '';
     private _vodStream: string = '';
     private _availableSegments: IAvailableMediaResponse = null;
+    private _timedMetadataSegments: IAvailableMetadataResponse = null;
     private currentSegment: IUISegment = null;
     private isPlaying: boolean = false;
     private _stallDetectionTimer: number | null = null;
@@ -82,6 +87,10 @@ export class PlayerWrapper {
         this._availableSegments = value;
     }
 
+    public set timedMetadataSegments(value: IAvailableMetadataResponse) {
+        this._timedMetadataSegments = value;
+    }
+
     public set liveStream(value: string) {
         this._liveStream = value;
     }
@@ -104,6 +113,10 @@ export class PlayerWrapper {
 
     public get mimeType() {
         return this._mimeType;
+    }
+
+    public set metadataTimelines(metadataTimelines: MetadataTimelines) {
+        this._metadataTimelinesComponent = metadataTimelines;
     }
 
     public pause() {
@@ -179,7 +192,6 @@ export class PlayerWrapper {
 
         // Remove timeline
         this.removeTimelineComponent();
-
         if (this.isLoaded) {
             this.player?.unload();
             // this.player?.destroy();
@@ -242,6 +254,8 @@ export class PlayerWrapper {
     private createTimelineComponent() {
         const segments = createTimelineSegments(this._availableSegments);
 
+        const metadataSegments = createMetadataTimelineSegmentsDictionary(this._timedMetadataSegments);
+
         const date = new Date(this.date.getUTCFullYear(), this.date.getUTCMonth(), this.date.getUTCDate(), 0, 0, 0);
 
         const enableZoom = this.allowedControllers ? this.allowedControllers.indexOf(ControlPanelElements.TIMELINE_ZOOM) > -1 : true;
@@ -259,6 +273,7 @@ export class PlayerWrapper {
         this.timelineComponent.addEventListener(TimelineEvents.SEGMENT_CHANGE, this.onSegmentChangeListenerRef as EventListener);
         // eslint-disable-next-line no-undef
         this.timelineComponent.addEventListener(TimelineEvents.SEGMENT_START, this.onSegmentStart.bind(this) as EventListener);
+        this._metadataTimelinesComponent.addEventListener(TimelineEvents.CURRENT_TIME_CHANGE, this.onCurrentTimeChange.bind(this) as EventListener);
         this.timelineComponent.config = timelineConfig;
 
         // We expect server to return 404 on manifest requests that turn out to be empty,
@@ -268,6 +283,32 @@ export class PlayerWrapper {
             'createTimelineComponent: setting firstSegmentStartSeconds to ' + `${firstSegmentStartSeconds}, ` + this.getSeekRangeString()
         );
         this.firstSegmentStartSeconds = firstSegmentStartSeconds;
+    }
+
+    private initMetadataTimelinesComponent() {
+        const segments = createMetadataTimelinesSegments(this._timedMetadataSegments);
+        const date = new Date(this.date.getUTCFullYear(), this.date.getUTCMonth(), this.date.getUTCDate(), 0, 0, 0);
+        const metadataTimelinesConfig : IMetadataTimelinesConfig = {
+            data: segments,
+            date: date,
+            duration: 86400, // day duration in seconds
+        }
+        this._metadataTimelinesComponent.config = metadataTimelinesConfig;
+    }
+
+    private onCurrentTimeChange(event: CustomEvent<IUISegmentEventData>) {
+        event.stopPropagation();
+        const segmentEventData = event.detail;
+        if (segmentEventData && this.timelineComponent) {
+            const segmentMatch = this.timelineComponent.getSegmentFromTime(segmentEventData.time);
+            this.currentSegment = segmentMatch.segment;
+            const newCurrentTime = segmentMatch.time + this.getVideoOffset();
+            Logger.log(`onCurrentTimeChange: jump to ${newCurrentTime}, ` + this.getSeekRangeString());
+            this.video.currentTime = newCurrentTime;
+            if (this.isPlaying) {
+                this.video.play();
+            }
+        }
     }
 
     private onSegmentStart(event: CustomEvent<IUISegmentEventData>) {
@@ -325,6 +366,7 @@ export class PlayerWrapper {
             currentTime = this.timelineComponent.getPreviousSegmentTime() || currentTime;
         }
         this.timelineComponent.currentTime = currentTime;
+        this._metadataTimelinesComponent.currentTime = currentTime;
         Logger.log(`jump segment: jump to ${currentTime}`);
     }
 
@@ -541,6 +583,8 @@ export class PlayerWrapper {
             // Update timeline
             this.removeTimelineComponent();
             this.createTimelineComponent();
+            this.initMetadataTimelinesComponent();
+            this._metadataTimelinesComponent.classList.remove('hidden');
         } else {
             // Wrap range element and add time tooltip
             this.avaUILayer.addLiveSeekBarTooltip(this.controls, this.computeClockForLive.bind(this));
@@ -606,6 +650,7 @@ export class PlayerWrapper {
                 Logger.log(`onTimeSeekUpdate: jump to previous segment ${currentTime}`);
             }
             this.timelineComponent.currentTime = currentTime;
+            this._metadataTimelinesComponent.currentTime = currentTime;
         }
     }
 

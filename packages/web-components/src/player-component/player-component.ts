@@ -1,6 +1,7 @@
 import { attr, customElement, FASTElement, observable } from '@microsoft/fast-element';
 import { keyCodeEnter, keyCodeSpace } from '@microsoft/fast-web-utilities';
 import { MediaApi } from '../../../common/services/media/media-api.class';
+import { AvaAPi } from '../../../common/services/auth/ava-api.class';
 import { IAvailableMediaResponse, IExpandedDate, Precision } from '../../../common/services/media/media.definitions';
 import { HttpError } from '../../../common/utils/http.error';
 import { PlayerEvents, WidgetGeneralError } from '../../../widgets/src';
@@ -14,9 +15,12 @@ import { getPlayerErrorString, getShakaPlayerErrorString } from './player-compon
 import { Localization } from './../../../common/services/localization/localization.class';
 import { IDictionary } from '../../../common/services/localization/localization.definitions';
 import { Logger } from './../../../widgets/src/common/logger';
+import { IAvailableMetadataResponse } from '../metadata-timelines/metadata-timelines.definitions';
+import { MetadataTimelines } from '../metadata-timelines';
 
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 DatePickerComponent;
+MetadataTimelines;
 Localization;
 
 /**
@@ -76,7 +80,9 @@ export class PlayerComponent extends FASTElement {
         if (!this.connected) {
             return;
         }
-
+        if (this.shadowRoot.querySelector('metadata-timelines-panel')) {
+            this.shadowRoot.querySelector('metadata-timelines-panel').classList.add('hidden');
+        }
         this.resources = Localization.dictionary;
         Localization.translate(ControlPanelElementsTooltip, 'PLAYER_Tooltip_');
 
@@ -109,14 +115,15 @@ export class PlayerComponent extends FASTElement {
             this.player.accessToken = accessToken;
         }
         this.player.allowCrossCred = allowCrossSiteCredentials;
-
         if (!MediaApi.baseStream) {
             return;
         }
+        this.player.metadataTimelines = this.shadowRoot?.querySelector<MetadataTimelines>('metadata-timelines');
         await this.initializeAvailableMedia();
 
         // Add loading mode
         this.classList.remove('loading');
+        this.shadowRoot?.querySelector('#metadata-timelines-panel').classList.remove('hidden');
     }
 
     public setPlaybackAuthorization(accessToken: string) {
@@ -173,7 +180,6 @@ export class PlayerComponent extends FASTElement {
         }
 
         this.afterInit = true;
-
         this.currentDate = date;
         this.datePickerComponent.inputDate = date.toUTCString();
         this.updateVODStream(false, true);
@@ -348,6 +354,19 @@ export class PlayerComponent extends FASTElement {
         }
     }
 
+    private async fetchTimedMetadataSegments(startTime: string, endTime: string): Promise<IAvailableMetadataResponse> {
+        try {
+            const timedMetadataSegments = await AvaAPi.getTimedMetadata(
+                startTime,
+                endTime,
+            );
+            return await timedMetadataSegments.json();
+        } catch (error) {
+            Logger.log(this.resources.PLAYER_ErrorFetchMetadata);
+            return null;
+        }
+    }
+
     private async selectNextDay() {
         // Get next day
         const startDate = new Date(this.currentYear, this.currentMonth - 1, this.currentDay + 1, 0, 0, 0);
@@ -405,6 +424,7 @@ export class PlayerComponent extends FASTElement {
             return;
         }
         // Load vod stream
+        const today = new Date(Date.UTC(this.currentYear, this.currentMonth - 1, this.currentDay));
         const nextDay = new Date(Date.UTC(this.currentYear, this.currentMonth - 1, this.currentDay + 1));
         const start: IExpandedDate = {
             year: this.currentYear,
@@ -426,9 +446,12 @@ export class PlayerComponent extends FASTElement {
         this.isLive = this.hasLiveData ? !VODMode : false;
         // Get segments
         const segments = await this.fetchAvailableSegments(start, end);
+        const timedMetadataSegments = await this.fetchTimedMetadataSegments(today.toISOString(), nextDay.toISOString());
+
         // Switch to VOD
         if (this.player) {
             this.player.availableSegments = segments;
+            this.player.timedMetadataSegments = timedMetadataSegments;
             this.player.vodStream = this.vodStream;
             this.player.liveStream = this.liveStream;
             const isStreamLive = await this.player.toggleLiveMode(this.isLive);

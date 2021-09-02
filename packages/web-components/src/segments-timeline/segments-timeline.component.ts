@@ -220,6 +220,37 @@ export class SegmentsTimelineComponent extends FASTElement {
         return 0;
     }
 
+    public getSegmentFromTime(time: number): IUISegmentEventData {
+        // Find segments corresponding to the given time
+        // If no corresponding segment, use the next or the first segment available
+        for (let index = this.config?.data?.segments.length - 1; index >= 0; index--) {
+            const segment = this.config?.data?.segments[index];
+            // Find current segment
+            if (segment?.startSeconds <= time && segment?.endSeconds >= time) {
+                this.timelineProgress.activeSegment = segment;
+                const result : IUISegmentEventData = {
+                    segment: segment,
+                    time: time,
+                }
+                return result;
+            } else if (segment?.startSeconds >= time) {
+                // If no segment correspond to the given time, find the next segment
+                this.timelineProgress.activeSegment = segment;
+                const result : IUISegmentEventData = {
+                    segment: segment,
+                    time: segment.startSeconds,
+                }
+                return result;
+            }
+        }
+        this.timelineProgress.activeSegment = this.config?.data?.segments[0];
+        const result : IUISegmentEventData = {
+            segment: this.config?.data?.segments[0],
+            time: this.config?.data?.segments[0].startSeconds
+        }
+        return result;
+    }
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     public get bar(): any {
         return this.timelineProgress?.rootElement;

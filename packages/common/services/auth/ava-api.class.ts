@@ -60,6 +60,17 @@ export class AvaAPi {
         return fetch(url, { headers });
     }
 
+    public static getTimedMetadata(
+        startTime: string,
+        endTime: string
+    ): Promise<Response> {
+        const url = `${this.apiBase}/videos/${this.videoName}/events?api-version=${this.apiVersion}&$filter=starttime%20ge%20${startTime}%20and%20endtime%20le%20${endTime}`;
+        const headers = { 'Content-Type': 'application/json' };
+        headers['Authorization'] = `Bearer ${TokenHandler.avaAPIToken}`;
+        return fetch(url, { headers });
+    }
+
+
     public static get fallbackAPIBase() {
         return AvaAPi._fallbackAPIBase;
     }
