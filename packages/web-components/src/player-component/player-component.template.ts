@@ -1,3 +1,4 @@
+
 import { html, when } from '@microsoft/fast-element';
 import { PlayerComponent } from '.';
 
@@ -45,10 +46,7 @@ export const template = html<PlayerComponent>`
             class="video-container 
             ${(x) => (x.isLive ? 'live' : x.isClip ? 'clip' : 'vod')} ${(x) => (x.isFullscreen ? 'fullscreen' : '')}"
         >
-            <video
-                class="video-element"
-                :muted="${(x) => x.isMuted}"
-            ></video>
+            <video crossorign="use-credentials" playsinline class="video-element" :muted="${(x) => x.isMuted}"></video>
         </div>
     </template>
 `;
