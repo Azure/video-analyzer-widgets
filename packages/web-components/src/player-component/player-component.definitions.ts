@@ -1,4 +1,4 @@
-export type MimeType = 'video/mp4' | 'application/dash+xml' | 'application/vnd.apple.mpegurl';
+export type MimeType = 'video/mp4' | 'application/dash+xml' | 'application/vnd.apple.mpegurl' | 'application/rtsp';
 
 export interface ISource {
     // Authentication Token for the player.
