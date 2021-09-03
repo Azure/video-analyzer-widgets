@@ -90,17 +90,14 @@ export const styles = css`
     .shaka-video-container.live .next-segment-button,
     .shaka-video-container.live .shaka-fast-forward-button,
     .shaka-video-container.live .shaka-rewind-button,
-    .shaka-video-container.live .shaka-current-time {
+    .shaka-video-container.live .shaka-current-time,
+    .shaka-video-container.live .shaka-seek-bar-container {
         display: none;
     }
 
     .shaka-video-container.vod .shaka-seek-bar-container,
     .shaka-video-container.vod .shaka-current-time {
         display: none;
-    }
-
-    .shaka-video-container.live .shaka-seek-bar-container {
-        top: 0px;
     }
 
     .shaka-video-container.clip .hours-label,

@@ -51,6 +51,7 @@ export class PlayerComponent extends FASTElement {
     @observable private currentYear: number = 0;
     @observable private currentMonth: number = 0;
     @observable private currentDay: number = 0;
+    @observable public isMuted: boolean;
 
     public player: PlayerWrapper;
     public datePickerComponent: DatePickerComponent;
@@ -78,7 +79,8 @@ export class PlayerComponent extends FASTElement {
         allowCrossSiteCredentials = true,
         accessToken?: string,
         allowedControllers?: ControlPanelElements[],
-        clipTimeRange?: IClipTimeRange
+        clipTimeRange?: IClipTimeRange,
+        isMuted?: boolean
     ) {
         if (!this.connected) {
             return;
@@ -93,6 +95,7 @@ export class PlayerComponent extends FASTElement {
             this.showDatePicker = allowedControllers.indexOf(ControlPanelElements.DATE_PICKER) > -1;
             this.showTimestamp = allowedControllers.indexOf(ControlPanelElements.TIMESTAMP) > -1;
         }
+        this.isMuted = isMuted ?? true;
 
         // Reload player
         if (this.player) {
