@@ -113,7 +113,8 @@ export class PlayerComponent extends FASTElement {
             this.toggleLiveModeCallBack.bind(this),
             this.changeDayCallBack.bind(this),
             this.handleShakaError.bind(this),
-            allowedControllers
+            allowedControllers,
+            this.clickLiveCallBack.bind(this)
         );
 
         if (accessToken) {
@@ -344,6 +345,25 @@ export class PlayerComponent extends FASTElement {
         this.$emit(PlayerEvents.TOGGLE_MODE, { isLive: isLive });
     }
 
+    private clickLiveCallBack(isLive: boolean) {
+        this.isLive = isLive;
+        this.currentYear = parseFloat(this.currentAllowedYears[this.currentAllowedYears.length - 1]);
+        this.currentMonth = parseFloat(this.currentAllowedMonths[this.currentAllowedMonths.length - 1]);
+        this.currentDay = parseFloat(this.currentAllowedDays[this.currentAllowedDays.length - 1]);
+        const date = new Date(Date.UTC(this.currentYear, this.currentMonth - 1, this.currentDay));
+        this.currentDate = date;
+        this.datePickerComponent.inputDate = date.toUTCString();
+        this.datePickerComponent.inputDateChanged();
+
+        if (!isLive){
+            this.clickLiveUpdateVODStream();
+        }
+
+        this.classList.add(this.isLive ? LiveState.ON : LiveState.OFF);
+        this.classList.remove(!this.isLive ? LiveState.ON : LiveState.OFF);
+        this.$emit(PlayerEvents.TOGGLE_MODE, { isLive: isLive });
+    }
+
     private async fetchAvailableSegments(startDate: IExpandedDate, end: IExpandedDate): Promise<IAvailableMediaResponse> {
         try {
             const availableHours = await MediaApi.getAvailableMedia(
@@ -446,6 +466,58 @@ export class PlayerComponent extends FASTElement {
                 start: start,
                 end: end
             });
+        }
+
+        this.liveStream = MediaApi.getLiveStream();
+
+        this.isLive = this.hasLiveData ? !VODMode : false;
+        // Get segments
+        const segments = await this.fetchAvailableSegments(start, end);
+        // Switch to VOD
+        if (this.player) {
+            this.player.availableSegments = segments;
+            this.player.vodStream = this.vodStream;
+            this.player.liveStream = this.liveStream;
+            if (this.isClip) {
+                this.player.toggleClipMode(this.isClip);
+            }
+            const isStreamLive = await this.player.toggleLiveMode(this.isLive);
+            // If we loaded the live stream at first time, update has live data
+            if (init && this.isLive) {
+                await this.updateLiveStateAfterStreamLoad(isStreamLive);
+            }
+        }
+        this.classList.add(this.isLive ? 'live-on' : 'live-off');
+        this.classList.remove(!this.isLive ? 'live-on' : 'live-off');
+    }
+
+    private async clickLiveUpdateVODStream(VODMode: boolean = true, init = false) {
+        if (!this.afterInit) {
+            return;
+        }
+        // Load vod stream
+        const nextDay = new Date(Date.UTC(this.currentYear, this.currentMonth - 1, this.currentDay + 1));
+        const start: IExpandedDate = {
+            year: this.currentYear,
+            month: this.currentMonth,
+            day: this.currentDay
+            // day: 1
+        };
+        const end: IExpandedDate = {
+            year: nextDay.getUTCFullYear(),
+            month: nextDay.getUTCMonth() + 1,
+            day: nextDay.getUTCDate()
+            // day: 2
+        };
+        if (this.isClip) {
+            this.vodStream = MediaApi.getVODStreamForCLip(this.clipTimeRange.startTime, this.clipTimeRange.endTime);
+        } else {
+            this.vodStream = MediaApi.getVODStream(
+                {
+                start: start,
+                end: end
+            }
+            );
         }
 
         this.liveStream = MediaApi.getLiveStream();

@@ -64,7 +64,8 @@ export class PlayerWrapper {
         private isLiveCallback: (isLive: boolean) => void,
         private changeDayCallBack: (isNext: boolean) => void,
         private errorCallback: (error: shaka_player.PlayerEvents.ErrorEvent) => void,
-        private allowedControllers: ControlPanelElements[]
+        private allowedControllers: ControlPanelElements[],
+        private onClickLiveCallback: (isLive: boolean) => void
     ) {
         this.resources = Localization.dictionary;
         // Install built-in polyfills to patch browser incompatibilities.
@@ -192,6 +193,24 @@ export class PlayerWrapper {
         this.isLoaded = false;
     }
 
+    public async onClickLive(isLive: boolean) {
+        this.isLive = isLive;
+        this.onClickLiveCallback(this.isLive);
+        if (isLive) {
+            await this.load(this._liveStream);
+            this.removeTimelineComponent();
+            this.video.play();
+        } else {
+            await this.load(this._vodStream);
+        }
+        if (this.boundingBoxesDrawer) {
+            this.boundingBoxesDrawer.clearInstances();
+        }
+
+        this.updateLiveButtonState();
+        this.updateControlsClassList();
+        return this.player.isLive();
+    }
     public async toggleLiveMode(isLive: boolean) {
         this.isLive = isLive;
         if (isLive) {
@@ -352,7 +371,7 @@ export class PlayerWrapper {
     private async init() {
         this.avaUILayer = new AVAPlayerUILayer(
             shaka,
-            this.toggleLiveMode.bind(this),
+            this.onClickLive.bind(this),
             this.toggleBodyTracking.bind(this),
             this.onClickNextDay.bind(this),
             this.onClickPrevDay.bind(this),
