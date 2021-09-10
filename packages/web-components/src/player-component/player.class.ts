@@ -65,7 +65,7 @@ export class PlayerWrapper {
         private changeDayCallBack: (isNext: boolean) => void,
         private errorCallback: (error: shaka_player.PlayerEvents.ErrorEvent) => void,
         private allowedControllers: ControlPanelElements[],
-        private onClickLiveCallback: (isLive: boolean) => void
+        private onClickLiveCallback: () => void
     ) {
         this.resources = Localization.dictionary;
         // Install built-in polyfills to patch browser incompatibilities.
@@ -195,7 +195,9 @@ export class PlayerWrapper {
 
     public async onClickLive(isLive: boolean) {
         this.isLive = isLive;
-        this.onClickLiveCallback(this.isLive);
+        if (!isLive) {
+            this.onClickLiveCallback();
+        }
         if (isLive) {
             await this.load(this._liveStream);
             this.removeTimelineComponent();
@@ -206,11 +208,12 @@ export class PlayerWrapper {
         if (this.boundingBoxesDrawer) {
             this.boundingBoxesDrawer.clearInstances();
         }
+        this.isLiveCallback(this.isLive);
 
         this.updateLiveButtonState();
         this.updateControlsClassList();
-        return this.player.isLive();
     }
+
     public async toggleLiveMode(isLive: boolean) {
         this.isLive = isLive;
         if (isLive) {
