@@ -196,14 +196,11 @@ export class PlayerWrapper {
     public async onClickLive(isLive: boolean) {
         this.isLive = isLive;
         if (!isLive) {
-            this.onClickLiveCallback();
-        }
-        if (isLive) {
+            await this.onClickLiveCallback();
+        } else {
             await this.load(this._liveStream);
             this.removeTimelineComponent();
             this.video.play();
-        } else {
-            await this.load(this._vodStream);
         }
         if (this.boundingBoxesDrawer) {
             this.boundingBoxesDrawer.clearInstances();
@@ -559,19 +556,7 @@ export class PlayerWrapper {
             Logger.log(`video start date is ${date} ${date.getUTCDate()}`);
             this.timestampOffset = date.getTime();
         } else {
-            const manifest = this.player.getManifest();
-            const variant = manifest.variants[0];
-            const stream = variant.video || variant.audio;
-            if (!stream.segmentIndex) {
-                await stream.createSegmentIndex();
-            }
-
-            this.segmentIndex = stream.segmentIndex;
-            const index = this.segmentIndex.find(0) || 0;
-            const reference = this.segmentIndex.get(index);
-            if (reference) {
-                this.timestampOffset = reference.timestampOffset * -1000;
-            }
+            await this.updateTimeUpdateOffset();
         }
 
         // If not live mode, init timeline
@@ -589,6 +574,22 @@ export class PlayerWrapper {
             setTimeout(() => {
                 this.controls?.controlsContainer_?.setAttribute('shown', this.isLive || this.isClip);
             }, 50);
+        }
+    }
+
+    private async updateTimeUpdateOffset() {
+        const manifest = this.player.getManifest();
+        const variant = manifest.variants[0];
+        const stream = variant.video || variant.audio;
+        if (!stream.segmentIndex) {
+            await stream.createSegmentIndex();
+        }
+
+        this.segmentIndex = stream.segmentIndex;
+        const index = this.segmentIndex.find(0) || 0;
+        const reference = this.segmentIndex.get(index);
+        if (reference) {
+            this.timestampOffset = reference.timestampOffset * -1000;
         }
     }
 
