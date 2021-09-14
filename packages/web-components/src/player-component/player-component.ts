@@ -345,35 +345,37 @@ export class PlayerComponent extends FASTElement {
         this.$emit(PlayerEvents.TOGGLE_MODE, { isLive: isLive });
     }
 
-    private async clickLiveCallBack() {
-        this.currentYear = parseFloat(this.currentAllowedYears[this.currentAllowedYears.length - 1]);
-        this.currentMonth = parseFloat(this.currentAllowedMonths[this.currentAllowedMonths.length - 1]);
-        this.currentDay = parseFloat(this.currentAllowedDays[this.currentAllowedDays.length - 1]);
-        const date = new Date(Date.UTC(this.currentYear, this.currentMonth - 1, this.currentDay));
-        this.currentDate = date;
-        this.datePickerComponent.inputDate = date.toUTCString();
-        this.datePickerComponent.inputDateChanged();
-
-        const nextDay = new Date(Date.UTC(this.currentYear, this.currentMonth - 1, this.currentDay + 1));
-        const start: IExpandedDate = {
-            year: this.currentYear,
-            month: this.currentMonth,
-            day: this.currentDay
-        };
-        const end: IExpandedDate = {
-            year: nextDay.getUTCFullYear(),
-            month: nextDay.getUTCMonth() + 1,
-            day: nextDay.getUTCDate()
-        };
-        this.vodStream = MediaApi.getVODStream({
-            start: start,
-            end: end
-        });
-        const segments = await this.fetchAvailableSegments(start, end);
-        if (this.player) {
-            this.player.availableSegments = segments;
-            this.player.vodStream = this.vodStream;
-            await this.player.load(this.vodStream);
+    private async clickLiveCallBack(isLive: boolean) {
+        if (isLive){
+            this.currentYear = parseFloat(this.currentAllowedYears[this.currentAllowedYears.length - 1]);
+            this.currentMonth = parseFloat(this.currentAllowedMonths[this.currentAllowedMonths.length - 1]);
+            this.currentDay = parseFloat(this.currentAllowedDays[this.currentAllowedDays.length - 1]);
+            const date = new Date(Date.UTC(this.currentYear, this.currentMonth - 1, this.currentDay));
+            this.currentDate = date;
+            this.datePickerComponent.inputDate = date.toUTCString();
+            this.datePickerComponent.inputDateChanged();  
+        } else {
+            const nextDay = new Date(Date.UTC(this.currentYear, this.currentMonth - 1, this.currentDay + 1));
+            const start: IExpandedDate = {
+                year: this.currentYear,
+                month: this.currentMonth,
+                day: this.currentDay
+            };
+            const end: IExpandedDate = {
+                year: nextDay.getUTCFullYear(),
+                month: nextDay.getUTCMonth() + 1,
+                day: nextDay.getUTCDate()
+            };
+            this.vodStream = MediaApi.getVODStream({
+                start: start,
+                end: end
+            });
+            const segments = await this.fetchAvailableSegments(start, end);
+            if (this.player) {
+                this.player.availableSegments = segments;
+                this.player.vodStream = this.vodStream;
+                await this.player.load(this.vodStream);
+            } 
         }
     }
 
