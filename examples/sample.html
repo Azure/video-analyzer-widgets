@@ -31,7 +31,8 @@
   <div>
     <label for="muteInput">Muted:</label>
     <select id="muteInput">
-      <option value="true" selected>Yes</option>
+      <option value="true"
+        selected>Yes</option>
       <option value="false">No</option>
     </select>
   </div>
@@ -81,13 +82,13 @@
       const clientApiTokenInput = document.querySelector('#clientApiTokenInput');
       const token = clientApiTokenInput.value;
       const muteInput = document.querySelector('#muteInput');
-      const mute = (muteInput.value==="true") ? true : false;
+      const mute = (muteInput.value === "true") ? true : false;
 
       const avaPlayer = document.querySelector("ava-player");
 
       const startTimeInput = document.querySelector('#startTimeInput');
       const endTimeInput = document.querySelector('#endTimeInput');
-      avaPlayer.configure({ clientApiEndpointUrl, videoName, token, debug: true, isMuted: mute});
+      avaPlayer.configure({ clientApiEndpointUrl, videoName, token, debug: true, isMuted: mute });
 
       if (startTimeInput.value && endTimeInput.value) {
         let startDate = new Date(startTimeInput.value);
@@ -100,7 +101,6 @@
   </script>
   <script src="../dist/global.js"
     onload="onAVALoad()"></script>
-  <script src="/node_modules/shaka-rtsp/dist/shaka_rtsp.min.js"></script>
   <script>
     mediaStreamLibrary.utils.setLoggingOutput(true, true)
     mediaStreamLibrary.utils.setNpmDebug(true, ['-msl:h264depay'])

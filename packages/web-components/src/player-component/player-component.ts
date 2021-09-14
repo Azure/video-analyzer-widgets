@@ -47,11 +47,11 @@ export class PlayerComponent extends FASTElement {
     @observable public errorString = '';
     @observable public hasError = false;
     @observable public showRetryButton = false;
+    @observable public isMuted: boolean;
     @observable public resources: IDictionary;
     @observable private currentYear: number = 0;
     @observable private currentMonth: number = 0;
     @observable private currentDay: number = 0;
-    @observable public isMuted: boolean;
 
     public player: PlayerWrapper;
     public datePickerComponent: DatePickerComponent;
@@ -113,7 +113,8 @@ export class PlayerComponent extends FASTElement {
             this.toggleLiveModeCallBack.bind(this),
             this.changeDayCallBack.bind(this),
             this.handleShakaError.bind(this),
-            allowedControllers
+            allowedControllers,
+            this.clickLiveCallBack.bind(this)
         );
 
         if (accessToken) {
@@ -121,7 +122,7 @@ export class PlayerComponent extends FASTElement {
         }
         this.player.allowCrossCred = allowCrossSiteCredentials;
 
-        if (!MediaApi.baseStream) {
+        if (!MediaApi.baseStream && !MediaApi.liveStream) {
             return;
         }
         if (clipTimeRange?.startTime && clipTimeRange?.endTime) {
@@ -342,6 +343,38 @@ export class PlayerComponent extends FASTElement {
         this.classList.add(this.isLive ? LiveState.ON : LiveState.OFF);
         this.classList.remove(!this.isLive ? LiveState.ON : LiveState.OFF);
         this.$emit(PlayerEvents.TOGGLE_MODE, { isLive: isLive });
+    }
+
+    private async clickLiveCallBack() {
+        this.currentYear = parseFloat(this.currentAllowedYears[this.currentAllowedYears.length - 1]);
+        this.currentMonth = parseFloat(this.currentAllowedMonths[this.currentAllowedMonths.length - 1]);
+        this.currentDay = parseFloat(this.currentAllowedDays[this.currentAllowedDays.length - 1]);
+        const date = new Date(Date.UTC(this.currentYear, this.currentMonth - 1, this.currentDay));
+        this.currentDate = date;
+        this.datePickerComponent.inputDate = date.toUTCString();
+        this.datePickerComponent.inputDateChanged();
+
+        const nextDay = new Date(Date.UTC(this.currentYear, this.currentMonth - 1, this.currentDay + 1));
+        const start: IExpandedDate = {
+            year: this.currentYear,
+            month: this.currentMonth,
+            day: this.currentDay
+        };
+        const end: IExpandedDate = {
+            year: nextDay.getUTCFullYear(),
+            month: nextDay.getUTCMonth() + 1,
+            day: nextDay.getUTCDate()
+        };
+        this.vodStream = MediaApi.getVODStream({
+            start: start,
+            end: end
+        });
+        const segments = await this.fetchAvailableSegments(start, end);
+        if (this.player) {
+            this.player.availableSegments = segments;
+            this.player.vodStream = this.vodStream;
+            await this.player.load(this.vodStream);
+        }
     }
 
     private async fetchAvailableSegments(startDate: IExpandedDate, end: IExpandedDate): Promise<IAvailableMediaResponse> {

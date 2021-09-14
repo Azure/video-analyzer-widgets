@@ -10,8 +10,11 @@ export interface ISource {
     // allow cross site credentials
     allowCrossSiteCredentials?: boolean;
 
-    // Source Url
-    src: string;
+    // archive Source Url
+    archiveSrc: string;
+
+    // RTSP Source Url
+    rtspSrc: string;
 }
 
 export enum ControlPanelElements {
