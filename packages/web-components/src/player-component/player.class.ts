@@ -54,6 +54,7 @@ export class PlayerWrapper {
     private _currentDate: Date;
     private _firstVideoError: number = 0;
     private _numVideoErrors: number = 0;
+    private _currentDate: Date;
 
     private readonly OFFSET_MULTIPLAYER = 1000;
     private readonly SECONDS_IN_HOUR = 3600;
