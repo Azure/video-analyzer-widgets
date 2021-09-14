@@ -15,6 +15,7 @@ import { template } from './timeline.template';
 import { Localization } from './../../../common/services/localization/localization.class';
 import { IDictionary } from '../../../common/services/localization/localization.definitions';
 import { observable } from '@microsoft/fast-element';
+import { Logger } from '../../../widgets/src/common/logger';
 
 SimpleBar;
 SegmentsTimelineComponent;
@@ -55,7 +56,8 @@ export class TimelineComponent extends FASTElement {
 
     public readonly DAY_DURATION_IN_SECONDS = 86400; // 60 (sec) * 60 (min) * 24 (hours)
 
-    public zoom: number = 1;
+    public zoom: number = 9;
+    public zoomFactor: number = 1;
     public scrollContainer: Element;
 
     private timeRulerReady = false;
@@ -63,13 +65,13 @@ export class TimelineComponent extends FASTElement {
     private segmentsTimeline: SegmentsTimelineComponent;
     private timeRuler: TimeRulerComponent;
     private fastSlider: FASTSlider;
+    private slider_max_zoom = 13;
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private simpleBar: any;
     private resizeObserver: ResizeObserver;
 
     private readonly SLIDER_DENSITY = 32;
-    private readonly SLIDER_MAX_ZOOM = 22;
     private readonly SEEK_BAR_TOP = '#FAF9F8';
     private readonly SEEK_BAR_BODY_COLOR = '#D02E00';
     private readonly CANVAS_MAX_WIDTH = 32767;
@@ -228,11 +230,26 @@ export class TimelineComponent extends FASTElement {
         };
     }
 
+    public scrollToCurrentTime() {
+        if (this.simpleBar) {
+            const scrollElement = this.simpleBar.getScrollElement();
+            const currentTimeBarPercentage = Math.min((this.currentTime / this.DAY_DURATION_IN_SECONDS) * 100, 100);
+            const clientWidthHalf = this.simpleBar.el.clientWidth / 2;
+            let scrollPoint = Math.floor((scrollElement.scrollWidth * currentTimeBarPercentage) / 100) - clientWidthHalf;
+            if (scrollPoint < 0) {
+                scrollPoint = 0;
+            } else if (scrollPoint + clientWidthHalf > this.simpleBar?.scrollLeft + this.simpleBar.el.clientWidth) {
+                scrollPoint = this.simpleBar?.scrollLeft + this.simpleBar.el.clientWidth;
+            }
+            scrollElement.scrollTo(scrollPoint, 0);
+        }
+    }
+
     private zoomIn() {
-        if (+this.fastSlider.value + this.SLIDER_DENSITY <= this.SLIDER_MAX_ZOOM * this.SLIDER_DENSITY) {
+        if (+this.fastSlider.value + this.SLIDER_DENSITY <= this.slider_max_zoom * this.SLIDER_DENSITY) {
             this.fastSlider.value = `${+this.fastSlider.value + this.SLIDER_DENSITY}`;
         } else {
-            this.fastSlider.value = `${+this.SLIDER_MAX_ZOOM * this.SLIDER_DENSITY}`;
+            this.fastSlider.value = `${+this.slider_max_zoom * this.SLIDER_DENSITY}`;
         }
     }
 
@@ -265,8 +282,10 @@ export class TimelineComponent extends FASTElement {
             return;
         }
 
+        this.slider_max_zoom = Math.ceil(Math.log2(this.CANVAS_MAX_WIDTH / this.$fastController.element.offsetWidth) * 2);
+
         this.fastSlider.min = this.SLIDER_DENSITY;
-        this.fastSlider.max = this.SLIDER_MAX_ZOOM * this.SLIDER_DENSITY;
+        this.fastSlider.max = this.slider_max_zoom * this.SLIDER_DENSITY;
         this.fastSlider.value = `${this.zoom * this.SLIDER_DENSITY}`;
     }
 
@@ -292,6 +311,7 @@ export class TimelineComponent extends FASTElement {
                     seekBarBodyColor: seekBarBodyColor
                 },
                 zoom: this.zoom,
+                zoomFactor: this.zoomFactor,
                 disableCursor: true
             }
         };
@@ -302,6 +322,7 @@ export class TimelineComponent extends FASTElement {
     private initTimeRuler() {
         this.timeRuler.startDate = this.config?.date || new Date();
         this.timeRuler.zoom = this.zoom;
+        this.timeRuler.zoomFactor = this.zoomFactor;
     }
 
     private resize() {
@@ -310,15 +331,19 @@ export class TimelineComponent extends FASTElement {
 
     private fastSliderChange() {
         const zoom = +this.fastSlider.value / this.SLIDER_DENSITY;
+        const zoomFactor = Math.pow(2, Math.floor(zoom / 2)) / ((zoom - 1) % 2 ? 1.5 : 1);
         // Do not zoom when canvas is more then 32,767 (max canvas width)
-        if (zoom * this.$fastController.element.offsetWidth >= this.CANVAS_MAX_WIDTH) {
+        if (zoomFactor * this.$fastController.element.offsetWidth >= this.CANVAS_MAX_WIDTH) {
             return;
         }
         this.zoom = zoom;
+        this.zoomFactor = zoomFactor;
+
         this.initSegmentsTimeline();
         this.initTimeRuler();
         setTimeout(() => {
             this.simpleBar?.recalculate();
+            this.scrollToCurrentTime();
         });
     }
 }

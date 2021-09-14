@@ -51,6 +51,7 @@ export class PlayerWrapper {
     private currentSegment: IUISegment = null;
     private isPlaying: boolean = false;
     private _stallDetectionTimer: number | null = null;
+    private _currentDate: Date;
 
     private readonly OFFSET_MULTIPLAYER = 1000;
     private readonly SECONDS_IN_HOUR = 3600;
@@ -130,6 +131,10 @@ export class PlayerWrapper {
 
     public get accessToken() {
         return this._accessToken;
+    }
+
+    public set currentDate(startDate: Date) {
+        this._currentDate = startDate;
     }
 
     public async load(url: string) {
@@ -272,7 +277,7 @@ export class PlayerWrapper {
     }
 
     private createTimelineComponent() {
-        const segments = createTimelineSegments(this._availableSegments);
+        const segments = createTimelineSegments(this._availableSegments, this._currentDate);
 
         const date = new Date(this.date.getUTCFullYear(), this.date.getUTCMonth(), this.date.getUTCDate(), 0, 0, 0);
 
@@ -295,7 +300,7 @@ export class PlayerWrapper {
 
         // We expect server to return 404 on manifest requests that turn out to be empty,
         // so we assume there will always be at least one segment.
-        const firstSegmentStartSeconds = extractRealTimeFromISO(this._availableSegments?.timeRanges[0]?.start);
+        const firstSegmentStartSeconds = extractRealTimeFromISO(this._availableSegments?.timeRanges[0]?.start, this._currentDate);
         Logger.log(
             'createTimelineComponent: setting firstSegmentStartSeconds to ' + `${firstSegmentStartSeconds}, ` + this.getSeekRangeString()
         );
@@ -615,6 +620,7 @@ export class PlayerWrapper {
             Logger.log('onLoadedData: jump to 0, ' + this.getSeekRangeString());
             this.video.currentTime = 0;
         }
+        this.timelineComponent?.scrollToCurrentTime();
     }
 
     private onTimeSeekUpdate() {

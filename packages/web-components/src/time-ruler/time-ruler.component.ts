@@ -32,6 +32,15 @@ export class TimeRulerComponent extends FASTElement {
      */
     @attr public zoom = 1;
 
+    /**
+     * zoom
+     *
+     * @public
+     * @remarks
+     * HTML attribute: zoomFactor
+     */
+    @attr public zoomFactor = 1;
+
     private readonly DEFAULT_TEXT_COLOR = 'black';
     private readonly DEFAULT_SCALE_COLOR = 'gray';
     private readonly DEFAULT_FONT_SIZE = '12px';
@@ -106,6 +115,7 @@ export class TimeRulerComponent extends FASTElement {
             fontSize: this.DEFAULT_FONT_SIZE,
             lineWidth: 1,
             zoom: this.zoom,
+            zoomFactor: this.zoomFactor,
             fontColor: textColor,
             timeColor: timeColor,
             smallScaleColor: smallScaleColor,
