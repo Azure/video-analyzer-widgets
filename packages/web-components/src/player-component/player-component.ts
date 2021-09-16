@@ -375,7 +375,7 @@ export class PlayerComponent extends FASTElement {
                 this.player.availableSegments = segments;
                 this.player.vodStream = this.vodStream;
                 await this.player.load(this.vodStream);
-            }  
+            }
         }
     }
 
