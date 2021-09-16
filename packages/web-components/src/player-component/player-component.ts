@@ -346,15 +346,15 @@ export class PlayerComponent extends FASTElement {
     }
 
     private async clickLiveCallBack(isLive: boolean) {
-        if (isLive){
-            this.currentYear = parseFloat(this.currentAllowedYears[this.currentAllowedYears.length - 1]);
-            this.currentMonth = parseFloat(this.currentAllowedMonths[this.currentAllowedMonths.length - 1]);
-            this.currentDay = parseFloat(this.currentAllowedDays[this.currentAllowedDays.length - 1]);
-            const date = new Date(Date.UTC(this.currentYear, this.currentMonth - 1, this.currentDay));
-            this.currentDate = date;
-            this.datePickerComponent.inputDate = date.toUTCString();
-            this.datePickerComponent.inputDateChanged();  
-        } else {
+        this.currentYear = parseFloat(this.currentAllowedYears[this.currentAllowedYears.length - 1]);
+        this.currentMonth = parseFloat(this.currentAllowedMonths[this.currentAllowedMonths.length - 1]);
+        this.currentDay = parseFloat(this.currentAllowedDays[this.currentAllowedDays.length - 1]);
+        const date = new Date(Date.UTC(this.currentYear, this.currentMonth - 1, this.currentDay));
+        this.currentDate = date;
+        this.datePickerComponent.inputDate = date.toUTCString();
+        this.datePickerComponent.inputDateChanged();
+
+        if (!isLive) {
             const nextDay = new Date(Date.UTC(this.currentYear, this.currentMonth - 1, this.currentDay + 1));
             const start: IExpandedDate = {
                 year: this.currentYear,
@@ -375,7 +375,7 @@ export class PlayerComponent extends FASTElement {
                 this.player.availableSegments = segments;
                 this.player.vodStream = this.vodStream;
                 await this.player.load(this.vodStream);
-            } 
+            }  
         }
     }
 
