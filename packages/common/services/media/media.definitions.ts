@@ -11,7 +11,7 @@ export interface IExpandedDate {
 
 export interface IExpandedTimeRange {
     start: IExpandedDate;
-    end: IExpandedDate;
+    end?: IExpandedDate;
 }
 
 export interface ITimeRange {

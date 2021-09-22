@@ -64,7 +64,8 @@ export class PlayerWrapper {
         private isLiveCallback: (isLive: boolean) => void,
         private changeDayCallBack: (isNext: boolean) => void,
         private errorCallback: (error: shaka_player.PlayerEvents.ErrorEvent) => void,
-        private allowedControllers: ControlPanelElements[]
+        private allowedControllers: ControlPanelElements[],
+        private onClickLiveCallback: () => void
     ) {
         this.resources = Localization.dictionary;
         // Install built-in polyfills to patch browser incompatibilities.
@@ -190,6 +191,24 @@ export class PlayerWrapper {
             await this.player?.unload();
         }
         this.isLoaded = false;
+    }
+
+    public async onClickLive(isLive: boolean) {
+        this.isLive = isLive;
+        if (!isLive) {
+            await this.onClickLiveCallback();
+        } else {
+            await this.load(this._liveStream);
+            this.removeTimelineComponent();
+            this.video.play();
+        }
+        if (this.boundingBoxesDrawer) {
+            this.boundingBoxesDrawer.clearInstances();
+        }
+        this.isLiveCallback(this.isLive);
+
+        this.updateLiveButtonState();
+        this.updateControlsClassList();
     }
 
     public async toggleLiveMode(isLive: boolean) {
@@ -352,7 +371,7 @@ export class PlayerWrapper {
     private async init() {
         this.avaUILayer = new AVAPlayerUILayer(
             shaka,
-            this.toggleLiveMode.bind(this),
+            this.onClickLive.bind(this),
             this.toggleBodyTracking.bind(this),
             this.onClickNextDay.bind(this),
             this.onClickPrevDay.bind(this),
@@ -537,19 +556,7 @@ export class PlayerWrapper {
             Logger.log(`video start date is ${date} ${date.getUTCDate()}`);
             this.timestampOffset = date.getTime();
         } else {
-            const manifest = this.player.getManifest();
-            const variant = manifest.variants[0];
-            const stream = variant.video || variant.audio;
-            if (!stream.segmentIndex) {
-                await stream.createSegmentIndex();
-            }
-
-            this.segmentIndex = stream.segmentIndex;
-            const index = this.segmentIndex.find(0) || 0;
-            const reference = this.segmentIndex.get(index);
-            if (reference) {
-                this.timestampOffset = reference.timestampOffset * -1000;
-            }
+            await this.updateTimeUpdateOffset();
         }
 
         // If not live mode, init timeline
@@ -567,6 +574,22 @@ export class PlayerWrapper {
             setTimeout(() => {
                 this.controls?.controlsContainer_?.setAttribute('shown', this.isLive || this.isClip);
             }, 50);
+        }
+    }
+
+    private async updateTimeUpdateOffset() {
+        const manifest = this.player.getManifest();
+        const variant = manifest.variants[0];
+        const stream = variant.video || variant.audio;
+        if (!stream.segmentIndex) {
+            await stream.createSegmentIndex();
+        }
+
+        this.segmentIndex = stream.segmentIndex;
+        const index = this.segmentIndex.find(0) || 0;
+        const reference = this.segmentIndex.get(index);
+        if (reference) {
+            this.timestampOffset = reference.timestampOffset * -1000;
         }
     }
 
