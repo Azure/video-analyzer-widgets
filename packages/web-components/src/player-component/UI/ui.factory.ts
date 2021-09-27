@@ -1,4 +1,4 @@
-import { BodyTracking, HoursLabel, LiveButton, NextDayButton, NextSegment, PrevDayButton, PrevSegment } from './ui.class';
+import { HoursLabel, LiveButton, NextDayButton, NextSegment, PrevDayButton, PrevSegment, MetaDataButton } from './ui.class';
 import { shaka } from '../index';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -46,12 +46,6 @@ export class LiveButtonFactory {
     }
 }
 
-export class BodyTrackingButtonFactory {
-    public static callBack: (isOn: boolean) => void;
-    public create(rootElement: any, controls: any) {
-        return new BodyTracking(rootElement, controls, BodyTrackingButtonFactory.callBack);
-    }
-}
 
 export class NextDayButtonFactory {
     public static callBack: () => void;
@@ -84,5 +78,13 @@ export class PrevSegmentButtonFactory {
     public static callBack: (isNext: boolean) => void;
     public create(rootElement: any, controls: any) {
         return new PrevSegment(rootElement, controls, PrevSegmentButtonFactory.callBack);
+    }
+}
+
+export class MetaDataButtonFactory {
+    public static BoxCallBack: (isOn: boolean) => void;
+    public static AttributesCallBack: (isOn: boolean) => void;
+    public create(rootElement: any, controls: any) {
+        return new MetaDataButton(rootElement, controls, MetaDataButtonFactory.BoxCallBack, MetaDataButtonFactory.AttributesCallBack);
     }
 }
