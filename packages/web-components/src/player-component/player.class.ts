@@ -52,6 +52,8 @@ export class PlayerWrapper {
     private isPlaying: boolean = false;
     private _stallDetectionTimer: number | null = null;
     private _currentDate: Date;
+    private _firstVideoError: number = 0;
+    private _numVideoErrors: number = 0;
 
     private readonly OFFSET_MULTIPLAYER = 1000;
     private readonly SECONDS_IN_HOUR = 3600;
@@ -685,11 +687,49 @@ export class PlayerWrapper {
         return this.getClockTimeString(time, false);
     }
 
-    private onErrorEvent(event: shaka_player.PlayerEvents.ErrorEvent) {
+    private async onErrorEvent(event: shaka_player.PlayerEvents.ErrorEvent) {
         // Extract the shaka.util.Error object from the event.
         // eslint-disable-next-line no-console
         Logger.log(event.detail);
-        if (this.errorCallback) {
+
+        // If we encounter a video error, reset video source UNLESS we exceed
+        // max video errors within three minutes.
+        let errorHandled = false;
+        const assetUri = this.player.getAssetUri();
+        if (assetUri.startsWith('ws') && event.detail.code === shaka.util.Error.Code.VIDEO_ERROR) {
+            // code 3016
+            const maxVideoErrors = 10; // Max retries will be 1 less than this number
+            const maxVideoErrorMinutes = 3;
+
+            const now = Date.now();
+            let secondsSinceFirstVideoError = (now - this._firstVideoError) / 1000;
+            if (secondsSinceFirstVideoError > 60 * maxVideoErrorMinutes) {
+                if (this._firstVideoError > 0) {
+                    Logger.log(`${secondsSinceFirstVideoError} elapsed since first video error, resetting count.`);
+                }
+                this._numVideoErrors = 0;
+                this._firstVideoError = now;
+                secondsSinceFirstVideoError = 0;
+            }
+
+            this._numVideoErrors += 1;
+            const logMsgPrefix = `Encountered ${this._numVideoErrors} video errors within the last ${secondsSinceFirstVideoError} seconds!`;
+            if (this._numVideoErrors >= maxVideoErrors) {
+                Logger.error(logMsgPrefix, 'No more reloads!');
+            } else {
+                Logger.log(logMsgPrefix, 'Reloading player.');
+                try {
+                    event.stopImmediatePropagation(); // Must call BEFORE await or else dispatch loop will keep notifying
+                    await this.load(assetUri);
+                    Logger.log('Reload complete!');
+                    errorHandled = true;
+                } catch (e) {
+                    Logger.error('Reload FAILED with error', JSON.stringify(e));
+                }
+            }
+        }
+
+        if (!errorHandled && this.errorCallback) {
             this.errorCallback(event);
             Logger.log(`onErrorEvent: ${event.detail}`);
         }
