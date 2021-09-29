@@ -15,7 +15,6 @@ import { template } from './timeline.template';
 import { Localization } from './../../../common/services/localization/localization.class';
 import { IDictionary } from '../../../common/services/localization/localization.definitions';
 import { observable } from '@microsoft/fast-element';
-import { Logger } from '../../../widgets/src/common/logger';
 
 SimpleBar;
 SegmentsTimelineComponent;
