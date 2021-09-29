@@ -56,7 +56,6 @@ export const stylesShaka = css`
         font-size: 4.4vmin;
     }
     .shaka-controls-container {
-        position: absolute;
         top: 0;
         left: 0;
         right: 0;

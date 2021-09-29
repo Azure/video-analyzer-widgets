@@ -89,7 +89,7 @@ export const styles = css`
     }
 
     .simplebar-scrollbar::before {
-        background-color: var(--divider-alt); /* color of the scroll thumb */
+        background-color: var(--type-primary); /* color of the scroll thumb */
         border-radius: 4px; /* roundness of the scroll thumb */
     }
 

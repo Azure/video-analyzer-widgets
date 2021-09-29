@@ -15,7 +15,7 @@ export const styles = css`
         --base-height-multiplier: 12;
         height: auto;
         position: relative;
-        padding-bottom: 48px;
+        padding-bottom: 0;
     }
 
     .error-container {
@@ -44,11 +44,6 @@ export const styles = css`
         visibility: hidden;
     }
 
-    :host(.live-off) {
-        /* add controllers and timeline */
-        padding-bottom: calc(48px + 49px);
-    }
-
     :host(.loading),
     :host(.error) {
         background: black;
@@ -75,6 +70,7 @@ export const styles = css`
         top: 0;
         left: 0;
         display: flex;
+        flex-direction: column;
         width: 100%;
         height: 100%;
     }
