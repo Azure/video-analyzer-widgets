@@ -47,13 +47,12 @@ export class MediaApi {
         let range_query = '';
         if (range) {
             const startDay = this.convertDateToIso(range.start.year, range.start.month, range.start.day);
-            if (range.end){
-                const endDay = this.convertDateToIso(range.end.year, range.end.month, range.end.day); 
+            if (range.end) {
+                const endDay = this.convertDateToIso(range.end.year, range.end.month, range.end.day);
                 range_query = `,starttime=${startDay},endtime=${endDay}`;
-             }
-             else{
-                range_query = `,starttime=${startDay}`; 
-             }
+            } else {
+                range_query = `,starttime=${startDay}`;
+            }
         }
 
         return `${this.baseStream}/manifest(format=${format}${range_query})${extension}`;

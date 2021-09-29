@@ -560,7 +560,7 @@ export declare namespace shaka {
          * @description an interface defining events sent by shaka
          * @interface ShakaEvent
          */
-        export interface ShakaEvent {
+        export interface ShakaEvent extends Event {
             type: string;
         }
 
@@ -1182,6 +1182,11 @@ export declare namespace shaka {
 	  networking plugins.
 	   */
         getNetworkingEngine(): any;
+        /**
+       * @returnType Get the uri to the asset that the player has loaded.
+       * If the player has not loaded content, this will return <code>null</code>.
+        */
+        getAssetUri(): string;
         /**
 	   * @returnType If a manifest is loaded, returns the manifest URI given in
 	the last call to load().  Otherwise, returns null.
