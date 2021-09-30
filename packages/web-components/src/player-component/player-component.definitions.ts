@@ -37,8 +37,7 @@ export enum ControlPanelElements {
     CAMERA_NAME = 'camera_name',
     TIMESTAMP = 'timestamp',
     TIMELINE_ZOOM = 'timeline_zoom',
-    Time_And_Duration = 'time_and_duration',
-    META_DATA = 'meta_data_button'
+    Time_And_Duration = 'time_and_duration'
 }
 
 export enum LiveState {

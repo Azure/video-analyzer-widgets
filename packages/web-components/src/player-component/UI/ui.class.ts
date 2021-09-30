@@ -201,63 +201,6 @@ export class OverflowMenu extends shaka.ui.OverflowMenu {
     }
 }
 
-export class MetaDataButton extends shaka.ui.OverflowMenu {
-    private svg: SVGSVGElement;
-    private path: SVGPathElement;
-    private isBoxOn: boolean;
-    private isAttributesOn: boolean;
-
-    public constructor(parent: any, 
-                       controls: any, 
-                       private showBoxCallBack: (isOn: boolean) => void, 
-                       private showAttributesCallBack: (isOn: boolean) => void) {
-        super(parent, controls);
-        this.init();
-    }
-
-    public createChildren_() {
-        const showBoundingBox = document.createElement('div');
-        showBoundingBox.innerText = ' Bounding Box ';
-        const BoxCheckbox = document.createElement('input');
-        BoxCheckbox.type = 'checkbox'
-        this.eventManager.listen(BoxCheckbox, 'click', () => {
-            this.isBoxOn = !this.isBoxOn;
-            this.showBoxCallBack(this.isBoxOn);
-        });
-        showBoundingBox.appendChild(BoxCheckbox);
-        this.overflowMenu_.appendChild(showBoundingBox);
-
-        const showAtrribute = document.createElement('div');
-        showAtrribute.innerText = ' Attributes ';
-        const AttributesCheckbox = document.createElement('input');
-        AttributesCheckbox.type = 'checkbox'
-        this.eventManager.listen(AttributesCheckbox, 'click', () => {
-            this.showAttributesCallBack(this.isAttributesOn)
-        });
-        showAtrribute.appendChild(AttributesCheckbox);
-        this.overflowMenu_.appendChild(showAtrribute);
-
-        const settingsLabel = document.createElement('label');
-        settingsLabel.classList.add('settings-header');
-        const settingsSpan = document.createElement('span');
-        settingsSpan.innerText = 'Meta Data Settings';
-        settingsLabel.prepend(settingsSpan);
-        this.overflowMenu_.prepend(settingsLabel);
-    }
-
-    private init() {
-        //Create SVG
-        this.svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-        this.path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        this.path.setAttribute('fill', 'black');
-        this.path.setAttribute('d', METADATA_PATH);
-        this.svg.appendChild(this.path);
-        this.overflowMenuButton_.innerText = '';
-        this.overflowMenuButton_.appendChild(this.svg);
-        setElementTooltip(this.overflowMenuButton_, 'Meta Data Settings');
-    }
-}
-
 export class LiveButton extends shaka.ui.Element {
     public isLiveButton = true;
     private isLive = true;

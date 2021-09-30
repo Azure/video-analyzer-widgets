@@ -7,8 +7,6 @@ export class BoundingBoxDrawer extends CanvasElement {
     private requestAnimFrameCounter: number;
     private timeToInstances: ITimeToInstance = [];
     private _isOn = false;
-    private _boxOn = false;
-    private _attributesOn = false;
 
     private readonly PADDING_RIGHT = 4;
     private readonly PADDING_TOP = 2;
@@ -36,14 +34,6 @@ export class BoundingBoxDrawer extends CanvasElement {
         this.video.addEventListener('play', this.playAnimation.bind(this));
         this.video.addEventListener('pause', this.pauseAnimation.bind(this));
         this.video.addEventListener('seeking', this.clear.bind(this));
-    }
-
-    public updateIsBox() {
-        this._boxOn = !this._boxOn;
-    }
-
-    public updateIsAttributes() {
-        this._attributesOn = !this._attributesOn;
     }
 
     public destroy() {
@@ -140,15 +130,11 @@ export class BoundingBoxDrawer extends CanvasElement {
             const y = Math.floor(instanceData.t * this.canvas.height);
             const w = Math.floor(instanceData.w * this.canvas.width);
             const h = Math.floor(instanceData.h * this.canvas.height);
-            if (this._boxOn){
-                this.context.strokeRect(x, y, w, h);
-            }
+            this.context.strokeRect(x, y, w, h);
 
             this.context.lineWidth = 1;
             this.context.strokeStyle = 'rgba(255, 255, 255, 0.74)';
-            if (this._boxOn){
-                this.context.strokeRect(x + 2, y + 2, w - 4, h - 4);
-            }
+            this.context.strokeRect(x + 2, y + 2, w - 4, h - 4);
 
             const cornerRadius = 5;
             this.context.fillStyle = 'rgba(0, 0, 0, 0.74)';
@@ -156,11 +142,8 @@ export class BoundingBoxDrawer extends CanvasElement {
             this.context.lineJoin = 'round';
             this.context.lineWidth = cornerRadius;
 
-            if (instanceData.entity && this._attributesOn) {
+            if (instanceData.entity) {
                 let label = `${instanceData.entity.tag} ${instanceData.entity.id || ''}`;
-                let confidence = `confidence: ${instanceData.entity.confidence}`;
-                let speed = `speed: ${instanceData.entity.speed}`;
-
                 let labelWidth = this.displayTextWidth(label);
                 if (labelWidth > w) {
                     label = `${label.substring(0, 10)}...`;
@@ -170,16 +153,11 @@ export class BoundingBoxDrawer extends CanvasElement {
                 const width = labelWidth + this.PADDING_RIGHT * 2 * this.ratio;
                 const height = this.getFontSize() + this.PADDING_TOP * 2 * this.ratio;
                 this.context.strokeRect(x + this.PADDING_RIGHT, y - height - this.ratio, width, height);
-                this.context.strokeRect(x + this.PADDING_RIGHT, y - height - this.ratio - 20, 150, height);
-                this.context.strokeRect(x + this.PADDING_RIGHT, y - height - this.ratio - 40, 80, height);
                 this.context.fillRect(x + this.PADDING_RIGHT, y - height - this.ratio, width, height);
-                this.context.fillRect(x + this.PADDING_RIGHT, y - height - this.ratio - 20, 150, height);
-                this.context.fillRect(x + this.PADDING_RIGHT, y - height - this.ratio - 40, 80, height);
+
                 this.context.fillStyle = 'white';
 
                 this.context.fillText(label, x + this.PADDING_RIGHT * this.ratio, y - this.PADDING_TOP * 2 * this.ratio);
-                this.context.fillText(confidence, x + this.PADDING_RIGHT * this.ratio, y - this.PADDING_TOP * 2 * this.ratio - 20);
-                this.context.fillText(speed, x + this.PADDING_RIGHT * this.ratio, y - this.PADDING_TOP * 2 * this.ratio - 40);
             }
 
             this.context.stroke();
@@ -236,6 +214,4 @@ export interface IInstanceData {
 export interface IEntity {
     id: number;
     tag: string;
-    confidence: string;
-    speed: string;
 }

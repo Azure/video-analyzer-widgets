@@ -340,17 +340,12 @@ export class PlayerWrapper {
         return this.player.seekRange().start - this.firstSegmentStartSeconds;
     }
 
-    private toggleBox() {
-        this.boundingBoxesDrawer.updateIsBox();
-        this.removeBoundingBoxLayer();
-        this.addBoundingBoxLayer();
-
-    }
-
-    private toggleAttributes() {
-        this.boundingBoxesDrawer.updateIsAttributes();
-        this.removeBoundingBoxLayer();
-        this.addBoundingBoxLayer();
+    private toggleBodyTracking(isOn: boolean) {
+        if (isOn) {
+            this.addBoundingBoxLayer();
+        } else {
+            this.removeBoundingBoxLayer();
+        }
     }
 
     private jumpSegment(isNext: boolean) {
@@ -378,12 +373,11 @@ export class PlayerWrapper {
         this.avaUILayer = new AVAPlayerUILayer(
             shaka,
             this.onClickLive.bind(this),
+            this.toggleBodyTracking.bind(this),
             this.onClickNextDay.bind(this),
             this.onClickPrevDay.bind(this),
             this.jumpSegment.bind(this),
-            this.allowedControllers,
-            this.toggleBox.bind(this),
-            this.toggleAttributes.bind(this)
+            this.allowedControllers
         );
 
         // Getting reference to video and video container on DOM
@@ -547,9 +541,7 @@ export class PlayerWrapper {
                 if (iterator.type === 'ENTITY') {
                     data.entity = {
                         id: iterator.entity.id || iterator.sequenceId,
-                        tag: iterator.entity.tag.value,
-                        confidence: iterator.entity.tag.confidence,
-                        speed: iterator.extensions.speed
+                        tag: iterator.entity.tag.value
                     };
                 }
                 this.boundingBoxesDrawer.addItem(emsg.startTime, emsg.endTime, data);
