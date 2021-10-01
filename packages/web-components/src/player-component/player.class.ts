@@ -136,6 +136,7 @@ export class PlayerWrapper {
 
     public async load(url: string) {
         this.isLoaded = false;
+        this.timestampOffset = undefined;
         try {
             await this.player.load(url, null, this.getMimeType(url));
             this.isLoaded = true;
@@ -158,7 +159,8 @@ export class PlayerWrapper {
         this.video?.removeEventListener('timeupdate', this.onTimeSeekUpdate.bind(this));
         this.video?.removeEventListener('loadeddata', this.onLoadedData.bind(this));
         this.video?.removeEventListener('seeked', this.onSeeked.bind(this));
-        this.video?.removeEventListener('play', this.onPlaying.bind(this));
+        this.video?.removeEventListener('play', this.onPlay.bind(this));
+        this.video?.removeEventListener('playing', this.onPlaying.bind(this));
         this.video?.removeEventListener('pause', this.onPause.bind(this));
 
         // Log media events to improve the usefulness of the logs (both Shaka and video)
@@ -417,7 +419,8 @@ export class PlayerWrapper {
 
         // Video listeners
         this.video.addEventListener('seeked', this.onSeeked.bind(this));
-        this.video.addEventListener('play', this.onPlaying.bind(this));
+        this.video.addEventListener('play', this.onPlay.bind(this));
+        this.video.addEventListener('playing', this.onPlaying.bind(this));
         this.video.addEventListener('pause', this.onPause.bind(this));
         this.video.addEventListener('timeupdate', this.onTimeSeekUpdate.bind(this));
         this.video.addEventListener('loadeddata', this.onLoadedData.bind(this));
@@ -590,7 +593,7 @@ export class PlayerWrapper {
         this.segmentIndex = stream.segmentIndex;
         const index = this.segmentIndex.find(0) || 0;
         const reference = this.segmentIndex.get(index);
-        if (reference) {
+        if (reference && isFinite(reference.timestampOffset)) {
             this.timestampOffset = reference.timestampOffset * -1000;
         }
     }
@@ -599,8 +602,15 @@ export class PlayerWrapper {
         this.isPlaying = false;
     }
 
-    private onPlaying() {
+    private onPlay() {
         this.isPlaying = true;
+    }
+
+    private onPlaying() {
+        // Check for timestamp offset since for RTSP if it was not available already
+        if (!isFinite(this.timestampOffset)) {
+            this.updateTimeUpdateOffset();
+        }
     }
 
     private onSeeked() {
