@@ -218,8 +218,7 @@ export class MetaDataButton extends shaka.ui.OverflowMenu {
     public createChildren_() {
         const showBoundingBox = document.createElement('div');
         showBoundingBox.innerText = ' Bounding Box ';
-        const BoxCheckbox = document.createElement('input');
-        BoxCheckbox.type = 'checkbox'
+        const BoxCheckbox = document.createElement('fast-checkbox');
         this.eventManager.listen(BoxCheckbox, 'click', () => {
             this.isBoxOn = !this.isBoxOn;
             this.showBoxCallBack(this.isBoxOn);
@@ -229,8 +228,7 @@ export class MetaDataButton extends shaka.ui.OverflowMenu {
 
         const showAtrribute = document.createElement('div');
         showAtrribute.innerText = ' Attributes ';
-        const AttributesCheckbox = document.createElement('input');
-        AttributesCheckbox.type = 'checkbox'
+        const AttributesCheckbox = document.createElement('fast-checkbox');
         this.eventManager.listen(AttributesCheckbox, 'click', () => {
             this.showAttributesCallBack(this.isAttributesOn)
         });
