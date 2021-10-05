@@ -30,7 +30,7 @@ export declare namespace shaka {
              */
             getEndByte(): any;
         }
-        class SegmentReference {
+        export class SegmentReference {
             /**
 		 * Creates a SegmentReference, which provides the start time, end time, and
   location to a media segment.
@@ -62,7 +62,7 @@ export declare namespace shaka {
 		 * Returns the segment's start time in seconds, relative to
   the start of a particular Period.
 		 */
-            getStartTime(): any;
+            getStartTime(): number;
             /**
 		 * Returns the segment's end time in seconds, relative to
   the start of a particular Period.
@@ -83,6 +83,8 @@ export declare namespace shaka {
   to the end of the resource.
 		 */
             getEndByte(): any;
+
+            get timestampOffset(): number;
         }
         namespace ManifestParser {
             /**
@@ -118,14 +120,14 @@ export declare namespace shaka {
 		 * @returnType The position of the segment, or null
 	if the position of the segment could not be determined.
 		 */
-            find(time: any): any;
+            find(time: any): number | null;
             /**
 		 * Gets the SegmentReference for the segment at the given position.
 		 * @param position The position of the segment.
 		 * @returnType The SegmentReference, or null if
 	no such SegmentReference exists.
 		 */
-            get(position: any): any;
+            get(position: any): shaka.media.SegmentReference | null;
             /**
 		 * Offset all segment references by a fixed amount.
 		 * @param offset The amount to add to each segment's start and end
