@@ -255,9 +255,12 @@ export class PlayerWrapper {
             this.isLoaded = true;
             // Auto play video
             this.video.play();
-        } catch (error) {
-            // eslint-disable-next-line no-console
-            Logger.log(error.message);
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                Logger.log(error.message);
+            } else {
+                throw error;
+            }
         }
     }
 

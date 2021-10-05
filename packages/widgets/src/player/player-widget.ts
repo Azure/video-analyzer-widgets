@@ -146,8 +146,12 @@ export class Player extends BaseWidget {
                     Logger.log(error);
                     this.handelFallback(error);
                 });
-        } catch (error) {
-            this.handelFallback(error);
+        } catch (error: unknown) {
+            if (error instanceof HttpError) {
+                this.handelFallback(error);
+            } else {
+                throw error;
+            }
         }
     }
 
