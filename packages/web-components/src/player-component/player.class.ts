@@ -24,6 +24,117 @@ import { MimeType } from './player-component.definitions';
 TimelineComponent;
 Localization;
 
+// When using shaka.PlayerInterface.onError to report errors, we sometimes
+// need to be able to pass codes which are not defined in
+// shaka.util.Error.Code.
+enum ErrorCode {
+    WEBSOCKET_CLOSED = 1500, // data = [ CloseEvent.code, CloseEvent.reason, CloseEvent.wasClean ]
+    WEBSOCKET_OPEN = 1501, // data = [ errorMsg, errorObj ]
+}
+
+interface IShakaErrorHandlerConfig {
+    resetSource: () => Promise<void>;
+    autoreconnect?: boolean;
+}
+
+class shakaErrorHandler {
+    private _resetSource: () => Promise<void>;
+    private _autoreconnect: boolean;
+
+    private _firstVideoError = 0;
+    private _numVideoErrors = 0;
+
+    public constructor(config: IShakaErrorHandlerConfig) {
+        this._resetSource = config.resetSource;
+        this._autoreconnect = config.autoreconnect ?? true;
+    }
+
+    // This is async, but caller will
+    // Porting to widgets, had to change from event: Event to event:any
+    // because @types/react declares Event interface which overrides lib.dom.
+    public async onShakaError(event: shaka_player.PlayerEvents.ErrorEvent): Promise<boolean> {
+        if (!('type' in event) || !('detail' in event)) {
+            throw new Error('onShakaError: event not recognized! No type or detail: ' +
+                JSON.stringify(event)
+            );
+        }
+
+        if (event.type !== 'error') {
+            throw new Error(
+                `onShakaError: event not recognized! Type = ${event.type}!`
+            );
+        }
+
+        const shakaError = event.detail as shaka_player.util.Error;
+        if (!shakaError) {
+            throw new Error(
+                'onShakaError: event.detail not provided! ' +
+                `event.type = ${event.type}, ${event}`
+            );
+        }
+
+        // Log the error
+        Logger.error(
+            'onShakaError: code',
+            shakaError.code,
+            `, ${shakaError.message}, object: ${shakaError}`
+        );
+
+        if (shakaError.code === ErrorCode.WEBSOCKET_CLOSED) {
+            if (this._autoreconnect) {
+                if (shakaError.severity === shaka.util.Error.Severity.RECOVERABLE) {
+                    event.stopImmediatePropagation(); // Must call BEFORE await or else dispatch loop will keep notifying
+                    await this._resetSource();
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        if (shakaError.code === 3016) {
+            // VIDEO_ERROR, typically PIPELINE_ERROR_DECODE / VDA Error 4
+            const maxVideoErrors = 10; // Max retries will be 1 less than this number
+            const maxVideoErrorMinutes = 3;
+
+            const now = Date.now();
+            let secondsSinceFirstVideoError = (now - this._firstVideoError) / 1000;
+            if (secondsSinceFirstVideoError > 60 * maxVideoErrorMinutes) {
+                if (this._firstVideoError > 0) {
+                    Logger.log(
+                        `${secondsSinceFirstVideoError} elapsed since first video error, resetting count.`
+                    );
+                }
+                this._numVideoErrors = 0;
+                this._firstVideoError = now;
+                secondsSinceFirstVideoError = 0;
+            }
+
+            this._numVideoErrors += 1;
+            const logMsgPrefix = `Encountered ${this._numVideoErrors} video errors within the last ${secondsSinceFirstVideoError} seconds!`;
+            if (this._numVideoErrors >= maxVideoErrors) {
+                Logger.error(logMsgPrefix, 'No more reloads!');
+                return false;
+            }
+
+            Logger.log(logMsgPrefix, 'Reloading player.');
+            try {
+                event.stopImmediatePropagation(); // Must call BEFORE await or else dispatch loop will keep notifying
+                await this._resetSource();
+                Logger.log('Reload complete!');
+                return true;
+            } catch (e) {
+                Logger.error(`Reload FAILED with error: ${e}`);
+                throw e;
+            }
+        }
+
+        // If we reached this point, we did not recognize and therefore did
+        // not handle the error.
+        return false;
+    }
+}
+
+
 export class PlayerWrapper {
     public player: shaka_player.Player = Object.create(null);
     public resources: IDictionary;
@@ -54,6 +165,7 @@ export class PlayerWrapper {
     private _firstVideoError: number = 0;
     private _numVideoErrors: number = 0;
     private wallclock_event: shaka_player.PlayerEvents.FakeEvent | undefined;
+    private _errorHandler: shakaErrorHandler;
 
     private readonly OFFSET_MULTIPLAYER = 1000;
     private readonly SECONDS_IN_HOUR = 3600;
@@ -143,9 +255,12 @@ export class PlayerWrapper {
             this.isLoaded = true;
             // Auto play video
             this.video.play();
-        } catch (error) {
-            // eslint-disable-next-line no-console
-            Logger.log(error.message);
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                Logger.log(error.message);
+            } else {
+                throw error;
+            }
         }
     }
 
@@ -383,6 +498,13 @@ export class PlayerWrapper {
             this.jumpSegment.bind(this),
             this.allowedControllers
         );
+
+        this._errorHandler = new shakaErrorHandler({
+            resetSource: async () => {
+                const assetUri = this.player.getAssetUri();
+                await this.load(assetUri);
+            }
+        });
 
         // Getting reference to video and video container on DOM
         // Initialize shaka player
@@ -707,49 +829,10 @@ export class PlayerWrapper {
     }
 
     private async onErrorEvent(event: shaka_player.PlayerEvents.ErrorEvent) {
-        // Extract the shaka.util.Error object from the event.
-        // eslint-disable-next-line no-console
-        Logger.log(event.detail);
-
-        // If we encounter a video error, reset video source UNLESS we exceed
-        // max video errors within three minutes.
-        let errorHandled = false;
-        const assetUri = this.player.getAssetUri();
-        if (assetUri.startsWith('ws') && event.detail.code === shaka.util.Error.Code.VIDEO_ERROR) { // code 3016
-            const maxVideoErrors = 10; // Max retries will be 1 less than this number
-            const maxVideoErrorMinutes = 3;
-
-            const now = Date.now();
-            let secondsSinceFirstVideoError = (now - this._firstVideoError) / 1000;
-            if (secondsSinceFirstVideoError > 60 * maxVideoErrorMinutes) {
-                if (this._firstVideoError > 0) {
-                    Logger.log(`${secondsSinceFirstVideoError} elapsed since first video error, resetting count.`);
-                }
-                this._numVideoErrors = 0;
-                this._firstVideoError = now;
-                secondsSinceFirstVideoError = 0;
-            }
-
-            this._numVideoErrors += 1;
-            const logMsgPrefix = `Encountered ${this._numVideoErrors} video errors within the last ${secondsSinceFirstVideoError} seconds!`;
-            if (this._numVideoErrors >= maxVideoErrors) {
-                Logger.error(logMsgPrefix, 'No more reloads!');
-            } else {
-                Logger.log(logMsgPrefix, 'Reloading player.');
-                try {
-                    event.stopImmediatePropagation(); // Must call BEFORE await or else dispatch loop will keep notifying
-                    await this.load(assetUri);
-                    Logger.log('Reload complete!');
-                    errorHandled = true;
-                } catch (e) {
-                    Logger.error('Reload FAILED with error', JSON.stringify(e));
-                }
-            }
-        }
-
+        const errorHandled = await this._errorHandler.onShakaError(event);
         if (!errorHandled && this.errorCallback) {
+            Logger.log(`onErrorEvent: ${event.detail} not handled, calling errorCallback.`);
             this.errorCallback(event);
-            Logger.log(`onErrorEvent: ${event.detail}`);
         }
     }
 
