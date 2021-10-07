@@ -162,6 +162,7 @@ export class PlayerWrapper {
     private currentSegment: IUISegment = null;
     private isPlaying: boolean = false;
     private _stallDetectionTimer: number | null = null;
+    private _driftCorrectionTimer: number | null = null;
     private _firstVideoError: number = 0;
     private _numVideoErrors: number = 0;
     private wallclock_event: shaka_player.PlayerEvents.FakeEvent | undefined;
@@ -295,6 +296,11 @@ export class PlayerWrapper {
         if (this._stallDetectionTimer !== null) {
             window.clearInterval(this._stallDetectionTimer);
             this._stallDetectionTimer = null;
+        }
+
+        if (this._driftCorrectionTimer !== null) {
+            window.clearInterval(this._driftCorrectionTimer);
+            this._driftCorrectionTimer = null;
         }
 
         // Remove BB
@@ -601,6 +607,19 @@ export class PlayerWrapper {
             }
             prevPosition = newPrevPosition;
         }, stallIntervalMs);
+
+        // Install drift correction
+        const driftIntervalMs = 5000;
+        const MAX_LATENCY_WINDOW = 5000;
+        this._driftCorrectionTimer = window.setInterval(() => {
+            const video = this.player.getMediaElement() as HTMLMediaElement;
+            if (this.player.seekRange().end - MAX_LATENCY_WINDOW > video.currentTime &&
+                !video.paused && this.isLive
+            ) {
+                Logger.log(`Correcting drift, jumping forward ${this.player.seekRange().end - video.currentTime}`);
+                video.currentTime = this.player.seekRange().end;
+            }
+        }, driftIntervalMs);
 
         // Add bounding box drawer
         const options: ICanvasOptions = {
