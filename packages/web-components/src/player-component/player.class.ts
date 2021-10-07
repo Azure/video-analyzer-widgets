@@ -614,7 +614,7 @@ export class PlayerWrapper {
         this._driftCorrectionTimer = window.setInterval(() => {
             const video = this.player.getMediaElement() as HTMLMediaElement;
             if (this.player.seekRange().end - MAX_LATENCY_WINDOW > video.currentTime &&
-                !video.paused
+                !video.paused && this.isLive
             ) {
                 Logger.log(`Correcting drift, jumping forward ${this.player.seekRange().end - video.currentTime}`);
                 video.currentTime = this.player.seekRange().end;
