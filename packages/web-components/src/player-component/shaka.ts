@@ -5,6 +5,8 @@
 /* eslint-disable @typescript-eslint/explicit-member-accessibility */
 /* eslint-disable no-unused-vars */
 /* eslint-disable @typescript-eslint/naming-convention */
+declare class GlobalError extends Error {}
+
 export declare namespace shaka {
     export namespace media {
         export class InitSegmentReference {
@@ -30,7 +32,7 @@ export declare namespace shaka {
              */
             getEndByte(): any;
         }
-        class SegmentReference {
+        export class SegmentReference {
             /**
 		 * Creates a SegmentReference, which provides the start time, end time, and
   location to a media segment.
@@ -62,7 +64,7 @@ export declare namespace shaka {
 		 * Returns the segment's start time in seconds, relative to
   the start of a particular Period.
 		 */
-            getStartTime(): any;
+            getStartTime(): number;
             /**
 		 * Returns the segment's end time in seconds, relative to
   the start of a particular Period.
@@ -83,6 +85,8 @@ export declare namespace shaka {
   to the end of the resource.
 		 */
             getEndByte(): any;
+
+            get timestampOffset(): number;
         }
         namespace ManifestParser {
             /**
@@ -118,14 +122,14 @@ export declare namespace shaka {
 		 * @returnType The position of the segment, or null
 	if the position of the segment could not be determined.
 		 */
-            find(time: any): any;
+            find(time: any): number | null;
             /**
 		 * Gets the SegmentReference for the segment at the given position.
 		 * @param position The position of the segment.
 		 * @returnType The SegmentReference, or null if
 	no such SegmentReference exists.
 		 */
-            get(position: any): any;
+            get(position: any): shaka.media.SegmentReference | null;
             /**
 		 * Offset all segment references by a fixed amount.
 		 * @param offset The amount to add to each segment's start and end
@@ -266,8 +270,8 @@ export declare namespace shaka {
             getSeekRangeEnd(): any;
         }
     }
-    namespace util {
-        class Error {
+    export namespace util {
+        class Error extends GlobalError implements shaka.extern.Error {
             severity: any;
             category: any;
             code: any;
@@ -948,7 +952,7 @@ export declare namespace shaka {
         }
     }
 
-    namespace extern {
+    export namespace extern {
         /** define the  TimelineRegionInfo from both doc and code */
         interface TimelineRegionInfo {
             schemeIdUri: string;
@@ -974,6 +978,14 @@ export declare namespace shaka {
             eventDuration: number;
             id: number;
             messageData: Uint8Array;
+        }
+
+        interface Error {
+            category: shaka.util.Error.Category ;
+            code: shaka.util.Error.Code ;
+            data: any [] ;
+            handled: boolean ;
+            severity: shaka.util.Error.Severity ;
         }
     }
 

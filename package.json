@@ -60,7 +60,7 @@
         "style-loader": "1.2.1",
         "ts-loader": "^8.0.11",
         "tslib": "^1.11.1",
-        "typescript": "^4.2.3",
+        "typescript": "4.2.4",
         "url-loader": "^4.1.1",
         "webpack": "^5.16.0",
         "webpack-bundle-analyzer": "^4.4.1",
@@ -78,7 +78,7 @@
         "lodash-es": "^4.17.21",
         "rxjs": "^6.6.3",
         "shaka-player": "3.1.0",
-        "@azure/video-analyzer-player": "1.0.3",
+        "@azure/video-analyzer-player": "1.0.4",
         "simplebar": "^5.3.3"
     },
     "files": [
