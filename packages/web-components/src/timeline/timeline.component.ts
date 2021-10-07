@@ -58,6 +58,7 @@ export class TimelineComponent extends FASTElement {
     public zoom: number = 9;
     public zoomFactor: number = 1;
     public scrollContainer: Element;
+    public autoScrolled = false;
 
     private timeRulerReady = false;
     private segmentsTimelineReady = false;
@@ -65,6 +66,7 @@ export class TimelineComponent extends FASTElement {
     private timeRuler: TimeRulerComponent;
     private fastSlider: FASTSlider;
     private slider_max_zoom = 13;
+    private userScrolled = false;
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private simpleBar: any;
@@ -85,9 +87,16 @@ export class TimelineComponent extends FASTElement {
         });
     }
 
+    public toggleUserScroll() {
+        this.userScrolled = !this.userScrolled;
+    }
+
     public currentTimeChanged() {
         if (this.segmentsTimeline) {
             this.segmentsTimeline.currentTime = this.currentTime;
+        }
+        if (!this.userScrolled) {
+            this.scrollToCurrentTime();
         }
     }
 
@@ -124,6 +133,14 @@ export class TimelineComponent extends FASTElement {
             classNames: {},
             scrollbarMinSize: 100
         });
+
+        this.simpleBar.getScrollElement().addEventListener('scroll', () => {
+            if (this.autoScrolled) {
+                this.autoScrolled = false;
+            } else {
+                this.userScrolled = true;
+            }
+        });
         this.simpleBar.recalculate();
     }
 
@@ -141,6 +158,7 @@ export class TimelineComponent extends FASTElement {
 
             this.segmentsTimeline?.addEventListener(SegmentsTimelineEvents.SEGMENT_CLICKED, ((event: CustomEvent<IUISegmentEventData>) => {
                 this.$emit(TimelineEvents.SEGMENT_CHANGE, event.detail);
+                this.userScrolled = false;
                 // eslint-disable-next-line no-undef
             }) as EventListener);
 
@@ -180,6 +198,7 @@ export class TimelineComponent extends FASTElement {
     public handleZoomInMouseUp(e: Event): boolean {
         switch (getKeyCode(e as KeyboardEvent)) {
             case 1: // left mouse button.
+                this.userScrolled = false;
                 this.zoomIn();
                 return false;
         }
@@ -191,7 +210,31 @@ export class TimelineComponent extends FASTElement {
         switch (getKeyCode(e)) {
             case keyCodeEnter:
             case keyCodeSpace:
+                this.userScrolled = false;
                 this.zoomIn();
+                return false;
+        }
+
+        return true;
+    }
+
+    public handleZoomResetMouseUp(e: Event): boolean {
+        switch (getKeyCode(e as KeyboardEvent)) {
+            case 1: // left mouse button.
+                this.userScrolled = false;
+                this.fastSlider.value = `${this.SLIDER_DENSITY}`;
+                return false;
+        }
+
+        return true;
+    }
+
+    public handleZoomResetKeyUp(e: KeyboardEvent): boolean {
+        switch (getKeyCode(e)) {
+            case keyCodeEnter:
+            case keyCodeSpace:
+                this.userScrolled = false;
+                this.fastSlider.value = `${this.SLIDER_DENSITY}`;
                 return false;
         }
 
@@ -234,13 +277,16 @@ export class TimelineComponent extends FASTElement {
             const scrollElement = this.simpleBar.getScrollElement();
             const currentTimeBarPercentage = Math.min((this.currentTime / this.DAY_DURATION_IN_SECONDS) * 100, 100);
             const clientWidthHalf = this.simpleBar.el.clientWidth / 2;
-            let scrollPoint = Math.floor((scrollElement.scrollWidth * currentTimeBarPercentage) / 100) - clientWidthHalf;
-            if (scrollPoint < 0) {
-                scrollPoint = 0;
-            } else if (scrollPoint + clientWidthHalf > this.simpleBar?.scrollLeft + this.simpleBar.el.clientWidth) {
-                scrollPoint = this.simpleBar?.scrollLeft + this.simpleBar.el.clientWidth;
+            let scrollLeftPoint = Math.floor((scrollElement.scrollWidth * currentTimeBarPercentage) / 100) - clientWidthHalf;
+            if (scrollLeftPoint < 0) {
+                scrollLeftPoint = 0;
+            } else if (scrollLeftPoint > scrollElement.scrollWidth - this.simpleBar.el.clientWidth) {
+                scrollLeftPoint = scrollElement.scrollWidth - this.simpleBar.el.clientWidth;
             }
-            scrollElement.scrollTo(scrollPoint, 0);
+            if (scrollLeftPoint !== scrollElement.scrollLeft) {
+                scrollElement.scrollTo(scrollLeftPoint, 0);
+            }
+            this.autoScrolled = true;
         }
     }
 

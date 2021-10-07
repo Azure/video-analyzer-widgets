@@ -24,6 +24,9 @@ export class TimeRuler extends CanvasElement {
         if (!this.rulerOptions.zoom) {
             this.rulerOptions.zoom = 1;
         }
+        if (!this.rulerOptions.zoomFactor) {
+            this.rulerOptions.zoomFactor = 1;
+        }
 
         this.resize();
     }
@@ -67,15 +70,8 @@ export class TimeRuler extends CanvasElement {
         this.canvasPointsDataList = [];
         let lastHourMark = 0;
 
-        this.canvasPointsDataList.push({
-            x: 0,
-            y: (this.rulerOptions.height - 2) * this.ratio,
-            color: this.rulerOptions?.fontColor,
-            text: this.rulerOptions.dateText
-        });
-
         // Drawing ruler line
-        for (let i = 1; i <= this.HOURS_IN_DAY * this.TENS_MINUTES_IN_HOUR; i += 1) {
+        for (let i = 0; i <= this.HOURS_IN_DAY * this.TENS_MINUTES_IN_HOUR; i += 1) {
             const pos = i * minutes;
 
             // Large scale mark
@@ -123,6 +119,15 @@ export class TimeRuler extends CanvasElement {
                     w: this.context.lineWidth * this.ratio,
                     h: this.TINY_SCALE_MARK_HEIGHT * this.ratio,
                     color: this.rulerOptions?.smallScaleColor
+                });
+            }
+
+            if (i === 0) {
+                this.canvasPointsDataList.push({
+                    x: pos,
+                    y: (this.rulerOptions.height - 2) * this.ratio,
+                    color: this.rulerOptions?.fontColor,
+                    text: this.rulerOptions.dateText
                 });
             }
         }

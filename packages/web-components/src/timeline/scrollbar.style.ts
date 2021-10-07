@@ -169,7 +169,7 @@ export const simpleBarStyles = css`
     .simplebar-track.simplebar-horizontal {
         left: 0;
         height: 20px;
-        margin-right: 132px; /* slider width */
+        margin-right: 152px; /* slider width */
         margin-left: 1px;
         background: var(--bg-dialog);
     }
@@ -188,7 +188,7 @@ export const simpleBarStyles = css`
         min-height: 0;
         min-width: 10px;
         width: auto;
-        margin: 4px;
+        margin: 4px 0;
         height: 8px;
     }
 

@@ -15,7 +15,7 @@ export const styles = css`
         --base-height-multiplier: 12;
         height: auto;
         position: relative;
-        padding-bottom: 0;
+        padding-bottom: 48px;
     }
 
     .error-container {
@@ -44,6 +44,11 @@ export const styles = css`
         visibility: hidden;
     }
 
+    :host(.live-off) {
+        /* add controllers and timeline */
+        padding-bottom: calc(48px + 76px);
+    }
+
     :host(.loading),
     :host(.error) {
         background: black;
@@ -70,7 +75,6 @@ export const styles = css`
         top: 0;
         left: 0;
         display: flex;
-        flex-direction: column;
         width: 100%;
         height: 100%;
     }
@@ -115,7 +119,7 @@ export const styles = css`
     }
 
     .shaka-video-container.fullscreen .shaka-controls-container.live-off .shaka-bottom-controls {
-        padding-bottom: calc(48px + 49px + 2px) !important;
+        padding-bottom: calc(48px + 76px + 2px) !important;
     }
     .shaka-volume-bar-container {
         height: 2px;

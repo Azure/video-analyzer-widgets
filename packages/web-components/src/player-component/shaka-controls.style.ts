@@ -56,6 +56,7 @@ export const stylesShaka = css`
         font-size: 4.4vmin;
     }
     .shaka-controls-container {
+        position: absolute;
         top: 0;
         left: 0;
         right: 0;
@@ -72,7 +73,7 @@ export const stylesShaka = css`
         z-index: 1;
     }
     .shaka-controls-container.live-off {
-        height: calc(100% + 48px + 49px);
+        height: calc(100% + 48px + 76px);
     }
     .live-button-component {
         width: 34px;
@@ -85,7 +86,7 @@ export const stylesShaka = css`
     }
     media-timeline {
         z-index: 9;
-        background-color: var(--bg-controls);
+        background-color: var(--timeline-background);
     }
     .shaka-video-container:not([shaka-controls='true']) .shaka-controls-container {
         display: none;
