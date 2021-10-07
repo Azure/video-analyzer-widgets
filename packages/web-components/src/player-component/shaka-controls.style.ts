@@ -521,6 +521,14 @@ export const stylesShaka = css`
         border-bottom: 1px solid var(--divider);
         color: var(--type-tertiary);
     }
+    .shaka-overflow-menu .overflow-menu-item {
+        padding: 8px;
+        font-size: 14px;
+        color: var(--type-tertiary);
+    }
+    .shaka-overflow-menu fast-checkbox {
+        float: right;
+    }
     .shaka-overflow-menu fast-button .material-icons-round {
         display: none;
     }

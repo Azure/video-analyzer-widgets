@@ -6,13 +6,17 @@ export class BoundingBoxDrawer extends CanvasElement {
     public data: any = [];
     private requestAnimFrameCounter: number;
     private timeToInstances: ITimeToInstance = [];
-    private _isOn = false;
-    private _boxOn = false;
-    private _attributesOn = false;
+    private _isOn: boolean = false;
+    private _boxOn: boolean = false;
+    private _attributesOn: boolean = false;
+    private _trackingOn: boolean = false;
+    private _trackingPoints: object = {};
+    private _colorMap: object = {};
 
     private readonly PADDING_RIGHT = 4;
     private readonly PADDING_TOP = 2;
     private readonly PADDING_TOP_TEXT = 6;
+    private readonly COLORS = ['Red', 'blue', 'Orange', 'Green', 'Purple', 'Yellow', 'Azure']
 
     public constructor(options: ICanvasOptions, private video: HTMLVideoElement) {
         super(options);
@@ -44,6 +48,10 @@ export class BoundingBoxDrawer extends CanvasElement {
 
     public updateIsAttributes() {
         this._attributesOn = !this._attributesOn;
+    }
+
+    public updateIsTracking() {
+        this._trackingOn = !this._trackingOn;
     }
 
     public destroy() {
@@ -86,6 +94,38 @@ export class BoundingBoxDrawer extends CanvasElement {
 
         this.timeToInstances[time?.toFixed(6)].instanceData.push(instance);
     }
+
+    public roundRect(x: number, y: number, w: number, h: number, radius: number) {
+        var context = this.context;
+        var r = x + w;
+        var b = y + h;
+        context.beginPath();
+        context.lineWidth= 0;
+        context.moveTo(x+radius, y);
+        context.lineTo(r-radius, y);
+        context.quadraticCurveTo(r, y, r, y+radius);
+        context.lineTo(r, y+h-radius);
+        context.quadraticCurveTo(r, b, r-radius, b);
+        context.lineTo(x+radius, b);
+        context.quadraticCurveTo(x, b, x, b-radius);
+        context.lineTo(x, y+radius);
+        context.quadraticCurveTo(x, y, x+radius, y);
+        context.stroke();
+        context.fillStyle = 'rgba(0, 0, 0, 0.74)';
+        context.fill();
+    }
+
+    public canvasArrow(fromx: number, fromy: number, tox: number, toy: number) {
+        var headlen = 5; // length of head in pixels
+        var dx = tox - fromx;
+        var dy = toy - fromy;
+        var angle = Math.atan2(dy, dx);
+        this.context.moveTo(fromx, fromy);
+        this.context.lineTo(tox, toy);
+        this.context.lineTo(tox - headlen * Math.cos(angle - Math.PI / 6), toy - headlen * Math.sin(angle - Math.PI / 6));
+        this.context.moveTo(tox, toy);
+        this.context.lineTo(tox - headlen * Math.cos(angle + Math.PI / 6), toy - headlen * Math.sin(angle + Math.PI / 6));
+      }
 
     public draw() {
         if (!this.requestAnimFrameCounter) {
@@ -156,30 +196,110 @@ export class BoundingBoxDrawer extends CanvasElement {
             this.context.lineJoin = 'round';
             this.context.lineWidth = cornerRadius;
 
-            if (instanceData.entity && this._attributesOn) {
-                let label = `${instanceData.entity.tag} ${instanceData.entity.id || ''}`;
-                let confidence = `confidence: ${instanceData.entity.confidence}`;
-                let speed = `speed: ${instanceData.entity.speed}`;
+            if (instanceData.entity) {
+                if (!this._colorMap.hasOwnProperty(instanceData.entity.trackingId)) {
+                    this._colorMap[instanceData.entity.trackingId] = this.COLORS[Object.keys(this._colorMap).length % this.COLORS.length];
+                }
+                let color = this._colorMap[instanceData.entity.trackingId];
+
+                let label = `${instanceData.entity.tag} ${instanceData.entity.trackingId.slice(instanceData.entity.trackingId.length - 6, instanceData.entity.trackingId.length)}`;
+                let speed = `${instanceData.entity.speed}`;
+                let orientation = `${instanceData.entity.orientation}`;
 
                 let labelWidth = this.displayTextWidth(label);
                 if (labelWidth > w) {
                     label = `${label.substring(0, 10)}...`;
                     labelWidth = this.displayTextWidth(label);
                 }
+
+                if (speed.length > 3) {
+                    speed = parseFloat(speed).toFixed(1).toString();
+                }
+
+                let floatSpeed = parseFloat(speed);
+                speed = speed + ' ft/s';
+                
                 this.getFontSize();
                 const width = labelWidth + this.PADDING_RIGHT * 2 * this.ratio;
                 const height = this.getFontSize() + this.PADDING_TOP * 2 * this.ratio;
-                this.context.strokeRect(x + this.PADDING_RIGHT, y - height - this.ratio, width, height);
-                this.context.strokeRect(x + this.PADDING_RIGHT, y - height - this.ratio - 20, 150, height);
-                this.context.strokeRect(x + this.PADDING_RIGHT, y - height - this.ratio - 40, 80, height);
-                this.context.fillRect(x + this.PADDING_RIGHT, y - height - this.ratio, width, height);
-                this.context.fillRect(x + this.PADDING_RIGHT, y - height - this.ratio - 20, 150, height);
-                this.context.fillRect(x + this.PADDING_RIGHT, y - height - this.ratio - 40, 80, height);
-                this.context.fillStyle = 'white';
 
-                this.context.fillText(label, x + this.PADDING_RIGHT * this.ratio, y - this.PADDING_TOP * 2 * this.ratio);
-                this.context.fillText(confidence, x + this.PADDING_RIGHT * this.ratio, y - this.PADDING_TOP * 2 * this.ratio - 20);
-                this.context.fillText(speed, x + this.PADDING_RIGHT * this.ratio, y - this.PADDING_TOP * 2 * this.ratio - 40);
+                if (this._attributesOn) {
+                    this.context.strokeRect(x + this.PADDING_RIGHT, y - height - this.ratio, width + height, height);
+                    this.context.fillRect(x + this.PADDING_RIGHT, y - height - this.ratio, width + height, height);
+    
+                    this.context.fillStyle = color;
+                    this.context.fillRect(x + this.PADDING_RIGHT * this.ratio + height/4, y - this.PADDING_TOP * 2 * this.ratio - height/2, height/2, height/2);
+    
+                    this.context.fillStyle = 'white';
+                    this.context.fillText(label, x + this.PADDING_RIGHT * this.ratio + height, y - this.PADDING_TOP * 2 * this.ratio);
+                    this.context.fillStyle = 'rgba(0, 0, 0, 0.74)';
+    
+                    let speedWidth = this.displayTextWidth(speed) + 2.5 * height;
+                    this.roundRect(x + w/2 - height/2, y + h/2 - height/2, speedWidth, height, height/2)
+    
+                    this.context.beginPath();
+                    this.context.strokeStyle = color
+                    this.context.arc(x + w/2, y + h/2, height/3, 0, 2 * Math.PI, true);
+                    this.context.fillStyle = color;
+                    this.context.fill();
+
+                    if (floatSpeed === 0 || speed === 'inf'){
+                        this.context.beginPath();
+                        this.context.strokeStyle = 'white';
+                        this.context.arc(x + w/2 + height, y + h/2, 1, 0, 2 * Math.PI, true);
+                        this.context.fillStyle = 'white';
+                        this.context.fill();
+                        this.context.stroke();
+                    } else {
+                        let floatOrientation = parseFloat(orientation);
+    
+                        this.context.beginPath();
+                        this.context.lineWidth = 1;
+                        this.context.strokeStyle = 'white';
+                        this.context.moveTo(x + w/2 + height, y + h/2);
+                        this.context.lineTo(x + w/2 + height + height/2 * Math.cos(floatOrientation - Math.PI), y + h/2 + height/2 * Math.sin(floatOrientation - Math.PI));
+                        this.context.closePath();
+                        this.context.stroke();
+    
+                        this.context.beginPath();
+                        this.context.strokeStyle = 'white';
+                        this.context.lineWidth = 1;
+                        this.canvasArrow(x + w/2 + height, y + h/2, x + w/2 + height + height/2 * Math.cos(floatOrientation), y + h/2 + height/2 * Math.sin(floatOrientation));
+                        this.context.stroke();
+                    }
+                    
+                    this.context.fillStyle = 'white';
+                    this.context.fillText(speed, x + w/2 + 1.5 * height, y + h/2 + height/4);
+                }
+
+                if (!this._trackingPoints.hasOwnProperty(instanceData.entity.trackingId)) {
+                    this._trackingPoints[instanceData.entity.trackingId] = [[x + w/2, y + h/2]];
+                } else if (this._trackingPoints[instanceData.entity.trackingId].length <= 240) {
+                    this._trackingPoints[instanceData.entity.trackingId].push([x + w/2, y + h/2]);
+                } else {
+                    this._trackingPoints[instanceData.entity.trackingId].shift();
+                    this._trackingPoints[instanceData.entity.trackingId].push([x + w/2, y + h/2]);
+                }
+
+                if (this._trackingOn) {
+                    if (this._trackingPoints[instanceData.entity.trackingId].length !== 0) {
+
+                        this.context.beginPath();
+                        this.context.strokeStyle = color;
+                        this.context.arc(x + w/2, y + h/2, height/3, 0, 2 * Math.PI, true);
+                        this.context.fillStyle = color;
+                        this.context.fill();
+
+                        this.context.beginPath();
+                        this.context.strokeStyle = color;
+                        this.context.lineWidth = 2;
+                        this.context.moveTo(this._trackingPoints[instanceData.entity.trackingId][0][0], this._trackingPoints[instanceData.entity.trackingId][0][1]);
+                        for (let point of this._trackingPoints[instanceData.entity.trackingId]) {
+                            this.context.lineTo(point[0], point[1]);
+                        }
+                        this.context.stroke();
+                    }
+                }
             }
 
             this.context.stroke();
@@ -236,6 +356,7 @@ export interface IInstanceData {
 export interface IEntity {
     id: number;
     tag: string;
-    confidence: string;
     speed: string;
+    trackingId: string;
+    orientation: string;
 }

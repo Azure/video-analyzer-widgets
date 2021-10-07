@@ -357,6 +357,12 @@ export class PlayerWrapper {
         this.addBoundingBoxLayer();
     }
 
+    private toggleTracking() {
+        this.boundingBoxesDrawer.updateIsTracking();
+        this.removeBoundingBoxLayer();
+        this.addBoundingBoxLayer();
+    }
+
     private jumpSegment(isNext: boolean) {
         let currentTime = this.video.currentTime;
 
@@ -387,7 +393,8 @@ export class PlayerWrapper {
             this.jumpSegment.bind(this),
             this.allowedControllers,
             this.toggleBox.bind(this),
-            this.toggleAttributes.bind(this)
+            this.toggleAttributes.bind(this),
+            this.toggleTracking.bind(this)
         );
 
         // Getting reference to video and video container on DOM
@@ -554,8 +561,9 @@ export class PlayerWrapper {
                     data.entity = {
                         id: iterator.entity.id || iterator.sequenceId,
                         tag: iterator.entity.tag.value,
-                        confidence: iterator.entity.tag.confidence,
-                        speed: iterator.extensions.speed
+                        trackingId: iterator.extensions.trackingId,
+                        speed: iterator.extensions.speed,
+                        orientation: iterator.extensions.mappedImageOrientation
                     };
                 }
                 this.boundingBoxesDrawer.addItem(emsg.startTime, emsg.endTime, data);
