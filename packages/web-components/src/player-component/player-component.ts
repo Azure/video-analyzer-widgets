@@ -543,9 +543,13 @@ export class PlayerComponent extends FASTElement {
                 ...this.datePickerComponent.allowedDates,
                 years: this.currentAllowedYears.toString()
             };
-        } catch (error) {
-            this.handleError(error);
-            throw new WidgetGeneralError(this.resources.PLAYER_CannotParseMedia);
+        } catch (error: unknown) {
+            if (error instanceof HttpError) {
+                this.handleError(error);
+                throw new WidgetGeneralError(this.resources.PLAYER_CannotParseMedia);
+            } else {
+                throw error;
+            }
         }
     }
 
@@ -580,9 +584,13 @@ export class PlayerComponent extends FASTElement {
                     this.allowedDates[year][index] = [];
                 }
             }
-        } catch (error) {
-            this.handleError(error);
-            throw new WidgetGeneralError(this.resources.PLAYER_CannotParseMedia);
+        } catch (error: unknown) {
+            if (error instanceof HttpError) {
+                this.handleError(error);
+                throw new WidgetGeneralError(this.resources.PLAYER_CannotParseMedia);
+            } else {
+                throw error;
+            }
         }
     }
 
@@ -621,9 +629,13 @@ export class PlayerComponent extends FASTElement {
                     this.allowedDates[year][month].push(index);
                 }
             }
-        } catch (error) {
-            this.handleError(error);
-            throw new WidgetGeneralError(this.resources.PLAYER_CannotParseMedia);
+        } catch (error: unknown) {
+            if (error instanceof HttpError) {
+                this.handleError(error);
+                throw new WidgetGeneralError(this.resources.PLAYER_CannotParseMedia);
+            } else {
+                throw error;
+            }
         }
     }
 
