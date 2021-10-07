@@ -228,7 +228,7 @@ export class BoundingBoxDrawer extends CanvasElement {
                     this.context.fillRect(x + this.PADDING_RIGHT, y - height - this.ratio, width + height, height);
     
                     this.context.fillStyle = color;
-                    this.context.fillRect(x + this.PADDING_RIGHT * this.ratio + height/4, y - this.PADDING_TOP * 2 * this.ratio - height/2, height/2, height/2);
+                    this.context.fillRect(x + this.PADDING_RIGHT * this.ratio + height/6, y - this.PADDING_TOP * 2 * this.ratio - 2 * height/3, 2 * height/3, 2 * height/3);
     
                     this.context.fillStyle = 'white';
                     this.context.fillText(label, x + this.PADDING_RIGHT * this.ratio + height, y - this.PADDING_TOP * 2 * this.ratio);
