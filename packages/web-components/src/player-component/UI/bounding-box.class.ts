@@ -241,11 +241,11 @@ export class BoundingBoxDrawer extends CanvasElement {
                     this.context.fillStyle = 'rgba(0, 0, 0, 0.74)';
 
                     const speedWidth = this.displayTextWidth(speed) + 2.5 * height;
-                    this.roundRect(x + w/2 - height/2, y + h/2 - height/2, speedWidth, height, height/2);
+                    this.roundRect(x + w/2 - height/2, y + h - height/2, speedWidth, height, height/2);
 
                     this.context.beginPath();
                     this.context.strokeStyle = color;
-                    this.context.arc(x + w/2, y + h/2, height/3, 0, 2 * Math.PI, true);
+                    this.context.arc(x + w/2, y + h, height/4, 0, 2 * Math.PI, true);
                     this.context.fillStyle = color;
                     this.context.fill();
 
@@ -253,7 +253,7 @@ export class BoundingBoxDrawer extends CanvasElement {
                         this.context.beginPath();
                         this.context.strokeStyle = 'white';
                         this.context.lineWidth = 3;
-                        this.context.arc(x + w/2 + height, y + h/2, 1, 0, 2 * Math.PI, true);
+                        this.context.arc(x + w/2 + height, y + h, 1, 0, 2 * Math.PI, true);
                         this.context.fillStyle = 'white';
                         this.context.fill();
                         this.context.stroke();
@@ -263,10 +263,10 @@ export class BoundingBoxDrawer extends CanvasElement {
                         this.context.beginPath();
                         this.context.lineWidth = 1;
                         this.context.strokeStyle = 'white';
-                        this.context.moveTo(x + w/2 + height, y + h/2);
+                        this.context.moveTo(x + w/2 + height, y + h);
                         this.context.lineTo(
                             x + w/2 + height + height/2 * Math.cos(floatOrientation - Math.PI),
-                            y + h/2 + height/2 * Math.sin(floatOrientation - Math.PI)
+                            y + h + height/2 * Math.sin(floatOrientation - Math.PI)
                         );
                         this.context.closePath();
                         this.context.stroke();
@@ -276,15 +276,15 @@ export class BoundingBoxDrawer extends CanvasElement {
                         this.context.lineWidth = 1;
                         this.canvasArrow(
                             x + w/2 + height,
-                            y + h/2,
+                            y + h,
                             x + w/2 + height + height/2 * Math.cos(floatOrientation),
-                            y + h/2 + height/2 * Math.sin(floatOrientation)
+                            y + h + height/2 * Math.sin(floatOrientation)
                         );
                         this.context.stroke();
                     }
 
                     this.context.fillStyle = 'white';
-                    this.context.fillText(speed, x + w/2 + 1.5 * height, y + h/2 + height/4);
+                    this.context.fillText(speed, x + w/2 + 1.5 * height, y + h + height/4);
                 }
 
                 if (!Object.prototype.hasOwnProperty.call(this._trackingPoints, instanceData.entity.trackingId)) {
