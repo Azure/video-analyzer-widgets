@@ -59,6 +59,7 @@ export const ControlPanelElementsTooltip = {
     META_DATA_LAYER_ON: 'Turn on object metadata overlay',
     META_DATA_LAYER_OFF: 'Turn off object metadata overlay',
     OVERFLOW_MENU: 'More options',
+    META_DATA_OVERFLOW_MENU: 'Metadata rendering',
     FULLSCREEN: 'Enter fullscreen',
     EXIT_FULLSCREEN: 'Exit fullscreen',
     NEXT_DAY: 'Next day',

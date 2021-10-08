@@ -82,9 +82,9 @@ export class PrevSegmentButtonFactory {
 }
 
 export class MetaDataButtonFactory {
-    public static BoxCallBack: (isOn: boolean) => void;
-    public static AttributesCallBack: (isOn: boolean) => void;
-    public static TrackingCallBack: (isOn: boolean) => void;
+    public static BoxCallBack: () => void;
+    public static AttributesCallBack: () => void;
+    public static TrackingCallBack: () => void;
     public create(rootElement: any, controls: any) {
         return new MetaDataButton(
             rootElement,

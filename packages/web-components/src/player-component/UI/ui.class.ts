@@ -205,16 +205,13 @@ export class OverflowMenu extends shaka.ui.OverflowMenu {
 export class MetaDataButton extends shaka.ui.OverflowMenu {
     private svg: SVGSVGElement;
     private path: SVGPathElement;
-    private isBoxOn: boolean;
-    private isAttributesOn: boolean;
-    private isTrackingOn: boolean;
 
     public constructor(
         parent: any,
         controls: any,
-        private showBoxCallBack: (isOn: boolean) => void,
-        private showAttributesCallBack: (isOn: boolean) => void,
-        private showTrackingCallBack: (isOn: boolean) => void
+        private showBoxCallBack: () => void,
+        private showAttributesCallBack: () => void,
+        private showTrackingCallBack: () => void
     ) {
         super(parent, controls);
         this.init();
@@ -222,32 +219,31 @@ export class MetaDataButton extends shaka.ui.OverflowMenu {
 
     public createChildren_() {
         const showBoundingBox = document.createElement('div');
-        showBoundingBox.innerText = 'Bounding Box';
+        showBoundingBox.innerText = Localization.dictionary.BUTTONS_CLASS_BoundingBox;
         showBoundingBox.classList.add('overflow-menu-item');
         const BoxCheckbox = document.createElement('fast-checkbox');
         this.eventManager.listen(BoxCheckbox, 'click', () => {
-            this.isBoxOn = !this.isBoxOn;
-            this.showBoxCallBack(this.isBoxOn);
+            this.showBoxCallBack();
         });
         showBoundingBox.appendChild(BoxCheckbox);
         this.overflowMenu_.appendChild(showBoundingBox);
 
         const showAtrribute = document.createElement('div');
-        showAtrribute.innerText = 'Attributes';
+        showAtrribute.innerText = Localization.dictionary.BUTTONS_CLASS_ATTRIBUTES;
         showAtrribute.classList.add('overflow-menu-item');
         const AttributesCheckbox = document.createElement('fast-checkbox');
         this.eventManager.listen(AttributesCheckbox, 'click', () => {
-            this.showAttributesCallBack(this.isAttributesOn);
+            this.showAttributesCallBack();
         });
         showAtrribute.appendChild(AttributesCheckbox);
         this.overflowMenu_.appendChild(showAtrribute);
 
         const showTrackingLine = document.createElement('div');
-        showTrackingLine.innerText = 'Object Path';
+        showTrackingLine.innerText = Localization.dictionary.BUTTONS_CLASS_ObjectPath;
         showTrackingLine.classList.add('overflow-menu-item');
         const TrackingLineCheckbox = document.createElement('fast-checkbox');
         this.eventManager.listen(TrackingLineCheckbox, 'click', () => {
-            this.showTrackingCallBack(this.isTrackingOn);
+            this.showTrackingCallBack();
         });
         showTrackingLine.appendChild(TrackingLineCheckbox);
         this.overflowMenu_.appendChild(showTrackingLine);
@@ -255,7 +251,7 @@ export class MetaDataButton extends shaka.ui.OverflowMenu {
         const settingsLabel = document.createElement('label');
         settingsLabel.classList.add('settings-header');
         const settingsSpan = document.createElement('span');
-        settingsSpan.innerText = 'Meta Data Settings';
+        settingsSpan.innerText = Localization.dictionary.BUTTONS_CLASS_MetaDataSettings;
         settingsLabel.prepend(settingsSpan);
         this.overflowMenu_.prepend(settingsLabel);
     }
@@ -269,7 +265,7 @@ export class MetaDataButton extends shaka.ui.OverflowMenu {
         this.svg.appendChild(this.path);
         this.overflowMenuButton_.innerText = '';
         this.overflowMenuButton_.appendChild(this.svg);
-        setElementTooltip(this.overflowMenuButton_, 'Meta Data Settings');
+        setElementTooltip(this.overflowMenuButton_, ControlPanelElementsTooltip.META_DATA_OVERFLOW_MENU);
     }
 }
 

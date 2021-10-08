@@ -16,7 +16,7 @@ export class BoundingBoxDrawer extends CanvasElement {
     private readonly PADDING_RIGHT = 4;
     private readonly PADDING_TOP = 2;
     private readonly PADDING_TOP_TEXT = 6;
-    private readonly COLORS = ['Red', 'blue', 'Orange', 'Green', 'Purple', 'Yellow', 'Azure'];
+    private readonly COLORS = ['#1890F1', '#F1707B', '#92C353', '#FFC328', '#DB5FFF', '#D84A1B', '#642AB5'];
 
     public constructor(options: ICanvasOptions, private video: HTMLVideoElement) {
         super(options);
@@ -252,6 +252,7 @@ export class BoundingBoxDrawer extends CanvasElement {
                     if (floatSpeed === 0 || speed === 'inf'){
                         this.context.beginPath();
                         this.context.strokeStyle = 'white';
+                        this.context.lineWidth = 3;
                         this.context.arc(x + w/2 + height, y + h/2, 1, 0, 2 * Math.PI, true);
                         this.context.fillStyle = 'white';
                         this.context.fill();
@@ -287,12 +288,22 @@ export class BoundingBoxDrawer extends CanvasElement {
                 }
 
                 if (!Object.prototype.hasOwnProperty.call(this._trackingPoints, instanceData.entity.trackingId)) {
-                    this._trackingPoints[instanceData.entity.trackingId] = [[x + w/2, y + h/2]];
-                } else if (this._trackingPoints[instanceData.entity.trackingId].length <= 240) {
-                    this._trackingPoints[instanceData.entity.trackingId].push([x + w/2, y + h/2]);
+                    this._trackingPoints[instanceData.entity.trackingId] = [[x + w/2, y + h]];
                 } else {
-                    this._trackingPoints[instanceData.entity.trackingId].shift();
-                    this._trackingPoints[instanceData.entity.trackingId].push([x + w/2, y + h/2]);
+                    const length = this._trackingPoints[instanceData.entity.trackingId].length;
+                    const lastX = this._trackingPoints[instanceData.entity.trackingId][length - 1][0];
+                    const lastY = this._trackingPoints[instanceData.entity.trackingId][length - 1][1];
+                    if (
+                        Math.abs(x + w/2 - lastX) > 50 || Math.abs(y + h - lastY) > 50
+                    ) {
+                        this._trackingPoints = {};
+                        this._trackingPoints[instanceData.entity.trackingId] = [[x + w/2, y + h]];
+                    } else {
+                        if (this._trackingPoints[instanceData.entity.trackingId].length > 240) {
+                            this._trackingPoints[instanceData.entity.trackingId].shift();
+                        }
+                        this._trackingPoints[instanceData.entity.trackingId].push([x + w/2, y + h]);
+                    }
                 }
 
                 if (this._trackingOn) {
@@ -300,7 +311,7 @@ export class BoundingBoxDrawer extends CanvasElement {
 
                         this.context.beginPath();
                         this.context.strokeStyle = color;
-                        this.context.arc(x + w/2, y + h/2, height/3, 0, 2 * Math.PI, true);
+                        this.context.arc(x + w/2, y + h, height/4, 0, 2 * Math.PI, true);
                         this.context.fillStyle = color;
                         this.context.fill();
 
