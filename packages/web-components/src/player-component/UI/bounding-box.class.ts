@@ -273,7 +273,12 @@ export class BoundingBoxDrawer extends CanvasElement {
                         this.context.beginPath();
                         this.context.strokeStyle = 'white';
                         this.context.lineWidth = 1;
-                        this.canvasArrow(x + w/2 + height, y + h/2, x + w/2 + height + height/2 * Math.cos(floatOrientation), y + h/2 + height/2 * Math.sin(floatOrientation));
+                        this.canvasArrow(
+                            x + w/2 + height,
+                            y + h/2,
+                            x + w/2 + height + height/2 * Math.cos(floatOrientation),
+                            y + h/2 + height/2 * Math.sin(floatOrientation)
+                        );
                         this.context.stroke();
                     }
 
