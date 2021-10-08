@@ -209,11 +209,13 @@ export class MetaDataButton extends shaka.ui.OverflowMenu {
     private isAttributesOn: boolean;
     private isTrackingOn: boolean;
 
-    public constructor(parent: any, 
-                       controls: any, 
-                       private showBoxCallBack: (isOn: boolean) => void, 
-                       private showAttributesCallBack: (isOn: boolean) => void,
-                       private showTrackingCallBack: (isOn: boolean) => void) {
+    public constructor(
+        parent: any,
+        controls: any,
+        private showBoxCallBack: (isOn: boolean) => void,
+        private showAttributesCallBack: (isOn: boolean) => void,
+        private showTrackingCallBack: (isOn: boolean) => void
+    ) {
         super(parent, controls);
         this.init();
     }
@@ -221,7 +223,7 @@ export class MetaDataButton extends shaka.ui.OverflowMenu {
     public createChildren_() {
         const showBoundingBox = document.createElement('div');
         showBoundingBox.innerText = 'Bounding Box';
-        showBoundingBox.classList.add('overflow-menu-item')
+        showBoundingBox.classList.add('overflow-menu-item');
         const BoxCheckbox = document.createElement('fast-checkbox');
         this.eventManager.listen(BoxCheckbox, 'click', () => {
             this.isBoxOn = !this.isBoxOn;
@@ -232,20 +234,20 @@ export class MetaDataButton extends shaka.ui.OverflowMenu {
 
         const showAtrribute = document.createElement('div');
         showAtrribute.innerText = 'Attributes';
-        showAtrribute.classList.add('overflow-menu-item')
+        showAtrribute.classList.add('overflow-menu-item');
         const AttributesCheckbox = document.createElement('fast-checkbox');
         this.eventManager.listen(AttributesCheckbox, 'click', () => {
-            this.showAttributesCallBack(this.isAttributesOn)
+            this.showAttributesCallBack(this.isAttributesOn);
         });
         showAtrribute.appendChild(AttributesCheckbox);
         this.overflowMenu_.appendChild(showAtrribute);
 
         const showTrackingLine = document.createElement('div');
         showTrackingLine.innerText = 'Object Path';
-        showTrackingLine.classList.add('overflow-menu-item')
+        showTrackingLine.classList.add('overflow-menu-item');
         const TrackingLineCheckbox = document.createElement('fast-checkbox');
         this.eventManager.listen(TrackingLineCheckbox, 'click', () => {
-            this.showTrackingCallBack(this.isTrackingOn)
+            this.showTrackingCallBack(this.isTrackingOn);
         });
         showTrackingLine.appendChild(TrackingLineCheckbox);
         this.overflowMenu_.appendChild(showTrackingLine);
@@ -259,7 +261,7 @@ export class MetaDataButton extends shaka.ui.OverflowMenu {
     }
 
     private init() {
-        //Create SVG
+        // Create SVG
         this.svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         this.path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         this.path.setAttribute('fill', 'black');

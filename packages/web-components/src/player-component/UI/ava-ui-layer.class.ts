@@ -203,14 +203,14 @@ export class AVAPlayerUILayer {
         this.shaka.ui.Controls.registerElement(ControlPanelElements.PREVIOUS_DAY, new PrevDayButtonFactory());
 
         this.shaka.ui.Controls.registerElement(ControlPanelElements.HOURS_LABEL, new HoursLabelFactory());
-        
-        MetaDataButtonFactory.BoxCallBack = (isOn: boolean) => {
+
+        MetaDataButtonFactory.BoxCallBack = () => {
             this.toggleBox();
         };
-        MetaDataButtonFactory.AttributesCallBack = (isOn: boolean) => {
+        MetaDataButtonFactory.AttributesCallBack = () => {
             this.toggleAttributes();
         };
-        MetaDataButtonFactory.TrackingCallBack = (isOn: boolean) => {
+        MetaDataButtonFactory.TrackingCallBack = () => {
             this.toggleTracking();
         };
         this.shaka.ui.Controls.registerElement(ControlPanelElements.META_DATA, new MetaDataButtonFactory());
