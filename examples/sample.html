@@ -75,11 +75,11 @@
 
     function onPlayButtonClick() {
       const clientApiEndpointUrlInput = document.querySelector('#clientApiEndpointUrlInput');
-      const clientApiEndpointUrl = clientApiEndpointUrlInput.value || 'https://85f99fd57c3a421e9fc2e943443e0f2d.api.westus2-2.videoanalyzer.azure.net';
+      const clientApiEndpointUrl = clientApiEndpointUrlInput.value;
       const videoNameInput = document.querySelector('#videoNameInput');
-      const videoName = videoNameInput.value || 'Ignite-Spatial-Analysis-PersonAttributesTopology';
+      const videoName = videoNameInput.value;
       const clientApiTokenInput = document.querySelector('#clientApiTokenInput');
-      const token = clientApiTokenInput.value || 'eyJhbGciOiJSUzI1NiIsImtpZCI6IjRGRUVFRTZGMkEyQTNGNUJEREEwNEU5NkMzNkU2MTEzMjgyRUUxRjUiLCJ4NXQiOiJULTd1YnlvcVAxdmRvRTZXdzI1aEV5Z3U0ZlUiLCJ0eXAiOiJKV1QifQ.eyJuYmYiOjE2MzM1NjAzNjcsImV4cCI6NDEwMjQ0NDgwMCwiaWF0IjoxNjMzNTYwNjY3LCJpc3MiOiJodHRwczovL21pY3Jvc29mdC5jb20iLCJhdWQiOiJodHRwczovLzg1Zjk5ZmQ1N2MzYTQyMWU5ZmMyZTk0MzQ0M2UwZjJkLmFwaS53ZXN0dXMyLTIudmlkZW9hbmFseXplci5henVyZS5uZXQvdmlkZW9zLyoifQ.S_eiGMvIe1mohCo3c8HJoCDTQucILA_vefItswxb4WasmcZS6KyuvLBtsyHofc_MZ3R_k5T58NEITZR-1ZnRkhdmePj64zw3hJHHOFj8S0U_6u1NR19VQ2mZjhZ0ZmBujwMVRGXbkS1okmePnD5LiIGnL6NuDZYZKEhM_XAOuiFyqWA2k59T6zCyPUjN3CWnb0q0SxZKCSTqOUMpw7kBdFtGF-g6AKaC2jeiyaBuCDoPFsj1FXTZEcplutOnSzjGcSvr9SMY0kkWiAF_dD4_4PCklW_9URtxViPGeL1Zc7zRC1MS8dGHvgC_ov1QJ_dUT45LREG-EwG-h3xaM2MY2w';
+      const token = clientApiTokenInput.value;
       const muteInput = document.querySelector('#muteInput');
       const mute = (muteInput.value === "true") ? true : false;
 
