@@ -465,12 +465,23 @@ export class PlayerWrapper {
         return this.player.seekRange().start - this.firstSegmentStartSeconds;
     }
 
-    private toggleBodyTracking(isOn: boolean) {
-        if (isOn) {
-            this.addBoundingBoxLayer();
-        } else {
-            this.removeBoundingBoxLayer();
-        }
+    private toggleBox() {
+        this.boundingBoxesDrawer.updateIsBox();
+        this.removeBoundingBoxLayer();
+        this.addBoundingBoxLayer();
+
+    }
+
+    private toggleAttributes() {
+        this.boundingBoxesDrawer.updateIsAttributes();
+        this.removeBoundingBoxLayer();
+        this.addBoundingBoxLayer();
+    }
+
+    private toggleTracking() {
+        this.boundingBoxesDrawer.updateIsTracking();
+        this.removeBoundingBoxLayer();
+        this.addBoundingBoxLayer();
     }
 
     private jumpSegment(isNext: boolean) {
@@ -498,11 +509,13 @@ export class PlayerWrapper {
         this.avaUILayer = new AVAPlayerUILayer(
             shaka,
             this.onClickLive.bind(this),
-            this.toggleBodyTracking.bind(this),
             this.onClickNextDay.bind(this),
             this.onClickPrevDay.bind(this),
             this.jumpSegment.bind(this),
-            this.allowedControllers
+            this.allowedControllers,
+            this.toggleBox.bind(this),
+            this.toggleAttributes.bind(this),
+            this.toggleTracking.bind(this)
         );
 
         this._errorHandler = new shakaErrorHandler({
@@ -688,7 +701,10 @@ export class PlayerWrapper {
                 if (iterator.type === 'ENTITY') {
                     data.entity = {
                         id: iterator.entity.id || iterator.sequenceId,
-                        tag: iterator.entity.tag.value
+                        tag: iterator.entity.tag.value,
+                        trackingId: iterator.extensions.trackingId,
+                        speed: iterator.extensions.speed,
+                        orientation: iterator.extensions.mappedImageOrientation
                     };
                 }
                 this.boundingBoxesDrawer.addItem(emsg.startTime, emsg.endTime, data);

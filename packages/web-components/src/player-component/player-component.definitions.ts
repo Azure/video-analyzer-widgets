@@ -37,7 +37,8 @@ export enum ControlPanelElements {
     CAMERA_NAME = 'camera_name',
     TIMESTAMP = 'timestamp',
     TIMELINE_ZOOM = 'timeline_zoom',
-    Time_And_Duration = 'time_and_duration'
+    Time_And_Duration = 'time_and_duration',
+    META_DATA = 'meta_data_button'
 }
 
 export enum LiveState {
@@ -58,6 +59,7 @@ export const ControlPanelElementsTooltip = {
     META_DATA_LAYER_ON: 'Turn on object metadata overlay',
     META_DATA_LAYER_OFF: 'Turn off object metadata overlay',
     OVERFLOW_MENU: 'More options',
+    META_DATA_OVERFLOW_MENU: 'Metadata rendering',
     FULLSCREEN: 'Enter fullscreen',
     EXIT_FULLSCREEN: 'Exit fullscreen',
     NEXT_DAY: 'Next day',

@@ -5,6 +5,7 @@ import {
     FORWARD_SVG_PATH,
     FULL_OFF_PATH,
     FULL_PATH,
+    METADATA_BUTTON_PATH,
     METADATA_PATH,
     MUTE_PATH,
     ON_PATH,
@@ -198,6 +199,73 @@ export class OverflowMenu extends shaka.ui.OverflowMenu {
             svg.appendChild(path);
             button.prepend(svg);
         }
+    }
+}
+
+export class MetaDataButton extends shaka.ui.OverflowMenu {
+    private svg: SVGSVGElement;
+    private path: SVGPathElement;
+
+    public constructor(
+        parent: any,
+        controls: any,
+        private showBoxCallBack: () => void,
+        private showAttributesCallBack: () => void,
+        private showTrackingCallBack: () => void
+    ) {
+        super(parent, controls);
+        this.init();
+    }
+
+    public createChildren_() {
+        const showBoundingBox = document.createElement('div');
+        showBoundingBox.innerText = Localization.dictionary.BUTTONS_CLASS_BoundingBox;
+        showBoundingBox.classList.add('overflow-menu-item');
+        const BoxCheckbox = document.createElement('fast-checkbox');
+        this.eventManager.listen(BoxCheckbox, 'click', () => {
+            this.showBoxCallBack();
+        });
+        showBoundingBox.appendChild(BoxCheckbox);
+        this.overflowMenu_.appendChild(showBoundingBox);
+
+        const showAtrribute = document.createElement('div');
+        showAtrribute.innerText = Localization.dictionary.BUTTONS_CLASS_ATTRIBUTES;
+        showAtrribute.classList.add('overflow-menu-item');
+        const AttributesCheckbox = document.createElement('fast-checkbox');
+        this.eventManager.listen(AttributesCheckbox, 'click', () => {
+            this.showAttributesCallBack();
+        });
+        showAtrribute.appendChild(AttributesCheckbox);
+        this.overflowMenu_.appendChild(showAtrribute);
+
+        const showTrackingLine = document.createElement('div');
+        showTrackingLine.innerText = Localization.dictionary.BUTTONS_CLASS_ObjectPath;
+        showTrackingLine.classList.add('overflow-menu-item');
+        const TrackingLineCheckbox = document.createElement('fast-checkbox');
+        this.eventManager.listen(TrackingLineCheckbox, 'click', () => {
+            this.showTrackingCallBack();
+        });
+        showTrackingLine.appendChild(TrackingLineCheckbox);
+        this.overflowMenu_.appendChild(showTrackingLine);
+
+        const settingsLabel = document.createElement('label');
+        settingsLabel.classList.add('settings-header');
+        const settingsSpan = document.createElement('span');
+        settingsSpan.innerText = Localization.dictionary.BUTTONS_CLASS_MetaDataSettings;
+        settingsLabel.prepend(settingsSpan);
+        this.overflowMenu_.prepend(settingsLabel);
+    }
+
+    private init() {
+        // Create SVG
+        this.svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        this.path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        this.path.setAttribute('fill', 'black');
+        this.path.setAttribute('d', METADATA_BUTTON_PATH);
+        this.svg.appendChild(this.path);
+        this.overflowMenuButton_.innerText = '';
+        this.overflowMenuButton_.appendChild(this.svg);
+        setElementTooltip(this.overflowMenuButton_, ControlPanelElementsTooltip.META_DATA_OVERFLOW_MENU);
     }
 }
 

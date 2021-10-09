@@ -3,7 +3,6 @@ import { ControlPanelElements } from '../player-component.definitions';
 import { ISeekBarElement } from './definitions';
 import { ForwardButton, FullscreenButton, MuteButton, OverflowMenu, PlayButton, RewindButton, SeekBarDecorator } from './ui.class';
 import {
-    BodyTrackingButtonFactory,
     ForwardButtonFactory,
     FullscreenButtonFactory,
     HoursLabelFactory,
@@ -15,7 +14,8 @@ import {
     PlayButtonFactory,
     PrevDayButtonFactory,
     PrevSegmentButtonFactory,
-    RewindButtonFactory
+    RewindButtonFactory,
+    MetaDataButtonFactory
 } from './ui.factory';
 
 /**
@@ -37,7 +37,7 @@ export class AVAPlayerUILayer {
             ControlPanelElements.NEXT_DAY,
             ControlPanelElements.HOURS_LABEL,
             ControlPanelElements.Time_And_Duration,
-            ControlPanelElements.META_DATA_LAYER,
+            ControlPanelElements.META_DATA,
             ControlPanelElements.OVERFLOW_MENU,
             ControlPanelElements.FULLSCREEN
         ],
@@ -55,11 +55,13 @@ export class AVAPlayerUILayer {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         private shaka: any,
         private toggleLiveMode: (isLive: boolean) => void,
-        private toggleBodyTracking: (isOn: boolean) => void,
         private nextDayCallBack: () => void,
         private prevDayCallBack: () => void,
         private jumpSegmentCallBack: (isNext: boolean) => void,
-        private allowedControllers: ControlPanelElements[]
+        private allowedControllers: ControlPanelElements[],
+        private toggleBox: () => void,
+        private toggleAttributes: () => void,
+        private toggleTracking: () => void
     ) {
         this.createControllers();
         this.updateAvailableControllers();
@@ -128,7 +130,7 @@ export class AVAPlayerUILayer {
                 hasMiddleSpacer = true;
             } else if (
                 !hasRightSpacer &&
-                (iterator === ControlPanelElements.META_DATA_LAYER ||
+                (iterator === ControlPanelElements.META_DATA ||
                     iterator === ControlPanelElements.OVERFLOW_MENU ||
                     iterator === ControlPanelElements.FULLSCREEN)
             ) {
@@ -179,10 +181,6 @@ export class AVAPlayerUILayer {
 
         this.shaka.ui.Controls.registerElement(ControlPanelElements.LIVE, new LiveButtonFactory());
 
-        BodyTrackingButtonFactory.callBack = (isOn: boolean) => {
-            this.toggleBodyTracking(isOn);
-        };
-        this.shaka.ui.Controls.registerElement(ControlPanelElements.META_DATA_LAYER, new BodyTrackingButtonFactory());
 
         NextSegmentButtonFactory.callBack = (isNext: boolean) => {
             this.jumpSegmentCallBack(isNext);
@@ -205,6 +203,17 @@ export class AVAPlayerUILayer {
         this.shaka.ui.Controls.registerElement(ControlPanelElements.PREVIOUS_DAY, new PrevDayButtonFactory());
 
         this.shaka.ui.Controls.registerElement(ControlPanelElements.HOURS_LABEL, new HoursLabelFactory());
+
+        MetaDataButtonFactory.BoxCallBack = () => {
+            this.toggleBox();
+        };
+        MetaDataButtonFactory.AttributesCallBack = () => {
+            this.toggleAttributes();
+        };
+        MetaDataButtonFactory.TrackingCallBack = () => {
+            this.toggleTracking();
+        };
+        this.shaka.ui.Controls.registerElement(ControlPanelElements.META_DATA, new MetaDataButtonFactory());
     }
 
     private createButton() {
