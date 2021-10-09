@@ -1,0 +1,91 @@
+<html>
+
+<head>
+  <title>Sample Player Widget</title>
+  <style></style>
+</head>
+
+<body>
+  <h1>Example Player widget</h1>
+  <div>
+    <label for="archiveUrlInput">ArchiveUrl</label>
+    <input id="archiveUrlInput"
+      style="width:700px"
+      type="text"
+      placeholder="client api endpoint url"
+      value="" />
+  </div>
+  <div>
+    <label for="rtspUrlInput">RTSP Url</label>
+    <input id="rtspUrlInput"
+      style="width:700px"
+      type="text"
+      placeholder="client api endpoint url"
+      value="" />
+  </div>
+  <div>
+    <label for="clientApiTokenInput">JWT Auth Token for Client API:</label>
+    <input id="clientApiTokenInput"
+      style="width:1000px"
+      type="text"
+      value="eyJhbGciOiJSUzI1NiIsImtpZCI6ImpyTFRURGg5ZEFKZERESElYWm55U0Q0RVZlSSIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzYW1wbGUtY3ZyLXZpZGVvLXNpbmsiLCJhdWQiOlsiaHR0cHM6Ly85MzU0Y2Q3NWVlZjQ0NDYyYTNkOTFlYmE1ZmZhNTM1OC5zdHJlYW1pbmcud2VzdGNlbnRyYWx1cy1wcml2YXRlMS52aWRlb2FuYWx5emVyLmF6dXJlLm5ldC9iYzRkYzZkNy1lYmZmLTQwYjMtYjYzMi01NTE4ZWIzMWIwMzciLCJ3c3M6Ly85MzU0Y2Q3NWVlZjQ0NDYyYTNkOTFlYmE1ZmZhNTM1OC5ydHNwLXR1bm5lbC53ZXN0Y2VudHJhbHVzLXByaXZhdGUxLnZpZGVvYW5hbHl6ZXIuYXp1cmUubmV0L2JjNGRjNmQ3LWViZmYtNDBiMy1iNjMyLTU1MThlYjMxYjAzNyJdLCJleHAiOjE2MzM3Mzg0OTYsImlzcyI6Imh0dHBzOi8vd2VzdGNlbnRyYWx1cy1wcml2YXRlMS52aWRlb2FuYWx5emVyLmF6dXJlLm5ldC8ifQ.yMnbKPtLhEE21SNsuLbbVfm5S0TmMPBbivPndGYpMnPnuRy4tZnf-e0IVKEpWN8aZ4h0b0A1kJH93DSkiEFMxsG8S3enjBDHFddGtw6xEqgbMTuyONsZqEy1xsvN_bQcsIIRayRbeJqcV6QeeBmuBvr7ZBfUTk4yU7AqSjpEMKqI0YSnR9xirGqIpheWg1NFnEuOi-D4frE81lTf_YyYbg6lOwqyFJEHJEEUYEdlhzIe2K9SgHjhFodie3uzM_UThQWLjTWpkw-NhEcjlX1QI8X_d_O3xv6FjjFZBaKfwEL-4Vnyc3dNZn5HXkGyA2_ovKDUEWstz0xFTzbqiWoiew" />
+  </div>
+  <div>
+    <label for="muteInput">Muted:</label>
+    <select id="muteInput">
+      <option value="true"
+        selected>Yes</option>
+      <option value="false">No</option>
+    </select>
+  </div>
+  <br />
+  <button id="play"
+    onclick="onPlayButtonClick()">Start Playback</button>
+  <br /><br />
+  <div id="container"
+    style="width:720px"
+    class="widget-container">
+    <ava-player>
+    </ava-player>
+  </div>
+  <script>
+    function onAVALoad() {
+      const avaPlayer = document.querySelector("ava-player");
+      avaPlayer.addEventListener('TOKEN_EXPIRED', () => {
+        console.log('token expired');
+      });
+
+      // avaPlayer.addEventListener('CLOCK_TIME_UPDATED', (event) => {
+      //   console.log(`event type:${event.type}, event detail: ${event.detail}`);
+      // });
+    }
+
+    function onPlayButtonClick() {
+      const archiveUrlInput = document.querySelector('#archiveUrlInput');
+      const archiveUrl = archiveUrlInput.value;
+
+      const rtspUrlInput = document.querySelector('#rtspUrlInput');
+      const rtspUrl = rtspUrlInput.value;
+
+      const clientApiTokenInput = document.querySelector('#clientApiTokenInput');
+      const token = clientApiTokenInput.value;
+      const muteInput = document.querySelector('#muteInput');
+      const mute = (muteInput.value === "true") ? true : false;
+
+      const avaPlayer = document.querySelector("ava-player");
+
+      avaPlayer.configure({ clientApiEndpointUrl: null, videoName: "", debug: true });
+
+      avaPlayer.setSource({ allowCrossSiteCredentials: false, archiveSrc: archiveUrl, rtspSrc: rtspUrl, authenticationToken: token })
+      avaPlayer.load();
+    }
+  </script>
+  <script src="../dist/global.js"
+    onload="onAVALoad()"></script>
+  <script>
+    mediaStreamLibrary.utils.setLoggingOutput(true, true)
+    mediaStreamLibrary.utils.setNpmDebug(true, ['-msl:h264depay'])
+  </script>
+</body>
+
+</html>
