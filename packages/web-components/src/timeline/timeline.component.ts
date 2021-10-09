@@ -87,10 +87,6 @@ export class TimelineComponent extends FASTElement {
         });
     }
 
-    public toggleUserScroll() {
-        this.userScrolled = !this.userScrolled;
-    }
-
     public currentTimeChanged() {
         if (this.segmentsTimeline) {
             this.segmentsTimeline.currentTime = this.currentTime;
