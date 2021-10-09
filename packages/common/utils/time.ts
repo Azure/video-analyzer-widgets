@@ -1,4 +1,4 @@
-export function toTimeText(time: number, roundSeconds = false): string {
+export function toTimeText(time: number, roundSeconds = true): string {
     const sec_num = time;
     let hours: number | string = Math.floor(sec_num / 3600);
     let minutes: number | string = Math.floor((sec_num - hours * 3600) / 60);

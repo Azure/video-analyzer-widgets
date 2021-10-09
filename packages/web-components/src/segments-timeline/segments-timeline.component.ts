@@ -227,7 +227,7 @@ export class SegmentsTimelineComponent extends FASTElement {
 
     private initSVGProgress() {
         const container = this.$fastController.element.shadowRoot?.querySelector('svg');
-        const containerWidth = this.$fastController.element.offsetWidth * (this.config.displayOptions.zoom || 1);
+        const containerWidth = this.$fastController.element.offsetWidth * (this.config.displayOptions.zoomFactor ?? 1);
         container.style.width = `${containerWidth}px`;
 
         const chartOptions: IChartOptions = {

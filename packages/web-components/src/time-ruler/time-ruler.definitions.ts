@@ -5,4 +5,5 @@ export interface IRulerOptions extends ICanvasOptions {
     timeColor: string;
     dateText: string;
     zoom?: number;
+    zoomFactor?: number;
 }

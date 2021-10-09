@@ -19,12 +19,12 @@ export const styles = css`
         --corner-radius: 10;
         --design-unit: 1;
         --density: 0;
-        right: 20px;
+        right: 40px;
         bottom: 0px;
         height: 20px;
         margin: 0px;
-        border-top: 1px solid var(--divider-alt);
-        border-bottom: 1px solid var(--divider-alt);
+        // border-top: 1px solid var(--divider-alt);
+        // border-bottom: 1px solid var(--divider-alt);
         border-radius: 0px;
         padding-bottom: 1px;
     }
@@ -42,7 +42,8 @@ export const styles = css`
         height: 1px;
     }
 
-    .plus-svg {
+    .plus-svg,
+    .reset-svg {
         width: 11px;
         height: 11px;
     }
@@ -69,27 +70,43 @@ export const styles = css`
     }
 
     .left-button,
-    .right-button {
-        width: 18px;
-        height: 18px;
+    .right-button,
+    .reset-button {
+        width: 20px;
+        height: 20px;
         display: inline-grid;
         position: absolute;
         bottom: 0;
-        border: 1px solid var(--divider-alt);
+        // border: 1px solid var(--divider-alt);
         --base-height-multiplier: 8px;
         border-radius: 0;
     }
 
+    fast-slider,
+    .left-button,
+    .right-button,
+    .reset-button {
+        background-color: var(--bg-dialog);
+    }
+
     .right-button {
-        right: 0px;
+        right: 20px;
     }
 
     .left-button {
-        right: 112px;
+        right: 132px;
+    }
+
+    .zoom-slider {
+        border: 1px solid var(--bg-dialog);
+    }
+
+    .reset-button {
+        right: 0px;
     }
 
     .simplebar-scrollbar::before {
-        background-color: var(--divider-alt); /* color of the scroll thumb */
+        background-color: var(--type-primary); /* color of the scroll thumb */
         border-radius: 4px; /* roundness of the scroll thumb */
     }
 

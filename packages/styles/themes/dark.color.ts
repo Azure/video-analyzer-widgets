@@ -29,7 +29,7 @@ export const darkColorsStyle: ElementStyles = css`
         --ruler-line-alt: rgba(138, 136, 134, 1);
         --video-buffer: rgba(96, 94, 92, 0.75);
         --segment-selected: rgba(243, 242, 241, 1);
-        --segment-rest: rgba(96, 94, 92, 1);
+        --segment-rest: rgba(134, 133, 132, 1);
         --segment-hover: rgba(138, 136, 134, 1);
         --segment-live: rgba(26, 188, 156, 1);
         --segment-bg: rgba(50, 49, 48, 1);
@@ -50,5 +50,6 @@ export const darkColorsStyle: ElementStyles = css`
         --type-tertiary: rgba(161, 159, 157, 1);
         --type-disabled: rgba(121, 119, 117, 1);
         --type-disabled-alt: rgba(72, 70, 68, 1);
+        --timeline-background: rgba(43, 43, 43, 1);
     }
 `;

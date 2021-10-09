@@ -60,6 +60,7 @@
     "DATE_PICKER_Month_12": "Dec",
     "TIMELINE_ZoomOut": "Zoom out",
     "TIMELINE_ZoomIn": "Zoom in",
+    "TIMELINE_ZoomReset": "Zoom reset",
     "DATE_PICKER_labelMonthNext": "Next month",
     "DATE_PICKER_labelMonthPrev": "Previous month",
     "DATE_PICKER_labelMonthSelect": "Select a month",
