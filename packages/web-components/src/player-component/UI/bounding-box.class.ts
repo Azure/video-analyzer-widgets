@@ -246,18 +246,18 @@ export class BoundingBoxDrawer extends CanvasElement {
                     this.context.fillStyle = 'white';
                     this.context.fillText(label, x + this.PADDING_RIGHT * this.ratio + height, y - this.PADDING_TOP * 2 * this.ratio);
                     this.context.fillStyle = 'rgba(0, 0, 0, 0.74)';
-                    
+
                     // Draw speed round pill
                     const speedWidth = this.displayTextWidth(speed) + 2.5 * height;
                     this.roundRect(x + w/2 - height/2, orientationPointY - height/2, speedWidth, height, height/2);
-                    
+
                     // Draw the dot in the speed round pill
                     this.context.beginPath();
                     this.context.strokeStyle = color;
                     this.context.arc(x + w/2, orientationPointY, height/4, 0, 2 * Math.PI, true);
                     this.context.fillStyle = color;
                     this.context.fill();
-                    
+
                     // Draw orientation arrow
                     if (floatSpeed === 0 || speed === 'inf'){
                         this.context.beginPath();
