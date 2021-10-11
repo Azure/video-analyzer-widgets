@@ -5,6 +5,8 @@
 /* eslint-disable @typescript-eslint/explicit-member-accessibility */
 /* eslint-disable no-unused-vars */
 /* eslint-disable @typescript-eslint/naming-convention */
+declare class GlobalError extends Error {}
+
 export declare namespace shaka {
     export namespace media {
         export class InitSegmentReference {
@@ -268,8 +270,8 @@ export declare namespace shaka {
             getSeekRangeEnd(): any;
         }
     }
-    namespace util {
-        class Error {
+    export namespace util {
+        class Error extends GlobalError implements shaka.extern.Error {
             severity: any;
             category: any;
             code: any;
@@ -950,7 +952,7 @@ export declare namespace shaka {
         }
     }
 
-    namespace extern {
+    export namespace extern {
         /** define the  TimelineRegionInfo from both doc and code */
         interface TimelineRegionInfo {
             schemeIdUri: string;
@@ -976,6 +978,14 @@ export declare namespace shaka {
             eventDuration: number;
             id: number;
             messageData: Uint8Array;
+        }
+
+        interface Error {
+            category: shaka.util.Error.Category ;
+            code: shaka.util.Error.Code ;
+            data: any [] ;
+            handled: boolean ;
+            severity: shaka.util.Error.Severity ;
         }
     }
 

@@ -46,7 +46,7 @@ export const styles = css`
 
     :host(.live-off) {
         /* add controllers and timeline */
-        padding-bottom: calc(48px + 49px);
+        padding-bottom: calc(48px + 76px);
     }
 
     :host(.loading),
@@ -119,7 +119,7 @@ export const styles = css`
     }
 
     .shaka-video-container.fullscreen .shaka-controls-container.live-off .shaka-bottom-controls {
-        padding-bottom: calc(48px + 49px + 2px) !important;
+        padding-bottom: calc(48px + 76px + 2px) !important;
     }
     .shaka-volume-bar-container {
         height: 2px;

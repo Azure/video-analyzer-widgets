@@ -1,0 +1,91 @@
+<html>
+
+<head>
+  <title>Sample Player Widget</title>
+  <style></style>
+</head>
+
+<body>
+  <h1>Example Player widget</h1>
+  <div>
+    <label for="archiveUrlInput">ArchiveUrl</label>
+    <input id="archiveUrlInput"
+      style="width:700px"
+      type="text"
+      placeholder="client api endpoint url"
+      value="" />
+  </div>
+  <div>
+    <label for="rtspUrlInput">RTSP Url</label>
+    <input id="rtspUrlInput"
+      style="width:700px"
+      type="text"
+      placeholder="client api endpoint url"
+      value="" />
+  </div>
+  <div>
+    <label for="authTokenInput">JWT Auth Token for playback:</label>
+    <input id="authTokenInput"
+      style="width:1000px"
+      type="text"
+      value="" />
+  </div>
+  <div>
+    <label for="muteInput">Muted:</label>
+    <select id="muteInput">
+      <option value="true"
+        selected>Yes</option>
+      <option value="false">No</option>
+    </select>
+  </div>
+  <br />
+  <button id="play"
+    onclick="onPlayButtonClick()">Start Playback</button>
+  <br /><br />
+  <div id="container"
+    style="width:720px"
+    class="widget-container">
+    <ava-player>
+    </ava-player>
+  </div>
+  <script>
+    function onAVALoad() {
+      const avaPlayer = document.querySelector("ava-player");
+      avaPlayer.addEventListener('TOKEN_EXPIRED', () => {
+        console.log('token expired');
+      });
+
+      // avaPlayer.addEventListener('CLOCK_TIME_UPDATED', (event) => {
+      //   console.log(`event type:${event.type}, event detail: ${event.detail}`);
+      // });
+    }
+
+    function onPlayButtonClick() {
+      const archiveUrlInput = document.querySelector('#archiveUrlInput');
+      const archiveUrl = archiveUrlInput.value;
+
+      const rtspUrlInput = document.querySelector('#rtspUrlInput');
+      const rtspUrl = rtspUrlInput.value;
+
+      const authTokenInput = document.querySelector('#authTokenInput');
+      const token = authTokenInput.value;
+      const muteInput = document.querySelector('#muteInput');
+      const mute = (muteInput.value === "true") ? true : false;
+
+      const avaPlayer = document.querySelector("ava-player");
+
+      avaPlayer.configure({ clientApiEndpointUrl: null, videoName: "", debug: true });
+
+      avaPlayer.setSource({ allowCrossSiteCredentials: false, archiveSrc: archiveUrl, rtspSrc: rtspUrl, authenticationToken: token })
+      avaPlayer.load();
+    }
+  </script>
+  <script src="../dist/global.js"
+    onload="onAVALoad()"></script>
+  <script>
+    mediaStreamLibrary.utils.setLoggingOutput(true, true)
+    mediaStreamLibrary.utils.setNpmDebug(true, ['-msl:h264depay'])
+  </script>
+</body>
+
+</html>

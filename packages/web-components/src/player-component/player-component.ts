@@ -374,6 +374,7 @@ export class PlayerComponent extends FASTElement {
             if (this.player) {
                 this.player.availableSegments = segments;
                 this.player.vodStream = this.vodStream;
+                this.player.currentDate = this.currentDate;
                 await this.player.load(this.vodStream);
             }
         }
@@ -493,6 +494,7 @@ export class PlayerComponent extends FASTElement {
             this.player.availableSegments = segments;
             this.player.vodStream = this.vodStream;
             this.player.liveStream = this.liveStream;
+            this.player.currentDate = this.currentDate;
             if (this.isClip) {
                 this.player.toggleClipMode(this.isClip);
             }
@@ -543,9 +545,13 @@ export class PlayerComponent extends FASTElement {
                 ...this.datePickerComponent.allowedDates,
                 years: this.currentAllowedYears.toString()
             };
-        } catch (error) {
-            this.handleError(error);
-            throw new WidgetGeneralError(this.resources.PLAYER_CannotParseMedia);
+        } catch (error: unknown) {
+            if (error instanceof HttpError) {
+                this.handleError(error);
+                throw new WidgetGeneralError(this.resources.PLAYER_CannotParseMedia);
+            } else {
+                throw error;
+            }
         }
     }
 
@@ -580,9 +586,13 @@ export class PlayerComponent extends FASTElement {
                     this.allowedDates[year][index] = [];
                 }
             }
-        } catch (error) {
-            this.handleError(error);
-            throw new WidgetGeneralError(this.resources.PLAYER_CannotParseMedia);
+        } catch (error: unknown) {
+            if (error instanceof HttpError) {
+                this.handleError(error);
+                throw new WidgetGeneralError(this.resources.PLAYER_CannotParseMedia);
+            } else {
+                throw error;
+            }
         }
     }
 
@@ -621,9 +631,13 @@ export class PlayerComponent extends FASTElement {
                     this.allowedDates[year][month].push(index);
                 }
             }
-        } catch (error) {
-            this.handleError(error);
-            throw new WidgetGeneralError(this.resources.PLAYER_CannotParseMedia);
+        } catch (error: unknown) {
+            if (error instanceof HttpError) {
+                this.handleError(error);
+                throw new WidgetGeneralError(this.resources.PLAYER_CannotParseMedia);
+            } else {
+                throw error;
+            }
         }
     }
 
