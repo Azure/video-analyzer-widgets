@@ -37,8 +37,8 @@ export class AVAPlayerUILayer {
             ControlPanelElements.NEXT_DAY,
             ControlPanelElements.HOURS_LABEL,
             ControlPanelElements.Time_And_Duration,
-            ControlPanelElements.OVERFLOW_MENU,
             ControlPanelElements.META_DATA,
+            ControlPanelElements.OVERFLOW_MENU,
             ControlPanelElements.FULLSCREEN
         ],
         addBigPlayButton: false,
@@ -60,7 +60,8 @@ export class AVAPlayerUILayer {
         private jumpSegmentCallBack: (isNext: boolean) => void,
         private allowedControllers: ControlPanelElements[],
         private toggleBox: () => void,
-        private toggleAttributes: () => void
+        private toggleAttributes: () => void,
+        private toggleTracking: () => void
     ) {
         this.createControllers();
         this.updateAvailableControllers();
@@ -129,7 +130,7 @@ export class AVAPlayerUILayer {
                 hasMiddleSpacer = true;
             } else if (
                 !hasRightSpacer &&
-                (iterator === ControlPanelElements.META_DATA_LAYER ||
+                (iterator === ControlPanelElements.META_DATA ||
                     iterator === ControlPanelElements.OVERFLOW_MENU ||
                     iterator === ControlPanelElements.FULLSCREEN)
             ) {
@@ -202,12 +203,15 @@ export class AVAPlayerUILayer {
         this.shaka.ui.Controls.registerElement(ControlPanelElements.PREVIOUS_DAY, new PrevDayButtonFactory());
 
         this.shaka.ui.Controls.registerElement(ControlPanelElements.HOURS_LABEL, new HoursLabelFactory());
-        
-        MetaDataButtonFactory.BoxCallBack = (isOn: boolean) => {
+
+        MetaDataButtonFactory.BoxCallBack = () => {
             this.toggleBox();
         };
-        MetaDataButtonFactory.AttributesCallBack = (isOn: boolean) => {
+        MetaDataButtonFactory.AttributesCallBack = () => {
             this.toggleAttributes();
+        };
+        MetaDataButtonFactory.TrackingCallBack = () => {
+            this.toggleTracking();
         };
         this.shaka.ui.Controls.registerElement(ControlPanelElements.META_DATA, new MetaDataButtonFactory());
     }

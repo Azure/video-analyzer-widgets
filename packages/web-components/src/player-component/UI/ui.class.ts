@@ -5,6 +5,7 @@ import {
     FORWARD_SVG_PATH,
     FULL_OFF_PATH,
     FULL_PATH,
+    METADATA_BUTTON_PATH,
     METADATA_PATH,
     MUTE_PATH,
     ON_PATH,
@@ -204,57 +205,67 @@ export class OverflowMenu extends shaka.ui.OverflowMenu {
 export class MetaDataButton extends shaka.ui.OverflowMenu {
     private svg: SVGSVGElement;
     private path: SVGPathElement;
-    private isBoxOn: boolean;
-    private isAttributesOn: boolean;
 
-    public constructor(parent: any, 
-                       controls: any, 
-                       private showBoxCallBack: (isOn: boolean) => void, 
-                       private showAttributesCallBack: (isOn: boolean) => void) {
+    public constructor(
+        parent: any,
+        controls: any,
+        private showBoxCallBack: () => void,
+        private showAttributesCallBack: () => void,
+        private showTrackingCallBack: () => void
+    ) {
         super(parent, controls);
         this.init();
     }
 
     public createChildren_() {
         const showBoundingBox = document.createElement('div');
-        showBoundingBox.innerText = ' Bounding Box ';
-        const BoxCheckbox = document.createElement('input');
-        BoxCheckbox.type = 'checkbox'
+        showBoundingBox.innerText = Localization.dictionary.BUTTONS_CLASS_BoundingBox;
+        showBoundingBox.classList.add('overflow-menu-item');
+        const BoxCheckbox = document.createElement('fast-checkbox');
         this.eventManager.listen(BoxCheckbox, 'click', () => {
-            this.isBoxOn = !this.isBoxOn;
-            this.showBoxCallBack(this.isBoxOn);
+            this.showBoxCallBack();
         });
         showBoundingBox.appendChild(BoxCheckbox);
         this.overflowMenu_.appendChild(showBoundingBox);
 
         const showAtrribute = document.createElement('div');
-        showAtrribute.innerText = ' Attributes ';
-        const AttributesCheckbox = document.createElement('input');
-        AttributesCheckbox.type = 'checkbox'
+        showAtrribute.innerText = Localization.dictionary.BUTTONS_CLASS_ATTRIBUTES;
+        showAtrribute.classList.add('overflow-menu-item');
+        const AttributesCheckbox = document.createElement('fast-checkbox');
         this.eventManager.listen(AttributesCheckbox, 'click', () => {
-            this.showAttributesCallBack(this.isAttributesOn)
+            this.showAttributesCallBack();
         });
         showAtrribute.appendChild(AttributesCheckbox);
         this.overflowMenu_.appendChild(showAtrribute);
 
+        const showTrackingLine = document.createElement('div');
+        showTrackingLine.innerText = Localization.dictionary.BUTTONS_CLASS_ObjectPath;
+        showTrackingLine.classList.add('overflow-menu-item');
+        const TrackingLineCheckbox = document.createElement('fast-checkbox');
+        this.eventManager.listen(TrackingLineCheckbox, 'click', () => {
+            this.showTrackingCallBack();
+        });
+        showTrackingLine.appendChild(TrackingLineCheckbox);
+        this.overflowMenu_.appendChild(showTrackingLine);
+
         const settingsLabel = document.createElement('label');
         settingsLabel.classList.add('settings-header');
         const settingsSpan = document.createElement('span');
-        settingsSpan.innerText = 'Meta Data Settings';
+        settingsSpan.innerText = Localization.dictionary.BUTTONS_CLASS_MetaDataSettings;
         settingsLabel.prepend(settingsSpan);
         this.overflowMenu_.prepend(settingsLabel);
     }
 
     private init() {
-        //Create SVG
+        // Create SVG
         this.svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         this.path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         this.path.setAttribute('fill', 'black');
-        this.path.setAttribute('d', METADATA_PATH);
+        this.path.setAttribute('d', METADATA_BUTTON_PATH);
         this.svg.appendChild(this.path);
         this.overflowMenuButton_.innerText = '';
         this.overflowMenuButton_.appendChild(this.svg);
-        setElementTooltip(this.overflowMenuButton_, 'Meta Data Settings');
+        setElementTooltip(this.overflowMenuButton_, ControlPanelElementsTooltip.META_DATA_OVERFLOW_MENU);
     }
 }
 

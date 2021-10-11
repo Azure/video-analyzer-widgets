@@ -53,6 +53,7 @@ export class PlayerWrapper {
     private _stallDetectionTimer: number | null = null;
     private _firstVideoError: number = 0;
     private _numVideoErrors: number = 0;
+    private wallclock_event: shaka_player.PlayerEvents.FakeEvent | undefined;
 
     private readonly OFFSET_MULTIPLAYER = 1000;
     private readonly SECONDS_IN_HOUR = 3600;
@@ -136,6 +137,7 @@ export class PlayerWrapper {
 
     public async load(url: string) {
         this.isLoaded = false;
+        this.timestampOffset = undefined;
         try {
             await this.player.load(url, null, this.getMimeType(url));
             this.isLoaded = true;
@@ -153,6 +155,8 @@ export class PlayerWrapper {
         this.player?.removeEventListener('trackschanged', this.onTrackChange.bind(this));
 
         this.player?.removeEventListener('emsg', this.onShakaMetadata.bind(this));
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (this.player as any).removeEventListener('wallclock', this.onWallclock.bind(this));
 
         // Video listeners
         this.video?.removeEventListener('timeupdate', this.onTimeSeekUpdate.bind(this));
@@ -353,6 +357,12 @@ export class PlayerWrapper {
         this.addBoundingBoxLayer();
     }
 
+    private toggleTracking() {
+        this.boundingBoxesDrawer.updateIsTracking();
+        this.removeBoundingBoxLayer();
+        this.addBoundingBoxLayer();
+    }
+
     private jumpSegment(isNext: boolean) {
         let currentTime = this.video.currentTime;
 
@@ -383,7 +393,8 @@ export class PlayerWrapper {
             this.jumpSegment.bind(this),
             this.allowedControllers,
             this.toggleBox.bind(this),
-            this.toggleAttributes.bind(this)
+            this.toggleAttributes.bind(this),
+            this.toggleTracking.bind(this)
         );
 
         // Getting reference to video and video container on DOM
@@ -419,6 +430,8 @@ export class PlayerWrapper {
         this.player.addEventListener('error', this.onErrorEvent.bind(this));
         this.player.addEventListener('trackschanged', this.onTrackChange.bind(this));
         this.player.addEventListener('emsg', this.onShakaMetadata.bind(this));
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (this.player as any).addEventListener('wallclock', this.onWallclock.bind(this));
 
         // Video listeners
         this.video.addEventListener('seeked', this.onSeeked.bind(this));
@@ -548,8 +561,9 @@ export class PlayerWrapper {
                     data.entity = {
                         id: iterator.entity.id || iterator.sequenceId,
                         tag: iterator.entity.tag.value,
-                        confidence: iterator.entity.tag.confidence,
-                        speed: iterator.extensions.speed
+                        trackingId: iterator.extensions.trackingId,
+                        speed: iterator.extensions.speed,
+                        orientation: iterator.extensions.mappedImageOrientation
                     };
                 }
                 this.boundingBoxesDrawer.addItem(emsg.startTime, emsg.endTime, data);
@@ -586,8 +600,11 @@ export class PlayerWrapper {
         }
     }
 
-    private async updateTimeUpdateOffset() {
+    private async getFirstSegmentReference(): Promise<shaka_player.media.SegmentReference | null> {
         const manifest = this.player.getManifest();
+        if (!manifest) {
+            return null;
+        }
         const variant = manifest.variants[0];
         const stream = variant.video || variant.audio;
         if (!stream.segmentIndex) {
@@ -596,10 +613,27 @@ export class PlayerWrapper {
 
         this.segmentIndex = stream.segmentIndex;
         const index = this.segmentIndex.find(0) || 0;
-        const reference = this.segmentIndex.get(index);
-        if (reference) {
+        return this.segmentIndex.get(index);
+    }
+
+    private async updateTimeUpdateOffset() {
+        Logger.log('calculating the timestamp offset for computing wallclock');
+        const reference = await this.getFirstSegmentReference();
+        if (reference && isFinite(reference.timestampOffset)) {
             this.timestampOffset = reference.timestampOffset * -1000;
+        } else if (this.wallclock_event) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const wallclock_event = this.wallclock_event as any;
+            const offset = reference ? (reference.getStartTime() - wallclock_event.timestamp) * 1000 : 0;
+            Logger.log('using wallclock to calculate timestamp offset.', wallclock_event, offset);
+            this.timestampOffset = wallclock_event.ntpTimestamp + offset;
         }
+    }
+
+    private async onWallclock(event: shaka_player.PlayerEvents.FakeEvent) {
+        Logger.log('Received wall clock event', event);
+        this.wallclock_event = event;
+        await this.updateTimeUpdateOffset();
     }
 
     private onPause() {
