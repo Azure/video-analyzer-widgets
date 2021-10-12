@@ -10,7 +10,9 @@ export class TimeRuler extends CanvasElement {
     private _rulerOptions?: IRulerOptions;
     private readonly HOURS_IN_DAY = 24;
     private readonly TENS_MINUTES_IN_HOUR = 6;
+    private readonly MINUTES_IN_HOUR = this.TENS_MINUTES_IN_HOUR * 10;
     private readonly MIN_HOURS_GAP = 300;
+    private readonly TINY_SCALE_MARK_HEIGHT = 2;
     private readonly SMALL_SCALE_MARK_HEIGHT = 4;
     private readonly LARGE_SCALE_MARK_HEIGHT = 8;
     private readonly SECONDES_IN_HOUR = 3600;
@@ -21,6 +23,9 @@ export class TimeRuler extends CanvasElement {
         this.rulerOptions = options;
         if (!this.rulerOptions.zoom) {
             this.rulerOptions.zoom = 1;
+        }
+        if (!this.rulerOptions.zoomFactor) {
+            this.rulerOptions.zoomFactor = 1;
         }
 
         this.resize();
@@ -35,7 +40,7 @@ export class TimeRuler extends CanvasElement {
     }
 
     public resize(): void {
-        this.setCanvasSize(this.rulerOptions.width * this.rulerOptions.zoom, this.rulerOptions.height);
+        this.setCanvasSize(this.rulerOptions.width * this.rulerOptions.zoomFactor, this.rulerOptions.height);
         this.setContextStyle();
         this.draw();
     }
@@ -56,10 +61,10 @@ export class TimeRuler extends CanvasElement {
     }
 
     public preparePoints() {
-        const rulLength = this.rulerOptions.width * this.rulerOptions.zoom;
-        const minutes = (rulLength - this.context.lineWidth) / (this.HOURS_IN_DAY * this.TENS_MINUTES_IN_HOUR);
+        const rulLength = this.rulerOptions.width * this.rulerOptions.zoomFactor;
+        let minutes = (rulLength - this.context.lineWidth) / (this.HOURS_IN_DAY * this.TENS_MINUTES_IN_HOUR);
 
-        const timeOccurrences = this.nearestPow2(Math.floor((rulLength * this.ratio * this.rulerOptions.zoom) / this.MIN_HOURS_GAP));
+        const timeOccurrences = this.nearestPow2(Math.floor((rulLength * this.ratio * this.rulerOptions.zoomFactor) / this.MIN_HOURS_GAP));
         const timeOccurrencesGap = (this.HOURS_IN_DAY * this.TENS_MINUTES_IN_HOUR) / timeOccurrences;
 
         this.canvasPointsDataList = [];
@@ -99,16 +104,52 @@ export class TimeRuler extends CanvasElement {
                     h: this.SMALL_SCALE_MARK_HEIGHT * this.ratio,
                     color: this.rulerOptions?.smallScaleColor
                 });
-            }
-
-            // Start Date tag
-            if (i === 0) {
+                if (this.rulerOptions.zoomFactor > 10) {
+                    this.canvasPointsDataList.push({
+                        x: pos * this.ratio,
+                        y: (this.rulerOptions.height - 2) * this.ratio,
+                        color: this.rulerOptions?.timeColor,
+                        text: toTimeText(this.SECONDES_IN_HOUR * (i / this.TENS_MINUTES_IN_HOUR))
+                    });
+                }
+            } else if (this.rulerOptions.zoomFactor > 10) {
                 this.canvasPointsDataList.push({
                     x: pos * this.ratio,
+                    y: 0,
+                    w: this.context.lineWidth * this.ratio,
+                    h: this.TINY_SCALE_MARK_HEIGHT * this.ratio,
+                    color: this.rulerOptions?.smallScaleColor
+                });
+            }
+
+            if (i === 0) {
+                this.canvasPointsDataList.push({
+                    x: pos,
                     y: (this.rulerOptions.height - 2) * this.ratio,
                     color: this.rulerOptions?.fontColor,
                     text: this.rulerOptions.dateText
                 });
+            }
+        }
+
+        if (this.rulerOptions.zoomFactor > 10) {
+            minutes = (rulLength - this.context.lineWidth) / (this.HOURS_IN_DAY * this.MINUTES_IN_HOUR);
+            for (let i = 1; i <= this.HOURS_IN_DAY * this.MINUTES_IN_HOUR; i += 1) {
+                const pos = i * minutes;
+                if (
+                    i % this.MINUTES_IN_HOUR !== 0 &&
+                    i % this.TENS_MINUTES_IN_HOUR !== 0 &&
+                    this.canvas &&
+                    this.canvas.width > this.MIN_WIDTH_FOR_SMALL_SCALE
+                ) {
+                    this.canvasPointsDataList.push({
+                        x: pos * this.ratio,
+                        y: 0,
+                        w: this.context.lineWidth * this.ratio,
+                        h: this.TINY_SCALE_MARK_HEIGHT * this.ratio,
+                        color: this.rulerOptions?.smallScaleColor
+                    });
+                }
             }
         }
     }

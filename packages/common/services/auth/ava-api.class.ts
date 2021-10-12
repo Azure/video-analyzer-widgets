@@ -3,7 +3,7 @@ import { TokenHandler } from './token-handler.class';
 
 export class AvaAPi {
     private static _videoName = '';
-    private static readonly apiVersion = '2021-05-01-preview';
+    private static readonly apiVersion = '2021-11-01-preview';
 
     private static cookieTimeoutRef = 0;
     private static cookieExpiration: Date;
@@ -23,7 +23,7 @@ export class AvaAPi {
             this.cookieTimeoutRef = 0;
         }
 
-        const url = `${this.apiBase}/videos/${this.videoName}/listStreamingToken?api-version=${this.apiVersion}`;
+        const url = `${this.apiBase}/videos/${this.videoName}/listContentToken?api-version=${this.apiVersion}`;
 
         const headers = { 'Content-Type': 'application/json' };
         headers['Authorization'] = `Bearer ${TokenHandler.avaAPIToken}`;

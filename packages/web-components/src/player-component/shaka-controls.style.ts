@@ -73,7 +73,7 @@ export const stylesShaka = css`
         z-index: 1;
     }
     .shaka-controls-container.live-off {
-        height: calc(100% + 48px + 49px);
+        height: calc(100% + 48px + 76px);
     }
     .live-button-component {
         width: 34px;
@@ -86,7 +86,7 @@ export const stylesShaka = css`
     }
     media-timeline {
         z-index: 9;
-        background-color: var(--bg-controls);
+        background-color: var(--timeline-background);
     }
     .shaka-video-container:not([shaka-controls='true']) .shaka-controls-container {
         display: none;
@@ -520,6 +520,14 @@ export const stylesShaka = css`
         font-size: 14px;
         border-bottom: 1px solid var(--divider);
         color: var(--type-tertiary);
+    }
+    .shaka-overflow-menu .overflow-menu-item {
+        padding: 8px;
+        font-size: 14px;
+        color: var(--type-tertiary);
+    }
+    .shaka-overflow-menu fast-checkbox {
+        float: right;
     }
     .shaka-overflow-menu fast-button .material-icons-round {
         display: none;

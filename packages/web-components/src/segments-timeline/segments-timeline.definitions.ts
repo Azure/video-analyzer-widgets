@@ -17,6 +17,7 @@ export interface IDisplayOptions {
     renderSeek?: ISeekBar;
     timeSmoothing?: number;
     zoom?: number;
+    zoomFactor?: number;
     disableCursor?: boolean; // Disable cursor on un segment parts
 }
 

@@ -50,5 +50,6 @@ export const defaultColorsStyle: ElementStyles = css`
         --type-tertiary: rgba(96, 94, 92, 1);
         --type-disabled: rgba(161, 159, 157, 1);
         --type-disabled-alt: rgba(138, 136, 134, 1);
+        --timeline-background: rgba(255, 255, 255, 1);
     }
 `;

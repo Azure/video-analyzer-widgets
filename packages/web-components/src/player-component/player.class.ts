@@ -162,6 +162,8 @@ export class PlayerWrapper {
     private currentSegment: IUISegment = null;
     private isPlaying: boolean = false;
     private _stallDetectionTimer: number | null = null;
+    private _currentDate: Date;
+    private _driftCorrectionTimer: number | null = null;
     private _firstVideoError: number = 0;
     private _numVideoErrors: number = 0;
     private wallclock_event: shaka_player.PlayerEvents.FakeEvent | undefined;
@@ -247,6 +249,10 @@ export class PlayerWrapper {
         return this._accessToken;
     }
 
+    public set currentDate(startDate: Date) {
+        this._currentDate = startDate;
+    }
+
     public async load(url: string) {
         this.isLoaded = false;
         this.timestampOffset = undefined;
@@ -295,6 +301,11 @@ export class PlayerWrapper {
         if (this._stallDetectionTimer !== null) {
             window.clearInterval(this._stallDetectionTimer);
             this._stallDetectionTimer = null;
+        }
+
+        if (this._driftCorrectionTimer !== null) {
+            window.clearInterval(this._driftCorrectionTimer);
+            this._driftCorrectionTimer = null;
         }
 
         // Remove BB
@@ -392,7 +403,7 @@ export class PlayerWrapper {
     }
 
     private createTimelineComponent() {
-        const segments = createTimelineSegments(this._availableSegments);
+        const segments = createTimelineSegments(this._availableSegments, this._currentDate);
 
         const date = new Date(this.date.getUTCFullYear(), this.date.getUTCMonth(), this.date.getUTCDate(), 0, 0, 0);
 
@@ -415,7 +426,7 @@ export class PlayerWrapper {
 
         // We expect server to return 404 on manifest requests that turn out to be empty,
         // so we assume there will always be at least one segment.
-        const firstSegmentStartSeconds = extractRealTimeFromISO(this._availableSegments?.timeRanges[0]?.start);
+        const firstSegmentStartSeconds = extractRealTimeFromISO(this._availableSegments?.timeRanges[0]?.start, this._currentDate);
         Logger.log(
             'createTimelineComponent: setting firstSegmentStartSeconds to ' + `${firstSegmentStartSeconds}, ` + this.getSeekRangeString()
         );
@@ -459,12 +470,23 @@ export class PlayerWrapper {
         return this.player.seekRange().start - this.firstSegmentStartSeconds;
     }
 
-    private toggleBodyTracking(isOn: boolean) {
-        if (isOn) {
-            this.addBoundingBoxLayer();
-        } else {
-            this.removeBoundingBoxLayer();
-        }
+    private toggleBox() {
+        this.boundingBoxesDrawer.updateIsBox();
+        this.removeBoundingBoxLayer();
+        this.addBoundingBoxLayer();
+
+    }
+
+    private toggleAttributes() {
+        this.boundingBoxesDrawer.updateIsAttributes();
+        this.removeBoundingBoxLayer();
+        this.addBoundingBoxLayer();
+    }
+
+    private toggleTracking() {
+        this.boundingBoxesDrawer.updateIsTracking();
+        this.removeBoundingBoxLayer();
+        this.addBoundingBoxLayer();
     }
 
     private jumpSegment(isNext: boolean) {
@@ -492,11 +514,13 @@ export class PlayerWrapper {
         this.avaUILayer = new AVAPlayerUILayer(
             shaka,
             this.onClickLive.bind(this),
-            this.toggleBodyTracking.bind(this),
             this.onClickNextDay.bind(this),
             this.onClickPrevDay.bind(this),
             this.jumpSegment.bind(this),
-            this.allowedControllers
+            this.allowedControllers,
+            this.toggleBox.bind(this),
+            this.toggleAttributes.bind(this),
+            this.toggleTracking.bind(this)
         );
 
         this._errorHandler = new shakaErrorHandler({
@@ -602,6 +626,19 @@ export class PlayerWrapper {
             prevPosition = newPrevPosition;
         }, stallIntervalMs);
 
+        // Install drift correction
+        const driftIntervalMs = 5000;
+        const MAX_LATENCY_WINDOW = 5000;
+        this._driftCorrectionTimer = window.setInterval(() => {
+            const video = this.player.getMediaElement() as HTMLMediaElement;
+            if (this.player.seekRange().end - MAX_LATENCY_WINDOW > video.currentTime &&
+                !video.paused && this.isLive
+            ) {
+                Logger.log(`Correcting drift, jumping forward ${this.player.seekRange().end - video.currentTime}`);
+                video.currentTime = this.player.seekRange().end;
+            }
+        }, driftIntervalMs);
+
         // Add bounding box drawer
         const options: ICanvasOptions = {
             height: this.video.clientHeight,
@@ -669,7 +706,10 @@ export class PlayerWrapper {
                 if (iterator.type === 'ENTITY') {
                     data.entity = {
                         id: iterator.entity.id || iterator.sequenceId,
-                        tag: iterator.entity.tag.value
+                        tag: iterator.entity.tag.value,
+                        trackingId: iterator.extensions.trackingId,
+                        speed: iterator.extensions.speed,
+                        orientation: iterator.extensions.mappedImageOrientation
                     };
                 }
                 this.boundingBoxesDrawer.addItem(emsg.startTime, emsg.endTime, data);
@@ -764,6 +804,7 @@ export class PlayerWrapper {
             Logger.log('onLoadedData: jump to 0, ' + this.getSeekRangeString());
             this.video.currentTime = 0;
         }
+        this.timelineComponent?.scrollToCurrentTime();
     }
 
     private onTimeSeekUpdate() {

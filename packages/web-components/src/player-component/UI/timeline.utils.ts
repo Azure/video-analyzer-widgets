@@ -3,14 +3,14 @@ import { IUISegment } from '../../segments-timeline/segments-timeline.definition
 import { extractRealTimeFromISO } from './time.utils';
 
 const MIN_DURATION_FILTER = 5;
-export function createTimelineSegments(availableSegments: IAvailableMediaResponse): IUISegment[] {
+export function createTimelineSegments(availableSegments: IAvailableMediaResponse, currentDateStartTime: Date): IUISegment[] {
     let segmentEnd = 0;
     let segmentStart = 0;
     // go over reference
     const segments = [];
     for (const currentSegment of availableSegments?.timeRanges) {
-        segmentEnd = extractRealTimeFromISO(currentSegment.end);
-        segmentStart = extractRealTimeFromISO(currentSegment.start);
+        segmentEnd = extractRealTimeFromISO(currentSegment.end, currentDateStartTime);
+        segmentStart = extractRealTimeFromISO(currentSegment.start, currentDateStartTime);
 
         // If duration id more the 5 seconds - add it
         if (segmentEnd - segmentStart > MIN_DURATION_FILTER) {
