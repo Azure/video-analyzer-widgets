@@ -206,6 +206,16 @@ export class PlayerWrapper {
         this._liveStream = value;
     }
 
+    public get liveStream() {
+        const url = new URL(this._liveStream);
+        // getVideo API may one day return the RTSP URL, until then, hard-code it.
+        url.searchParams.set('rtsp', encodeURIComponent('rtsp://localhost'));
+        if (this.accessToken) {
+            url.searchParams.set('authorization', this.accessToken);
+        }
+        return url.toString();
+    }
+
     public set vodStream(value: string) {
         this._vodStream = value;
     }
@@ -329,7 +339,7 @@ export class PlayerWrapper {
         this.isLive = isLive;
         await this.onClickLiveCallback(isLive);
         if (isLive) {
-            await this.load(this._liveStream);
+            await this.load(this.liveStream);
             this.removeTimelineComponent();
             this.video.play();
         }
@@ -345,7 +355,7 @@ export class PlayerWrapper {
     public async toggleLiveMode(isLive: boolean) {
         this.isLive = isLive;
         if (isLive) {
-            await this.load(this._liveStream);
+            await this.load(this.liveStream);
             this.removeTimelineComponent();
             this.video.play();
         } else {
