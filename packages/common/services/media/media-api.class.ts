@@ -33,8 +33,6 @@ export class MediaApi {
         // if RTSP is present use RTSP URL.
         if (this._liveStream && this.supportsMediaSource()) {
             const url = new URL(this._liveStream);
-            // getVideo API may one day return the RTSP URL, until then, hard-code it.
-            url.searchParams.append('rtsp', encodeURIComponent('rtsp://localhost'));
             return url.toString();
         }
         const format = MediaApi._format === VideoFormat.HLS ? 'm3u8-cmaf' : 'mpd-time-cmaf';
