@@ -323,7 +323,13 @@ export class PlayerComponent extends FASTElement {
 
     public retryStreaming() {
         this.clearError();
-        this.player.retryStreaming();
+        if(this.isLive) {
+            Logger.log("Reloading live stream...")
+            this.player.load(this.player.liveStream);
+        } else {
+            Logger.log("Reloading VOD stream...")
+            this.player.load(this.player.vodStream);
+        }
     }
 
     private updateFullScreen() {

@@ -380,8 +380,13 @@ export class PlayerWrapper {
     }
 
     public retryStreaming() {
-        this.player.retryStreaming();
-        this.play();
+        if(this.isLive) {
+            Logger.log("Reloading live stream...")
+            this.player.load(this.liveStream);
+        } else {
+            Logger.log("Reloading VOD stream...")
+            this.player.load(this.vodStream);
+        }
     }
 
     private updateLiveButtonState() {
@@ -536,6 +541,7 @@ export class PlayerWrapper {
         this._errorHandler = new shakaErrorHandler({
             resetSource: async () => {
                 const assetUri = this.player.getAssetUri();
+                Logger.log("Auto-reconnecting...")
                 await this.load(assetUri);
             }
         });
