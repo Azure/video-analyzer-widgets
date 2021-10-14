@@ -54,8 +54,9 @@ export class TimelineComponent extends FASTElement {
     @observable public resources: IDictionary = {};
 
     public readonly DAY_DURATION_IN_SECONDS = 86400; // 60 (sec) * 60 (min) * 24 (hours)
+    public readonly DEFAULT_ZOOM_LEVEL = 9;
 
-    public zoom: number = 9;
+    public zoom: number = this.DEFAULT_ZOOM_LEVEL;
     public zoomFactor: number = 1;
     public scrollContainer: Element;
     public autoScrolled = false;
@@ -217,8 +218,7 @@ export class TimelineComponent extends FASTElement {
     public handleZoomResetMouseUp(e: Event): boolean {
         switch (getKeyCode(e as KeyboardEvent)) {
             case 1: // left mouse button.
-                this.userScrolled = false;
-                this.fastSlider.value = `${this.SLIDER_DENSITY}`;
+                this.zoomReset();
                 return false;
         }
 
@@ -229,8 +229,7 @@ export class TimelineComponent extends FASTElement {
         switch (getKeyCode(e)) {
             case keyCodeEnter:
             case keyCodeSpace:
-                this.userScrolled = false;
-                this.fastSlider.value = `${this.SLIDER_DENSITY}`;
+                this.zoomReset();
                 return false;
         }
 
@@ -300,6 +299,12 @@ export class TimelineComponent extends FASTElement {
         } else {
             this.fastSlider.value = `${this.SLIDER_DENSITY}`;
         }
+    }
+
+    private zoomReset() {
+        this.zoom = this.DEFAULT_ZOOM_LEVEL;
+        this.fastSlider.value = `${this.zoom * this.SLIDER_DENSITY}`;
+        this.userScrolled = false;
     }
 
     private initTimeLine() {
