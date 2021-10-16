@@ -485,11 +485,15 @@ export class PlayerWrapper {
         return this.player.seekRange().start - this.firstSegmentStartSeconds;
     }
 
+    private onClickFullscreen() {
+        this.removeBoundingBoxLayer();
+        this.addBoundingBoxLayer();
+    }
+
     private toggleBox() {
         this.boundingBoxesDrawer.updateIsBox();
         this.removeBoundingBoxLayer();
         this.addBoundingBoxLayer();
-
     }
 
     private toggleAttributes() {
@@ -528,6 +532,7 @@ export class PlayerWrapper {
     private async init() {
         this.avaUILayer = new AVAPlayerUILayer(
             shaka,
+            this.onClickFullscreen.bind(this),
             this.onClickLive.bind(this),
             this.onClickNextDay.bind(this),
             this.onClickPrevDay.bind(this),

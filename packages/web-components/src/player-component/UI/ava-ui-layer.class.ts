@@ -54,6 +54,7 @@ export class AVAPlayerUILayer {
     public constructor(
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         private shaka: any,
+        private fullscreenCallBack: () => void,
         private toggleLiveMode: (isLive: boolean) => void,
         private nextDayCallBack: () => void,
         private prevDayCallBack: () => void,
@@ -160,6 +161,9 @@ export class AVAPlayerUILayer {
         this.shaka.ui.Controls.registerElement(ControlPanelElements.REWIND, new this.shaka.ui.RewindButton.Factory());
 
         this.shaka.ui.FullscreenButton = FullscreenButton;
+        FullscreenButtonFactory.callBack = async () => {
+            this.fullscreenCallBack();
+        };
         this.shaka.ui.FullscreenButton.Factory = FullscreenButtonFactory;
         this.shaka.ui.Controls.registerElement(ControlPanelElements.FULLSCREEN, new this.shaka.ui.FullscreenButton.Factory());
 
