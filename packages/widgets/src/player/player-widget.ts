@@ -133,8 +133,8 @@ export class Player extends BaseWidget {
                     } else {
                         const response = await videoInformation.json();
                         // Init media API
-                        MediaApi.baseStream = response.properties.streaming.archiveBaseUrl;
-                        MediaApi.liveStream = response.properties.streaming.rtspTunnelUrl;
+                        MediaApi.baseStream = response.properties.contentUrls.archiveBaseUrl;
+                        MediaApi.liveStream = response.properties.contentUrls.rtspTunnelUrl;
 
                         // Authorize video
                         await AvaAPi.authorize();
