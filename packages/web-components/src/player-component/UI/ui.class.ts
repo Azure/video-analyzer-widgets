@@ -93,7 +93,7 @@ export class FullscreenButton extends shaka.ui.FullscreenButton {
     private svg: SVGSVGElement;
     private path: SVGPathElement;
 
-    public constructor(parent: any, controls: any, private callBack: () => void) {
+    public constructor(parent: any, controls: any, private clickCallback: () => void) {
         super(parent, controls);
         this.init();
     }
@@ -119,7 +119,7 @@ export class FullscreenButton extends shaka.ui.FullscreenButton {
         this.updateIcon_();
         setElementTooltip(this.button_, ControlPanelElementsTooltip.FULLSCREEN);
         this.eventManager.listen(this.button_, 'click', () => {
-            this.callBack();
+            this.clickCallback();
         });
     }
 }
