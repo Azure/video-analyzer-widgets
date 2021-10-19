@@ -389,6 +389,11 @@ export class PlayerWrapper {
         }
     }
 
+    public onClickFullscreen() {
+        this.removeBoundingBoxLayer();
+        this.addBoundingBoxLayer();
+    }
+
     private updateLiveButtonState() {
         for (const element of this.controls?.elements_) {
             if (element?.isLiveButton) {
@@ -483,11 +488,6 @@ export class PlayerWrapper {
         // This offset, when added to a seek position expressed in seconds since today GMT 00:00,
         // will cause the start of the first segment to be mapped to start of seek range.
         return this.player.seekRange().start - this.firstSegmentStartSeconds;
-    }
-
-    public onClickFullscreen() {
-        this.removeBoundingBoxLayer();
-        this.addBoundingBoxLayer();
     }
 
     private toggleBox() {
