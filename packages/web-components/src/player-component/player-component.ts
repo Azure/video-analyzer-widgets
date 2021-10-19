@@ -327,6 +327,7 @@ export class PlayerComponent extends FASTElement {
     }
 
     private updateFullScreen() {
+        this.player.onClickFullscreen();
         this.isFullscreen = document.fullscreenElement !== null;
     }
 

@@ -485,7 +485,7 @@ export class PlayerWrapper {
         return this.player.seekRange().start - this.firstSegmentStartSeconds;
     }
 
-    private onClickFullscreen() {
+    public onClickFullscreen() {
         this.removeBoundingBoxLayer();
         this.addBoundingBoxLayer();
     }
@@ -532,7 +532,6 @@ export class PlayerWrapper {
     private async init() {
         this.avaUILayer = new AVAPlayerUILayer(
             shaka,
-            this.onClickFullscreen.bind(this),
             this.onClickLive.bind(this),
             this.onClickNextDay.bind(this),
             this.onClickPrevDay.bind(this),

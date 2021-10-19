@@ -24,7 +24,7 @@ export class RewindButtonFactory {
 export class FullscreenButtonFactory {
     public static callBack: () => void;
     public create(rootElement: any, controls: any) {
-        return new shaka.ui.FullscreenButton(rootElement, controls, FullscreenButtonFactory.callBack);
+        return new shaka.ui.FullscreenButton(rootElement, controls);
     }
 }
 
