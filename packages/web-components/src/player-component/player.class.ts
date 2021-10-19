@@ -29,7 +29,7 @@ Localization;
 // shaka.util.Error.Code.
 enum ErrorCode {
     WEBSOCKET_CLOSED = 1500, // data = [ CloseEvent.code, CloseEvent.reason, CloseEvent.wasClean ]
-    WEBSOCKET_OPEN = 1501, // data = [ errorMsg, errorObj ]
+    WEBSOCKET_OPEN = 1501 // data = [ errorMsg, errorObj ]
 }
 
 interface IShakaErrorHandlerConfig {
@@ -54,31 +54,20 @@ class shakaErrorHandler {
     // because @types/react declares Event interface which overrides lib.dom.
     public async onShakaError(event: shaka_player.PlayerEvents.ErrorEvent): Promise<boolean> {
         if (!('type' in event) || !('detail' in event)) {
-            throw new Error('onShakaError: event not recognized! No type or detail: ' +
-                JSON.stringify(event)
-            );
+            throw new Error('onShakaError: event not recognized! No type or detail: ' + JSON.stringify(event));
         }
 
         if (event.type !== 'error') {
-            throw new Error(
-                `onShakaError: event not recognized! Type = ${event.type}!`
-            );
+            throw new Error(`onShakaError: event not recognized! Type = ${event.type}!`);
         }
 
         const shakaError = event.detail as shaka_player.util.Error;
         if (!shakaError) {
-            throw new Error(
-                'onShakaError: event.detail not provided! ' +
-                `event.type = ${event.type}, ${event}`
-            );
+            throw new Error('onShakaError: event.detail not provided! ' + `event.type = ${event.type}, ${event}`);
         }
 
         // Log the error
-        Logger.error(
-            'onShakaError: code',
-            shakaError.code,
-            `, ${shakaError.message}, object: ${shakaError}`
-        );
+        Logger.error('onShakaError: code', shakaError.code, `, ${shakaError.message}, object: ${shakaError}`);
 
         if (shakaError.code === ErrorCode.WEBSOCKET_CLOSED) {
             if (this._autoreconnect) {
@@ -100,9 +89,7 @@ class shakaErrorHandler {
             let secondsSinceFirstVideoError = (now - this._firstVideoError) / 1000;
             if (secondsSinceFirstVideoError > 60 * maxVideoErrorMinutes) {
                 if (this._firstVideoError > 0) {
-                    Logger.log(
-                        `${secondsSinceFirstVideoError} elapsed since first video error, resetting count.`
-                    );
+                    Logger.log(`${secondsSinceFirstVideoError} elapsed since first video error, resetting count.`);
                 }
                 this._numVideoErrors = 0;
                 this._firstVideoError = now;
@@ -133,7 +120,6 @@ class shakaErrorHandler {
         return false;
     }
 }
-
 
 export class PlayerWrapper {
     public player: shaka_player.Player = Object.create(null);
@@ -207,13 +193,16 @@ export class PlayerWrapper {
     }
 
     public get liveStream() {
-        const url = new URL(this._liveStream);
-        // getVideo API may one day return the RTSP URL, until then, hard-code it.
-        url.searchParams.set('rtsp', encodeURIComponent('rtsp://localhost'));
-        if (this.accessToken) {
-            url.searchParams.set('authorization', this.accessToken);
+        if (this._liveStream) {
+            const url = new URL(this._liveStream);
+            // getVideo API may one day return the RTSP URL, until then, hard-code it.
+            url.searchParams.set('rtsp', encodeURIComponent('rtsp://localhost'));
+            if (this.accessToken) {
+                url.searchParams.set('authorization', this.accessToken);
+            }
+            return url.toString();
         }
-        return url.toString();
+        return '';
     }
 
     public set vodStream(value: string) {
@@ -264,9 +253,16 @@ export class PlayerWrapper {
     }
 
     public async load(url: string) {
+        this.addLoading();
         this.isLoaded = false;
         this.timestampOffset = undefined;
         try {
+            if (url.indexOf('wss:/') != -1) {
+                this.videoContainer.classList.add('rtsp-playback');
+            } else {
+                this.videoContainer.classList.remove('rtsp-playback');
+            }
+
             await this.player.load(url, null, this.getMimeType(url));
             this.isLoaded = true;
             // Auto play video
@@ -336,6 +332,7 @@ export class PlayerWrapper {
     }
 
     public async onClickLive(isLive: boolean) {
+        this.addLoading();
         this.isLive = isLive;
         await this.onClickLiveCallback(isLive);
         if (isLive) {
@@ -380,7 +377,7 @@ export class PlayerWrapper {
     }
 
     public retryStreaming() {
-        if(this.isLive) {
+        if (this.isLive) {
             Logger.log('Reloading live stream...');
             this.player.load(this.liveStream);
         } else {
@@ -392,6 +389,22 @@ export class PlayerWrapper {
     public updateFullScreen() {
         this.removeBoundingBoxLayer();
         this.addBoundingBoxLayer();
+    }
+
+    public addLoading() {
+        this.videoContainer.classList.add('loading');
+    }
+
+    public removeLoading() {
+        this.videoContainer.classList.remove('loading');
+    }
+
+    public disableLiveButton(disable: boolean) {
+        for (const element of this.controls?.elements_) {
+            if (element?.isLiveButton) {
+                element.disableButton(disable);
+            }
+        }
     }
 
     private updateLiveButtonState() {
@@ -651,9 +664,7 @@ export class PlayerWrapper {
         const MAX_LATENCY_WINDOW = 5000;
         this._driftCorrectionTimer = window.setInterval(() => {
             const video = this.player.getMediaElement() as HTMLMediaElement;
-            if (this.player.seekRange().end - MAX_LATENCY_WINDOW > video.currentTime &&
-                !video.paused && this.isLive
-            ) {
+            if (this.player.seekRange().end - MAX_LATENCY_WINDOW > video.currentTime && !video.paused && this.isLive) {
                 Logger.log(`Correcting drift, jumping forward ${this.player.seekRange().end - video.currentTime}`);
                 video.currentTime = this.player.seekRange().end;
             }
@@ -825,6 +836,7 @@ export class PlayerWrapper {
             this.video.currentTime = 0;
         }
         this.timelineComponent?.scrollToCurrentTime();
+        this.removeLoading();
     }
 
     private onTimeSeekUpdate() {
@@ -890,6 +902,7 @@ export class PlayerWrapper {
     }
 
     private async onErrorEvent(event: shaka_player.PlayerEvents.ErrorEvent) {
+        this.removeLoading();
         const errorHandled = await this._errorHandler.onShakaError(event);
         if (!errorHandled && this.errorCallback) {
             Logger.log(`onErrorEvent: ${event.detail} not handled, calling errorCallback.`);

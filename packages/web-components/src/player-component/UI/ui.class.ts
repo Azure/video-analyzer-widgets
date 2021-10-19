@@ -184,6 +184,7 @@ export class OverflowMenu extends shaka.ui.OverflowMenu {
         this.svg.appendChild(this.path);
         this.overflowMenuButton_.innerText = '';
         this.overflowMenuButton_.appendChild(this.svg);
+        this.overflowMenuButton_.classList.add('settings-overflow-menu-item');
         setElementTooltip(this.overflowMenuButton_, ControlPanelElementsTooltip.OVERFLOW_MENU);
 
         const backToButtons = this.controls.getVideoContainer().getElementsByClassName('shaka-back-to-overflow-button');
@@ -265,6 +266,7 @@ export class MetaDataButton extends shaka.ui.OverflowMenu {
         this.svg.appendChild(this.path);
         this.overflowMenuButton_.innerText = '';
         this.overflowMenuButton_.appendChild(this.svg);
+        this.overflowMenuButton_.classList.add('metadata-overflow-menu-item');
         setElementTooltip(this.overflowMenuButton_, ControlPanelElementsTooltip.META_DATA_OVERFLOW_MENU);
     }
 }
@@ -283,6 +285,10 @@ export class LiveButton extends shaka.ui.Element {
         this.button_.classList.remove(this.isLive ? 'live-off' : 'live-on');
         const label = this.isLive ? 'Switch to VOD' : 'Switch to live';
         setElementTooltip(this.button_, label);
+    }
+
+    public disableButton(disable: boolean) {
+        this.button_.disabled = disable;
     }
 
     private init() {

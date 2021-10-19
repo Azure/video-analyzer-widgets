@@ -99,20 +99,21 @@ export class PlayerComponent extends FASTElement {
             this.showTimestamp = allowedControllers.indexOf(ControlPanelElements.TIMESTAMP) > -1;
             this.showTimeline = allowedControllers.indexOf(ControlPanelElements.TIMELINE) > -1;
             this.showUpperBounding = this.showCameraName || this.showDatePicker || this.showTimestamp;
-            this.showBottomControls = allowedControllers.indexOf(ControlPanelElements.REWIND) > -1
-            || allowedControllers.indexOf(ControlPanelElements.PLAY_PAUSE) > -1
-            || allowedControllers.indexOf(ControlPanelElements.FAST_FORWARD) > -1
-            || allowedControllers.indexOf(ControlPanelElements.LIVE) > -1
-            || allowedControllers.indexOf(ControlPanelElements.MUTE) > -1
-            || allowedControllers.indexOf(ControlPanelElements.VOLUME) > -1
-            || allowedControllers.indexOf(ControlPanelElements.META_DATA) > -1
-            || allowedControllers.indexOf(ControlPanelElements.OVERFLOW_MENU) > -1
-            || allowedControllers.indexOf(ControlPanelElements.FULLSCREEN) > -1
-            || allowedControllers.indexOf(ControlPanelElements.NEXT_DAY) > -1
-            || allowedControllers.indexOf(ControlPanelElements.PREVIOUS_DAY) > -1
-            || allowedControllers.indexOf(ControlPanelElements.HOURS_LABEL) > -1
-            || allowedControllers.indexOf(ControlPanelElements.NEXT_SEGMENT) > -1
-            || allowedControllers.indexOf(ControlPanelElements.PREV_SEGMENT) > -1;
+            this.showBottomControls =
+                allowedControllers.indexOf(ControlPanelElements.REWIND) > -1 ||
+                allowedControllers.indexOf(ControlPanelElements.PLAY_PAUSE) > -1 ||
+                allowedControllers.indexOf(ControlPanelElements.FAST_FORWARD) > -1 ||
+                allowedControllers.indexOf(ControlPanelElements.LIVE) > -1 ||
+                allowedControllers.indexOf(ControlPanelElements.MUTE) > -1 ||
+                allowedControllers.indexOf(ControlPanelElements.VOLUME) > -1 ||
+                allowedControllers.indexOf(ControlPanelElements.META_DATA) > -1 ||
+                allowedControllers.indexOf(ControlPanelElements.OVERFLOW_MENU) > -1 ||
+                allowedControllers.indexOf(ControlPanelElements.FULLSCREEN) > -1 ||
+                allowedControllers.indexOf(ControlPanelElements.NEXT_DAY) > -1 ||
+                allowedControllers.indexOf(ControlPanelElements.PREVIOUS_DAY) > -1 ||
+                allowedControllers.indexOf(ControlPanelElements.HOURS_LABEL) > -1 ||
+                allowedControllers.indexOf(ControlPanelElements.NEXT_SEGMENT) > -1 ||
+                allowedControllers.indexOf(ControlPanelElements.PREV_SEGMENT) > -1;
         }
         this.classList.add(this.showTimeline ? 'timeline-on' : 'timeline-off');
         this.classList.add(this.showUpperBounding ? 'upper-bounding-on' : 'upper-bounding-off');
@@ -139,6 +140,8 @@ export class PlayerComponent extends FASTElement {
             this.clickLiveCallBack.bind(this)
         );
 
+        this.player.addLoading();
+
         if (accessToken) {
             this.player.accessToken = accessToken;
         }
@@ -154,9 +157,21 @@ export class PlayerComponent extends FASTElement {
             this.isClip = false;
             this.clipTimeRange = null;
         }
-        await this.initializeAvailableMedia();
+        if (MediaApi.videoFlags?.isInUse && MediaApi.liveStream) {
+            this.hasLiveData = true;
+        }
+        if (MediaApi.baseStream) {
+            this.classList.remove('no-archive');
+            this.player.disableLiveButton(false);
+            await this.initializeAvailableMedia(!this.hasLiveData);
+        } else {
+            this.classList.add('no-archive');
+            this.player.disableLiveButton(true);
+        }
 
-        // Add loading mode
+        this.afterInit = true;
+        this.updateVODStream(this.isClip ?? false, true);
+
         this.classList.remove('loading');
     }
 
@@ -166,7 +181,7 @@ export class PlayerComponent extends FASTElement {
         }
     }
 
-    public async initializeAvailableMedia() {
+    public async initializeAvailableMedia(checkForLive: boolean) {
         await this.fetchAvailableYears();
 
         if (!this.currentAllowedYears?.length) {
@@ -199,25 +214,24 @@ export class PlayerComponent extends FASTElement {
         // Select the last recorded date
         const date = new Date(Date.UTC(this.currentYear, this.currentMonth - 1, this.currentDay));
 
-        // If the last recorded day is today - try switch to live
-        const today = new Date();
-        this.isLive =
-            date.getUTCFullYear() === today.getUTCFullYear() &&
-            date.getUTCMonth() === today.getUTCMonth() &&
-            date.getUTCDate() === today.getUTCDate();
+        if (checkForLive) {
+            // If the last recorded day is today - try switch to live
+            const today = new Date();
+            this.isLive =
+                date.getUTCFullYear() === today.getUTCFullYear() &&
+                date.getUTCMonth() === today.getUTCMonth() &&
+                date.getUTCDate() === today.getUTCDate();
 
-        this.hasLiveData = this.isLive;
+            this.hasLiveData = this.isLive;
+        }
 
         // If there is no live data - remove live button
         if (!this.hasLiveData) {
             this.classList.add('no-live-data');
         }
 
-        this.afterInit = true;
-
         this.currentDate = date;
         this.datePickerComponent.inputDate = date.toUTCString();
-        this.updateVODStream(this.isClip ?? false, true);
     }
 
     public cameraNameChanged() {
@@ -305,10 +319,11 @@ export class PlayerComponent extends FASTElement {
                 this.currentMonth = this.currentDate.getUTCMonth() + 1;
                 this.currentDay = this.currentDate.getUTCDate();
                 this.isClip = false;
+
+                this.updateVODStream(true);
                 if (this.player) {
                     this.player?.toggleClipMode(this.isClip);
                 }
-                this.updateVODStream(true);
             }
             // eslint-disable-next-line no-undef
         }) as EventListener);
@@ -480,36 +495,42 @@ export class PlayerComponent extends FASTElement {
         if (!this.afterInit) {
             return;
         }
-        // Load vod stream
-        const nextDay = new Date(Date.UTC(this.currentYear, this.currentMonth - 1, this.currentDay + 1));
-        const start: IExpandedDate = {
-            year: this.currentYear,
-            month: this.currentMonth,
-            day: this.currentDay
-        };
-        const end: IExpandedDate = {
-            year: nextDay.getUTCFullYear(),
-            month: nextDay.getUTCMonth() + 1,
-            day: nextDay.getUTCDate()
-        };
-        if (this.isClip) {
-            this.vodStream = MediaApi.getVODStreamForCLip(this.clipTimeRange.startTime, this.clipTimeRange.endTime);
-        } else {
-            this.vodStream = MediaApi.getVODStream({
-                start: start,
-                end: end
-            });
-        }
 
-        this.liveStream = MediaApi.getLiveStream();
-
-        this.isLive = this.hasLiveData ? !VODMode : false;
-        // Get segments
-        const segments = await this.fetchAvailableSegments(start, end);
-        // Switch to VOD
         if (this.player) {
-            this.player.availableSegments = segments;
-            this.player.vodStream = this.vodStream;
+            this.player.addLoading();
+            this.liveStream = MediaApi.liveStream;
+
+            this.isLive = this.hasLiveData ? !VODMode : false;
+
+            if (MediaApi.baseStream) {
+                // Load vod stream
+                const nextDay = new Date(Date.UTC(this.currentYear, this.currentMonth - 1, this.currentDay + 1));
+                const start: IExpandedDate = {
+                    year: this.currentYear,
+                    month: this.currentMonth,
+                    day: this.currentDay
+                };
+                const end: IExpandedDate = {
+                    year: nextDay.getUTCFullYear(),
+                    month: nextDay.getUTCMonth() + 1,
+                    day: nextDay.getUTCDate()
+                };
+                if (this.isClip) {
+                    this.vodStream = MediaApi.getVODStreamForCLip(this.clipTimeRange.startTime, this.clipTimeRange.endTime);
+                } else {
+                    this.vodStream = MediaApi.getVODStream({
+                        start: start,
+                        end: end
+                    });
+                }
+
+                if (!this.isLive || this.isClip) {
+                    const segments = await this.fetchAvailableSegments(start, end);
+                    this.player.availableSegments = segments;
+                }
+                this.player.vodStream = this.vodStream;
+            }
+
             this.player.liveStream = this.liveStream;
             this.player.currentDate = this.currentDate;
             if (this.isClip) {

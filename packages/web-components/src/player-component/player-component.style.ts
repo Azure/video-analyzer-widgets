@@ -212,6 +212,12 @@ export const styles = css`
         border: var(--segment-live) 1px solid;
     }
 
+    .live-button-component.live-on.disabled {
+        color: var(--segment-live);
+        border: none;
+        opacity: 1;
+    }
+
     .live-button-component.live-off {
         background: var(--segment-bg);
         border: 1px solid var(--segment-bg);
@@ -285,6 +291,26 @@ export const styles = css`
         display: inline-block;
         vertical-align: middle;
         color: var(--action);
+    }
+
+    :host(.no-archive) .date-picker {
+        display: none;
+    }
+
+    :host(.live-on) .rtsp-playback .metadata-overflow-menu-item {
+        display: none;
+    }
+
+    :host(.live-on) .rtsp-playback .settings-overflow-menu-item {
+        display: none;
+    }
+
+    :host(.loading) .shaka-spinner-container {
+        display: flex !important;
+    }
+
+    .video-container.loading .shaka-spinner-container {
+        display: flex !important;
     }
 
     ${timeTooltipStyle}
