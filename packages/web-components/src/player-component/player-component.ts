@@ -99,7 +99,7 @@ export class PlayerComponent extends FASTElement {
             this.showTimestamp = allowedControllers.indexOf(ControlPanelElements.TIMESTAMP) > -1;
             this.showTimeline = allowedControllers.indexOf(ControlPanelElements.TIMELINE) > -1;
             this.showUpperBounding = this.showCameraName || this.showDatePicker || this.showTimestamp;
-            this.showBottomControls = allowedControllers.indexOf(ControlPanelElements.REWIND) > -1 
+            this.showBottomControls = allowedControllers.indexOf(ControlPanelElements.REWIND) > -1
             || allowedControllers.indexOf(ControlPanelElements.PLAY_PAUSE) > -1
             || allowedControllers.indexOf(ControlPanelElements.FAST_FORWARD) > -1
             || allowedControllers.indexOf(ControlPanelElements.LIVE) > -1
