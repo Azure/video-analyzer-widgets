@@ -35,9 +35,6 @@ export class PlayerComponent extends FASTElement {
     @attr public showCameraName = true;
     @attr public showDatePicker = true;
     @attr public showTimestamp = true;
-    @attr public showTimeline = true;
-    @attr public showUpperBounding = true;
-    @attr public showBottomControls = true;
 
     @observable public isLive = false;
     @observable public isClip = false;
@@ -68,6 +65,9 @@ export class PlayerComponent extends FASTElement {
     private afterInit = false;
     private connected = false;
     private clipTimeRange: IClipTimeRange;
+    private showTimeline = true;
+    private showUpperBounding = true;
+    private showBottomControls = true;
 
     public constructor() {
         super();
