@@ -1,5 +1,6 @@
 import { HttpError, StatusCodes } from '../../../common/utils/http.error';
 import { Localization } from './../../../common/services/localization/localization.class';
+import { shaka } from './shaka';
 
 export function getPlayerErrorString(error: HttpError) {
     switch (error?.code) {
@@ -21,8 +22,8 @@ export function getPlayerErrorString(error: HttpError) {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function getShakaPlayerErrorString(error: any) {
-    switch (error?.detail.category) {
+export function getShakaPlayerErrorString(error: shaka.PlayerEvents.ErrorEvent) {
+    switch (error.detail.category) {
         case 1: {
             // shaka_player.util.Error.Category.NETWORK
             return Localization.dictionary.PLAYER_UTILS_ShakaError_Network;
@@ -37,7 +38,7 @@ export function getShakaPlayerErrorString(error: any) {
         }
         case 5: {
             // shaka_player.util.Error.Category.STREAMING
-            return Localization.dictionary.PLAYER_UTILS_ShakaError_Streaming;
+            return Localization.dictionary.PLAYER_UTILS_ShakaError_Streaming + ' ' + error.detail.message;
         }
         case 9: {
             // shaka_player.util.Error.Category.STORAGE
