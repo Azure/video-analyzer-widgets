@@ -389,7 +389,7 @@ export class PlayerWrapper {
         }
     }
 
-    public onClickFullscreen() {
+    public updateFullScreen() {
         this.removeBoundingBoxLayer();
         this.addBoundingBoxLayer();
     }
