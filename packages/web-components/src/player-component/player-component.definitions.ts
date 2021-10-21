@@ -25,7 +25,7 @@ export enum ControlPanelElements {
     MUTE = 'mute',
     VOLUME = 'volume',
     SPACER = 'spacer',
-    META_DATA_LAYER = 'meta_data_layer',
+    META_DATA = 'meta_data_button',
     OVERFLOW_MENU = 'overflow_menu',
     FULLSCREEN = 'fullscreen',
     NEXT_DAY = 'next_day',
@@ -36,9 +36,9 @@ export enum ControlPanelElements {
     DATE_PICKER = 'date_picker',
     CAMERA_NAME = 'camera_name',
     TIMESTAMP = 'timestamp',
+    TIMELINE = 'timeline',
     TIMELINE_ZOOM = 'timeline_zoom',
-    Time_And_Duration = 'time_and_duration',
-    META_DATA = 'meta_data_button'
+    Time_And_Duration = 'time_and_duration'
 }
 
 export enum LiveState {

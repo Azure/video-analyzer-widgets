@@ -65,6 +65,9 @@ export class PlayerComponent extends FASTElement {
     private afterInit = false;
     private connected = false;
     private clipTimeRange: IClipTimeRange;
+    private showTimeline = true;
+    private showUpperBounding = true;
+    private showBottomControls = true;
 
     public constructor() {
         super();
@@ -94,7 +97,26 @@ export class PlayerComponent extends FASTElement {
             this.showCameraName = allowedControllers.indexOf(ControlPanelElements.CAMERA_NAME) > -1;
             this.showDatePicker = allowedControllers.indexOf(ControlPanelElements.DATE_PICKER) > -1;
             this.showTimestamp = allowedControllers.indexOf(ControlPanelElements.TIMESTAMP) > -1;
+            this.showTimeline = allowedControllers.indexOf(ControlPanelElements.TIMELINE) > -1;
+            this.showUpperBounding = this.showCameraName || this.showDatePicker || this.showTimestamp;
+            this.showBottomControls = allowedControllers.indexOf(ControlPanelElements.REWIND) > -1
+            || allowedControllers.indexOf(ControlPanelElements.PLAY_PAUSE) > -1
+            || allowedControllers.indexOf(ControlPanelElements.FAST_FORWARD) > -1
+            || allowedControllers.indexOf(ControlPanelElements.LIVE) > -1
+            || allowedControllers.indexOf(ControlPanelElements.MUTE) > -1
+            || allowedControllers.indexOf(ControlPanelElements.VOLUME) > -1
+            || allowedControllers.indexOf(ControlPanelElements.META_DATA) > -1
+            || allowedControllers.indexOf(ControlPanelElements.OVERFLOW_MENU) > -1
+            || allowedControllers.indexOf(ControlPanelElements.FULLSCREEN) > -1
+            || allowedControllers.indexOf(ControlPanelElements.NEXT_DAY) > -1
+            || allowedControllers.indexOf(ControlPanelElements.PREVIOUS_DAY) > -1
+            || allowedControllers.indexOf(ControlPanelElements.HOURS_LABEL) > -1
+            || allowedControllers.indexOf(ControlPanelElements.NEXT_SEGMENT) > -1
+            || allowedControllers.indexOf(ControlPanelElements.PREV_SEGMENT) > -1;
         }
+        this.classList.add(this.showTimeline ? 'timeline-on' : 'timeline-off');
+        this.classList.add(this.showUpperBounding ? 'upper-bounding-on' : 'upper-bounding-off');
+        this.classList.add(this.showBottomControls ? 'bottom-controls-on' : 'bottom-controls-off');
         this.isMuted = isMuted ?? true;
 
         // Reload player
