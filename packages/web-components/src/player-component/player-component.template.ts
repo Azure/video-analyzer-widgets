@@ -33,7 +33,7 @@ export const template = html<PlayerComponent>`
                                 aria-label="${(x) => x.resources?.PLAYER_Retry}"
                                 title="${(x) => x.resources?.PLAYER_Retry}"
                                 @keyup="${(x, c) => x.handleRetryKeyUp(c.event as KeyboardEvent)}"
-                                @mouseup="${(x, c) => x.handleRetryMouseUp(c.event as MouseEvent)}"
+                                @click="${(x) => x.handleRetry()}"
                                 >${(x) => x.resources?.PLAYER_Retry}</fast-button
                             >
                         `

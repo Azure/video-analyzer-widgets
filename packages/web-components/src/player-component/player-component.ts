@@ -300,14 +300,8 @@ export class PlayerComponent extends FASTElement {
         }) as EventListener);
     }
 
-    public handleRetryMouseUp(e: MouseEvent): boolean {
-        switch (e.which) {
-            case 1: // left mouse button.
-                this.retryStreaming();
-                return false;
-        }
-
-        return true;
+    public handleRetry() {
+        this.retryStreaming();
     }
 
     public handleRetryKeyUp(e: KeyboardEvent): boolean {
