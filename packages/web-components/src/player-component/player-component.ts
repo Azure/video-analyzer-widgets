@@ -433,7 +433,8 @@ export class PlayerComponent extends FASTElement {
             );
 
             return await availableHours.json();
-        } catch (error) {
+        } catch (error: any) {
+            this.handleError(error);
             Logger.log(this.resources.PLAYER_ErrorFetchSegments);
             return null;
         }
@@ -565,8 +566,8 @@ export class PlayerComponent extends FASTElement {
     }
 
     private async fetchAvailableYears() {
-        const availableYears = await MediaApi.getAvailableMedia(Precision.YEAR, null, this.player.allowCrossCred, this.player.accessToken);
         try {
+            const availableYears = await MediaApi.getAvailableMedia(Precision.YEAR, null, this.player.allowCrossCred, this.player.accessToken);
             const yearRanges: IAvailableMediaResponse = await availableYears.json();
 
             for (const range of yearRanges.timeRanges) {
@@ -583,11 +584,12 @@ export class PlayerComponent extends FASTElement {
                 ...this.datePickerComponent.allowedDates,
                 years: this.currentAllowedYears.toString()
             };
-        } catch (error: unknown) {
+        } catch (error: any) {
             if (error instanceof HttpError) {
                 this.handleError(error);
                 throw new WidgetGeneralError(this.resources.PLAYER_CannotParseMedia);
             } else {
+                this.handleError(error);
                 throw error;
             }
         }
@@ -624,11 +626,12 @@ export class PlayerComponent extends FASTElement {
                     this.allowedDates[year][index] = [];
                 }
             }
-        } catch (error: unknown) {
+        } catch (error: any) {
             if (error instanceof HttpError) {
                 this.handleError(error);
                 throw new WidgetGeneralError(this.resources.PLAYER_CannotParseMedia);
             } else {
+                this.handleError(error);
                 throw error;
             }
         }
@@ -669,11 +672,12 @@ export class PlayerComponent extends FASTElement {
                     this.allowedDates[year][month].push(index);
                 }
             }
-        } catch (error: unknown) {
+        } catch (error: any) {
             if (error instanceof HttpError) {
                 this.handleError(error);
                 throw new WidgetGeneralError(this.resources.PLAYER_CannotParseMedia);
             } else {
+                this.handleError(error);
                 throw error;
             }
         }
