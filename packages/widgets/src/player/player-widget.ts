@@ -87,8 +87,8 @@ export class Player extends BaseWidget {
 
     public setSource(source: ISource) {
         this.source = source;
-        MediaApi.baseStream = this.source.archiveSrc;
-        MediaApi.liveStream = this.source.rtspSrc;
+        MediaApi.videoEntity = this.source.videoEntity;
+
         this.setLocalization(this.config?.locale, ['common', 'player']);
         if (this.loaded) {
             const playerComponent: PlayerComponent = this.shadowRoot.querySelector('media-player');
@@ -131,10 +131,7 @@ export class Player extends BaseWidget {
                     if (videoInformation.status >= 400 && videoInformation.status < 600) {
                         this.handelFallback(new HttpError('API Error', videoInformation.status, videoInformation));
                     } else {
-                        const response = await videoInformation.json();
-                        // Init media API
-                        MediaApi.baseStream = response.properties.contentUrls.archiveBaseUrl;
-                        MediaApi.liveStream = response.properties.contentUrls.rtspTunnelUrl;
+                        MediaApi.videoEntity = await videoInformation.json();
 
                         // Authorize video
                         await AvaAPi.authorize();

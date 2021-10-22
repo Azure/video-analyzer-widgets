@@ -7,21 +7,14 @@
 
 <body>
   <h1>Example Player widget</h1>
-  <div>
-    <label for="archiveUrlInput">ArchiveUrl</label>
-    <input id="archiveUrlInput"
+  <div style="display:flex">
+    <label for="videoJSONInput">Video JSON</label>
+    <textarea id="videoJSONInput"
       style="width:700px"
       type="text"
-      placeholder="client api endpoint url"
-      value="" />
-  </div>
-  <div>
-    <label for="rtspUrlInput">RTSP Url</label>
-    <input id="rtspUrlInput"
-      style="width:700px"
-      type="text"
-      placeholder="client api endpoint url"
-      value="" />
+      rows="8"
+      placeholder="Copy paste the video JSON"
+      value=""></textarea>
   </div>
   <div>
     <label for="authTokenInput">JWT Auth Token for playback:</label>
@@ -61,11 +54,8 @@
     }
 
     function onPlayButtonClick() {
-      const archiveUrlInput = document.querySelector('#archiveUrlInput');
-      const archiveUrl = archiveUrlInput.value;
-
-      const rtspUrlInput = document.querySelector('#rtspUrlInput');
-      const rtspUrl = rtspUrlInput.value;
+      const videoJSONInput = document.querySelector('#videoJSONInput');
+      const videoJSON = videoJSONInput.value;
 
       const authTokenInput = document.querySelector('#authTokenInput');
       const token = authTokenInput.value;
@@ -76,7 +66,7 @@
 
       avaPlayer.configure({ clientApiEndpointUrl: null, videoName: "", debug: true });
 
-      avaPlayer.setSource({ allowCrossSiteCredentials: false, archiveSrc: archiveUrl, rtspSrc: rtspUrl, authenticationToken: token })
+      avaPlayer.setSource({ allowCrossSiteCredentials: false, videoEntity: JSON.parse(videoJSON), authenticationToken: token })
       avaPlayer.load();
     }
   </script>
