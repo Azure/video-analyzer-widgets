@@ -147,7 +147,13 @@ export class PlayerComponent extends FASTElement {
         }
         this.player.allowCrossCred = allowCrossSiteCredentials;
 
-        if (!MediaApi.baseStream && !MediaApi.liveStream) {
+        if (!MediaApi.videoFlags.canStream || (!MediaApi.baseStream && (!MediaApi.videoFlags.isInUse || !MediaApi.liveStream))) {
+            this.hasError = true;
+            this.player.removeLoading();
+            this.classList.remove('loading');
+            this.errorString = Localization.dictionary.PLAYER_UTILS_NO_MEDIA_FAILED;
+            this.classList.add('error');
+            this.$emit(PlayerEvents.PLAYER_ERROR, this.errorString);
             return;
         }
         if (clipTimeRange?.startTime && clipTimeRange?.endTime) {
