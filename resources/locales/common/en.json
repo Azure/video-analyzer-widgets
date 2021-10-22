@@ -41,6 +41,7 @@
     "PLAYER_UTILS_ShakaError_Manifest": "Errors parsing the Manifest.",
     "PLAYER_UTILS_ShakaError_Streaming": "Errors related to streaming.",
     "PLAYER_UTILS_ShakaError_Storage": "Errors in the database storage (offline).",
+    "PLAYER_UTILS_NO_MEDIA_FAILED": "The video cannot be streamed.",
     "SVG_PROGRESS_Default": "default",
     "SVG_PROGRESS_SVGIsMissingError": "Root SVG Element is missing",
     "TIMELINE_ComponentTitle": "Timeline Component",
