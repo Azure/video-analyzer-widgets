@@ -1,20 +1,15 @@
+import { VideoEntity } from '../../../common/services/media/media.definitions';
+
 export type MimeType = 'video/mp4' | 'application/dash+xml' | 'application/vnd.apple.mpegurl' | 'application/rtsp';
 
 export interface ISource {
     // Authentication Token for the player.
     authenticationToken?: string;
 
-    // Mime type
-    type?: MimeType;
-
     // allow cross site credentials
     allowCrossSiteCredentials?: boolean;
 
-    // archive Source Url
-    archiveSrc: string;
-
-    // RTSP Source Url
-    rtspSrc: string;
+    videoEntity: VideoEntity;
 }
 
 export enum ControlPanelElements {

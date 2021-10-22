@@ -1,12 +1,19 @@
-import { IExpandedTimeRange, IExpandedDate, Precision, VideoFormat } from './media.definitions';
+import { IExpandedTimeRange, IExpandedDate, Precision, VideoFormat, VideoEntity } from './media.definitions';
 
 export class MediaApi {
     private static _baseStream = '';
-    private static _liveStream: string | undefined;
-    private static _format = MediaApi.supportsMediaSource() ?  VideoFormat.DASH : VideoFormat.HLS;
+    private static _rtspStream: string | undefined;
+    private static _format = MediaApi.supportsMediaSource() ? VideoFormat.DASH : VideoFormat.HLS;
+    private static _videoEntity: VideoEntity;
 
     public static supportsMediaSource(): boolean {
         return !!window.MediaSource;
+    }
+
+    public static set videoEntity(value: VideoEntity) {
+        this._videoEntity = value;
+        this._baseStream = this._videoEntity?.properties?.contentUrls?.archiveBaseUrl;
+        this._rtspStream = this._videoEntity?.properties?.contentUrls?.rtspTunnelUrl;
     }
 
     public static isApple(): boolean {
@@ -21,18 +28,14 @@ export class MediaApi {
         return this._baseStream;
     }
 
-    public static set baseStream(value) {
-        this._baseStream = value;
+    public static get videoFlags() {
+        return this._videoEntity?.properties?.flags;
     }
 
-    public static set liveStream(value: string) {
-        this._liveStream = value;
-    }
-
-    public static getLiveStream(): string {
+    public static get liveStream(): string {
         // if RTSP is present use RTSP URL.
-        if (this._liveStream && this.supportsMediaSource()) {
-            const url = new URL(this._liveStream);
+        if (this._rtspStream && this.supportsMediaSource()) {
+            const url = new URL(this._rtspStream);
             return url.toString();
         }
         const format = MediaApi._format === VideoFormat.HLS ? 'm3u8-cmaf' : 'mpd-time-cmaf';
