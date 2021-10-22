@@ -222,6 +222,10 @@ export class BoundingBoxDrawer extends CanvasElement {
                     speed = parseFloat(speed).toFixed(1).toString();
                 }
 
+                if (speed === 'inf') {
+                    speed = '0.0';
+                }
+
                 const floatSpeed = parseFloat(speed);
                 speed = speed + ' ft/s';
 
@@ -259,7 +263,7 @@ export class BoundingBoxDrawer extends CanvasElement {
                     this.context.fill();
 
                     // Draw orientation arrow
-                    if (floatSpeed === 0 || speed === 'inf'){
+                    if (floatSpeed === 0 || speed === 'inf' || orientation === 'inf'){
                         this.context.beginPath();
                         this.context.strokeStyle = 'white';
                         this.context.lineWidth = 3;

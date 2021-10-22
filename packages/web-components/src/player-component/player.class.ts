@@ -389,6 +389,11 @@ export class PlayerWrapper {
         }
     }
 
+    public updateFullScreen() {
+        this.removeBoundingBoxLayer();
+        this.addBoundingBoxLayer();
+    }
+
     private updateLiveButtonState() {
         for (const element of this.controls?.elements_) {
             if (element?.isLiveButton) {
@@ -489,7 +494,6 @@ export class PlayerWrapper {
         this.boundingBoxesDrawer.updateIsBox();
         this.removeBoundingBoxLayer();
         this.addBoundingBoxLayer();
-
     }
 
     private toggleAttributes() {

@@ -3,6 +3,9 @@ import { secondaryAccentButtonStyle } from '../../../styles/system-providers/ava
 import { stylesShaka } from './shaka-controls.style';
 import { timeTooltipStyle } from './UI/time-tooltip.style';
 
+const timelineHeight = '76px';
+const bottomControlHeight = '48px';
+
 export const styles = css`
     :host {
         display: inline-block;
@@ -44,9 +47,58 @@ export const styles = css`
         visibility: hidden;
     }
 
-    :host(.live-off) {
-        /* add controllers and timeline */
-        padding-bottom: calc(48px + 76px);
+    :host(.live-off.timeline-on.bottom-controls-on) {
+        padding-bottom: calc(${bottomControlHeight} + ${timelineHeight});
+    }
+
+    :host(.live-off.timeline-on.bottom-controls-on) .shaka-controls-container.live-off {
+        height: calc(100% + ${bottomControlHeight} + ${timelineHeight});
+    }
+
+    :host(.live-off.timeline-on.bottom-controls-on) .shaka-video-container.fullscreen .shaka-controls-container.live-off .shaka-bottom-controls {
+        padding-bottom: calc(${bottomControlHeight} + ${timelineHeight} + 2px) !important;
+    }
+
+    :host(.live-off.timeline-off.bottom-controls-on),
+    :host(.live-on.bottom-controls-on) {
+        padding-bottom: ${bottomControlHeight};
+    }
+
+    :host(.live-off.timeline-off.bottom-controls-on) .shaka-controls-container.live-off,
+    :host(.live-on.bottom-controls-on) .shaka-controls-container.live-on {
+        height: calc(100% + ${bottomControlHeight});
+    }
+
+    :host(.live-off.timeline-off.bottom-controls-on) .shaka-video-container.fullscreen .shaka-controls-container.live-off .shaka-bottom-controls,
+    :host(.live-on.bottom-controls-on) .shaka-video-container.fullscreen .shaka-controls-container.live-on .shaka-bottom-controls {
+        padding-bottom: calc(${bottomControlHeight} + 2px) !important;
+    }
+
+    :host(.live-off.timeline-on.bottom-controls-off) {
+        padding-bottom: ${timelineHeight};
+    }
+
+    :host(.live-off.timeline-on.bottom-controls-off) .shaka-controls-container.live-off {
+        height: calc(100% + ${timelineHeight});
+    }
+
+    :host(.live-off.timeline-on.bottom-controls-off) .shaka-video-container.fullscreen .shaka-controls-container.live-off .shaka-bottom-controls {
+        padding-bottom: calc(${timelineHeight} + 2px) !important;
+    }
+
+    :host(.live-off.timeline-off.bottom-controls-off),
+    :host(.live-on.bottom-controls-off) {
+        padding-bottom: 0px;
+    }
+
+    :host(.live-off.timeline-off.bottom-controls-off) .shaka-controls-container.live-off,
+    :host(.live-on.bottom-controls-off) .shaka-controls-container.live-on {
+        height: calc(100%);
+    }
+
+    :host(.live-off.timeline-off.bottom-controls-off) .shaka-video-container.fullscreen .shaka-controls-container.live-off .shaka-bottom-controls,
+    :host(.live-on.bottom-controls-off) .shaka-video-container.fullscreen .shaka-controls-container.live-on .shaka-bottom-controls {
+        padding-bottom: 2px !important;
     }
 
     :host(.loading),
@@ -65,6 +117,14 @@ export const styles = css`
     }
 
     :host(.no-live-data) .live-button-component {
+        display: none;
+    }
+
+    :host(.timeline-off) media-timeline {
+        display: none;
+    }
+
+    :host(.upper-bounding-off) .upper-bounding {
         display: none;
     }
 
@@ -118,9 +178,6 @@ export const styles = css`
         font-size: 16px;
     }
 
-    .shaka-video-container.fullscreen .shaka-controls-container.live-off .shaka-bottom-controls {
-        padding-bottom: calc(48px + 76px + 2px) !important;
-    }
     .shaka-volume-bar-container {
         height: 2px;
         border-radius: 0;
