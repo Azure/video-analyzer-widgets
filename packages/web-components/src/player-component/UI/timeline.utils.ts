@@ -7,8 +7,8 @@ export function createTimelineSegments(availableSegments: IAvailableMediaRespons
     let segmentEnd = 0;
     let segmentStart = 0;
     // go over reference
-    const segments = [];
-    for (const currentSegment of availableSegments?.timeRanges) {
+    const segments: IUISegment[] = [];
+    availableSegments?.timeRanges?.forEach((currentSegment) => {
         segmentEnd = extractRealTimeFromISO(currentSegment.end, currentDateStartTime);
         segmentStart = extractRealTimeFromISO(currentSegment.start, currentDateStartTime);
 
@@ -20,7 +20,7 @@ export function createTimelineSegments(availableSegments: IAvailableMediaRespons
             };
             segments.push(segment);
         }
-    }
+    });
 
     const mergedSegments = [];
 

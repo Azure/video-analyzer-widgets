@@ -72,9 +72,6 @@ export const stylesShaka = css`
         align-items: center;
         z-index: 1;
     }
-    .shaka-controls-container.live-off {
-        height: calc(100% + 48px + 76px);
-    }
     .live-button-component {
         width: 34px;
         height: 22px;

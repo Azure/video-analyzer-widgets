@@ -325,7 +325,7 @@ export class PlayerWrapper {
 
         // Remove timeline
         this.removeTimelineComponent();
-        this.controls.destroy();
+        await this.controls.destroy();
 
         if (this.isLoaded) {
             this.video.pause();
