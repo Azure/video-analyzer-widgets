@@ -166,10 +166,6 @@ export class DatePickerComponent extends FASTElement {
                 if (!Object.keys(this.resources).length) {
                     this.resources = Localization.dictionary;
                 }
-
-                // setTimeout(() => {
-                //     this.datePicker.picker.set('select', this.date);
-                // });
             });
         } catch (error) {
             // eslint-disable-next-line no-console

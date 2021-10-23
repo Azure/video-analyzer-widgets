@@ -317,7 +317,8 @@ export const styles = css`
         display: none;
     }
 
-    .switch-to-dash-button {
+    .switch-to-dash-button,
+    :host(.rtsp-playback.no-archive) .switch-to-dash-button {
         display: none;
     }
 
