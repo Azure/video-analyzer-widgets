@@ -75,11 +75,11 @@
 
     function onPlayButtonClick() {
       const clientApiEndpointUrlInput = document.querySelector('#clientApiEndpointUrlInput');
-      const clientApiEndpointUrl = clientApiEndpointUrlInput.value;
+      const clientApiEndpointUrl = clientApiEndpointUrlInput.value || 'https://797831707f3b44b585e4955d61695493.api.eastus2.videoanalyzer.azure.net';
       const videoNameInput = document.querySelector('#videoNameInput');
-      const videoName = videoNameInput.value;
+      const videoName = videoNameInput.value || 'sample-motion-video-camera001';
       const clientApiTokenInput = document.querySelector('#clientApiTokenInput');
-      const token = clientApiTokenInput.value;
+      const token = clientApiTokenInput.value || 'eyJhbGciOiJSUzI1NiIsImtpZCI6IkY5NUJDQjEzRjg4RTk2OEU3QTFBNDY0QjI1QTE3QjMzNzVEMkQzNEIiLCJ4NXQiOiItVnZMRV9pT2xvNTZHa1pMSmFGN00zWFMwMHMiLCJ0eXAiOiJKV1QifQ.eyJuYmYiOjE2Mjg4OTY3MjUsImV4cCI6NDEwMjQ0NDgwMCwiaWF0IjoxNjI4ODk3MDI1LCJpc3MiOiJodHRwczovL2NvbnRvc28uY29tIiwiYXVkIjoiaHR0cHM6Ly83OTc4MzE3MDdmM2I0NGI1ODVlNDk1NWQ2MTY5NTQ5My5hcGkuZWFzdHVzMi52aWRlb2FuYWx5emVyLmF6dXJlLm5ldC92aWRlb3MvKiJ9.tp1Z2q8XhcHeb6tOxgmtAHCtAhzcsXsrQgPZoBSx3iPkMQB_bDq1xHueBZ6KZeNQw6GEFsmsqIbOnGbNUP7StcKtj8AcHwVFzC3Kd2VfjgD09ORJffYnbdQKJJ-mCOr_Yfj-NFEuIS4mnet2bVErkze338Eh4JrSil1j4stP6AS4w1fus2lEAH_ODNQMQ69e_RKoxQihYBgP8asBJeVH3pBW6TDE3ZbvEklqckpyHBU7ThbgFvMueJFE5_MLzoI1r3MsRkfdeD8Tc5PcP3OEJ9zySvfNG2OgjsuDH9_ogWKJPILaqfV35KfFhaoogEkeobd202xXnRM8u73-YlgWkg';
       const muteInput = document.querySelector('#muteInput');
       const mute = (muteInput.value === "true") ? true : false;
 
