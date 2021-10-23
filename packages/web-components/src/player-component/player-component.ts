@@ -439,7 +439,7 @@ export class PlayerComponent extends FASTElement {
                 this.player.accessToken
             )
                 .then(async (availableHours) => {
-                    AvailableMediaResponse = await availableHours.json()
+                    AvailableMediaResponse = await availableHours.json();
                 })
                 .catch((error) => {
                     this.handleError(error);
@@ -590,7 +590,6 @@ export class PlayerComponent extends FASTElement {
                             this.allowedDates[index] = [];
                         }
                     }
-        
                     this.currentAllowedYears = Object.keys(this.allowedDates);
                     this.datePickerComponent.allowedDates = {
                         ...this.datePickerComponent.allowedDates,
