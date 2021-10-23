@@ -41,6 +41,7 @@
     "PLAYER_UTILS_ShakaError_Manifest": "Fouten bij het ontleden van het manifest.",
     "PLAYER_UTILS_ShakaError_Streaming": "Fouten gerelateerd aan streaming.",
     "PLAYER_UTILS_ShakaError_Storage": "Fouten in de database-opslag (offline).",
+    "PLAYER_UTILS_NO_MEDIA_FAILED": "Das Video kann nicht gestreamt werden",
     "SVG_PROGRESS_Default": "standaard",
     "SVG_PROGRESS_SVGIsMissingError": "Root SVG-element ontbreekt",
     "TIMELINE_ComponentTitle": "Tijdlijncomponent",

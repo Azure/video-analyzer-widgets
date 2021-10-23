@@ -32,11 +32,18 @@ export class MediaApi {
         return this._videoEntity?.properties?.flags;
     }
 
+    public static set rtspStream(value: string) {
+        this._rtspStream = value;
+    }
+
+    public static get rtspStream() {
+        return this._rtspStream;
+    }
+
     public static get liveStream(): string {
         // if RTSP is present use RTSP URL.
         if (this._rtspStream && this.supportsMediaSource()) {
-            const url = new URL(this._rtspStream);
-            return url.toString();
+            return this._rtspStream;
         }
         const format = MediaApi._format === VideoFormat.HLS ? 'm3u8-cmaf' : 'mpd-time-cmaf';
         const extension = MediaApi._format === VideoFormat.HLS ? '.m3u8' : '.mpd';
