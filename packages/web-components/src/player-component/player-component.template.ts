@@ -1,4 +1,3 @@
-
 import { html, when } from '@microsoft/fast-element';
 import { PlayerComponent } from '.';
 
@@ -35,6 +34,15 @@ export const template = html<PlayerComponent>`
                                 @keyup="${(x, c) => x.handleRetryKeyUp(c.event as KeyboardEvent)}"
                                 @click="${(x) => x.handleRetry()}"
                                 >${(x) => x.resources?.PLAYER_Retry}</fast-button
+                            >
+                            <fast-button
+                                appearance="accent"
+                                class="secondary switch-to-dash-button"
+                                aria-label="${(x) => x.resources?.PLAYER_SwitchToDash}"
+                                title="${(x) => x.resources?.PLAYER_SwitchToDash}"
+                                @keyup="${(x, c) => x.handleSwitchToDashKeyUp(c.event as KeyboardEvent)}"
+                                @click="${(x) => x.handleSwitchToDash()}"
+                                >${(x) => x.resources?.PLAYER_SwitchToDash}</fast-button
                             >
                         `
                     )}

@@ -55,7 +55,10 @@ export const styles = css`
         height: calc(100% + ${bottomControlHeight} + ${timelineHeight});
     }
 
-    :host(.live-off.timeline-on.bottom-controls-on) .shaka-video-container.fullscreen .shaka-controls-container.live-off .shaka-bottom-controls {
+    :host(.live-off.timeline-on.bottom-controls-on)
+        .shaka-video-container.fullscreen
+        .shaka-controls-container.live-off
+        .shaka-bottom-controls {
         padding-bottom: calc(${bottomControlHeight} + ${timelineHeight} + 2px) !important;
     }
 
@@ -69,7 +72,10 @@ export const styles = css`
         height: calc(100% + ${bottomControlHeight});
     }
 
-    :host(.live-off.timeline-off.bottom-controls-on) .shaka-video-container.fullscreen .shaka-controls-container.live-off .shaka-bottom-controls,
+    :host(.live-off.timeline-off.bottom-controls-on)
+        .shaka-video-container.fullscreen
+        .shaka-controls-container.live-off
+        .shaka-bottom-controls,
     :host(.live-on.bottom-controls-on) .shaka-video-container.fullscreen .shaka-controls-container.live-on .shaka-bottom-controls {
         padding-bottom: calc(${bottomControlHeight} + 2px) !important;
     }
@@ -82,7 +88,10 @@ export const styles = css`
         height: calc(100% + ${timelineHeight});
     }
 
-    :host(.live-off.timeline-on.bottom-controls-off) .shaka-video-container.fullscreen .shaka-controls-container.live-off .shaka-bottom-controls {
+    :host(.live-off.timeline-on.bottom-controls-off)
+        .shaka-video-container.fullscreen
+        .shaka-controls-container.live-off
+        .shaka-bottom-controls {
         padding-bottom: calc(${timelineHeight} + 2px) !important;
     }
 
@@ -96,7 +105,10 @@ export const styles = css`
         height: calc(100%);
     }
 
-    :host(.live-off.timeline-off.bottom-controls-off) .shaka-video-container.fullscreen .shaka-controls-container.live-off .shaka-bottom-controls,
+    :host(.live-off.timeline-off.bottom-controls-off)
+        .shaka-video-container.fullscreen
+        .shaka-controls-container.live-off
+        .shaka-bottom-controls,
     :host(.live-on.bottom-controls-off) .shaka-video-container.fullscreen .shaka-controls-container.live-on .shaka-bottom-controls {
         padding-bottom: 2px !important;
     }
@@ -297,12 +309,20 @@ export const styles = css`
         display: none;
     }
 
-    :host(.live-on) .rtsp-playback .metadata-overflow-menu-item {
+    :host(.live-on.rtsp-playback) .metadata-overflow-menu-item {
         display: none;
     }
 
-    :host(.live-on) .rtsp-playback .settings-overflow-menu-item {
+    :host(.live-on.rtsp-playback) .settings-overflow-menu-item {
         display: none;
+    }
+
+    .switch-to-dash-button {
+        display: none;
+    }
+
+    :host(.rtsp-playback) .switch-to-dash-button {
+        display: flex;
     }
 
     :host(.loading) .shaka-spinner-container {
