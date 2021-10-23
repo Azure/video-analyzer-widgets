@@ -100,16 +100,16 @@ export class BoundingBoxDrawer extends CanvasElement {
         const r = x + w;
         const b = y + h;
         context.beginPath();
-        context.lineWidth= 0;
-        context.moveTo(x+radius, y);
-        context.lineTo(r-radius, y);
-        context.quadraticCurveTo(r, y, r, y+radius);
-        context.lineTo(r, y+h-radius);
-        context.quadraticCurveTo(r, b, r-radius, b);
-        context.lineTo(x+radius, b);
-        context.quadraticCurveTo(x, b, x, b-radius);
-        context.lineTo(x, y+radius);
-        context.quadraticCurveTo(x, y, x+radius, y);
+        context.lineWidth = 0;
+        context.moveTo(x + radius, y);
+        context.lineTo(r - radius, y);
+        context.quadraticCurveTo(r, y, r, y + radius);
+        context.lineTo(r, y + h - radius);
+        context.quadraticCurveTo(r, b, r - radius, b);
+        context.lineTo(x + radius, b);
+        context.quadraticCurveTo(x, b, x, b - radius);
+        context.lineTo(x, y + radius);
+        context.quadraticCurveTo(x, y, x + radius, y);
         context.stroke();
         context.fillStyle = 'rgba(0, 0, 0, 0.74)';
         context.fill();
@@ -185,13 +185,13 @@ export class BoundingBoxDrawer extends CanvasElement {
             const trackingLinePointY = y + h;
 
             // Draw bounding box
-            if (this._boxOn){
+            if (this._boxOn) {
                 this.context.strokeRect(x, y, w, h);
             }
 
             this.context.lineWidth = 1;
             this.context.strokeStyle = 'rgba(255, 255, 255, 0.74)';
-            if (this._boxOn){
+            if (this._boxOn) {
                 this.context.strokeRect(x + 2, y + 2, w - 4, h - 4);
             }
 
@@ -202,13 +202,16 @@ export class BoundingBoxDrawer extends CanvasElement {
             this.context.lineWidth = cornerRadius;
 
             if (instanceData.entity) {
-                if (!Object.prototype.hasOwnProperty.call(this._colorMap, instanceData.entity.trackingId)) {
+                if (!Object.prototype.hasOwnProperty.call(this._colorMap, instanceData?.entity?.trackingId)) {
                     this._colorMap[instanceData.entity.trackingId] = this.COLORS[Object.keys(this._colorMap).length % this.COLORS.length];
                 }
-                const color = this._colorMap[instanceData.entity.trackingId];
+                const color = instanceData?.entity?.trackingId ? this._colorMap[instanceData.entity.trackingId ?? 0] : 'white';
 
-                const Id = instanceData.entity.trackingId.slice(instanceData.entity.trackingId.length - 6, instanceData.entity.trackingId.length);
-                let label = `${instanceData.entity.tag} ${Id}`;
+                const Id = instanceData.entity?.trackingId?.slice(
+                    instanceData.entity.trackingId.length - 6,
+                    instanceData.entity.trackingId.length
+                );
+                let label = `${instanceData.entity.tag} ${Id ?? ''}`;
                 let speed = `${instanceData.entity.speed}`;
                 const orientation = `${instanceData.entity.orientation}`;
 
@@ -234,114 +237,115 @@ export class BoundingBoxDrawer extends CanvasElement {
                 const height = this.getFontSize() + this.PADDING_TOP * 2 * this.ratio;
 
                 if (this._attributesOn) {
-
                     // Show the tag box and tag
-                    this.context.strokeRect(x + this.PADDING_RIGHT, y - height - this.ratio, width + height, height);
-                    this.context.fillRect(x + this.PADDING_RIGHT, y - height - this.ratio, width + height, height);
+                    this.context.strokeRect(x + this.PADDING_RIGHT / 2, y - height - this.ratio, width + height, height);
+                    this.context.fillRect(x + this.PADDING_RIGHT / 2, y - height - this.ratio, width + height, height);
 
                     this.context.fillStyle = color;
                     this.context.fillRect(
-                        x + this.PADDING_RIGHT * this.ratio + height/6,
-                        y - this.PADDING_TOP * 2 * this.ratio - 2 * height/3,
-                        2 * height/3,
-                        2 * height/3
+                        x + (this.PADDING_RIGHT / 2) * this.ratio + height / 6,
+                        y - this.PADDING_TOP * 2 * this.ratio - (2 * height) / 3,
+                        (2 * height) / 3,
+                        (2 * height) / 3
                     );
 
                     this.context.fillStyle = 'white';
                     this.context.fillText(label, x + this.PADDING_RIGHT * this.ratio + height, y - this.PADDING_TOP * 2 * this.ratio);
                     this.context.fillStyle = 'rgba(0, 0, 0, 0.74)';
 
-                    // Draw speed round pill
-                    const speedWidth = this.displayTextWidth(speed) + 2.5 * height;
-                    this.roundRect(x + w/2 - height/2, orientationPointY - height/2, speedWidth, height, height/2);
+                    if (instanceData?.entity?.speed && instanceData?.entity?.orientation) {
+                        // Draw speed round pill
+                        const speedWidth = this.displayTextWidth(speed) + 2.5 * height;
+                        this.roundRect(x + w / 2 - height / 2, orientationPointY - height / 2, speedWidth, height, height / 2);
 
-                    // Draw the dot in the speed round pill
-                    this.context.beginPath();
-                    this.context.strokeStyle = color;
-                    this.context.arc(x + w/2, orientationPointY, height/4, 0, 2 * Math.PI, true);
-                    this.context.fillStyle = color;
-                    this.context.fill();
-
-                    // Draw orientation arrow
-                    if (floatSpeed === 0 || speed === 'inf' || orientation === 'inf'){
-                        this.context.beginPath();
-                        this.context.strokeStyle = 'white';
-                        this.context.lineWidth = 3;
-                        this.context.arc(x + w/2 + height, orientationPointY, 1, 0, 2 * Math.PI, true);
-                        this.context.fillStyle = 'white';
-                        this.context.fill();
-                        this.context.stroke();
-                    } else {
-                        const floatOrientation = parseFloat(orientation);
-
-                        this.context.beginPath();
-                        this.context.lineWidth = 1;
-                        this.context.strokeStyle = 'white';
-                        this.context.moveTo(x + w/2 + height, orientationPointY);
-                        this.context.lineTo(
-                            x + w/2 + height + height/2 * Math.cos(floatOrientation - Math.PI),
-                            orientationPointY + height/2 * Math.sin(floatOrientation - Math.PI)
-                        );
-                        this.context.closePath();
-                        this.context.stroke();
-
-                        this.context.beginPath();
-                        this.context.strokeStyle = 'white';
-                        this.context.lineWidth = 1;
-                        this.canvasArrow(
-                            x + w/2 + height,
-                            orientationPointY,
-                            x + w/2 + height + height/2 * Math.cos(floatOrientation),
-                            orientationPointY + height/2 * Math.sin(floatOrientation)
-                        );
-                        this.context.stroke();
-                    }
-
-                    // Draw speed text
-                    this.context.fillStyle = 'white';
-                    this.context.fillText(speed, x + w/2 + 1.5 * height, orientationPointY + height/4);
-                }
-
-                if (!Object.prototype.hasOwnProperty.call(this._trackingPoints, instanceData.entity.trackingId)) {
-                    this._trackingPoints[instanceData.entity.trackingId] = [[x + w/2, trackingLinePointY]];
-                } else {
-                    const length = this._trackingPoints[instanceData.entity.trackingId].length;
-                    const lastX = this._trackingPoints[instanceData.entity.trackingId][length - 1][0];
-                    const lastY = this._trackingPoints[instanceData.entity.trackingId][length - 1][1];
-                    if (
-                        Math.abs(x + w/2 - lastX) > 50 || Math.abs(trackingLinePointY - lastY) > 50
-                    ) {
-                        this._trackingPoints = {};
-                        this._trackingPoints[instanceData.entity.trackingId] = [[x + w/2, trackingLinePointY]];
-                    } else {
-                        if (this._trackingPoints[instanceData.entity.trackingId].length > 240) {
-                            this._trackingPoints[instanceData.entity.trackingId].shift();
-                        }
-                        this._trackingPoints[instanceData.entity.trackingId].push([x + w/2, trackingLinePointY]);
-                    }
-                }
-
-                if (this._trackingOn) {
-                    if (this._trackingPoints[instanceData.entity.trackingId].length !== 0) {
-                        // Draw the current position dot for the tracking line
+                        // Draw the dot in the speed round pill
                         this.context.beginPath();
                         this.context.strokeStyle = color;
-                        this.context.arc(x + w/2, trackingLinePointY, height/4, 0, 2 * Math.PI, true);
+                        this.context.arc(x + w / 2, orientationPointY, height / 4, 0, 2 * Math.PI, true);
                         this.context.fillStyle = color;
                         this.context.fill();
 
-                        // Draw the tracking line
-                        this.context.beginPath();
-                        this.context.strokeStyle = color;
-                        this.context.lineWidth = 2;
-                        this.context.moveTo(
-                            this._trackingPoints[instanceData.entity.trackingId][0][0],
-                            this._trackingPoints[instanceData.entity.trackingId][0][1]
-                        );
-                        for (const point of this._trackingPoints[instanceData.entity.trackingId]) {
-                            this.context.lineTo(point[0], point[1]);
+                        // Draw orientation arrow
+                        if (floatSpeed === 0 || speed === 'inf' || orientation === 'inf') {
+                            this.context.beginPath();
+                            this.context.strokeStyle = 'white';
+                            this.context.lineWidth = 3;
+                            this.context.arc(x + w / 2 + height, orientationPointY, 1, 0, 2 * Math.PI, true);
+                            this.context.fillStyle = 'white';
+                            this.context.fill();
+                            this.context.stroke();
+                        } else {
+                            const floatOrientation = parseFloat(orientation);
+
+                            this.context.beginPath();
+                            this.context.lineWidth = 1;
+                            this.context.strokeStyle = 'white';
+                            this.context.moveTo(x + w / 2 + height, orientationPointY);
+                            this.context.lineTo(
+                                x + w / 2 + height + (height / 2) * Math.cos(floatOrientation - Math.PI),
+                                orientationPointY + (height / 2) * Math.sin(floatOrientation - Math.PI)
+                            );
+                            this.context.closePath();
+                            this.context.stroke();
+
+                            this.context.beginPath();
+                            this.context.strokeStyle = 'white';
+                            this.context.lineWidth = 1;
+                            this.canvasArrow(
+                                x + w / 2 + height,
+                                orientationPointY,
+                                x + w / 2 + height + (height / 2) * Math.cos(floatOrientation),
+                                orientationPointY + (height / 2) * Math.sin(floatOrientation)
+                            );
+                            this.context.stroke();
                         }
-                        this.context.stroke();
+
+                        // Draw speed text
+                        this.context.fillStyle = 'white';
+                        this.context.fillText(speed, x + w / 2 + 1.5 * height, orientationPointY + height / 4);
+                    }
+                }
+
+                if (instanceData?.entity?.trackingId) {
+                    if (!Object.prototype.hasOwnProperty.call(this._trackingPoints, instanceData.entity.trackingId)) {
+                        this._trackingPoints[instanceData.entity.trackingId] = [[x + w / 2, trackingLinePointY]];
+                    } else {
+                        const length = this._trackingPoints[instanceData.entity.trackingId].length;
+                        const lastX = this._trackingPoints[instanceData.entity.trackingId][length - 1][0];
+                        const lastY = this._trackingPoints[instanceData.entity.trackingId][length - 1][1];
+                        if (Math.abs(x + w / 2 - lastX) > 50 || Math.abs(trackingLinePointY - lastY) > 50) {
+                            this._trackingPoints = {};
+                            this._trackingPoints[instanceData.entity.trackingId] = [[x + w / 2, trackingLinePointY]];
+                        } else {
+                            if (this._trackingPoints[instanceData.entity.trackingId].length > 240) {
+                                this._trackingPoints[instanceData.entity.trackingId].shift();
+                            }
+                            this._trackingPoints[instanceData.entity.trackingId].push([x + w / 2, trackingLinePointY]);
+                        }
+                    }
+
+                    if (this._trackingOn) {
+                        if (this._trackingPoints[instanceData.entity.trackingId].length !== 0) {
+                            // Draw the current position dot for the tracking line
+                            this.context.beginPath();
+                            this.context.strokeStyle = color;
+                            this.context.arc(x + w / 2, trackingLinePointY, height / 4, 0, 2 * Math.PI, true);
+                            this.context.fillStyle = color;
+                            this.context.fill();
+
+                            // Draw the tracking line
+                            this.context.beginPath();
+                            this.context.strokeStyle = color;
+                            this.context.lineWidth = 2;
+                            this.context.moveTo(
+                                this._trackingPoints[instanceData.entity.trackingId][0][0],
+                                this._trackingPoints[instanceData.entity.trackingId][0][1]
+                            );
+                            for (const point of this._trackingPoints[instanceData.entity.trackingId]) {
+                                this.context.lineTo(point[0], point[1]);
+                            }
+                            this.context.stroke();
+                        }
                     }
                 }
             }

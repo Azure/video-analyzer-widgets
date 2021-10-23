@@ -42,6 +42,7 @@
     </ava-player>
   </div>
   <script>
+    var loaded = false;
     function onAVALoad() {
       const avaPlayer = document.querySelector("ava-player");
       avaPlayer.addEventListener('TOKEN_EXPIRED', () => {
@@ -67,7 +68,10 @@
       avaPlayer.configure({ clientApiEndpointUrl: null, videoName: "", debug: true });
 
       avaPlayer.setSource({ allowCrossSiteCredentials: false, videoEntity: JSON.parse(videoJSON), authenticationToken: token })
-      avaPlayer.load();
+      if (!loaded) {
+        avaPlayer.load();
+        loaded = true;
+      }
     }
   </script>
   <script src="../dist/global.js"

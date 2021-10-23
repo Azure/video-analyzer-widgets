@@ -68,6 +68,7 @@ export class PlayerComponent extends FASTElement {
     private showTimeline = true;
     private showUpperBounding = true;
     private showBottomControls = true;
+    private allowedControllers: ControlPanelElements[];
 
     public constructor() {
         super();
@@ -88,6 +89,16 @@ export class PlayerComponent extends FASTElement {
         if (!this.connected) {
             return;
         }
+
+        if (clipTimeRange?.startTime && clipTimeRange?.endTime) {
+            this.isClip = true;
+            this.clipTimeRange = clipTimeRange;
+        } else {
+            this.isClip = false;
+            this.clipTimeRange = null;
+        }
+
+        this.allowedControllers = allowedControllers;
 
         this.resources = Localization.dictionary;
         Localization.translate(ControlPanelElementsTooltip, 'PLAYER_Tooltip_');
@@ -115,12 +126,20 @@ export class PlayerComponent extends FASTElement {
                 allowedControllers.indexOf(ControlPanelElements.NEXT_SEGMENT) > -1 ||
                 allowedControllers.indexOf(ControlPanelElements.PREV_SEGMENT) > -1;
         }
-        this.classList.add(this.showTimeline ? 'timeline-on' : 'timeline-off');
-        this.classList.add(this.showUpperBounding ? 'upper-bounding-on' : 'upper-bounding-off');
-        this.classList.add(this.showBottomControls ? 'bottom-controls-on' : 'bottom-controls-off');
+
+        this.updateClass('timeline-on', this.showTimeline);
+        this.updateClass('timeline-off', !this.showTimeline);
+        this.updateClass('upper-bounding-on', this.showUpperBounding);
+        this.updateClass('upper-bounding-off', !this.showUpperBounding);
+        this.updateClass('bottom-controls-on', this.showBottomControls);
+        this.updateClass('bottom-controls-of', !this.showBottomControls);
+
         this.isMuted = isMuted ?? true;
 
-        // Reload player
+        this.initializePlayer(this.allowedControllers, allowCrossSiteCredentials, accessToken);
+    }
+
+    public async initializePlayer(allowedControllers: ControlPanelElements[], allowCrossSiteCredentials = true, accessToken?: string) {
         if (this.player) {
             // If there was an existing error -clear state
             this.clearError();
@@ -137,7 +156,8 @@ export class PlayerComponent extends FASTElement {
             this.changeDayCallBack.bind(this),
             this.handleShakaError.bind(this),
             allowedControllers,
-            this.clickLiveCallBack.bind(this)
+            this.clickLiveCallBack.bind(this),
+            this.updateClass.bind(this)
         );
 
         this.player.addLoading();
@@ -156,13 +176,7 @@ export class PlayerComponent extends FASTElement {
             this.$emit(PlayerEvents.PLAYER_ERROR, this.errorString);
             return;
         }
-        if (clipTimeRange?.startTime && clipTimeRange?.endTime) {
-            this.isClip = true;
-            this.clipTimeRange = clipTimeRange;
-        } else {
-            this.isClip = false;
-            this.clipTimeRange = null;
-        }
+
         if (MediaApi.videoFlags?.isInUse && MediaApi.liveStream) {
             this.hasLiveData = true;
         }
@@ -356,6 +370,26 @@ export class PlayerComponent extends FASTElement {
         }
 
         return true;
+    }
+
+    public handleSwitchToDash() {
+        this.switchToDash();
+    }
+
+    public handleSwitchToDashKeyUp(e: KeyboardEvent): boolean {
+        switch (e.keyCode) {
+            case keyCodeEnter:
+            case keyCodeSpace:
+                this.switchToDash();
+                return false;
+        }
+
+        return true;
+    }
+
+    public switchToDash() {
+        MediaApi.rtspStream = '';
+        this.initializePlayer(this.allowedControllers, this.player.allowCrossCred, this.player.accessToken);
     }
 
     public retryStreaming() {
@@ -731,5 +765,13 @@ export class PlayerComponent extends FASTElement {
         this.time = timeString;
         this.$emit(PlayerEvents.CLOCK_TIME_UPDATED, time);
         this.timeContainer.innerText = this.time;
+    }
+
+    private updateClass(className: string, condition: boolean) {
+        if (condition) {
+            this.classList.add(className);
+        } else {
+            this.classList.remove(className);
+        }
     }
 }

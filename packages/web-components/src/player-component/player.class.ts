@@ -168,7 +168,8 @@ export class PlayerWrapper {
         private changeDayCallBack: (isNext: boolean) => void,
         private errorCallback: (error: shaka_player.PlayerEvents.ErrorEvent) => void,
         private allowedControllers: ControlPanelElements[],
-        private onClickLiveCallback: (isLive: boolean) => void
+        private onClickLiveCallback: (isLive: boolean) => void,
+        private updateParentClass: (className: string, condition: boolean) => void
     ) {
         this.resources = Localization.dictionary;
         // Install built-in polyfills to patch browser incompatibilities.
@@ -195,10 +196,12 @@ export class PlayerWrapper {
     public get liveStream() {
         if (this._liveStream) {
             const url = new URL(this._liveStream);
-            // getVideo API may one day return the RTSP URL, until then, hard-code it.
-            url.searchParams.set('rtsp', encodeURIComponent('rtsp://localhost'));
-            if (this.accessToken) {
-                url.searchParams.set('authorization', this.accessToken);
+            if (this._liveStream === MediaApi.rtspStream) {
+                // getVideo API may one day return the RTSP URL, until then, hard-code it.
+                url.searchParams.set('rtsp', encodeURIComponent('rtsp://localhost'));
+                if (this.accessToken) {
+                    url.searchParams.set('authorization', this.accessToken);
+                }
             }
             return url.toString();
         }
@@ -258,9 +261,9 @@ export class PlayerWrapper {
         this.timestampOffset = undefined;
         try {
             if (url.indexOf('wss:/') != -1) {
-                this.videoContainer.classList.add('rtsp-playback');
+                this.updateParentClass('rtsp-playback', true);
             } else {
-                this.videoContainer.classList.remove('rtsp-playback');
+                this.updateParentClass('rtsp-playback', false);
             }
 
             await this.player.load(url, null, this.getMimeType(url));
@@ -322,6 +325,7 @@ export class PlayerWrapper {
 
         // Remove timeline
         this.removeTimelineComponent();
+        await this.controls.destroy();
 
         if (this.isLoaded) {
             this.video.pause();
@@ -738,9 +742,9 @@ export class PlayerWrapper {
                     data.entity = {
                         id: iterator.entity.id || iterator.sequenceId,
                         tag: iterator.entity.tag.value,
-                        trackingId: iterator.extensions.trackingId,
-                        speed: iterator.extensions.speed,
-                        orientation: iterator.extensions.mappedImageOrientation
+                        trackingId: iterator?.extensions?.trackingId,
+                        speed: iterator?.extensions?.speed,
+                        orientation: iterator?.extensions?.mappedImageOrientation
                     };
                 }
                 this.boundingBoxesDrawer.addItem(emsg.startTime, emsg.endTime, data);
