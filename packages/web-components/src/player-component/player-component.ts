@@ -420,7 +420,7 @@ export class PlayerComponent extends FASTElement {
 
     private async fetchAvailableSegments(startDate: IExpandedDate, end: IExpandedDate): Promise<IAvailableMediaResponse> {
         try {
-            let AvailableMediaResponse = null;
+            let availableMediaResponse = null;
             await MediaApi.getAvailableMedia(
                 Precision.FULL,
                 {
@@ -439,13 +439,13 @@ export class PlayerComponent extends FASTElement {
                 this.player.accessToken
             )
                 .then(async (availableHours) => {
-                    AvailableMediaResponse = await availableHours.json();
+                    availableMediaResponse = await availableHours.json();
                 })
                 .catch((error) => {
                     this.handleError(error);
                     Logger.log(this.resources.PLAYER_ErrorFetchSegments);
                 });
-            return AvailableMediaResponse;
+            return availableMediaResponse;
         } catch (error) {
             Logger.log(this.resources.PLAYER_ErrorFetchSegments);
             return null;
