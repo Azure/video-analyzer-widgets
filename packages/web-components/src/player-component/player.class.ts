@@ -2,7 +2,7 @@
 import { ICanvasOptions } from '../../../common/canvas/canvas.definitions';
 import { IAvailableMediaResponse } from '../../../common/services/media/media.definitions';
 import { SegoeUIFontFamily } from '../../../styles/system-providers/ava-design-system-provider.definitions';
-import { PlayerEvents, WidgetGeneralError } from '../../../widgets/src';
+import { WidgetGeneralError } from '../../../widgets/src';
 import { Logger } from '../../../widgets/src/common/logger';
 import { IUISegment, IUISegmentEventData } from '../segments-timeline/segments-timeline.definitions';
 import { TimelineComponent } from '../timeline';
