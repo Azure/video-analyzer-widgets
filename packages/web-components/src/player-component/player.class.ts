@@ -664,8 +664,8 @@ export class PlayerWrapper {
         }, stallIntervalMs);
 
         // Install drift correction
-        const driftIntervalMs = 10000; //in milliseconds
-        const MAX_LATENCY_WINDOW = 3; //in seconds
+        const driftIntervalMs = 10000; // in milliseconds
+        const MAX_LATENCY_WINDOW = 3; // in seconds
         this._driftCorrectionTimer = window.setInterval(async () => {
             const video = this.player.getMediaElement() as HTMLMediaElement;
             if (this.player.getBufferedInfo().video[0].end - MAX_LATENCY_WINDOW > video.currentTime &&
