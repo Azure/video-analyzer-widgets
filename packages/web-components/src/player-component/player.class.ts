@@ -273,9 +273,9 @@ export class PlayerWrapper {
         } catch (error: unknown) {
             if (error instanceof Error) {
                 Logger.log(error.message);
-            } else {
-                throw error;
             }
+            this.onErrorEvent({ type: 'error', detail: error } as shaka_player.PlayerEvents.ErrorEvent);
+            throw error;
         }
     }
 
