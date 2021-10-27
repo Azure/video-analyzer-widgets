@@ -35,49 +35,52 @@ enum ErrorCode {
 interface IShakaErrorHandlerConfig {
     resetSource: () => Promise<void>;
     autoreconnect?: boolean;
+    networkRetries?: number;
 }
 
 class shakaErrorHandler {
     private _resetSource: () => Promise<void>;
     private _autoreconnect: boolean;
+    private _maxNetworkRetries: number;
 
     private _firstVideoError = 0;
     private _numVideoErrors = 0;
+    private _networkRetries = 0;
 
     public constructor(config: IShakaErrorHandlerConfig) {
         this._resetSource = config.resetSource;
         this._autoreconnect = config.autoreconnect ?? true;
+        this._maxNetworkRetries = config.networkRetries ?? 5;
+    }
+
+    public resetErrorCount() {
+        this._networkRetries = 0;
     }
 
     // This is async, but caller will
     // Porting to widgets, had to change from event: Event to event:any
     // because @types/react declares Event interface which overrides lib.dom.
     public async onShakaError(event: shaka_player.PlayerEvents.ErrorEvent): Promise<boolean> {
-        if (!('type' in event) || !('detail' in event)) {
-            throw new Error('onShakaError: event not recognized! No type or detail: ' + JSON.stringify(event));
-        }
 
-        if (event.type !== 'error') {
-            throw new Error(`onShakaError: event not recognized! Type = ${event.type}!`);
-        }
-
-        const shakaError = event.detail as shaka_player.util.Error;
-        if (!shakaError) {
-            throw new Error('onShakaError: event.detail not provided! ' + `event.type = ${event.type}, ${event}`);
-        }
-
+        const shakaError = event.detail;
         // Log the error
         Logger.error('onShakaError: code', shakaError.code, `, ${shakaError.message}, object: ${shakaError}`);
 
-        if (shakaError.code === ErrorCode.WEBSOCKET_CLOSED) {
-            if (this._autoreconnect) {
-                if (shakaError.severity === shaka.util.Error.Severity.RECOVERABLE) {
-                    event.stopImmediatePropagation(); // Must call BEFORE await or else dispatch loop will keep notifying
-                    await this._resetSource();
-                    return true;
-                }
+        if (
+            shakaError.code === ErrorCode.WEBSOCKET_CLOSED &&
+            this._autoreconnect &&
+            shakaError.severity === shaka.util.Error.Severity.RECOVERABLE
+        ) {
+            if (this._networkRetries++ < this._maxNetworkRetries) {
+                Logger.log('Retrying after a network error', event);
+                event.stopImmediatePropagation(); // Must call BEFORE await or else dispatch loop will keep notifying
+                await this._resetSource();
+                return true;
+            } else {
+                // reset the count and pass the error message to the user.
+                this._networkRetries = 0;
+                return false;
             }
-            return false;
         }
 
         if (shakaError.code === 3016) {
@@ -150,8 +153,6 @@ export class PlayerWrapper {
     private _stallDetectionTimer: number | null = null;
     private _currentDate: Date;
     private _driftCorrectionTimer: number | null = null;
-    private _firstVideoError: number = 0;
-    private _numVideoErrors: number = 0;
     private wallclock_event: shaka_player.PlayerEvents.FakeEvent | undefined;
     private _errorHandler: shakaErrorHandler;
 
@@ -271,9 +272,7 @@ export class PlayerWrapper {
             // Auto play video
             this.video.play();
         } catch (error: unknown) {
-            if (error instanceof Error) {
-                Logger.log(error.message);
-            }
+            Logger.log('Failed to load the video', error.toString(), error);
             this.onErrorEvent({ type: 'error', detail: error } as shaka_player.PlayerEvents.ErrorEvent);
             throw error;
         }
@@ -383,10 +382,10 @@ export class PlayerWrapper {
     public retryStreaming() {
         if (this.isLive) {
             Logger.log('Reloading live stream...');
-            this.player.load(this.liveStream);
+            this.load(this.liveStream);
         } else {
             Logger.log('Reloading VOD stream...');
-            this.player.load(this.vodStream);
+            this.load(this.vodStream);
         }
     }
 
@@ -572,6 +571,9 @@ export class PlayerWrapper {
         this.player = new shaka.Player(this.video);
 
         this.player.configure({
+            abr: {
+                enabled: false
+            },
             manifest: {
                 defaultPresentationDelay: 6
             },
@@ -834,6 +836,7 @@ export class PlayerWrapper {
     }
 
     private onLoadedData() {
+        this._errorHandler.resetErrorCount();
         // If vod mode - start first segment
         if (!this.isLive) {
             Logger.log('onLoadedData: jump to 0, ' + this.getSeekRangeString());
@@ -907,6 +910,7 @@ export class PlayerWrapper {
 
     private async onErrorEvent(event: shaka_player.PlayerEvents.ErrorEvent) {
         this.removeLoading();
+        this.player.unload();
         const errorHandled = await this._errorHandler.onShakaError(event);
         if (!errorHandled && this.errorCallback) {
             Logger.log(`onErrorEvent: ${event.detail} not handled, calling errorCallback.`);
