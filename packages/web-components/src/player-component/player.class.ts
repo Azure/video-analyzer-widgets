@@ -669,12 +669,16 @@ export class PlayerWrapper {
         this._driftCorrectionTimer = window.setInterval(async () => {
             const video = this.player.getMediaElement() as HTMLMediaElement;
             if (this.player.getBufferedInfo().video[0].end - MAX_LATENCY_WINDOW > video.currentTime &&
-                !video.paused && this.isLive
+                !video.paused && this.isLive && !this.player.isBuffering()
             ) {
+                // TODO: To account for the time that elapses during the trickplay portion, we need to add some additional trickplay duration
+                // in order to get latency as low as possible. The slower the trickplay speed, and the higher the latency, the higher this
+                // additional value will have to be. For now we use a flat value.
+                const additionalDur= 2000; // in milliseconds
                 const delta=this.player.getBufferedInfo().video[0].end - video.currentTime;
                 Logger.log(`Correcting drift, jumping forward ${delta}`);
-                video.playbackRate=4;
-                await new Promise(r => setTimeout(r, (delta*1000/video.playbackRate)));
+                video.playbackRate=2;
+                await new Promise(r => setTimeout(r, (delta*1000/video.playbackRate + additionalDur)));
                 video.playbackRate=1;
             }
         }, driftIntervalMs);
