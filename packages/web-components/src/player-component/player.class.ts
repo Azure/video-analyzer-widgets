@@ -679,6 +679,7 @@ export class PlayerWrapper {
                 Logger.log(`Correcting drift, jumping forward ${delta}`);
                 video.playbackRate=2;
                 await new Promise(r => setTimeout(r, (delta*1000/video.playbackRate + additionalDur)));
+                Logger.log('Resetting to 1x playback rate...');
                 video.playbackRate=1;
             }
         }, driftIntervalMs);
