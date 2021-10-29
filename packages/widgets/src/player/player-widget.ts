@@ -162,6 +162,8 @@ export class Player extends BaseWidget {
         AvaAPi.videoName = this.config?.videoName;
         if (this._config?.debug !== undefined) {
             Logger.debugMode = !!this._config?.debug;
+            const player: PlayerComponent = this.shadowRoot.querySelector('media-player');
+            player.setDebugMode(Logger.debugMode);
         }
         this.allowedControllers = this.config.playerControllers;
         this.isMuted = this.config?.isMuted ?? true;

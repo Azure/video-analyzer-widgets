@@ -186,6 +186,14 @@ export class PlayerWrapper {
         }
     }
 
+    public static setDebugMode(debugMode: boolean) {
+        if (debugMode) {
+            shaka.log.setLevel(shaka.log.Level.V1);
+        } else {
+            shaka.log.setLevel(shaka.log.Level.INFO);
+        }
+    }
+
     public set availableSegments(value: IAvailableMediaResponse) {
         this._availableSegments = value;
     }

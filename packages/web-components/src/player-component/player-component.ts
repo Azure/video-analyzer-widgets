@@ -79,6 +79,10 @@ export class PlayerComponent extends FASTElement {
         this.classList.add('loading');
     }
 
+    public setDebugMode(debug: boolean) {
+        PlayerWrapper.setDebugMode(debug);
+    }
+
     public async init(
         allowCrossSiteCredentials = true,
         accessToken?: string,
