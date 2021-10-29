@@ -679,7 +679,7 @@ export class PlayerWrapper {
                 // in order to get latency as low as possible. The slower the trickplay speed, and the higher the latency, the higher this
                 // additional value will have to be. For now we use a flat value.
                     const additionalDur= 2000; // in milliseconds
-                    const delta = videoBufferedEnd - video.currentTime;
+                    const delta = videoBufferedEnd - videoCurrentTime;
                     Logger.log(`Correcting drift, jumping forward ${delta}`);
                     video.playbackRate=2;
                     await new Promise(r => setTimeout(r, (delta*1000/video.playbackRate + additionalDur)));
