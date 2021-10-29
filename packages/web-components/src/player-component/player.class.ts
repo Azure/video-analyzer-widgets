@@ -668,12 +668,10 @@ export class PlayerWrapper {
         const MAX_LATENCY_WINDOW = 3; // in seconds
         this._driftCorrectionTimer = window.setInterval(async () => {
             const video = this.player.getMediaElement() as HTMLMediaElement;
-
             if (video && !video.paused && this.isLive && !this.player.isBuffering()) {
                 const videoBuffered = this.player.getBufferedInfo().video;
                 const videoCurrentTime = video.currentTime; // Lock in the current value
                 const videoBufferedEnd = videoBuffered.length > 0 ? videoBuffered[videoBuffered.length - 1].end : videoCurrentTime - 1;
-
                 if (videoBufferedEnd - MAX_LATENCY_WINDOW > videoCurrentTime) {
                 // TODO: To account for the time that elapses during the trickplay portion, we need to add some additional trickplay duration
                 // in order to get latency as low as possible. The slower the trickplay speed, and the higher the latency, the higher this
