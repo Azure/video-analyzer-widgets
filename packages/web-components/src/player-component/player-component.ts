@@ -454,7 +454,8 @@ export class PlayerComponent extends FASTElement {
 
     private async fetchAvailableSegments(startDate: IExpandedDate, end: IExpandedDate): Promise<IAvailableMediaResponse> {
         try {
-            const availableHours = await MediaApi.getAvailableMedia(
+            let availableMediaResponse = null;
+            await MediaApi.getAvailableMedia(
                 Precision.FULL,
                 {
                     start: {
@@ -470,9 +471,15 @@ export class PlayerComponent extends FASTElement {
                 },
                 this.player.allowCrossCred,
                 this.player.accessToken
-            );
-
-            return await availableHours.json();
+            )
+                .then(async (availableHours) => {
+                    availableMediaResponse = await availableHours.json();
+                })
+                .catch((error) => {
+                    this.handleError(error);
+                    Logger.log(this.resources.PLAYER_ErrorFetchSegments);
+                });
+            return availableMediaResponse;
         } catch (error) {
             Logger.log(this.resources.PLAYER_ErrorFetchSegments);
             return null;
@@ -605,24 +612,28 @@ export class PlayerComponent extends FASTElement {
     }
 
     private async fetchAvailableYears() {
-        const availableYears = await MediaApi.getAvailableMedia(Precision.YEAR, null, this.player.allowCrossCred, this.player.accessToken);
         try {
-            const yearRanges: IAvailableMediaResponse = await availableYears.json();
-
-            for (const range of yearRanges.timeRanges) {
-                const start = parseFloat(range.start);
-                const end = parseFloat(range.end);
-                // Fill years between start-end
-                for (let index = start; index <= end; index++) {
-                    this.allowedDates[index] = [];
-                }
-            }
-
-            this.currentAllowedYears = Object.keys(this.allowedDates);
-            this.datePickerComponent.allowedDates = {
-                ...this.datePickerComponent.allowedDates,
-                years: this.currentAllowedYears.toString()
-            };
+            await MediaApi.getAvailableMedia(Precision.YEAR, null, this.player.allowCrossCred, this.player.accessToken)
+                .then(async (availableYears) => {
+                    const yearRanges: IAvailableMediaResponse = await availableYears.json();
+                    for (const range of yearRanges.timeRanges) {
+                        const start = parseFloat(range.start);
+                        const end = parseFloat(range.end);
+                        // Fill years between start-end
+                        for (let index = start; index <= end; index++) {
+                            this.allowedDates[index] = [];
+                        }
+                    }
+                    this.currentAllowedYears = Object.keys(this.allowedDates);
+                    this.datePickerComponent.allowedDates = {
+                        ...this.datePickerComponent.allowedDates,
+                        years: this.currentAllowedYears.toString()
+                    };
+                })
+                .catch((error) => {
+                    this.handleError(error);
+                    throw new WidgetGeneralError(this.resources.PLAYER_CannotParseMedia);
+                });
         } catch (error: unknown) {
             if (error instanceof HttpError) {
                 this.handleError(error);
@@ -636,7 +647,7 @@ export class PlayerComponent extends FASTElement {
     private async fetchAvailableMonths(year: number) {
         // Take available months according to year
         try {
-            const availableMonths = await MediaApi.getAvailableMedia(
+            await MediaApi.getAvailableMedia(
                 Precision.MONTH,
                 {
                     start: {
@@ -652,18 +663,24 @@ export class PlayerComponent extends FASTElement {
                 },
                 this.player.allowCrossCred,
                 this.player.accessToken
-            );
-            const monthRanges: IAvailableMediaResponse = await availableMonths.json();
+            )
+                .then(async (availableMonths) => {
+                    const monthRanges: IAvailableMediaResponse = await availableMonths.json();
 
-            // Get last available month
-            for (const range of monthRanges.timeRanges) {
-                const start = parseFloat(range.start?.substring(range.start.length - 2, range.start.length));
-                const end = parseFloat(range.end?.substring(range.end.length - 2, range.end.length));
-                // Fill years between start-end
-                for (let index = start; index <= end; index++) {
-                    this.allowedDates[year][index] = [];
-                }
-            }
+                    // Get last available month
+                    for (const range of monthRanges.timeRanges) {
+                        const start = parseFloat(range.start?.substring(range.start.length - 2, range.start.length));
+                        const end = parseFloat(range.end?.substring(range.end.length - 2, range.end.length));
+                        // Fill years between start-end
+                        for (let index = start; index <= end; index++) {
+                            this.allowedDates[year][index] = [];
+                        }
+                    }
+                })
+                .catch((error) => {
+                    this.handleError(error);
+                    throw new WidgetGeneralError(this.resources.PLAYER_CannotParseMedia);
+                });
         } catch (error: unknown) {
             if (error instanceof HttpError) {
                 this.handleError(error);
@@ -680,7 +697,7 @@ export class PlayerComponent extends FASTElement {
             const lastDayOfMonth = new Date(year, month, 1, 0, 0, 0);
             lastDayOfMonth.setDate(lastDayOfMonth.getDate() - 1);
             // fetch available days
-            const availableDays = await MediaApi.getAvailableMedia(
+            await MediaApi.getAvailableMedia(
                 Precision.DAY,
                 {
                     start: {
@@ -696,19 +713,24 @@ export class PlayerComponent extends FASTElement {
                 },
                 this.player.allowCrossCred,
                 this.player.accessToken
-            );
+            )
+                .then(async (availableDays) => {
+                    const dayRanges: IAvailableMediaResponse = await availableDays.json();
 
-            const dayRanges: IAvailableMediaResponse = await availableDays.json();
-
-            this.allowedDates[year][month] = [];
-            for (const range of dayRanges.timeRanges) {
-                const start = parseFloat(range.start?.substring(range.start.length - 2, range.start.length));
-                const end = parseFloat(range.end?.substring(range.end.length - 2, range.end.length));
-                // Fill years between start-end
-                for (let index = start; index <= end; index++) {
-                    this.allowedDates[year][month].push(index);
-                }
-            }
+                    this.allowedDates[year][month] = [];
+                    for (const range of dayRanges.timeRanges) {
+                        const start = parseFloat(range.start?.substring(range.start.length - 2, range.start.length));
+                        const end = parseFloat(range.end?.substring(range.end.length - 2, range.end.length));
+                        // Fill years between start-end
+                        for (let index = start; index <= end; index++) {
+                            this.allowedDates[year][month].push(index);
+                        }
+                    }
+                })
+                .catch((error) => {
+                    this.handleError(error);
+                    throw new WidgetGeneralError(this.resources.PLAYER_CannotParseMedia);
+                });
         } catch (error: unknown) {
             if (error instanceof HttpError) {
                 this.handleError(error);
