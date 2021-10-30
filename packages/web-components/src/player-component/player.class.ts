@@ -337,8 +337,9 @@ export class PlayerWrapper {
             this.video.src = '';
             await this.player?.unload();
             await this.controls.destroy();
+            this.controls = undefined;
+            this.isLoaded = false;
         }
-        this.isLoaded = false;
     }
 
     public async onClickLive(isLive: boolean) {
