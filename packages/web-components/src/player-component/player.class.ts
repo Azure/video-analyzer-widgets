@@ -61,7 +61,6 @@ class shakaErrorHandler {
     // Porting to widgets, had to change from event: Event to event:any
     // because @types/react declares Event interface which overrides lib.dom.
     public async onShakaError(event: shaka_player.PlayerEvents.ErrorEvent): Promise<boolean> {
-
         const shakaError = event.detail;
         // Log the error
         Logger.error('onShakaError: code', shakaError.code, `, ${shakaError.message}, object: ${shakaError}`);
@@ -332,12 +331,12 @@ export class PlayerWrapper {
 
         // Remove timeline
         this.removeTimelineComponent();
-        // await this.controls.destroy();
 
         if (this.isLoaded) {
             this.video.pause();
             this.video.src = '';
             await this.player?.unload();
+            await this.controls.destroy();
         }
         this.isLoaded = false;
     }
@@ -683,16 +682,16 @@ export class PlayerWrapper {
                 const videoCurrentTime = video.currentTime; // Lock in the current value
                 const videoBufferedEnd = videoBuffered.length > 0 ? videoBuffered[videoBuffered.length - 1].end : videoCurrentTime - 1;
                 if (videoBufferedEnd - MAX_LATENCY_WINDOW > videoCurrentTime) {
-                // TODO: To account for the time that elapses during the trickplay portion, we need to add some additional trickplay duration
-                // in order to get latency as low as possible. The slower the trickplay speed, and the higher the latency, the higher this
-                // additional value will have to be. For now we use a flat value.
-                    const additionalDur= 2000; // in milliseconds
+                    // TODO: To account for the time that elapses during the trickplay portion, we need to add some additional trickplay duration
+                    // in order to get latency as low as possible. The slower the trickplay speed, and the higher the latency, the higher this
+                    // additional value will have to be. For now we use a flat value.
+                    const additionalDur = 2000; // in milliseconds
                     const delta = videoBufferedEnd - videoCurrentTime;
                     Logger.log(`Correcting drift, jumping forward ${delta}`);
-                    video.playbackRate=2;
-                    await new Promise(r => setTimeout(r, (delta*1000/video.playbackRate + additionalDur)));
+                    video.playbackRate = 2;
+                    await new Promise((r) => setTimeout(r, (delta * 1000) / video.playbackRate + additionalDur));
                     Logger.log('Resetting to 1x playback rate...');
-                    video.playbackRate=1;
+                    video.playbackRate = 1;
                 }
             }
         }, driftIntervalMs);
