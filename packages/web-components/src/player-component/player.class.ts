@@ -336,7 +336,7 @@ export class PlayerWrapper {
             this.video.pause();
             this.video.src = '';
             await this.player?.unload();
-            await this.controls.destroy();
+            await this.controls?.destroy();
             this.controls = undefined;
             this.isLoaded = false;
         }
@@ -433,7 +433,9 @@ export class PlayerWrapper {
 
     private removeTimelineComponent() {
         if (this.timelineComponent) {
-            this.controls.bottomControls_.removeChild(this.timelineComponent);
+            if (this.controls) {
+                this.controls.bottomControls_.removeChild(this.timelineComponent);
+            }
             // eslint-disable-next-line no-undef
             this.timelineComponent.removeEventListener(TimelineEvents.SEGMENT_CHANGE, this.onSegmentChangeListenerRef as EventListener);
             // eslint-disable-next-line no-undef
