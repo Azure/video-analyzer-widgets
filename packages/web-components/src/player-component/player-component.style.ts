@@ -62,6 +62,10 @@ export const styles = css`
         padding-bottom: calc(${bottomControlHeight} + ${timelineHeight} + 2px) !important;
     }
 
+    :host(.live-off.timeline-on.bottom-controls-on) .shaka-video-container.fullscreen .shaka-overflow-menu {
+        margin-bottom: calc(${bottomControlHeight} + ${timelineHeight} + 2px) !important;
+    }
+
     :host(.live-off.timeline-off.bottom-controls-on),
     :host(.live-on.bottom-controls-on) {
         padding-bottom: ${bottomControlHeight};
@@ -78,6 +82,11 @@ export const styles = css`
         .shaka-bottom-controls,
     :host(.live-on.bottom-controls-on) .shaka-video-container.fullscreen .shaka-controls-container.live-on .shaka-bottom-controls {
         padding-bottom: calc(${bottomControlHeight} + 2px) !important;
+    }
+
+    :host(.live-off.timeline-off.bottom-controls-on) .shaka-video-container.fullscreen .shaka-overflow-menu,
+    :host(.live-on.bottom-controls-on) .shaka-video-container.fullscreen .shaka-overflow-menu {
+        margin-bottom: calc(${bottomControlHeight} + 2px) !important;
     }
 
     :host(.live-off.timeline-on.bottom-controls-off) {

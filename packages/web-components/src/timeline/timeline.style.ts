@@ -42,10 +42,14 @@ export const styles = css`
         height: 1px;
     }
 
-    .plus-svg,
-    .reset-svg {
+    .plus-svg {
         width: 11px;
         height: 11px;
+    }
+
+    .reset-svg {
+        width: 16px;
+        height: 12px;
     }
 
     .scroll-container {
