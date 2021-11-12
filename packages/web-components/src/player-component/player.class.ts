@@ -263,12 +263,16 @@ export class PlayerWrapper {
         this._currentDate = startDate;
     }
 
+    public get isRtsp(): boolean {
+        return this.player?.getAssetUri()?.startsWith('ws');
+    }
+
     public async load(url: string) {
         this.addLoading();
         this.isLoaded = false;
         this.timestampOffset = undefined;
         try {
-            if (url.indexOf('wss:/') != -1) {
+            if (url.startsWith('ws')) {
                 this.updateParentClass('rtsp-playback', true);
             } else {
                 this.updateParentClass('rtsp-playback', false);
@@ -680,7 +684,7 @@ export class PlayerWrapper {
         const MAX_LATENCY_WINDOW = 3; // in seconds
         this._driftCorrectionTimer = window.setInterval(async () => {
             const video = this.player.getMediaElement() as HTMLMediaElement;
-            if (video && !video.paused && this.isLive && !this.player.isBuffering()) {
+            if (video && !video.paused && this.isRtsp && !this.player.isBuffering()) {
                 const videoBuffered = this.player.getBufferedInfo().video;
                 const videoCurrentTime = video.currentTime; // Lock in the current value
                 const videoBufferedEnd = videoBuffered.length > 0 ? videoBuffered[videoBuffered.length - 1].end : videoCurrentTime - 1;
