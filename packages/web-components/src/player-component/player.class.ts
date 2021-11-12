@@ -269,7 +269,7 @@ export class PlayerWrapper {
         this.isLoaded = false;
         this.timestampOffset = undefined;
         try {
-            if (url.indexOf('wss:/') != -1) {
+            if (url.startsWith('ws')) {
                 this.updateParentClass('rtsp-playback', true);
                 this._rtspPlayback= true;
             } else {
