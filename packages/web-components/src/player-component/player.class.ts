@@ -154,7 +154,6 @@ export class PlayerWrapper {
     private _driftCorrectionTimer: number | null = null;
     private wallclock_event: shaka_player.PlayerEvents.FakeEvent | undefined;
     private _errorHandler: shakaErrorHandler;
-    private _rtspPlayback: boolean = false;
 
     private readonly OFFSET_MULTIPLAYER = 1000;
     private readonly SECONDS_IN_HOUR = 3600;
@@ -264,6 +263,10 @@ export class PlayerWrapper {
         this._currentDate = startDate;
     }
 
+    public get isRtsp(): boolean {
+        return this.player?.getAssetUri()?.startsWith('ws');
+    }
+
     public async load(url: string) {
         this.addLoading();
         this.isLoaded = false;
@@ -271,10 +274,8 @@ export class PlayerWrapper {
         try {
             if (url.startsWith('ws')) {
                 this.updateParentClass('rtsp-playback', true);
-                this._rtspPlayback= true;
             } else {
                 this.updateParentClass('rtsp-playback', false);
-                this._rtspPlayback = false;
             }
 
             await this.player.load(url, null, this.getMimeType(url));
@@ -683,7 +684,7 @@ export class PlayerWrapper {
         const MAX_LATENCY_WINDOW = 3; // in seconds
         this._driftCorrectionTimer = window.setInterval(async () => {
             const video = this.player.getMediaElement() as HTMLMediaElement;
-            if (video && !video.paused && this._rtspPlayback && !this.player.isBuffering()) {
+            if (video && !video.paused && this.isRtsp && !this.player.isBuffering()) {
                 const videoBuffered = this.player.getBufferedInfo().video;
                 const videoCurrentTime = video.currentTime; // Lock in the current value
                 const videoBufferedEnd = videoBuffered.length > 0 ? videoBuffered[videoBuffered.length - 1].end : videoCurrentTime - 1;
