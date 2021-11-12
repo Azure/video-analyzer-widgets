@@ -483,10 +483,50 @@ export class PlayerComponent extends FASTElement {
         }
     }
 
+    private disableNextDay(): null {
+        let currentDayIndex = this.currentAllowedDays.findIndex(item => parseInt(item) === this.currentDay);
+        if (currentDayIndex === this.currentAllowedDays.length - 1) {
+            let currentMonthIndex = this.currentAllowedMonths.findIndex(item => parseInt(item) === this.currentMonth);
+            if (currentMonthIndex === this.currentAllowedMonths.length - 1) {
+                let currentYearIndex = this.currentAllowedYears.findIndex(item => parseInt(item) === this.currentYear);
+                if (currentYearIndex === this.currentAllowedYears.length - 1) {
+                    this.player.disableNextDayButton(true);
+                    return null;
+                }
+            }
+        }
+        this.player.disableNextDayButton(false);
+        return null;
+    }
+
     private async selectNextDay() {
+        let currentDayIndex = this.currentAllowedDays.findIndex(item => parseInt(item) === this.currentDay);
+        if (currentDayIndex === this.currentAllowedDays.length - 1) {
+            let currentMonthIndex = this.currentAllowedMonths.findIndex(item => parseInt(item) === this.currentMonth);
+            if (currentMonthIndex === this.currentAllowedMonths.length - 1) {
+                let currentYearIndex = this.currentAllowedYears.findIndex(item => parseInt(item) === this.currentYear);
+                this.currentYear = parseInt(this.currentAllowedYears[currentYearIndex + 1]);
+                await this.fetchAvailableMonths(this.currentYear);
+                this.currentAllowedMonths = this.allowedDates[this.currentYear];
+                this.currentMonth = parseInt(this.currentAllowedMonths[0]);
+                await this.fetchAvailableDays(this.currentYear, this.currentMonth);
+                this.currentAllowedDays = this.allowedDates[this.currentYear][this.currentMonth];
+                this.currentDay = parseInt(this.currentAllowedDays[0]);
+            }
+            else {
+                this.currentMonth =  parseInt(this.currentAllowedMonths[currentMonthIndex + 1]);
+                await this.fetchAvailableDays(this.currentYear, this.currentMonth);
+                this.currentAllowedDays = this.allowedDates[this.currentYear][this.currentMonth];
+                this.currentDay = parseInt(this.currentAllowedDays[0]);
+            }
+        }
+        else {
+            this.currentDay = parseInt(this.currentAllowedDays[currentDayIndex + 1]);
+        }
+
         // Get next day
-        const startDate = new Date(this.currentYear, this.currentMonth - 1, this.currentDay + 1, 0, 0, 0);
-        const untilDate = new Date(this.currentYear, this.currentMonth - 1, this.currentDay + 2, 0, 0, 0);
+        const startDate = new Date(this.currentYear, this.currentMonth - 1, this.currentDay, 0, 0, 0);
+        const untilDate = new Date(this.currentYear, this.currentMonth - 1, this.currentDay + 1, 0, 0, 0);
 
         const start: IExpandedDate = {
             year: startDate.getFullYear(),
@@ -501,18 +541,58 @@ export class PlayerComponent extends FASTElement {
         const segments = await this.fetchAvailableSegments(start, end);
         // eslint-disable-next-line no-console
         if (segments?.timeRanges?.length) {
-            this.currentDay++;
             const date = new Date(Date.UTC(this.currentYear, this.currentMonth - 1, this.currentDay));
             this.currentDate = date;
             this.datePickerComponent.inputDate = date.toUTCString();
+            this.datePickerComponent.date = date;
             this.updateVODStream(true);
         }
     }
 
+    private disablePrevDay(): null {
+        let currentDayIndex = this.currentAllowedDays.findIndex(item => parseInt(item) === this.currentDay);
+        if (currentDayIndex === 0) {
+            let currentMonthIndex = this.currentAllowedMonths.findIndex(item => parseInt(item) === this.currentMonth);
+            if (currentMonthIndex === 0) {
+                let currentYearIndex = this.currentAllowedYears.findIndex(item => parseInt(item) === this.currentYear);
+                if (currentYearIndex === 0) {
+                    this.player.disablePrevDayButton(true);
+                    return null;
+                }
+            }
+        }
+        this.player.disablePrevDayButton(false);
+        return null;
+    }
+
     private async selectPrevDay() {
+        let currentDayIndex = this.currentAllowedDays.findIndex(item => parseInt(item) === this.currentDay);
+        if (currentDayIndex === 0) {
+            let currentMonthIndex = this.currentAllowedMonths.findIndex(item => parseInt(item) === this.currentMonth);
+            if (currentMonthIndex === 0) {
+                let currentYearIndex = this.currentAllowedYears.findIndex(item => parseInt(item) === this.currentYear);
+                this.currentYear = parseInt(this.currentAllowedYears[currentYearIndex - 1]);
+                await this.fetchAvailableMonths(this.currentYear);
+                this.currentAllowedMonths = this.allowedDates[this.currentYear];
+                this.currentMonth = parseInt(this.currentAllowedMonths[this.currentAllowedMonths.length - 1]);
+                await this.fetchAvailableDays(this.currentYear, this.currentMonth);
+                this.currentAllowedDays = this.allowedDates[this.currentYear][this.currentMonth];
+                this.currentDay = parseInt(this.currentAllowedDays[this.currentAllowedDays.length - 1]);
+            }
+            else {
+                this.currentMonth =  parseInt(this.currentAllowedMonths[currentMonthIndex - 1]);
+                await this.fetchAvailableDays(this.currentYear, this.currentMonth);
+                this.currentAllowedDays = this.allowedDates[this.currentYear][this.currentMonth];
+                this.currentDay = parseInt(this.currentAllowedDays[this.currentAllowedDays.length - 1]);
+            }
+        }
+        else {
+            this.currentDay = parseInt(this.currentAllowedDays[currentDayIndex - 1]);
+        }
+
         // Get next day
-        const startDate = new Date(this.currentYear, this.currentMonth - 1, this.currentDay - 1, 0, 0, 0);
-        const untilDate = new Date(this.currentYear, this.currentMonth - 1, this.currentDay, 0, 0, 0);
+        const startDate = new Date(this.currentYear, this.currentMonth - 1, this.currentDay, 0, 0, 0);
+        const untilDate = new Date(this.currentYear, this.currentMonth - 1, this.currentDay + 1, 0, 0, 0);
 
         const start: IExpandedDate = {
             year: startDate.getFullYear(),
@@ -527,15 +607,17 @@ export class PlayerComponent extends FASTElement {
         const segments = await this.fetchAvailableSegments(start, end);
         // eslint-disable-next-line no-console
         if (segments?.timeRanges?.length) {
-            this.currentDay--;
             const date = new Date(Date.UTC(this.currentYear, this.currentMonth - 1, this.currentDay));
             this.currentDate = date;
             this.datePickerComponent.inputDate = date.toUTCString();
+            this.datePickerComponent.date = date;
             this.updateVODStream(true);
         }
     }
 
     private async updateVODStream(VODMode: boolean = false, init = false) {
+        this.disableNextDay();
+        this.disablePrevDay();
         if (!this.afterInit) {
             return;
         }

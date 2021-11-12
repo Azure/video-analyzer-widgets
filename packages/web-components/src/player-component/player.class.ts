@@ -418,6 +418,22 @@ export class PlayerWrapper {
         }
     }
 
+    public disableNextDayButton(disable: boolean) {
+        for (const element of this.controls?.elements_) {
+            if (element?.isNextDayButton) {
+                element.disableNextDayButton(disable);
+            }
+        }
+    }
+
+    public disablePrevDayButton(disable: boolean) {
+        for (const element of this.controls?.elements_) {
+            if (element?.isPrevDayButton) {
+                element.disablePrevDayButton(disable);
+            }
+        }
+    }
+
     private updateLiveButtonState() {
         for (const element of this.controls?.elements_) {
             if (element?.isLiveButton) {
