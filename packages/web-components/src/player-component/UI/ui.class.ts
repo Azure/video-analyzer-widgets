@@ -312,6 +312,10 @@ export class NextDayButton extends shaka.ui.Element {
         this.init();
     }
 
+    public disableNextDayButton(disable: boolean) {
+        this.button_.disabled = disable;
+    }
+
     private init() {
         this.button_ = document.createElement('fast-button');
         setElementTooltip(this.button_, Localization.dictionary.BUTTONS_CLASS_NextRecordedDay);
@@ -329,9 +333,6 @@ export class NextDayButton extends shaka.ui.Element {
             this.callBack();
         });
     }
-    public disableNextDayButton(disable: boolean) {
-        this.button_.disabled = disable;
-    }
 }
 
 export class PrevDayButton extends shaka.ui.Element {
@@ -339,6 +340,10 @@ export class PrevDayButton extends shaka.ui.Element {
     public constructor(parent: any, controls: any, private callBack: () => void) {
         super(parent, controls);
         this.init();
+    }
+
+    public disablePrevDayButton(disable: boolean) {
+        this.button_.disabled = disable;
     }
 
     private init() {
@@ -357,9 +362,6 @@ export class PrevDayButton extends shaka.ui.Element {
         this.eventManager.listen(this.button_, 'click', () => {
             this.callBack();
         });
-    }
-    public disablePrevDayButton(disable: boolean) {
-        this.button_.disabled = disable;
     }
 }
 

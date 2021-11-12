@@ -484,11 +484,11 @@ export class PlayerComponent extends FASTElement {
     }
 
     private disableNextDay(): null {
-        let currentDayIndex = this.currentAllowedDays.findIndex(item => parseInt(item) === this.currentDay);
+        const currentDayIndex = this.currentAllowedDays.findIndex(item => parseInt(item, 10) === this.currentDay);
         if (currentDayIndex === this.currentAllowedDays.length - 1) {
-            let currentMonthIndex = this.currentAllowedMonths.findIndex(item => parseInt(item) === this.currentMonth);
+            const currentMonthIndex = this.currentAllowedMonths.findIndex(item => parseInt(item, 10) === this.currentMonth);
             if (currentMonthIndex === this.currentAllowedMonths.length - 1) {
-                let currentYearIndex = this.currentAllowedYears.findIndex(item => parseInt(item) === this.currentYear);
+                const currentYearIndex = this.currentAllowedYears.findIndex(item => parseInt(item, 10) === this.currentYear);
                 if (currentYearIndex === this.currentAllowedYears.length - 1) {
                     this.player.disableNextDayButton(true);
                     return null;
@@ -500,28 +500,26 @@ export class PlayerComponent extends FASTElement {
     }
 
     private async selectNextDay() {
-        let currentDayIndex = this.currentAllowedDays.findIndex(item => parseInt(item) === this.currentDay);
+        const currentDayIndex = this.currentAllowedDays.findIndex(item => parseInt(item, 10) === this.currentDay);
         if (currentDayIndex === this.currentAllowedDays.length - 1) {
-            let currentMonthIndex = this.currentAllowedMonths.findIndex(item => parseInt(item) === this.currentMonth);
+            const currentMonthIndex = this.currentAllowedMonths.findIndex(item => parseInt(item, 10) === this.currentMonth);
             if (currentMonthIndex === this.currentAllowedMonths.length - 1) {
-                let currentYearIndex = this.currentAllowedYears.findIndex(item => parseInt(item) === this.currentYear);
-                this.currentYear = parseInt(this.currentAllowedYears[currentYearIndex + 1]);
+                const currentYearIndex = this.currentAllowedYears.findIndex(item => parseInt(item, 10) === this.currentYear);
+                this.currentYear = parseInt(this.currentAllowedYears[currentYearIndex + 1], 10);
                 await this.fetchAvailableMonths(this.currentYear);
                 this.currentAllowedMonths = this.allowedDates[this.currentYear];
-                this.currentMonth = parseInt(this.currentAllowedMonths[0]);
+                this.currentMonth = parseInt(this.currentAllowedMonths[0], 10);
                 await this.fetchAvailableDays(this.currentYear, this.currentMonth);
                 this.currentAllowedDays = this.allowedDates[this.currentYear][this.currentMonth];
-                this.currentDay = parseInt(this.currentAllowedDays[0]);
-            }
-            else {
-                this.currentMonth =  parseInt(this.currentAllowedMonths[currentMonthIndex + 1]);
+                this.currentDay = parseInt(this.currentAllowedDays[0], 10);
+            } else {
+                this.currentMonth =  parseInt(this.currentAllowedMonths[currentMonthIndex + 1], 10);
                 await this.fetchAvailableDays(this.currentYear, this.currentMonth);
                 this.currentAllowedDays = this.allowedDates[this.currentYear][this.currentMonth];
-                this.currentDay = parseInt(this.currentAllowedDays[0]);
+                this.currentDay = parseInt(this.currentAllowedDays[0], 10);
             }
-        }
-        else {
-            this.currentDay = parseInt(this.currentAllowedDays[currentDayIndex + 1]);
+        } else {
+            this.currentDay = parseInt(this.currentAllowedDays[currentDayIndex + 1], 10);
         }
 
         // Get next day
@@ -550,11 +548,11 @@ export class PlayerComponent extends FASTElement {
     }
 
     private disablePrevDay(): null {
-        let currentDayIndex = this.currentAllowedDays.findIndex(item => parseInt(item) === this.currentDay);
+        const currentDayIndex = this.currentAllowedDays.findIndex(item => parseInt(item, 10) === this.currentDay);
         if (currentDayIndex === 0) {
-            let currentMonthIndex = this.currentAllowedMonths.findIndex(item => parseInt(item) === this.currentMonth);
+            const currentMonthIndex = this.currentAllowedMonths.findIndex(item => parseInt(item, 10) === this.currentMonth);
             if (currentMonthIndex === 0) {
-                let currentYearIndex = this.currentAllowedYears.findIndex(item => parseInt(item) === this.currentYear);
+                const currentYearIndex = this.currentAllowedYears.findIndex(item => parseInt(item, 10) === this.currentYear);
                 if (currentYearIndex === 0) {
                     this.player.disablePrevDayButton(true);
                     return null;
@@ -566,28 +564,26 @@ export class PlayerComponent extends FASTElement {
     }
 
     private async selectPrevDay() {
-        let currentDayIndex = this.currentAllowedDays.findIndex(item => parseInt(item) === this.currentDay);
+        const currentDayIndex = this.currentAllowedDays.findIndex(item => parseInt(item, 10) === this.currentDay);
         if (currentDayIndex === 0) {
-            let currentMonthIndex = this.currentAllowedMonths.findIndex(item => parseInt(item) === this.currentMonth);
+            const currentMonthIndex = this.currentAllowedMonths.findIndex(item => parseInt(item, 10) === this.currentMonth);
             if (currentMonthIndex === 0) {
-                let currentYearIndex = this.currentAllowedYears.findIndex(item => parseInt(item) === this.currentYear);
-                this.currentYear = parseInt(this.currentAllowedYears[currentYearIndex - 1]);
+                const currentYearIndex = this.currentAllowedYears.findIndex(item => parseInt(item, 10) === this.currentYear);
+                this.currentYear = parseInt(this.currentAllowedYears[currentYearIndex - 1], 10);
                 await this.fetchAvailableMonths(this.currentYear);
                 this.currentAllowedMonths = this.allowedDates[this.currentYear];
-                this.currentMonth = parseInt(this.currentAllowedMonths[this.currentAllowedMonths.length - 1]);
+                this.currentMonth = parseInt(this.currentAllowedMonths[this.currentAllowedMonths.length - 1], 10);
                 await this.fetchAvailableDays(this.currentYear, this.currentMonth);
                 this.currentAllowedDays = this.allowedDates[this.currentYear][this.currentMonth];
-                this.currentDay = parseInt(this.currentAllowedDays[this.currentAllowedDays.length - 1]);
-            }
-            else {
-                this.currentMonth =  parseInt(this.currentAllowedMonths[currentMonthIndex - 1]);
+                this.currentDay = parseInt(this.currentAllowedDays[this.currentAllowedDays.length - 1], 10);
+            } else {
+                this.currentMonth =  parseInt(this.currentAllowedMonths[currentMonthIndex - 1], 10);
                 await this.fetchAvailableDays(this.currentYear, this.currentMonth);
                 this.currentAllowedDays = this.allowedDates[this.currentYear][this.currentMonth];
-                this.currentDay = parseInt(this.currentAllowedDays[this.currentAllowedDays.length - 1]);
+                this.currentDay = parseInt(this.currentAllowedDays[this.currentAllowedDays.length - 1], 10);
             }
-        }
-        else {
-            this.currentDay = parseInt(this.currentAllowedDays[currentDayIndex - 1]);
+        } else {
+            this.currentDay = parseInt(this.currentAllowedDays[currentDayIndex - 1], 10);
         }
 
         // Get next day
