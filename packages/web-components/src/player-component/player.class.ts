@@ -19,7 +19,7 @@ import { Localization } from './../../../common/services/localization/localizati
 import { IDictionary } from '../../../common/services/localization/localization.definitions';
 import { MediaApi } from '../../../common/services/media/media-api.class';
 import { MimeType } from './player-component.definitions';
-import * as shakaRtsp from '@azure/video-analyzer-player';
+import { ShakaErrorHandler } from '@azure/video-analyzer-player';
 
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 TimelineComponent;
@@ -55,7 +55,7 @@ export class PlayerWrapper {
     private _currentDate: Date;
     private _driftCorrectionTimer: number | null = null;
     private wallclock_event: shaka_player.PlayerEvents.FakeEvent | undefined;
-    private _errorHandler: shakaRtsp.ShakaErrorHandler;
+    private _errorHandler: ShakaErrorHandler;
 
     private readonly OFFSET_MULTIPLAYER = 1000;
     private readonly SECONDS_IN_HOUR = 3600;
@@ -474,7 +474,7 @@ export class PlayerWrapper {
             this.toggleTracking.bind(this)
         );
 
-        this._errorHandler = new shakaRtsp.ShakaErrorHandler({
+        this._errorHandler = new ShakaErrorHandler({
             resetSource: async () => {
                 const assetUri = this.player.getAssetUri();
                 Logger.log('Auto-reconnecting...');
