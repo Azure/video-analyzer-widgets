@@ -483,7 +483,7 @@ export class PlayerComponent extends FASTElement {
         }
     }
 
-    private disableNextDay(): null {
+    private updateNextDayDisabled(): null {
         const currentDayIndex = this.currentAllowedDays.findIndex(item => parseInt(item, 10) === this.currentDay);
         if (currentDayIndex === this.currentAllowedDays.length - 1) {
             const currentMonthIndex = this.currentAllowedMonths.findIndex(item => parseInt(item, 10) === this.currentMonth);
@@ -547,7 +547,7 @@ export class PlayerComponent extends FASTElement {
         }
     }
 
-    private disablePrevDay(): null {
+    private updatePrevDayDisabled(): null {
         const currentDayIndex = this.currentAllowedDays.findIndex(item => parseInt(item, 10) === this.currentDay);
         if (currentDayIndex === 0) {
             const currentMonthIndex = this.currentAllowedMonths.findIndex(item => parseInt(item, 10) === this.currentMonth);
@@ -612,8 +612,8 @@ export class PlayerComponent extends FASTElement {
     }
 
     private async updateVODStream(VODMode: boolean = false, init = false) {
-        this.disableNextDay();
-        this.disablePrevDay();
+        this.updateNextDayDisabled();
+        this.updatePrevDayDisabled();
         if (!this.afterInit) {
             return;
         }
