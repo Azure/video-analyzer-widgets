@@ -483,7 +483,7 @@ export class PlayerComponent extends FASTElement {
         }
     }
 
-    private updateNextDayDisabled(): null {
+    private updateNextDayDisabled() {
         const currentDayIndex = this.currentAllowedDays.findIndex(item => parseInt(item, 10) === this.currentDay);
         if (currentDayIndex === this.currentAllowedDays.length - 1) {
             const currentMonthIndex = this.currentAllowedMonths.findIndex(item => parseInt(item, 10) === this.currentMonth);
@@ -491,12 +491,11 @@ export class PlayerComponent extends FASTElement {
                 const currentYearIndex = this.currentAllowedYears.findIndex(item => parseInt(item, 10) === this.currentYear);
                 if (currentYearIndex === this.currentAllowedYears.length - 1) {
                     this.player.disableNextDayButton(true);
-                    return null;
+                    return;
                 }
             }
         }
         this.player.disableNextDayButton(false);
-        return null;
     }
 
     private async selectNextDay() {
@@ -505,6 +504,9 @@ export class PlayerComponent extends FASTElement {
             const currentMonthIndex = this.currentAllowedMonths.findIndex(item => parseInt(item, 10) === this.currentMonth);
             if (currentMonthIndex === this.currentAllowedMonths.length - 1) {
                 const currentYearIndex = this.currentAllowedYears.findIndex(item => parseInt(item, 10) === this.currentYear);
+                if (currentYearIndex === this.currentAllowedYears.length - 1) {
+                    return;
+                }
                 this.currentYear = parseInt(this.currentAllowedYears[currentYearIndex + 1], 10);
                 await this.fetchAvailableMonths(this.currentYear);
                 this.currentAllowedMonths = this.allowedDates[this.currentYear];
@@ -547,7 +549,7 @@ export class PlayerComponent extends FASTElement {
         }
     }
 
-    private updatePrevDayDisabled(): null {
+    private updatePrevDayDisabled() {
         const currentDayIndex = this.currentAllowedDays.findIndex(item => parseInt(item, 10) === this.currentDay);
         if (currentDayIndex === 0) {
             const currentMonthIndex = this.currentAllowedMonths.findIndex(item => parseInt(item, 10) === this.currentMonth);
@@ -555,12 +557,11 @@ export class PlayerComponent extends FASTElement {
                 const currentYearIndex = this.currentAllowedYears.findIndex(item => parseInt(item, 10) === this.currentYear);
                 if (currentYearIndex === 0) {
                     this.player.disablePrevDayButton(true);
-                    return null;
+                    return;
                 }
             }
         }
         this.player.disablePrevDayButton(false);
-        return null;
     }
 
     private async selectPrevDay() {
@@ -569,6 +570,9 @@ export class PlayerComponent extends FASTElement {
             const currentMonthIndex = this.currentAllowedMonths.findIndex(item => parseInt(item, 10) === this.currentMonth);
             if (currentMonthIndex === 0) {
                 const currentYearIndex = this.currentAllowedYears.findIndex(item => parseInt(item, 10) === this.currentYear);
+                if (currentYearIndex === 0) {
+                    return;
+                }
                 this.currentYear = parseInt(this.currentAllowedYears[currentYearIndex - 1], 10);
                 await this.fetchAvailableMonths(this.currentYear);
                 this.currentAllowedMonths = this.allowedDates[this.currentYear];
