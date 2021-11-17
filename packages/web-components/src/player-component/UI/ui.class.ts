@@ -306,9 +306,14 @@ export class LiveButton extends shaka.ui.Element {
 }
 
 export class NextDayButton extends shaka.ui.Element {
+    public isNextDayButton = true;
     public constructor(parent: any, controls: any, private callBack: () => void) {
         super(parent, controls);
         this.init();
+    }
+
+    public disableNextDayButton(disable: boolean) {
+        this.button_.disabled = disable;
     }
 
     private init() {
@@ -331,9 +336,14 @@ export class NextDayButton extends shaka.ui.Element {
 }
 
 export class PrevDayButton extends shaka.ui.Element {
+    public isPrevDayButton = true;
     public constructor(parent: any, controls: any, private callBack: () => void) {
         super(parent, controls);
         this.init();
+    }
+
+    public disablePrevDayButton(disable: boolean) {
+        this.button_.disabled = disable;
     }
 
     private init() {
