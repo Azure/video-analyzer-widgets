@@ -419,9 +419,14 @@ export class BodyTracking extends shaka.ui.Element {
 }
 
 export class NextSegment extends shaka.ui.Element {
+    public isNextSegmentButton = true;
     public constructor(parent: any, controls: any, private callBack: (isNext: boolean) => void) {
         super(parent, controls);
         this.init();
+    }
+
+    public disableNextSegmentButton(disable: boolean) {
+        this.button_.disabled = disable;
     }
 
     private init() {
@@ -443,9 +448,14 @@ export class NextSegment extends shaka.ui.Element {
 }
 
 export class PrevSegment extends shaka.ui.Element {
+    public isPrevSegmentButton = true;
     public constructor(parent: any, controls: any, private callBack: (isNext: boolean) => void) {
         super(parent, controls);
         this.init();
+    }
+
+    public disablePrevSegmentButton(disable: boolean) {
+        this.button_.disabled = disable;
     }
 
     private init() {

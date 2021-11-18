@@ -438,6 +438,46 @@ export class PlayerWrapper {
         }
     }
 
+    private disableNextSegmentButton(disable: boolean) {
+        for (const element of this.controls?.elements_) {
+            if (element?.isNextSegmentButton) {
+                element.disableNextSegmentButton(disable);
+            }
+        }
+    }
+
+    private disablePrevSegmentButton(disable: boolean) {
+        for (const element of this.controls?.elements_) {
+            if (element?.isPrevSegmentButton) {
+                element.disablePrevSegmentButton(disable);
+            }
+        }
+    }
+
+    private updateNextSegmentButton() {
+        const lastSegmentStartSeconds = extractRealTimeFromISO(
+            this._availableSegments?.timeRanges[this._availableSegments?.timeRanges.length - 1]?.start,
+            this._currentDate
+        );
+        if (lastSegmentStartSeconds === this.currentSegment.startSeconds) {
+            this.disableNextSegmentButton(true);
+        } else {
+            this.disableNextSegmentButton(false);
+        }
+    }
+
+    private updatePrevSegmentButton() {
+        const firstSegmentStartSeconds = extractRealTimeFromISO(
+            this._availableSegments?.timeRanges[0]?.start,
+            this._currentDate
+        );
+        if (firstSegmentStartSeconds === this.currentSegment.startSeconds) {
+            this.disablePrevSegmentButton(true);
+        } else {
+            this.disablePrevSegmentButton(false);
+        }
+    }
+
     private updateLiveButtonState() {
         for (const element of this.controls?.elements_) {
             if (element?.isLiveButton) {
@@ -504,6 +544,8 @@ export class PlayerWrapper {
         const segmentEventData = event.detail;
         if (segmentEventData) {
             this.currentSegment = segmentEventData.segment;
+            this.updatePrevSegmentButton();
+            this.updateNextSegmentButton();
             const playbackMode: number = this.player.getPlaybackRate();
             const seconds = playbackMode > 0 ? segmentEventData.segment.startSeconds : segmentEventData.segment.endSeconds;
             const newCurrentTime = seconds + this.getVideoOffset();
