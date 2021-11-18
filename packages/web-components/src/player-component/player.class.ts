@@ -454,28 +454,17 @@ export class PlayerWrapper {
         }
     }
 
-    private updateNextSegmentButton() {
+    private updatePrevNextSegmentButtonsDisabledState() {
         const lastSegmentStartSeconds = extractRealTimeFromISO(
             this._availableSegments?.timeRanges[this._availableSegments?.timeRanges.length - 1]?.start,
             this._currentDate
         );
-        if (lastSegmentStartSeconds === this.currentSegment.startSeconds) {
-            this.disableNextSegmentButton(true);
-        } else {
-            this.disableNextSegmentButton(false);
-        }
-    }
-
-    private updatePrevSegmentButton() {
         const firstSegmentStartSeconds = extractRealTimeFromISO(
             this._availableSegments?.timeRanges[0]?.start,
             this._currentDate
         );
-        if (firstSegmentStartSeconds === this.currentSegment.startSeconds) {
-            this.disablePrevSegmentButton(true);
-        } else {
-            this.disablePrevSegmentButton(false);
-        }
+        this.disableNextSegmentButton(lastSegmentStartSeconds === this.currentSegment.startSeconds);
+        this.disablePrevSegmentButton(firstSegmentStartSeconds === this.currentSegment.startSeconds);
     }
 
     private updateLiveButtonState() {
@@ -544,8 +533,7 @@ export class PlayerWrapper {
         const segmentEventData = event.detail;
         if (segmentEventData) {
             this.currentSegment = segmentEventData.segment;
-            this.updatePrevSegmentButton();
-            this.updateNextSegmentButton();
+            this.updatePrevNextSegmentButtonsDisabledState();
             const playbackMode: number = this.player.getPlaybackRate();
             const seconds = playbackMode > 0 ? segmentEventData.segment.startSeconds : segmentEventData.segment.endSeconds;
             const newCurrentTime = seconds + this.getVideoOffset();

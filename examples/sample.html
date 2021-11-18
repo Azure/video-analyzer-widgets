@@ -75,11 +75,11 @@
 
     function onPlayButtonClick() {
       const clientApiEndpointUrlInput = document.querySelector('#clientApiEndpointUrlInput');
-      const clientApiEndpointUrl = clientApiEndpointUrlInput.value;
+      const clientApiEndpointUrl = clientApiEndpointUrlInput.value || 'https://7b7261cfff2d4abb82daa81ee64e0dff.api.westcentralus-private1.videoanalyzer.azure.net';
       const videoNameInput = document.querySelector('#videoNameInput');
-      const videoName = videoNameInput.value;
+      const videoName = videoNameInput.value || 'krishndu-cvr-pipeline1';
       const clientApiTokenInput = document.querySelector('#clientApiTokenInput');
-      const token = clientApiTokenInput.value;
+      const token = clientApiTokenInput.value || 'eyJhbGciOiJSUzI1NiIsImtpZCI6IjAzMjE2Qzg0MTcyNDVDNDRERDU4QUJGODBEM0EyMTg1NDMwNDYxMUEiLCJ4NXQiOiJBeUZzaEJja1hFVGRXS3Y0RFRvaGhVTUVZUm8iLCJ0eXAiOiJKV1QifQ.eyJuYmYiOjE2Mjg4ODcwNjQsImV4cCI6NDEwMjQ0NDgwMCwiaWF0IjoxNjI4ODg3MzY0LCJpc3MiOiJodHRwOi8vY29udG9zbyIsImF1ZCI6InRlc3QifQ.Q2Zf2kb950NCuy2Qrkzdj0V3Wp-24D3zqZUS_TbfwDFW8XZQMvR-C0UUf0FrH7ibCnveFPWDn2lVe79zxqd6cx6nbEn_PYEMnkZV0PNDno6_ywK0LHCWcwyh26Qxa8-BZ86os760rDSFPewl46vloVMuLybVKr4aJR6gIiXTuox55ueCTUeWhq4YayY0s58wLr0E8rkIzIVYshhez1fzBYok_UA344M2Aql6mU1keUK-onUpSIeJIYMwvnGUrjiaJtWFPUEvp-Z3przUknDs2nl_0jdrl33Zlr8cQ6Apgt7IV_7zLrIBhg1e77zf0oLaqr13PxydS6Bh8qVXkDyVGg';
       const muteInput = document.querySelector('#muteInput');
       const mute = (muteInput.value === "true") ? true : false;
 
