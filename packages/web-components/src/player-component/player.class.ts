@@ -19,109 +19,11 @@ import { Localization } from './../../../common/services/localization/localizati
 import { IDictionary } from '../../../common/services/localization/localization.definitions';
 import { MediaApi } from '../../../common/services/media/media-api.class';
 import { MimeType } from './player-component.definitions';
+import { ShakaErrorHandler } from '@azure/video-analyzer-player';
 
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 TimelineComponent;
 Localization;
-
-// When using shaka.PlayerInterface.onError to report errors, we sometimes
-// need to be able to pass codes which are not defined in
-// shaka.util.Error.Code.
-enum ErrorCode {
-    WEBSOCKET_CLOSED = 1500, // data = [ CloseEvent.code, CloseEvent.reason, CloseEvent.wasClean ]
-    WEBSOCKET_OPEN = 1501 // data = [ errorMsg, errorObj ]
-}
-
-interface IShakaErrorHandlerConfig {
-    resetSource: () => Promise<void>;
-    autoreconnect?: boolean;
-    networkRetries?: number;
-}
-
-class shakaErrorHandler {
-    private _resetSource: () => Promise<void>;
-    private _autoreconnect: boolean;
-    private _maxNetworkRetries: number;
-
-    private _firstVideoError = 0;
-    private _numVideoErrors = 0;
-    private _networkRetries = 0;
-
-    public constructor(config: IShakaErrorHandlerConfig) {
-        this._resetSource = config.resetSource;
-        this._autoreconnect = config.autoreconnect ?? true;
-        this._maxNetworkRetries = config.networkRetries ?? 5;
-    }
-
-    public resetErrorCount() {
-        this._networkRetries = 0;
-    }
-
-    // This is async, but caller will
-    // Porting to widgets, had to change from event: Event to event:any
-    // because @types/react declares Event interface which overrides lib.dom.
-    public async onShakaError(event: shaka_player.PlayerEvents.ErrorEvent): Promise<boolean> {
-        const shakaError = event.detail;
-        // Log the error
-        Logger.error('onShakaError: code', shakaError.code, `, ${shakaError.message}, object: ${shakaError}`);
-
-        if (
-            shakaError.code === ErrorCode.WEBSOCKET_CLOSED &&
-            this._autoreconnect &&
-            shakaError.severity === shaka.util.Error.Severity.RECOVERABLE
-        ) {
-            if (this._networkRetries++ < this._maxNetworkRetries) {
-                Logger.log('Retrying after a network error', event);
-                event.stopImmediatePropagation(); // Must call BEFORE await or else dispatch loop will keep notifying
-                await this._resetSource();
-                return true;
-            } else {
-                // reset the count and pass the error message to the user.
-                this._networkRetries = 0;
-                return false;
-            }
-        }
-
-        if (shakaError.code === 3016) {
-            // VIDEO_ERROR, typically PIPELINE_ERROR_DECODE / VDA Error 4
-            const maxVideoErrors = 10; // Max retries will be 1 less than this number
-            const maxVideoErrorMinutes = 3;
-
-            const now = Date.now();
-            let secondsSinceFirstVideoError = (now - this._firstVideoError) / 1000;
-            if (secondsSinceFirstVideoError > 60 * maxVideoErrorMinutes) {
-                if (this._firstVideoError > 0) {
-                    Logger.log(`${secondsSinceFirstVideoError} elapsed since first video error, resetting count.`);
-                }
-                this._numVideoErrors = 0;
-                this._firstVideoError = now;
-                secondsSinceFirstVideoError = 0;
-            }
-
-            this._numVideoErrors += 1;
-            const logMsgPrefix = `Encountered ${this._numVideoErrors} video errors within the last ${secondsSinceFirstVideoError} seconds!`;
-            if (this._numVideoErrors >= maxVideoErrors) {
-                Logger.error(logMsgPrefix, 'No more reloads!');
-                return false;
-            }
-
-            Logger.log(logMsgPrefix, 'Reloading player.');
-            try {
-                event.stopImmediatePropagation(); // Must call BEFORE await or else dispatch loop will keep notifying
-                await this._resetSource();
-                Logger.log('Reload complete!');
-                return true;
-            } catch (e) {
-                Logger.error(`Reload FAILED with error: ${e}`);
-                throw e;
-            }
-        }
-
-        // If we reached this point, we did not recognize and therefore did
-        // not handle the error.
-        return false;
-    }
-}
 
 export class PlayerWrapper {
     public player: shaka_player.Player = Object.create(null);
@@ -153,7 +55,7 @@ export class PlayerWrapper {
     private _currentDate: Date;
     private _driftCorrectionTimer: number | null = null;
     private wallclock_event: shaka_player.PlayerEvents.FakeEvent | undefined;
-    private _errorHandler: shakaErrorHandler;
+    private _errorHandler: ShakaErrorHandler;
 
     private readonly OFFSET_MULTIPLAYER = 1000;
     private readonly SECONDS_IN_HOUR = 3600;
@@ -618,7 +520,7 @@ export class PlayerWrapper {
             this.toggleTracking.bind(this)
         );
 
-        this._errorHandler = new shakaErrorHandler({
+        this._errorHandler = new ShakaErrorHandler({
             resetSource: async () => {
                 const assetUri = this.player.getAssetUri();
                 Logger.log('Auto-reconnecting...');
