@@ -1,4 +1,5 @@
 import { WidgetGeneralError } from '../../../widgets/src';
+import { MediaApi } from '../media/media-api.class';
 import { TokenHandler } from './token-handler.class';
 
 export class AvaAPi {
@@ -37,6 +38,7 @@ export class AvaAPi {
             }
         });
         const data = await response.json();
+        MediaApi.contentToken = data.Token;
         if (!data.ExpirationDate) {
             throw new WidgetGeneralError('Invalid cookie expiration');
         }

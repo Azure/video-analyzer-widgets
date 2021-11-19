@@ -84,3 +84,8 @@ export interface SystemData {
     lastModifiedByType?: string;
     lastModifiedAt?: Date;
 }
+
+export interface VideoContentToken {
+    readonly expirationDate?: Date;
+    readonly token?: string;
+}

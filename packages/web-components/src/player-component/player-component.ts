@@ -85,7 +85,6 @@ export class PlayerComponent extends FASTElement {
 
     public async init(
         allowCrossSiteCredentials = true,
-        accessToken?: string,
         allowedControllers?: ControlPanelElements[],
         clipTimeRange?: IClipTimeRange,
         isMuted?: boolean
@@ -140,10 +139,10 @@ export class PlayerComponent extends FASTElement {
 
         this.isMuted = isMuted ?? true;
 
-        this.initializePlayer(this.allowedControllers, allowCrossSiteCredentials, accessToken);
+        this.initializePlayer(this.allowedControllers, allowCrossSiteCredentials);
     }
 
-    public async initializePlayer(allowedControllers: ControlPanelElements[], allowCrossSiteCredentials = true, accessToken?: string) {
+    public async initializePlayer(allowedControllers: ControlPanelElements[], allowCrossSiteCredentials = true) {
         if (this.player) {
             // If there was an existing error -clear state
             this.clearError();
@@ -166,9 +165,6 @@ export class PlayerComponent extends FASTElement {
 
         this.player.addLoading();
 
-        if (accessToken) {
-            this.player.accessToken = accessToken;
-        }
         this.player.allowCrossCred = allowCrossSiteCredentials;
 
         if (!MediaApi.videoFlags.canStream || (!MediaApi.baseStream && (!MediaApi.videoFlags.isInUse || !MediaApi.liveStream))) {
@@ -197,12 +193,6 @@ export class PlayerComponent extends FASTElement {
         this.updateVODStream(this.isClip ?? false, true);
 
         this.classList.remove('loading');
-    }
-
-    public setPlaybackAuthorization(accessToken: string) {
-        if (accessToken) {
-            this.player.accessToken = accessToken;
-        }
     }
 
     public async initializeAvailableMedia(checkForLive: boolean) {
@@ -399,7 +389,7 @@ export class PlayerComponent extends FASTElement {
 
     public switchToDash() {
         MediaApi.rtspStream = '';
-        this.initializePlayer(this.allowedControllers, this.player.allowCrossCred, this.player.accessToken);
+        this.initializePlayer(this.allowedControllers, this.player.allowCrossCred);
     }
 
     public retryStreaming() {
@@ -478,8 +468,7 @@ export class PlayerComponent extends FASTElement {
                         day: end.day
                     }
                 },
-                this.player.allowCrossCred,
-                this.player.accessToken
+                this.player.allowCrossCred
             );
 
             return await availableHours.json();
@@ -695,7 +684,7 @@ export class PlayerComponent extends FASTElement {
     }
 
     private async fetchAvailableYears() {
-        const availableYears = await MediaApi.getAvailableMedia(Precision.YEAR, null, this.player.allowCrossCred, this.player.accessToken);
+        const availableYears = await MediaApi.getAvailableMedia(Precision.YEAR, null, this.player.allowCrossCred);
         try {
             const yearRanges: IAvailableMediaResponse = await availableYears.json();
 
@@ -740,8 +729,7 @@ export class PlayerComponent extends FASTElement {
                         day: 1
                     }
                 },
-                this.player.allowCrossCred,
-                this.player.accessToken
+                this.player.allowCrossCred
             );
             const monthRanges: IAvailableMediaResponse = await availableMonths.json();
 
@@ -784,8 +772,7 @@ export class PlayerComponent extends FASTElement {
                         day: lastDayOfMonth.getDate()
                     }
                 },
-                this.player.allowCrossCred,
-                this.player.accessToken
+                this.player.allowCrossCred
             );
 
             const dayRanges: IAvailableMediaResponse = await availableDays.json();
