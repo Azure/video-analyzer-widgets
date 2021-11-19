@@ -463,8 +463,8 @@ export class PlayerWrapper {
             this._availableSegments?.timeRanges[0]?.start,
             this._currentDate
         );
-        this.disableNextSegmentButton(lastSegmentStartSeconds === this.currentSegment.startSeconds);
-        this.disablePrevSegmentButton(firstSegmentStartSeconds === this.currentSegment.startSeconds);
+        this.disableNextSegmentButton(this.currentSegment.startSeconds === lastSegmentStartSeconds);
+        this.disablePrevSegmentButton(this.currentSegment.startSeconds === firstSegmentStartSeconds);
     }
 
     private updateLiveButtonState() {
