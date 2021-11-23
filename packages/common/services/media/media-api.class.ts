@@ -59,7 +59,7 @@ export class MediaApi {
         if (range) {
             const startDay = this.convertDateToIso(range.start.year, range.start.month, range.start.day);
             if (range.end) {
-                const endDay = this.convertDateToIso(range.end.year, range.end.month, range.end.day);
+                const endDay = this.convertDateToIso(range.end.year, range.end.month, range.end.day - 1) + 'T23:59:59.000Z';
                 range_query = `,starttime=${startDay},endtime=${endDay}`;
             } else {
                 range_query = `,starttime=${startDay}`;
