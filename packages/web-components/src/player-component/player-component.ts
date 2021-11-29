@@ -136,7 +136,7 @@ export class PlayerComponent extends FASTElement {
         this.updateClass('upper-bounding-on', this.showUpperBounding);
         this.updateClass('upper-bounding-off', !this.showUpperBounding);
         this.updateClass('bottom-controls-on', this.showBottomControls);
-        this.updateClass('bottom-controls-of', !this.showBottomControls);
+        this.updateClass('bottom-controls-off', !this.showBottomControls);
 
         this.isMuted = isMuted ?? true;
 
