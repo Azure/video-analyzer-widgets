@@ -453,6 +453,7 @@ export class PlayerWrapper {
         const segmentEventData = event.detail;
         if (segmentEventData) {
             this.currentSegment = event.detail.segment;
+            this.updatePrevNextSegmentButtonsDisabledState();
             const newCurrentTime = event.detail.time + this.getVideoOffset();
             Logger.log(`onSegmentChange: jump to ${newCurrentTime}, ` + this.getSeekRangeString());
             this.video.currentTime = newCurrentTime;
