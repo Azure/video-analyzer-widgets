@@ -484,11 +484,11 @@ export class PlayerComponent extends FASTElement {
     }
 
     private updateNextDayDisabled() {
-        const currentDayIndex = this.currentAllowedDays.findIndex(item => parseInt(item, 10) === this.currentDay);
+        const currentDayIndex = this.currentAllowedDays.findIndex((item) => parseInt(item, 10) === this.currentDay);
         if (currentDayIndex === this.currentAllowedDays.length - 1) {
-            const currentMonthIndex = this.currentAllowedMonths.findIndex(item => parseInt(item, 10) === this.currentMonth);
+            const currentMonthIndex = this.currentAllowedMonths.findIndex((item) => parseInt(item, 10) === this.currentMonth);
             if (currentMonthIndex === this.currentAllowedMonths.length - 1) {
-                const currentYearIndex = this.currentAllowedYears.findIndex(item => parseInt(item, 10) === this.currentYear);
+                const currentYearIndex = this.currentAllowedYears.findIndex((item) => parseInt(item, 10) === this.currentYear);
                 if (currentYearIndex === this.currentAllowedYears.length - 1) {
                     this.player.disableNextDayButton(true);
                     return;
@@ -499,11 +499,11 @@ export class PlayerComponent extends FASTElement {
     }
 
     private async selectNextDay() {
-        const currentDayIndex = this.currentAllowedDays.findIndex(item => parseInt(item, 10) === this.currentDay);
+        const currentDayIndex = this.currentAllowedDays.findIndex((item) => parseInt(item, 10) === this.currentDay);
         if (currentDayIndex === this.currentAllowedDays.length - 1) {
-            const currentMonthIndex = this.currentAllowedMonths.findIndex(item => parseInt(item, 10) === this.currentMonth);
+            const currentMonthIndex = this.currentAllowedMonths.findIndex((item) => parseInt(item, 10) === this.currentMonth);
             if (currentMonthIndex === this.currentAllowedMonths.length - 1) {
-                const currentYearIndex = this.currentAllowedYears.findIndex(item => parseInt(item, 10) === this.currentYear);
+                const currentYearIndex = this.currentAllowedYears.findIndex((item) => parseInt(item, 10) === this.currentYear);
                 if (currentYearIndex === this.currentAllowedYears.length - 1) {
                     return;
                 }
@@ -515,7 +515,7 @@ export class PlayerComponent extends FASTElement {
                 this.currentAllowedDays = this.allowedDates[this.currentYear][this.currentMonth];
                 this.currentDay = parseInt(this.currentAllowedDays[0], 10);
             } else {
-                this.currentMonth =  parseInt(this.currentAllowedMonths[currentMonthIndex + 1], 10);
+                this.currentMonth = parseInt(this.currentAllowedMonths[currentMonthIndex + 1], 10);
                 await this.fetchAvailableDays(this.currentYear, this.currentMonth);
                 this.currentAllowedDays = this.allowedDates[this.currentYear][this.currentMonth];
                 this.currentDay = parseInt(this.currentAllowedDays[0], 10);
@@ -550,11 +550,11 @@ export class PlayerComponent extends FASTElement {
     }
 
     private updatePrevDayDisabled() {
-        const currentDayIndex = this.currentAllowedDays.findIndex(item => parseInt(item, 10) === this.currentDay);
+        const currentDayIndex = this.currentAllowedDays.findIndex((item) => parseInt(item, 10) === this.currentDay);
         if (currentDayIndex === 0) {
-            const currentMonthIndex = this.currentAllowedMonths.findIndex(item => parseInt(item, 10) === this.currentMonth);
+            const currentMonthIndex = this.currentAllowedMonths.findIndex((item) => parseInt(item, 10) === this.currentMonth);
             if (currentMonthIndex === 0) {
-                const currentYearIndex = this.currentAllowedYears.findIndex(item => parseInt(item, 10) === this.currentYear);
+                const currentYearIndex = this.currentAllowedYears.findIndex((item) => parseInt(item, 10) === this.currentYear);
                 if (currentYearIndex === 0) {
                     this.player.disablePrevDayButton(true);
                     return;
@@ -565,11 +565,11 @@ export class PlayerComponent extends FASTElement {
     }
 
     private async selectPrevDay() {
-        const currentDayIndex = this.currentAllowedDays.findIndex(item => parseInt(item, 10) === this.currentDay);
+        const currentDayIndex = this.currentAllowedDays.findIndex((item) => parseInt(item, 10) === this.currentDay);
         if (currentDayIndex === 0) {
-            const currentMonthIndex = this.currentAllowedMonths.findIndex(item => parseInt(item, 10) === this.currentMonth);
+            const currentMonthIndex = this.currentAllowedMonths.findIndex((item) => parseInt(item, 10) === this.currentMonth);
             if (currentMonthIndex === 0) {
-                const currentYearIndex = this.currentAllowedYears.findIndex(item => parseInt(item, 10) === this.currentYear);
+                const currentYearIndex = this.currentAllowedYears.findIndex((item) => parseInt(item, 10) === this.currentYear);
                 if (currentYearIndex === 0) {
                     return;
                 }
@@ -581,7 +581,7 @@ export class PlayerComponent extends FASTElement {
                 this.currentAllowedDays = this.allowedDates[this.currentYear][this.currentMonth];
                 this.currentDay = parseInt(this.currentAllowedDays[this.currentAllowedDays.length - 1], 10);
             } else {
-                this.currentMonth =  parseInt(this.currentAllowedMonths[currentMonthIndex - 1], 10);
+                this.currentMonth = parseInt(this.currentAllowedMonths[currentMonthIndex - 1], 10);
                 await this.fetchAvailableDays(this.currentYear, this.currentMonth);
                 this.currentAllowedDays = this.allowedDates[this.currentYear][this.currentMonth];
                 this.currentDay = parseInt(this.currentAllowedDays[this.currentAllowedDays.length - 1], 10);
@@ -650,10 +650,8 @@ export class PlayerComponent extends FASTElement {
                     });
                 }
 
-                if (!this.isLive || this.isClip) {
-                    const segments = await this.fetchAvailableSegments(start, end);
-                    this.player.availableSegments = segments;
-                }
+                const segments = await this.fetchAvailableSegments(start, end);
+                this.player.availableSegments = segments;
                 this.player.vodStream = this.vodStream;
             }
 
