@@ -342,10 +342,11 @@ export class PlayerComponent extends FASTElement {
                 this.currentYear = this.currentDate.getUTCFullYear();
                 this.currentMonth = this.currentDate.getUTCMonth() + 1;
                 this.currentDay = this.currentDate.getUTCDate();
+                const isClipBeforeSelectDate = this.isClip;
                 this.isClip = false;
 
                 this.updateVODStream(true);
-                if (this.player) {
+                if (this.player && isClipBeforeSelectDate) {
                     this.player?.toggleClipMode(this.isClip);
                 }
             }
