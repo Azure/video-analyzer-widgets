@@ -60,6 +60,9 @@ export const styles = css`
         .shaka-controls-container.live-off
         .shaka-bottom-controls {
         padding-bottom: calc(${bottomControlHeight} + ${timelineHeight} + 2px) !important;
+        opacity: 0;
+        transition: opacity 0.5s;
+        transition-delay: 6s;
     }
 
     :host(.live-off.timeline-on.bottom-controls-on) .shaka-video-container.fullscreen .shaka-overflow-menu {
@@ -147,6 +150,14 @@ export const styles = css`
 
     :host(.upper-bounding-off) .upper-bounding {
         display: none;
+    }
+
+    :host(.live-off.timeline-on.bottom-controls-on)
+        .shaka-video-container.fullscreen
+        .shaka-controls-container.live-off
+        .shaka-bottom-controls:hover {
+        opacity: 1;
+        transition: opacity 0s;
     }
 
     ${stylesShaka}
