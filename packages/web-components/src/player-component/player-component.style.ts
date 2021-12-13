@@ -278,6 +278,10 @@ export const styles = css`
         background: black;
     }
 
+    .fullscreen video {
+        max-height: calc(100% - ${bottomControlHeight} - ${timelineHeight});
+    }
+
     .upper-bounding {
         padding: 0 20px;
         height: 49px;
