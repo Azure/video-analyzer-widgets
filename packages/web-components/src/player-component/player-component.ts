@@ -75,6 +75,12 @@ export class PlayerComponent extends FASTElement {
         this.classList.add(this.isLive ? LiveState.ON : LiveState.OFF);
         this.classList.remove(!this.isLive ? LiveState.ON : LiveState.OFF);
 
+        if (this.isClip) {
+            this.classList.add('clip-on');
+        } else {
+            this.classList.remove('clip-on');
+        }
+
         // Add loading mode
         this.classList.add('loading');
     }
@@ -668,6 +674,12 @@ export class PlayerComponent extends FASTElement {
         }
         this.classList.add(this.isLive ? 'live-on' : 'live-off');
         this.classList.remove(!this.isLive ? 'live-on' : 'live-off');
+
+        if (this.isClip) {
+            this.classList.add('clip-on');
+        } else {
+            this.classList.remove('clip-on');
+        }
     }
 
     private async updateLiveStateAfterStreamLoad(isStreamLive: boolean) {

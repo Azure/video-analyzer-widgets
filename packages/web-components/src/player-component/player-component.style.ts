@@ -122,6 +122,33 @@ export const styles = css`
         padding-bottom: 2px !important;
     }
 
+    :host(.live-off.clip-on.bottom-controls-on) {
+        padding-bottom: calc(${bottomControlHeight});
+    }
+
+    :host(.live-off.clip-on.bottom-controls-on) .shaka-controls-container.live-off {
+        height: calc(100% + ${bottomControlHeight});
+    }
+
+    :host(.live-off.clip-on.bottom-controls-on)
+        .shaka-video-container.fullscreen
+        .shaka-controls-container.live-off
+        .shaka-bottom-controls {
+        padding-bottom: calc(${bottomControlHeight} + 2px) !important;
+    }
+
+    :host(.live-off.clip-on.bottom-controls-on) .shaka-video-container.fullscreen .shaka-overflow-menu {
+        margin-bottom: calc(${bottomControlHeight} + 2px) !important;
+    }
+
+    :host(.live-off.clip-on.bottom-controls-off) {
+        padding-bottom: 0px;
+    }
+
+    :host(.live-off.clip-on.bottom-controls-off) .shaka-controls-container.live-off {
+        height: calc(100%);
+    }
+
     :host(.loading),
     :host(.error) {
         background: black;
@@ -300,6 +327,10 @@ export const styles = css`
 
     :host(.live-on.bottom-controls-off) .fullscreen video {
         max-height: calc(100%);
+    }
+
+    :host(.live-off.bottom-controls-on.clip-on) .fullscreen video {
+        max-height: calc(100% - ${bottomControlHeight});
     }
 
     .upper-bounding {
