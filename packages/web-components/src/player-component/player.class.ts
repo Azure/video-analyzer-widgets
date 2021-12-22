@@ -56,6 +56,7 @@ export class PlayerWrapper {
     private _driftCorrectionTimer: number | null = null;
     private wallclock_event: shaka_player.PlayerEvents.FakeEvent | undefined;
     private _errorHandler: ShakaErrorHandler;
+    private _timelineComponentZoom: number;
 
     private readonly OFFSET_MULTIPLAYER = 1000;
     private readonly SECONDS_IN_HOUR = 3600;
@@ -747,8 +748,10 @@ export class PlayerWrapper {
             this.getClockTimeString(displayTime);
 
             // Update timeline
+            this._timelineComponentZoom = this.timelineComponent?.zoom;
             this.removeTimelineComponent();
             this.createTimelineComponent();
+            this.timelineComponent.zoom = this._timelineComponentZoom || this.timelineComponent.DEFAULT_ZOOM_LEVEL;
         } else {
             // Wrap range element and add time tooltip
             this.avaUILayer.addLiveSeekBarTooltip(this.controls, this.computeClockForLive.bind(this));
