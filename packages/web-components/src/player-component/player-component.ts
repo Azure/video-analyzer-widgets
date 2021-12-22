@@ -256,6 +256,11 @@ export class PlayerComponent extends FASTElement {
 
         this.currentDate = date;
         this.datePickerComponent.inputDate = date.toUTCString();
+
+        if (this.isClip) {
+            this.currentDate = this.clipTimeRange.startTime;
+            this.datePickerComponent.date = this.clipTimeRange.startTime;
+        }
     }
 
     public cameraNameChanged() {
