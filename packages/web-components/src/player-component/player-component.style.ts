@@ -286,18 +286,12 @@ export const styles = css`
         max-height: calc(100% - ${timelineHeight});
     }
 
-    :host(.live-off.timeline-off.bottom-controls-on) .fullscreen video {
-        max-height: calc(100% - ${bottomControlHeight});
-    }
-
-    :host(.live-off.timeline-off.bottom-controls-off) .fullscreen video {
-        max-height: calc(100%);
-    }
-
+    :host(.live-off.timeline-off.bottom-controls-on) .fullscreen video,
     :host(.live-on.bottom-controls-on) .fullscreen video {
         max-height: calc(100% - ${bottomControlHeight});
     }
 
+    :host(.live-off.timeline-off.bottom-controls-off) .fullscreen video,
     :host(.live-on.bottom-controls-off) .fullscreen video {
         max-height: calc(100%);
     }
