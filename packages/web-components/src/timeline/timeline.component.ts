@@ -383,7 +383,7 @@ export class TimelineComponent extends FASTElement {
             return;
         }
         this.zoom = zoom;
-        this.zoomFactor = zoomFactor;
+        this.zoomFactor = (zoomFactor >= 1) ? zoomFactor : 1;
 
         this.initSegmentsTimeline();
         this.initTimeRuler();
