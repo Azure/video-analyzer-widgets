@@ -376,14 +376,14 @@ export class TimelineComponent extends FASTElement {
     }
 
     private fastSliderChange() {
-        const zoom = +this.fastSlider.value / this.SLIDER_DENSITY;
+        const zoom = Math.floor(+this.fastSlider.value / this.SLIDER_DENSITY);
         const zoomFactor = Math.pow(2, Math.floor(zoom / 2)) / ((zoom - 1) % 2 ? 1.5 : 1);
         // Do not zoom when canvas is more then 32,767 (max canvas width)
         if (zoomFactor * this.$fastController.element.offsetWidth >= this.CANVAS_MAX_WIDTH) {
             return;
         }
         this.zoom = zoom;
-        this.zoomFactor = (zoomFactor >= 1) ? zoomFactor : 1;
+        this.zoomFactor = zoomFactor;
 
         this.initSegmentsTimeline();
         this.initTimeRuler();
