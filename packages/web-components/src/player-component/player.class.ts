@@ -353,10 +353,7 @@ export class PlayerWrapper {
             this._availableSegments?.timeRanges[this._availableSegments?.timeRanges.length - 1]?.start,
             this._currentDate
         );
-        const firstSegmentStartSeconds = extractRealTimeFromISO(
-            this._availableSegments?.timeRanges[0]?.start,
-            this._currentDate
-        );
+        const firstSegmentStartSeconds = extractRealTimeFromISO(this._availableSegments?.timeRanges[0]?.start, this._currentDate);
         this.disableNextSegmentButton(this.currentSegment.startSeconds === lastSegmentStartSeconds);
         this.disablePrevSegmentButton(this.currentSegment.startSeconds === firstSegmentStartSeconds);
     }
@@ -730,6 +727,7 @@ export class PlayerWrapper {
         if (!MediaApi.supportsMediaSource()) {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             await new Promise((resolve) => setTimeout(resolve, 1000));
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const date = (this.video as any).getStartDate();
             Logger.log(`video start date is ${date} ${date.getUTCDate()}`);
             this.timestampOffset = date.getTime();
