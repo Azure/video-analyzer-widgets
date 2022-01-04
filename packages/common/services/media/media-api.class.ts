@@ -3,12 +3,12 @@ import { IExpandedTimeRange, IExpandedDate, Precision, VideoFormat, VideoEntity 
 export class MediaApi {
     private static _baseStream = '';
     private static _rtspStream: string | undefined;
-    private static _format = VideoFormat.HLS;
+    private static _format = MediaApi.supportsMediaSource() ? VideoFormat.DASH : VideoFormat.HLS;
     private static _videoEntity: VideoEntity;
     private static _contentToken: string;
 
     public static supportsMediaSource(): boolean {
-        return !window.MediaSource;
+        return !!window.MediaSource;
     }
 
     public static set videoEntity(value: VideoEntity) {
