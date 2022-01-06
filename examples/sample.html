@@ -75,11 +75,11 @@
 
     function onPlayButtonClick() {
       const clientApiEndpointUrlInput = document.querySelector('#clientApiEndpointUrlInput');
-      const clientApiEndpointUrl = clientApiEndpointUrlInput.value || 'https://9856bc9341774b5bb97b134c57045861.api.westcentralus-private1.videoanalyzer.azure.net';
+      const clientApiEndpointUrl = clientApiEndpointUrlInput.value;
       const videoNameInput = document.querySelector('#videoNameInput');
-      const videoName = videoNameInput.value || 'cvr1';
+      const videoName = videoNameInput.value;
       const clientApiTokenInput = document.querySelector('#clientApiTokenInput');
-      const token = clientApiTokenInput.value || 'eyJhbGciOiJSUzI1NiIsImtpZCI6IjUyNjY1NzNFOEE4MTJFNDlCODM0OUMyMDU5NjczRDRCOUU4QzVGNkQiLCJ4NXQiOiJVbVpYUG9xQkxrbTROSndnV1djOVM1Nk1YMjAiLCJ0eXAiOiJKV1QifQ.eyJuYmYiOjE2MzQ2NjQ5MjksImV4cCI6NDEwMjQ0NDgwMCwiaWF0IjoxNjM0NjY1MjI5LCJpc3MiOiJodHRwczovL2NvbnRvc28uY29tIiwiYXVkIjoiaHR0cHM6Ly85ODU2YmM5MzQxNzc0YjViYjk3YjEzNGM1NzA0NTg2MS5hcGkud2VzdGNlbnRyYWx1cy1wcml2YXRlMS52aWRlb2FuYWx5emVyLmF6dXJlLm5ldC92aWRlb3MvKiJ9.PXD88GokHN4fosrvfsUx000KMS0PxDUbrVqAff3eI-IJVd76X59Gok-bi5jAQquSupv2y2ssJx1bLkvcQ7DkJzS8Hq1IyclIMmobyabE9PNhBGAy7LgVSMyU-9V7gjS1uA-aOp9fU-cW8R3xdh1xFj0wcmzReGYTBKErrcgzVpAHx4gxmNAG0KepZempwIcmPUDujFr5hJSlKSTrumiezAPnA8Zj1gqNjVJUqhrDL_4RvcTiqr-5duwHslGOp6lrQtenUgsg4veOgro4l_Jys0aU8Hl5iP2LkcI7ZtekdeGXDOzDkSVBzSxHZ5xr2NKoCpM5Q3BjDtMiK6zZFPOwCA';
+      const token = clientApiTokenInput.value;
       const muteInput = document.querySelector('#muteInput');
       const mute = (muteInput.value === "true") ? true : false;
 
@@ -87,7 +87,7 @@
 
       const startTimeInput = document.querySelector('#startTimeInput');
       const endTimeInput = document.querySelector('#endTimeInput');
-      avaPlayer.configure({ clientApiEndpointUrl, videoName, token, debug: true, isMuted: mute, playerControllers:['mute'] });
+      avaPlayer.configure({ clientApiEndpointUrl, videoName, token, debug: true, isMuted: mute });
 
       if (startTimeInput.value && endTimeInput.value) {
         let startDate = new Date(startTimeInput.value);
