@@ -83,12 +83,7 @@ export class PlayerComponent extends FASTElement {
         PlayerWrapper.setDebugMode(debug);
     }
 
-    public async init(
-        allowCrossSiteCredentials = true,
-        allowedControllers?: ControlPanelElements[],
-        clipTimeRange?: IClipTimeRange,
-        isMuted?: boolean
-    ) {
+    public async init(allowedControllers?: ControlPanelElements[], clipTimeRange?: IClipTimeRange, isMuted?: boolean) {
         if (!this.connected) {
             return;
         }
@@ -139,10 +134,10 @@ export class PlayerComponent extends FASTElement {
 
         this.isMuted = isMuted ?? true;
 
-        this.initializePlayer(this.allowedControllers, allowCrossSiteCredentials);
+        this.initializePlayer(this.allowedControllers);
     }
 
-    public async initializePlayer(allowedControllers: ControlPanelElements[], allowCrossSiteCredentials = true) {
+    public async initializePlayer(allowedControllers: ControlPanelElements[]) {
         if (this.player) {
             // If there was an existing error -clear state
             this.clearError();
@@ -164,8 +159,6 @@ export class PlayerComponent extends FASTElement {
         );
 
         this.player.addLoading();
-
-        this.player.allowCrossCred = allowCrossSiteCredentials;
 
         if (!MediaApi.videoFlags.canStream || (!MediaApi.baseStream && (!MediaApi.videoFlags.isInUse || !MediaApi.liveStream))) {
             this.hasError = true;
@@ -389,7 +382,7 @@ export class PlayerComponent extends FASTElement {
 
     public switchToDash() {
         MediaApi.rtspStream = '';
-        this.initializePlayer(this.allowedControllers, this.player.allowCrossCred);
+        this.initializePlayer(this.allowedControllers);
     }
 
     public retryStreaming() {
@@ -454,22 +447,18 @@ export class PlayerComponent extends FASTElement {
 
     private async fetchAvailableSegments(startDate: IExpandedDate, end: IExpandedDate): Promise<IAvailableMediaResponse> {
         try {
-            const availableHours = await MediaApi.getAvailableMedia(
-                Precision.FULL,
-                {
-                    start: {
-                        year: startDate.year,
-                        month: startDate.month,
-                        day: startDate.day
-                    },
-                    end: {
-                        year: end.year,
-                        month: end.month,
-                        day: end.day
-                    }
+            const availableHours = await MediaApi.getAvailableMedia(Precision.FULL, {
+                start: {
+                    year: startDate.year,
+                    month: startDate.month,
+                    day: startDate.day
                 },
-                this.player.allowCrossCred
-            );
+                end: {
+                    year: end.year,
+                    month: end.month,
+                    day: end.day
+                }
+            });
 
             return await availableHours.json();
         } catch (error) {
@@ -684,7 +673,7 @@ export class PlayerComponent extends FASTElement {
     }
 
     private async fetchAvailableYears() {
-        const availableYears = await MediaApi.getAvailableMedia(Precision.YEAR, null, this.player.allowCrossCred);
+        const availableYears = await MediaApi.getAvailableMedia(Precision.YEAR, null);
         try {
             const yearRanges: IAvailableMediaResponse = await availableYears.json();
 
@@ -715,22 +704,18 @@ export class PlayerComponent extends FASTElement {
     private async fetchAvailableMonths(year: number) {
         // Take available months according to year
         try {
-            const availableMonths = await MediaApi.getAvailableMedia(
-                Precision.MONTH,
-                {
-                    start: {
-                        year: year,
-                        month: 1,
-                        day: 1
-                    },
-                    end: {
-                        year: year,
-                        month: 12,
-                        day: 1
-                    }
+            const availableMonths = await MediaApi.getAvailableMedia(Precision.MONTH, {
+                start: {
+                    year: year,
+                    month: 1,
+                    day: 1
                 },
-                this.player.allowCrossCred
-            );
+                end: {
+                    year: year,
+                    month: 12,
+                    day: 1
+                }
+            });
             const monthRanges: IAvailableMediaResponse = await availableMonths.json();
 
             // Get last available month
@@ -758,22 +743,18 @@ export class PlayerComponent extends FASTElement {
             const lastDayOfMonth = new Date(year, month, 1, 0, 0, 0);
             lastDayOfMonth.setDate(lastDayOfMonth.getDate() - 1);
             // fetch available days
-            const availableDays = await MediaApi.getAvailableMedia(
-                Precision.DAY,
-                {
-                    start: {
-                        year: year,
-                        month: month,
-                        day: 1
-                    },
-                    end: {
-                        year: year,
-                        month: month,
-                        day: lastDayOfMonth.getDate()
-                    }
+            const availableDays = await MediaApi.getAvailableMedia(Precision.DAY, {
+                start: {
+                    year: year,
+                    month: month,
+                    day: 1
                 },
-                this.player.allowCrossCred
-            );
+                end: {
+                    year: year,
+                    month: month,
+                    day: lastDayOfMonth.getDate()
+                }
+            });
 
             const dayRanges: IAvailableMediaResponse = await availableDays.json();
 

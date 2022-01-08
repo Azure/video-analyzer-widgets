@@ -46,7 +46,7 @@ export class MediaApi {
     }
 
     public static get rtspStream() {
-        return this.addTokenQueryParam(this._rtspStream);
+        return this._rtspStream;
     }
 
     public static get liveStream(): string {
@@ -60,7 +60,7 @@ export class MediaApi {
 
             liveUrl = `${this.baseStream}/manifest(format=${format})${extension}`;
         }
-        return this.addTokenQueryParam(liveUrl);
+        return MediaApi._format === VideoFormat.HLS ? this.addTokenQueryParam(liveUrl) : liveUrl;
     }
 
     public static getVODStream(range: IExpandedTimeRange = null): string {
@@ -78,7 +78,8 @@ export class MediaApi {
             }
         }
 
-        return this.addTokenQueryParam(`${this.baseStream}/manifest(format=${format}${range_query})${extension}`);
+        const url = `${this.baseStream}/manifest(format=${format}${range_query})${extension}`;
+        return MediaApi._format === VideoFormat.HLS ? this.addTokenQueryParam(url) : url;
     }
 
     public static getVODStreamForCLip(startTime: Date, endTime: Date): string {
@@ -92,14 +93,11 @@ export class MediaApi {
             range_query = `,starttime=${startTimeISOFormat},endtime=${endTimeISOFormat}`;
         }
 
-        return this.addTokenQueryParam(`${this.baseStream}/manifest(format=${format}${range_query})${extension}`);
+        const url = `${this.baseStream}/manifest(format=${format}${range_query})${extension}`;
+        return MediaApi._format === VideoFormat.HLS ? this.addTokenQueryParam(url) : url;
     }
 
-    public static getAvailableMedia(
-        precision: Precision,
-        range: IExpandedTimeRange = null,
-        allowCrossSiteCredentials = true
-    ): Promise<Response> {
+    public static getAvailableMedia(precision: Precision, range: IExpandedTimeRange = null): Promise<Response> {
         // time ranges are required for month, day and full
         if ((precision === Precision.MONTH || precision === Precision.DAY || precision === Precision.FULL) && !range) {
             throw Error('wrong parameters');
@@ -111,13 +109,8 @@ export class MediaApi {
         const url = `${this.baseStream}/availableMedia${range_query}`;
 
         // eslint-disable-next-line no-undef
-        const requestInit: RequestInit = {};
-
-        if (allowCrossSiteCredentials) {
-            requestInit.credentials = 'include';
-        }
-
-        return fetch(this.addTokenQueryParam(url), requestInit);
+        const requestInit: RequestInit = { headers: { Authorization: `Bearer ${this.contentToken}` } };
+        return fetch(url, requestInit);
     }
 
     private static convertDateToIso(year: number, month: number, day: number) {

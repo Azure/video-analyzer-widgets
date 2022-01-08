@@ -36,7 +36,6 @@ export class PlayerWrapper {
     private _mimeType: MimeType;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private controls: any;
-    private _allowCrossCred = true;
     private timestampOffset: number;
     private firstSegmentStartSeconds: number;
     private date: Date;
@@ -120,14 +119,6 @@ export class PlayerWrapper {
 
     public set vodStream(value: string) {
         this._vodStream = value;
-    }
-
-    public set allowCrossCred(value: boolean) {
-        this._allowCrossCred = value;
-    }
-
-    public get allowCrossCred() {
-        return this._allowCrossCred;
     }
 
     public set mimeType(value: MimeType) {
@@ -673,7 +664,6 @@ export class PlayerWrapper {
     }
 
     private authenticationHandler(type: shaka_player.net.NetworkingEngine.RequestType, request: shaka_player.extern.Request) {
-        request['allowCrossSiteCredentials'] = this._allowCrossCred;
         if (!MediaApi.contentToken) {
             return;
         }
