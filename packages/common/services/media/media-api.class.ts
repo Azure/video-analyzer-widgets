@@ -46,14 +46,14 @@ export class MediaApi {
     }
 
     public static get rtspStream() {
-        return this._rtspStream;
+        return this.addTokenQueryParam(this._rtspStream, 'authorization');
     }
 
     public static get liveStream(): string {
         // if RTSP is present use RTSP URL.
         let liveUrl = '';
         if (this._rtspStream && this.supportsMediaSource()) {
-            liveUrl = this._rtspStream;
+            liveUrl = this.rtspStream;
         } else {
             const format = MediaApi._format === VideoFormat.HLS ? 'm3u8-cmaf' : 'mpd-time-cmaf';
             const extension = MediaApi._format === VideoFormat.HLS ? '.m3u8' : '.mpd';
@@ -127,9 +127,9 @@ export class MediaApi {
         }
     }
 
-    private static addTokenQueryParam(urlString: string) {
+    private static addTokenQueryParam(urlString: string, paramName = 'token') {
         const url = new URL(urlString);
-        url.searchParams.set('token', encodeURIComponent(this.contentToken));
+        url.searchParams.set(paramName, encodeURIComponent(this.contentToken));
         return url.toString();
     }
 }

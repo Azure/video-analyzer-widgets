@@ -86,6 +86,6 @@ export interface SystemData {
 }
 
 export interface VideoContentToken {
-    readonly expirationDate?: Date;
-    readonly token?: string;
+    readonly ExpirationDate?: Date;
+    readonly Token?: string;
 }
