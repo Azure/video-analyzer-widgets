@@ -1,4 +1,6 @@
 import { WidgetGeneralError } from '../../../widgets/src';
+import { MediaApi } from '../media/media-api.class';
+import { VideoContentToken } from '../media/media.definitions';
 import { TokenHandler } from './token-handler.class';
 
 export class AvaAPi {
@@ -29,14 +31,14 @@ export class AvaAPi {
         headers['Authorization'] = `Bearer ${TokenHandler.avaAPIToken}`;
 
         const response = await fetch(url, {
-            credentials: 'include',
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${TokenHandler.avaAPIToken}`
             }
         });
-        const data = await response.json();
+        const data: VideoContentToken = await response.json();
+        MediaApi.contentToken = data.Token;
         if (!data.ExpirationDate) {
             throw new WidgetGeneralError('Invalid cookie expiration');
         }

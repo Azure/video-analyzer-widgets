@@ -33,11 +33,9 @@ export class PlayerWrapper {
     private isClip = false;
     private isLoaded = false;
     private duringSegmentJump = false;
-    private _accessToken = '';
     private _mimeType: MimeType;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private controls: any;
-    private _allowCrossCred = true;
     private timestampOffset: number;
     private firstSegmentStartSeconds: number;
     private date: Date;
@@ -110,9 +108,9 @@ export class PlayerWrapper {
             if (this._liveStream === MediaApi.rtspStream) {
                 // getVideo API may one day return the RTSP URL, until then, hard-code it.
                 url.searchParams.set('rtsp', encodeURIComponent('rtsp://localhost'));
-                if (this.accessToken) {
-                    url.searchParams.set('authorization', this.accessToken);
-                }
+                // if (MediaApi.contentToken) {
+                //     url.searchParams.set('authorization', MediaApi.contentToken);
+                // }
             }
             return url.toString();
         }
@@ -121,14 +119,6 @@ export class PlayerWrapper {
 
     public set vodStream(value: string) {
         this._vodStream = value;
-    }
-
-    public set allowCrossCred(value: boolean) {
-        this._allowCrossCred = value;
-    }
-
-    public get allowCrossCred() {
-        return this._allowCrossCred;
     }
 
     public set mimeType(value: MimeType) {
@@ -152,14 +142,6 @@ export class PlayerWrapper {
 
     public play() {
         this.video.play();
-    }
-
-    public set accessToken(accessToken: string) {
-        this._accessToken = accessToken;
-    }
-
-    public get accessToken() {
-        return this._accessToken;
     }
 
     public set currentDate(startDate: Date) {
@@ -362,10 +344,7 @@ export class PlayerWrapper {
             this._availableSegments?.timeRanges[this._availableSegments?.timeRanges.length - 1]?.start,
             this._currentDate
         );
-        const firstSegmentStartSeconds = extractRealTimeFromISO(
-            this._availableSegments?.timeRanges[0]?.start,
-            this._currentDate
-        );
+        const firstSegmentStartSeconds = extractRealTimeFromISO(this._availableSegments?.timeRanges[0]?.start, this._currentDate);
         this.disableNextSegmentButton(this.currentSegment.startSeconds === lastSegmentStartSeconds);
         this.disablePrevSegmentButton(this.currentSegment.startSeconds === firstSegmentStartSeconds);
     }
@@ -685,13 +664,16 @@ export class PlayerWrapper {
     }
 
     private authenticationHandler(type: shaka_player.net.NetworkingEngine.RequestType, request: shaka_player.extern.Request) {
-        request['allowCrossSiteCredentials'] = this._allowCrossCred;
-        if (!this._accessToken) {
+        if (!MediaApi.contentToken) {
             return;
         }
 
-        // Add authorization header
-        request.headers['Authorization'] = `Bearer ${this._accessToken}`;
+        const url: string = request['uris'][0];
+        if (url.indexOf('http') != -1) {
+            const urlRequest = new URL(url);
+            urlRequest.searchParams.set('token', MediaApi.contentToken);
+            request['uris'][0] = urlRequest.toString();
+        }
     }
 
     private onShakaMetadata(event: shaka_player.PlayerEvents.EmsgEvent) {
@@ -733,6 +715,8 @@ export class PlayerWrapper {
     private async onTrackChange() {
         // Get player manifest
         if (!MediaApi.supportsMediaSource()) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            await new Promise((resolve) => setTimeout(resolve, 1000));
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const date = (this.video as any).getStartDate();
             Logger.log(`video start date is ${date} ${date.getUTCDate()}`);

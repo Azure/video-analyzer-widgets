@@ -88,19 +88,18 @@ export class Player extends BaseWidget {
     public setSource(source: ISource) {
         this.source = source;
         MediaApi.videoEntity = this.source.videoEntity;
+        MediaApi.contentToken = this.source.authenticationToken;
 
         this.setLocalization(this.config?.locale, ['common', 'player']);
         if (this.loaded) {
             const playerComponent: PlayerComponent = this.shadowRoot.querySelector('media-player');
             playerComponent.cameraName = AvaAPi.videoName;
-            playerComponent.init(this.source.allowCrossSiteCredentials, this.source.authenticationToken, this.allowedControllers);
+            playerComponent.init(this.allowedControllers);
         }
     }
 
     public setPlaybackAuthorization(token: string) {
-        const playerComponent: PlayerComponent = this.shadowRoot.querySelector('media-player');
-
-        playerComponent.setPlaybackAuthorization(token);
+        MediaApi.contentToken = token;
     }
 
     public set apiBase(apiBase: string) {
@@ -120,7 +119,7 @@ export class Player extends BaseWidget {
         // If set source state
         if (this.source) {
             playerComponent.cameraName = AvaAPi.videoName;
-            playerComponent.init(this.source.allowCrossSiteCredentials, this.source.authenticationToken, this.allowedControllers);
+            playerComponent.init(this.allowedControllers);
             return;
         }
         // Configuration state - work with AVA API
@@ -136,7 +135,7 @@ export class Player extends BaseWidget {
                         // Authorize video
                         await AvaAPi.authorize();
                         playerComponent.cameraName = AvaAPi.videoName;
-                        playerComponent.init(true, '', this.allowedControllers, this.clipTimeRange, this.isMuted);
+                        playerComponent.init(this.allowedControllers, this.clipTimeRange, this.isMuted);
                     }
                 })
                 .catch((error) => {
@@ -172,7 +171,7 @@ export class Player extends BaseWidget {
     private handelFallback(error: HttpError) {
         const player: PlayerComponent = this.shadowRoot.querySelector('media-player');
         player.cameraName = AvaAPi.videoName;
-        player.init(true, '', this.allowedControllers);
+        player.init(this.allowedControllers);
         player.handleError(error);
     }
 

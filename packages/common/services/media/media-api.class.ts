@@ -5,6 +5,7 @@ export class MediaApi {
     private static _rtspStream: string | undefined;
     private static _format = MediaApi.supportsMediaSource() ? VideoFormat.DASH : VideoFormat.HLS;
     private static _videoEntity: VideoEntity;
+    private static _contentToken: string;
 
     public static supportsMediaSource(): boolean {
         return !!window.MediaSource;
@@ -14,6 +15,14 @@ export class MediaApi {
         this._videoEntity = value;
         this._baseStream = this._videoEntity?.properties?.contentUrls?.archiveBaseUrl;
         this._rtspStream = this._videoEntity?.properties?.contentUrls?.rtspTunnelUrl;
+    }
+
+    public static set contentToken(value: string) {
+        this._contentToken = value;
+    }
+
+    public static get contentToken() {
+        return this._contentToken;
     }
 
     public static isApple(): boolean {
@@ -37,18 +46,21 @@ export class MediaApi {
     }
 
     public static get rtspStream() {
-        return this._rtspStream;
+        return this.addTokenQueryParam(this._rtspStream, 'authorization');
     }
 
     public static get liveStream(): string {
         // if RTSP is present use RTSP URL.
+        let liveUrl = '';
         if (this._rtspStream && this.supportsMediaSource()) {
-            return this._rtspStream;
-        }
-        const format = MediaApi._format === VideoFormat.HLS ? 'm3u8-cmaf' : 'mpd-time-cmaf';
-        const extension = MediaApi._format === VideoFormat.HLS ? '.m3u8' : '.mpd';
+            liveUrl = this.rtspStream;
+        } else {
+            const format = MediaApi._format === VideoFormat.HLS ? 'm3u8-cmaf' : 'mpd-time-cmaf';
+            const extension = MediaApi._format === VideoFormat.HLS ? '.m3u8' : '.mpd';
 
-        return `${this.baseStream}/manifest(format=${format})${extension}`;
+            liveUrl = `${this.baseStream}/manifest(format=${format})${extension}`;
+        }
+        return MediaApi._format === VideoFormat.HLS ? this.addTokenQueryParam(liveUrl) : liveUrl;
     }
 
     public static getVODStream(range: IExpandedTimeRange = null): string {
@@ -66,7 +78,8 @@ export class MediaApi {
             }
         }
 
-        return `${this.baseStream}/manifest(format=${format}${range_query})${extension}`;
+        const url = `${this.baseStream}/manifest(format=${format}${range_query})${extension}`;
+        return MediaApi._format === VideoFormat.HLS ? this.addTokenQueryParam(url) : url;
     }
 
     public static getVODStreamForCLip(startTime: Date, endTime: Date): string {
@@ -80,15 +93,11 @@ export class MediaApi {
             range_query = `,starttime=${startTimeISOFormat},endtime=${endTimeISOFormat}`;
         }
 
-        return `${this.baseStream}/manifest(format=${format}${range_query})${extension}`;
+        const url = `${this.baseStream}/manifest(format=${format}${range_query})${extension}`;
+        return MediaApi._format === VideoFormat.HLS ? this.addTokenQueryParam(url) : url;
     }
 
-    public static getAvailableMedia(
-        precision: Precision,
-        range: IExpandedTimeRange = null,
-        allowCrossSiteCredentials = true,
-        token?: string
-    ): Promise<Response> {
+    public static getAvailableMedia(precision: Precision, range: IExpandedTimeRange = null): Promise<Response> {
         // time ranges are required for month, day and full
         if ((precision === Precision.MONTH || precision === Precision.DAY || precision === Precision.FULL) && !range) {
             throw Error('wrong parameters');
@@ -100,17 +109,7 @@ export class MediaApi {
         const url = `${this.baseStream}/availableMedia${range_query}`;
 
         // eslint-disable-next-line no-undef
-        const requestInit: RequestInit = {};
-
-        if (allowCrossSiteCredentials) {
-            requestInit.credentials = 'include';
-        }
-
-        if (token) {
-            requestInit.headers = {
-                Authorization: `Bearer ${token}`
-            };
-        }
+        const requestInit: RequestInit = { headers: { Authorization: `Bearer ${this.contentToken}` } };
         return fetch(url, requestInit);
     }
 
@@ -126,5 +125,11 @@ export class MediaApi {
         } else {
             return '';
         }
+    }
+
+    private static addTokenQueryParam(urlString: string, paramName = 'token') {
+        const url = new URL(urlString);
+        url.searchParams.set(paramName, encodeURIComponent(this.contentToken));
+        return url.toString();
     }
 }
