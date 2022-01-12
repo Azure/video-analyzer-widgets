@@ -128,6 +128,10 @@ export class MediaApi {
     }
 
     private static addTokenQueryParam(urlString: string, paramName = 'token') {
+        if (!urlString) {
+            return urlString;
+        }
+
         const url = new URL(urlString);
         url.searchParams.set(paramName, encodeURIComponent(this.contentToken));
         return url.toString();
