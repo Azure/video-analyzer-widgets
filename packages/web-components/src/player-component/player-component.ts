@@ -69,6 +69,8 @@ export class PlayerComponent extends FASTElement {
     private showUpperBounding = true;
     private showBottomControls = true;
     private allowedControllers: ControlPanelElements[];
+    private initDatePickerOnce = true;
+    private isClickingLiveButton = false;
 
     public constructor() {
         super();
@@ -242,7 +244,7 @@ export class PlayerComponent extends FASTElement {
 
         if (this.isClip) {
             this.currentDate = this.clipTimeRange.startTime;
-            this.datePickerComponent.date = this.clipTimeRange.startTime;
+            this.datePickerComponent.inputDate = this.clipTimeRange.startTime.toUTCString();
         }
     }
 
@@ -322,24 +324,26 @@ export class PlayerComponent extends FASTElement {
     }
 
     public initDatePicker() {
-        this.datePickerComponent = this.shadowRoot?.querySelector('media-date-picker');
-
-        this.datePickerComponent.addEventListener(DatePickerEvent.DATE_CHANGE, ((event: CustomEvent<Date>) => {
-            if (this.afterInit && event.detail?.toUTCString() !== this.currentDate?.toUTCString()) {
-                this.currentDate = event.detail;
-                this.currentYear = this.currentDate.getUTCFullYear();
-                this.currentMonth = this.currentDate.getUTCMonth() + 1;
-                this.currentDay = this.currentDate.getUTCDate();
-                const isClipBeforeSelectDate = this.isClip;
-                this.isClip = false;
-
-                this.updateVODStream(true);
-                if (this.player && isClipBeforeSelectDate) {
-                    this.player?.toggleClipMode(this.isClip);
+        if (this.initDatePickerOnce) {
+            this.initDatePickerOnce = false;
+            this.datePickerComponent = this.shadowRoot?.querySelector('media-date-picker');
+            this.datePickerComponent.addEventListener(DatePickerEvent.DATE_CHANGE, ((event: CustomEvent<Date>) => {
+                if (this.afterInit && !this.isClickingLiveButton) {
+                    this.currentDate = event.detail;
+                    this.currentYear = this.currentDate.getUTCFullYear();
+                    this.currentMonth = this.currentDate.getUTCMonth() + 1;
+                    this.currentDay = this.currentDate.getUTCDate();
+                    const isClipBeforeSelectDate = this.isClip;
+                    this.isClip = false;
+                    this.updateVODStream(true);
+                    if (this.player && isClipBeforeSelectDate) {
+                        this.player?.toggleClipMode(this.isClip);
+                    }
                 }
-            }
-            // eslint-disable-next-line no-undef
-        }) as EventListener);
+                this.isClickingLiveButton = false;
+                // eslint-disable-next-line no-undef
+            }) as EventListener);
+        }
 
         this.datePickerComponent.addEventListener(DatePickerEvent.RENDER, ((event: CustomEvent<IDatePickerRenderEvent>) => {
             const data = event.detail;
@@ -411,6 +415,12 @@ export class PlayerComponent extends FASTElement {
     }
 
     private async clickLiveCallBack(isLive: boolean) {
+        this.isClickingLiveButton = true;
+        if ((this.currentYear === parseFloat(this.currentAllowedYears[this.currentAllowedYears.length - 1])) &&
+            (this.currentMonth === parseFloat(this.currentAllowedMonths[this.currentAllowedMonths.length - 1]) &&
+            (this.currentDay === parseFloat(this.currentAllowedDays[this.currentAllowedDays.length - 1])))) {
+            this.isClickingLiveButton = false;
+        }
         this.currentYear = parseFloat(this.currentAllowedYears[this.currentAllowedYears.length - 1]);
         this.currentMonth = parseFloat(this.currentAllowedMonths[this.currentAllowedMonths.length - 1]);
         this.currentDay = parseFloat(this.currentAllowedDays[this.currentAllowedDays.length - 1]);
@@ -442,6 +452,7 @@ export class PlayerComponent extends FASTElement {
                 this.player.currentDate = this.currentDate;
                 await this.player.load(this.vodStream);
             }
+            this.isClickingLiveButton = false;
         }
     }
 
@@ -529,7 +540,6 @@ export class PlayerComponent extends FASTElement {
             this.currentDate = date;
             this.datePickerComponent.inputDate = date.toUTCString();
             this.datePickerComponent.date = date;
-            this.updateVODStream(true);
         }
     }
 
@@ -595,7 +605,6 @@ export class PlayerComponent extends FASTElement {
             this.currentDate = date;
             this.datePickerComponent.inputDate = date.toUTCString();
             this.datePickerComponent.date = date;
-            this.updateVODStream(true);
         }
     }
 
