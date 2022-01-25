@@ -50,6 +50,7 @@ export const template = html<TimelineComponent>`
                         class="zoom-slider"
                         connectedCallback="${(x) => x.fastSliderConnectedCallback()}"
                         aria-label="zoom-slider"
+                        role="slider"
                     >
                         <svg class="fast-slider-svg" slot="thumb">
                             <path class="marker-bg-path" d="${ZOOM_MARKER_BG_PATH}"></path>
