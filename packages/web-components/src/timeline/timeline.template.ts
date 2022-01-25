@@ -51,7 +51,7 @@ export const template = html<TimelineComponent>`
                         connectedCallback="${(x) => x.fastSliderConnectedCallback()}"
                         aria-label="zoom-slider"
                         role="slider"
-                        aria-valuenow="${(x) => x.fastSlider?.value}"
+                        aria-valuenow="32"
                     >
                         <svg class="fast-slider-svg" slot="thumb">
                             <path class="marker-bg-path" d="${ZOOM_MARKER_BG_PATH}"></path>
