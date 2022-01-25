@@ -46,7 +46,11 @@ export const template = html<TimelineComponent>`
                             <path d="${ZOOM_MINUS_PATH}"></path>
                         </svg>
                     </fast-button>
-                    <fast-slider class="zoom-slider" connectedCallback="${(x) => x.fastSliderConnectedCallback()}">
+                    <fast-slider
+                        class="zoom-slider"
+                        connectedCallback="${(x) => x.fastSliderConnectedCallback()}"
+                        aria-label="zoom-slider"
+                    >
                         <svg class="fast-slider-svg" slot="thumb">
                             <path class="marker-bg-path" d="${ZOOM_MARKER_BG_PATH}"></path>
                             <path class="marker-path" d="${ZOOM_MARKER_PATH}"></path>
