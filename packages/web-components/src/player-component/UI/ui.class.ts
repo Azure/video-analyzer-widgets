@@ -432,6 +432,7 @@ export class NextSegment extends shaka.ui.Element {
     private init() {
         this.button_ = document.createElement('fast-button');
         this.button_.setAttribute('title', Localization.dictionary.BUTTONS_CLASS_NextTimeRange);
+        this.button_.ariaLabel = Localization.dictionary.BUTTONS_CLASS_NextTimeRange;
         // Create SVG
         this.svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         this.path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
@@ -461,6 +462,7 @@ export class PrevSegment extends shaka.ui.Element {
     private init() {
         this.button_ = document.createElement('fast-button');
         this.button_.setAttribute('title', Localization.dictionary.BUTTONS_CLASS_PreviousTimeRange);
+        this.button_.ariaLabel = Localization.dictionary.BUTTONS_CLASS_PreviousTimeRange;
         // Create SVG
         this.svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         this.path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
