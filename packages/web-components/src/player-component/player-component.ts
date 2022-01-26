@@ -652,6 +652,8 @@ export class PlayerComponent extends FASTElement {
         }
         this.classList.add(this.isLive ? 'live-on' : 'live-off');
         this.classList.remove(!this.isLive ? 'live-on' : 'live-off');
+
+        this.updateClass('clip-on', this.isClip);
     }
 
     private async updateLiveStateAfterStreamLoad(isStreamLive: boolean) {
