@@ -265,6 +265,6 @@ export class DatePickerComponent extends FASTElement {
     }
 
     private onDateOpen() {
-        this.datePicker.picker.set('select', this.date);
+        // This function will be called when clicking the datepicker icon to open the calendar.
     }
 }
