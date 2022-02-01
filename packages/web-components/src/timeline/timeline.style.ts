@@ -105,6 +105,10 @@ export const styles = css`
         border: 1px solid var(--bg-dialog);
     }
 
+    .zoom-slider:focus-visible {
+        border: 2px solid var(--neutral-focus);
+    }
+
     .reset-button {
         right: 0px;
     }
