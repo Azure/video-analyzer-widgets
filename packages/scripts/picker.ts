@@ -697,10 +697,10 @@
             // If it’s a focus event, add the “focused” class to the root.
             if (event.type == 'focus') {
                 P.$root.addClass(CLASSES.focused);
+            } else {
+               // If the event is focus, should not open the picker.
+                P.open(); 
             }
-
-            // And then finally open the picker.
-            P.open();
         }
 
         // Return a new picker instance.
