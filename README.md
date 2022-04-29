@@ -1,6 +1,8 @@
 ![ava_widgets_banner_github.png](https://user-images.githubusercontent.com/51399662/119260323-fc97bf00-bbda-11eb-82d0-c31fa64b8e38.png)
 
-# Azure Video Analyzer widgets
+# Deprecated. Azure Video Analyzer widgets
+
+We’re retiring the Azure Video Analyzer preview service, you're advised to transition your applications off of Video Analyzer by 01 December 2022. This repo is no longer being maintained.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/%3C%2F%3E-TypeScript-%230074c1.svg)](https://www.typescriptlang.org/)
