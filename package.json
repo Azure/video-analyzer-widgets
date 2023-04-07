@@ -27,7 +27,7 @@
     "license": "MIT",
     "devDependencies": {
         "@babel/core": "^7.12.10",
-        "@open-wc/testing": "^2.0.0",
+        "@open-wc/testing": "^3.1.8",
         "@storybook/addon-controls": "^6.2.8",
         "@storybook/addon-essentials": "^6.3.6",
         "@storybook/addon-links": "^6.2.8",
