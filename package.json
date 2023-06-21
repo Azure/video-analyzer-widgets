@@ -77,7 +77,7 @@
         "jwt-decode": "^3.1.2",
         "lodash-es": "^4.17.21",
         "rxjs": "^6.6.3",
-        "shaka-player": "3.1.0",
+        "shaka-player": "4.3.7",
         "simplebar": "^5.3.3"
     },
     "files": [
