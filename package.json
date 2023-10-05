@@ -33,7 +33,7 @@
         "@storybook/addon-links": "^6.2.8",
         "@storybook/addons": "^6.2.8",
         "@storybook/cli": "^6.2.8",
-        "@storybook/html": "^6.3.6",
+        "@storybook/html": "^7.4.6",
         "@storybook/theming": "^6.2.8",
         "@types/estree": "0.0.46",
         "@types/jquery": "^3.5.5",
